@@ -1,0 +1,21 @@
+[v0] Inițializare Anthropic client...
+[v0] Using API key: undefined...
+[v0] Citire fișier XLSM...
+[v0] Coli disponibile: [
+  'Лист1',
+  'Кристалл Судьбы',
+  'Мандала',
+  'Совместимость',
+  'Прогностика',
+  'Халдейская',
+  'Алфавит',
+  'Планеты',
+  'Кармические Страны',
+  'МК Дата',
+  'Каст',
+  'Лист2'
+]
+[v0] Trimit date la Claude pentru analiză...
+
+[v0] Eroare: 401 {"type":"error","error":{"type":"authentication_error","message":"invalid x-api-key"},"request_id":"req_011CdCAGAhbLjq1rCFy5t9w8"}
+[v0] Status: 401

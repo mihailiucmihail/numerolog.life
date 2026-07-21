@@ -1,0 +1,7 @@
+allowBuilds:
+  core-js: set this to true or false
+  sharp: set this to true or false
+  sweph: set this to true or false
+minimumReleaseAgeExclude:
+  - '@ai-sdk/anthropic@4.0.15'
+  - '@ai-sdk/provider-utils@5.0.10'

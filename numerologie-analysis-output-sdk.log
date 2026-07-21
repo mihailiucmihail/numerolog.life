@@ -1,0 +1,41 @@
+[v0] Citire fișier XLSM...
+[v0] Coli disponibile: [
+  'Лист1',
+  'Кристалл Судьбы',
+  'Мандала',
+  'Совместимость',
+  'Прогностика',
+  'Халдейская',
+  'Алфавит',
+  'Планеты',
+  'Кармические Страны',
+  'МК Дата',
+  'Каст',
+  'Лист2'
+]
+[v0] Trimit date la Claude prin AI SDK...
+
+[v0] Eroare: [1m[31mUnauthenticated request to AI Gateway.[0m
+
+To authenticate, set the [33mAI_GATEWAY_API_KEY[0m environment variable with your API key.
+
+Alternatively, you can use a provider module instead of the AI Gateway.
+
+Learn more: [34mhttps://ai-sdk.dev/unauthenticated-ai-gateway[0m
+
+
+[v0] Details: Error [GatewayAuthenticationError]: [1m[31mUnauthenticated request to AI Gateway.[0m
+
+To authenticate, set the [33mAI_GATEWAY_API_KEY[0m environment variable with your API key.
+
+Alternatively, you can use a provider module instead of the AI Gateway.
+
+Learn more: [34mhttps://ai-sdk.dev/unauthenticated-ai-gateway[0m
+
+
+    at wrapGatewayError (file:///vercel/share/v0-project/node_modules/.pnpm/ai@7.0.26_zod@3.25.76/node_modules/ai/dist/index.js:2481:5)
+    at executeGenerateText (file:///vercel/share/v0-project/node_modules/.pnpm/ai@7.0.26_zod@3.25.76/node_modules/ai/dist/index.js:5762:13)
+    at async runWithTracingChannelSpan (file:///vercel/share/v0-project/node_modules/.pnpm/ai@7.0.26_zod@3.25.76/node_modules/ai/dist/index.js:4045:12)
+    at async runInTracingChannelSpan (file:///vercel/share/v0-project/node_modules/.pnpm/ai@7.0.26_zod@3.25.76/node_modules/ai/dist/index.js:4203:66)
+    at async generateText (file:///vercel/share/v0-project/node_modules/.pnpm/ai@7.0.26_zod@3.25.76/node_modules/ai/dist/index.js:5765:10)
+    at async analyzeNumerologyFile (/vercel/share/v0-project/analyze-numerologie-ai-sdk.js:64:22)

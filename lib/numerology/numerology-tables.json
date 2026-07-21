@@ -1,0 +1,38 @@
+{
+  "numbers": {
+    "1": {
+      "planetary_task": "Wysokie siły vă cer să deveniți adevăratul lider, mereu gata să ajutați, să protejați, să întindeți mâna de ajutor. Dar acest sprijin nu trebuie legat de finanțe. Este mai degrabă un nivel de conducere spirituală.",
+      "social_task": "Trebuie să transmiteți cunoștințele acumulate exclusiv verbal, să deveniți orator, lector. Sarcina dvs. este să transmiteți oral informațiile acumulate de suflet. Purtați povara ajutorului frații și surorilor.",
+      "professions": "Profesii intelectuale, comunicații, menajeri, profesori, organizatori, juriști, meșteri talentați (frizer, bijutier, mecanic), comerț, turism, calculatoare, lucru care necesită reacție rapidă, științe oculte",
+      "talismans": "Agat",
+      "color": "Galben, multicolor",
+      "type": "Profesori, oameni de știință în universități. Talent: pedagogie, lecturi, oratorică. Sarcină: primește, îmbunătățește, transmite cunoștințe"
+    },
+    "2": {
+      "planetary_task": "Prima ta misiune este legată de necesitatea de a ajuta oamenii fără a cere contrapartidă. Arată grijă, lărgesc viziunea asupra lumii. Ești profesorul spiritual al lumii care va fi reconstruită în curând.",
+      "social_task": "Trebuie să preiei răspunderea pentru mediu, animale, copii, persoane cu handicap. Îngrijoreaza și protejeaza pe cei care au nevoie. Apără pe toate femeile, în special pe cele apropiate (soție, mamă, fiică, soră).",
+      "professions": "Sferă spirituală, ajutor altora, niani, îngrijitoare, psihologi, pedagogie, medici, lucru cu femei, educatori, agricultură, dietologi, lucru cu animale și plante, organizare de evenimente",
+      "talismans": "Piatra Lunii",
+      "color": "Alb, argintiu",
+      "type": "Vindecători, medici. Talent: cunosc ierburi, medicamente, simt durerea altuia, vindecare, înțelegere animale"
+    },
+    "3": {
+      "planetary_task": "Această misiune este legată de necesitatea de a se dezvolta creativ, de a oferi oamenilor manifestări ale talentului și abilităților tale. Misiunea necesită, de obicei, o exprimare publică și vocală care ar putea încălzi strălucitor tot ceea ce te înconjoară.",
+      "social_task": "Această sarcină presupune nu doar să devii părinte, ci să transmiți cunoștințe, experiență, abilități, talente și capacități copiilor tăi. Trebuie să te ocupi personal de educația și educația copiilor tăi.",
+      "professions": "Sferă frumuseții, modă, artiști, croitori, cusători, design, expoziții, gastronomie, restaurante, cafenele, lucru cu femei, finanțe, bănci, servicii de întâlniri, imobiliare, lucru cu copii, grădinițe",
+      "talismans": "Malachit, smarald",
+      "color": "Verde",
+      "type": "Educatori în case private. Talent: materializare de gânduri-formă, capacitate de a materializa orice idee. Sarcină: ocupa-te personal de educația copiilor"
+    }
+  },
+  "calculations": {
+    "life_path": "Suma cifrelor din data nașterii redusă la o singură cifră (1-9) sau master number (11, 22)",
+    "expression_number": "Suma valorilor tuturor literelor din numele complet, redusă la o singură cifră",
+    "soul_number": "Suma valorilor vocalelor din numele complet",
+    "personality_number": "Suma valorilor consoanelor din numele complet",
+    "birth_year_number": "Suma cifrelor anului nașterii"
+  },
+  "letter_values": {
+    "A": 1, "B": 2, "C": 3, "D": 4, "E": 5, "F": 6, "G": 7, "H": 8, "I": 9, "J": 1, "K": 2, "L": 3, "M": 4, "N": 5, "O": 6, "P": 7, "Q": 8, "R": 9, "S": 1, "T": 2, "U": 3, "V": 4, "W": 5, "X": 6, "Y": 7, "Z": 8
+  }
+}

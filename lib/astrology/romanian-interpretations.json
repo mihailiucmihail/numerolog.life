@@ -1,0 +1,466 @@
+{
+  "signs": {
+    "aries": {
+      "keywords": [
+        "inițiativă",
+        "curaj",
+        "spontaneitate",
+        "vitalitate"
+      ],
+      "description": "Ai un impuls direct de a începe lucruri noi, un apetit pentru provocări și o energie care preferă acțiunea imediată în locul deliberării prelungite.",
+      "strengths": "Manifești o îndrăzneală autentică, ai capacitatea de a deschide drumuri și o forță de a reacționa rapid atunci când situația cere decizii clare.",
+      "challenges": "Poți avea tendința spre impulsivitate, iritabilitate rapidă și dificultatea de a duce la capăt proiecte după ce entuziasmul inițial se estompează."
+    },
+    "taurus": {
+      "keywords": [
+        "stabilitate",
+        "senzorialitate",
+        "răbdare",
+        "constanță"
+      ],
+      "description": "Ai o abordare tihnită, ancorată în plăcerile concrete ale vieții și în nevoia de siguranță materială, ritm predictibil și confort tangibil.",
+      "strengths": "Susții perseverența, simțul practic, loialitatea în relații și o capacitate rară de a construi lent, dar solid, ceea ce este cu adevărat valoros.",
+      "challenges": "Poți manifesta încăpățânare, rezistență la schimbare și un atașament excesiv față de rutine sau bunuri care limitează deschiderea către noutate."
+    },
+    "gemini": {
+      "keywords": [
+        "curiozitate",
+        "comunicare",
+        "adaptabilitate",
+        "versatilitate"
+      ],
+      "description": "Gândirea ta este colorată cu vioiciune, ai plăcerea conversației, un apetit pentru informație variată și nevoia de stimulare mentală constantă prin schimburi cu ceilalți.",
+      "strengths": "Exprimarea nuanțată, învățarea rapidă, capacitatea de a face conexiuni neașteptate și de a naviga cu ușurință între contexte diferite îți sunt facilitate.",
+      "challenges": "Poți genera dispersie, superficialitate în angajamente și o agitație mentală care îți îngreunează aprofundarea sau odihna interioară autentică."
+    },
+    "cancer": {
+      "keywords": [
+        "sensibilitate",
+        "protecție",
+        "memorie",
+        "apartenență"
+      ],
+      "description": "Ai o profunzime emoțională, un atașament față de origini, o intuiție fină pentru atmosfere afective și dorința de a crea un spațiu sigur, familial.",
+      "strengths": "Cultivi empatia, grija autentică față de cei apropiați, ai o memorie afectivă bogată și capacitatea de a susține emoțional oamenii vulnerabili.",
+      "challenges": "Poți manifesta hipersensibilitate, retragere defensivă, tendința de a rumega răni vechi și dificultatea de a stabili limite emoționale clare."
+    },
+    "leo": {
+      "keywords": [
+        "expresivitate",
+        "generozitate",
+        "creativitate",
+        "demnitate"
+      ],
+      "description": "Ai o nevoie puternică de a fi văzut, de a-ți exprima autentic o identitate personală strălucitoare și de a trăi viața ca pe o scenă cu semnificație.",
+      "strengths": "Susții curajul de a te afirma, ești generos, ai talent creativ și o căldură care poate inspira și energiza oamenii din jur.",
+      "challenges": "Poți manifesta o nevoie excesivă de validare, orgoliul îți poate fi rănit ușor și poți avea tendința de a dramatiza sau de a domina atenția în relații."
+    },
+    "virgo": {
+      "keywords": [
+        "discernământ",
+        "utilitate",
+        "rafinament",
+        "analiză"
+      ],
+      "description": "Ai un ochi atent la detalii, dorința de a îmbunătăți concret ceea ce funcționează prost și o etică a muncii îngrijite, discrete și utile.",
+      "strengths": "Oferi claritate analitică, ai simț practic, capacitatea de a organiza sisteme complexe și o disponibilitate autentică de a fi de folos celorlalți.",
+      "challenges": "Poți genera perfecționism paralizant, autocritică severă, îngrijorare cronică pentru detalii minore și dificultatea de a aprecia rezultatele imperfecte."
+    },
+    "libra": {
+      "keywords": [
+        "echilibru",
+        "diplomație",
+        "armonie",
+        "relaționare"
+      ],
+      "description": "Totul este colorat de nevoia ta de echilibru relațional, de sensibilitatea ta estetică rafinată și de dorința sinceră de a găsi soluții juste între poziții opuse.",
+      "strengths": "Cultivi tactul, ai capacitatea de mediere, gustul pentru frumos și o abilitate reală de a vedea perspective multiple în situații complicate.",
+      "challenges": "Poți manifesta indecizie prelungită, dependență de aprobarea celorlalți și tendința de a evita conflictele necesare pentru a păstra aparența armoniei."
+    },
+    "scorpio": {
+      "keywords": [
+        "intensitate",
+        "profunzime",
+        "transformare",
+        "penetrare"
+      ],
+      "description": "Ai o privire care pătrunde dincolo de suprafețe, o atracție firească spre tabuuri, mistere psihologice și zonele în care viața se reașează radical.",
+      "strengths": "Susții reziliența în crize, loialitatea profundă, ai o intuiție pentru motivațiile ascunse și puterea de a te reinventa după experiențe transformatoare.",
+      "challenges": "Poți genera suspiciune, gelozie, tendința de a controla emoțional relațiile și dificultatea de a lăsa să treacă răni sau resentimente vechi."
+    },
+    "sagittarius": {
+      "keywords": [
+        "explorare",
+        "sens",
+        "libertate",
+        "optimism"
+      ],
+      "description": "Deschizi orizonturi largi, ai un apetit pentru călătorii fizice sau intelectuale, pui întrebări filozofice și ai încrederea că viața are întotdeauna un sens de descoperit.",
+      "strengths": "Cultivi entuziasmul, generozitatea de spirit, ai capacitatea de a vedea imaginea de ansamblu și curajul de a-ți urmări convingerile autentice.",
+      "challenges": "Poți manifesta exagerare, dogmatism, promisiuni nerealiste și o neliniște care fuge de angajamente concrete sau de detaliile plictisitoare ale vieții."
+    },
+    "capricorn": {
+      "keywords": [
+        "responsabilitate",
+        "structură",
+        "ambiție",
+        "maturitate"
+      ],
+      "description": "Ai seriozitate, orientare spre obiective pe termen lung, respect pentru realitate și dorința de a construi durabil, cu răbdare și disciplină.",
+      "strengths": "Oferi tenacitate, ai simț al datoriei, capacitatea de a organiza eforturi pe ani întregi și o autoritate câștigată prin muncă onestă și competență.",
+      "challenges": "Poți manifesta rigiditate, pesimism, exigență excesivă față de tine și tendința de a amâna bucuria vieții în numele obligațiilor asumate."
+    },
+    "aquarius": {
+      "keywords": [
+        "originalitate",
+        "independență",
+        "viziune",
+        "solidaritate"
+      ],
+      "description": "Ai o gândire neconvențională, interes pentru idei de viitor, sensibilitate față de cauze colective și nevoia de a rămâne autentic diferit.",
+      "strengths": "Susții inovația, obiectivitatea intelectuală, ai capacitatea de a colabora în rețele diverse și curajul de a apăra soluții care contrazic convențiile.",
+      "challenges": "Poți genera detașare emoțională, încăpățânare ideologică, izolare într-o abstracțiune rece sau opoziție reflexă față de orice tradiție."
+    },
+    "pisces": {
+      "keywords": [
+        "imaginație",
+        "compasiune",
+        "receptivitate",
+        "spiritualitate"
+      ],
+      "description": "Estompezi granițele obișnuite, ai sensibilitate artistică, deschidere către dimensiuni subtile ale experienței și o milă naturală față de suferința altora.",
+      "strengths": "Cultivi empatia profundă, inspirația creativă, ai capacitatea de iertare și o intuiție care percepe ceea ce rămâne nespus în relații și situații.",
+      "challenges": "Poți manifesta confuzie, tendința de evadare, dificultatea de a stabili limite clare și riscul de a te pierde în fantezii sau dependențe."
+    }
+  },
+  "planets": {
+    "sun": {
+      "keywords": [
+        "identitate",
+        "vitalitate",
+        "voință",
+        "sine"
+      ],
+      "description": "Reprezintă miezul conștient al personalității tale, direcția spre care se orientează firesc voința ta și modul în care cauți sens și strălucire proprie.",
+      "influence": "Modelează sentimentul central al identității tale, felul în care îți manifești încrederea în sine și calitatea vitalității care îți hrănește proiectele importante."
+    },
+    "moon": {
+      "keywords": [
+        "emoție",
+        "instinct",
+        "confort",
+        "obicei"
+      ],
+      "description": "Guvernează lumea ta interioară a reacțiilor emoționale automate, a nevoilor afective de bază și a memoriei corpului tău privind ceea ce înseamnă siguranță.",
+      "influence": "Îți colorează sensibilitatea, ritmurile emoționale zilnice și tipul de mediu intim în care te poți simți cu adevărat acasă și hrănit sufletește."
+    },
+    "mercury": {
+      "keywords": [
+        "gândire",
+        "comunicare",
+        "învățare",
+        "conectare"
+      ],
+      "description": "Reprezintă modul tău de a procesa informația, de a formula idei, de a vorbi și scrie, precum și curiozitatea ta care pune întrebări despre lume.",
+      "influence": "Îți influențează stilul mental, ritmul conversațiilor, preferințele de învățare și felul în care construiești punți între idei, oameni sau contexte diferite."
+    },
+    "venus": {
+      "keywords": [
+        "atracție",
+        "plăcere",
+        "valori",
+        "estetică"
+      ],
+      "description": "Guvernează felul în care iubești, apreciezi frumusețea, acorzi valoare lucrurilor și cauți armonia în relații apropiate și afaceri.",
+      "influence": "Îți modelează gusturile estetice, stilul afectiv, dinamica atracției și felul în care negociezi apropierea, plăcerea și schimbul de valoare cu ceilalți."
+    },
+    "mars": {
+      "keywords": [
+        "acțiune",
+        "dorință",
+        "curaj",
+        "afirmare"
+      ],
+      "description": "Reprezintă energia ta care pornește la luptă, urmărește ceea ce vrei, apără teritoriul personal și transformă dorința brută în inițiativă concretă.",
+      "influence": "Îți influențează felul în care îți manifești furia, îți asumi riscuri, cucerești ceea ce contează și faci față confruntării directe cu obstacolele."
+    },
+    "jupiter": {
+      "keywords": [
+        "expansiune",
+        "sens",
+        "încredere",
+        "oportunitate"
+      ],
+      "description": "Guvernează impulsul tău de a crește, de a căuta un sens mai larg, de a explora convingeri și de a te deschide către oportunități care depășesc obișnuitul.",
+      "influence": "Îți colorează optimismul, generozitatea, apetitul pentru cunoaștere superioară și capacitatea de a vedea în situații dificile o promisiune de învățare sau abundență."
+    },
+    "saturn": {
+      "keywords": [
+        "structură",
+        "limită",
+        "maturitate",
+        "responsabilitate"
+      ],
+      "description": "Reprezintă principiul realității care îți impune limite, îți cere disciplină, îți testează angajamentele și îți construiește autoritatea prin efort susținut și confruntarea cu dificultatea.",
+      "influence": "Îți modelează raportul cu timpul, cu autoritatea, cu frica de eșec și cu procesul lent prin care îți transformi vulnerabilitatea în competență matură."
+    },
+    "uranus": {
+      "keywords": [
+        "libertate",
+        "trezire",
+        "originalitate",
+        "ruptură"
+      ],
+      "description": "Guvernează sclipirile tale de intuiție bruscă, dorința de emancipare de vechile forme și evenimentele neașteptate care îți schimbă direcția vieții.",
+      "influence": "Îți influențează zonele în care cauți independență radicală, experimentezi cu forme noi și produci treziri care rup rutina și convenția."
+    },
+    "neptune": {
+      "keywords": [
+        "imaginație",
+        "transcendență",
+        "dizolvare",
+        "inspirație"
+      ],
+      "description": "Reprezintă chemarea ta spre ceea ce depășește egoul concret, prin artă, mistică, empatie fără margini sau prin iluzii care îți cer discernământ atent.",
+      "influence": "Îți colorează visele, aspirațiile spirituale, sensibilitatea artistică și zonele în care te poți pierde claritatea în ceață, idealizare sau evaziune."
+    },
+    "pluto": {
+      "keywords": [
+        "transformare",
+        "putere",
+        "regenerare",
+        "adâncime"
+      ],
+      "description": "Guvernează procesele tale profunde de moarte simbolică și renaștere, confruntarea cu propria umbră și puterea care iese la iveală după crize majore.",
+      "influence": "Îți modelează felul în care traversezi transformări radicale, recunoști dinamica puterii în relații și îți regenerezi sensul după prăbușiri interioare."
+    }
+  },
+  "houses": {
+    "house_1": {
+      "keywords": [
+        "sine",
+        "aparență",
+        "început",
+        "impact"
+      ],
+      "description": "Descrie felul în care te prezinți în lume, prima impresie pe care o lași celorlalți și energia cu care pornești în orice nouă etapă a vieții.",
+      "life_area": "Vizează identitatea ta personală vizibilă, corpul, atitudinea de bază și modul spontan de a păși în situații noi sau printre oameni necunoscuți."
+    },
+    "house_2": {
+      "keywords": [
+        "resurse",
+        "valori",
+        "corp",
+        "siguranță"
+      ],
+      "description": "Se referă la relația ta cu banii, cu bunurile materiale, cu talentele tale proprii și cu sentimentul de valoare personală care îți susține stabilitatea interioară.",
+      "life_area": "Vizează câștigurile tale prin efort propriu, gestionarea resurselor, plăcerile corporale și felul în care îți definești ceea ce contează cu adevărat pentru tine."
+    },
+    "house_3": {
+      "keywords": [
+        "comunicare",
+        "învățare",
+        "vecinătate",
+        "frați"
+      ],
+      "description": "Descrie mediul tău apropiat, schimburile cotidiene de idei, relațiile cu frații și cu vecinii, precum și felul în care înveți lucruri noi.",
+      "life_area": "Vizează școala timpurie, deplasările scurte, scrisul, vorbirea și rețeaua de contacte care îți hrănește viața mentală de zi cu zi."
+    },
+    "house_4": {
+      "keywords": [
+        "cămin",
+        "familie",
+        "rădăcini",
+        "intimitate"
+      ],
+      "description": "Se referă la casa ta, la familia de origine, la moștenirea psihologică transmisă de strămoși și la fundamentul intim pe care se sprijină viața ta.",
+      "life_area": "Vizează spațiul tău locuit, relația cu părinții, sentimentul apartenenței, viața privată și procesele emoționale care se desfășoară departe de ochii lumii."
+    },
+    "house_5": {
+      "keywords": [
+        "creativitate",
+        "joacă",
+        "iubire",
+        "copii"
+      ],
+      "description": "Descrie zona plăcerii tale creative, a poveștilor de dragoste, a copiilor și a tuturor formelor prin care îți exprimi bucuria autentică de a fi viu.",
+      "life_area": "Vizează hobbyurile tale, romantismul, exprimarea artistică, jocul, riscurile asumate din pasiune și relația cu propria ta energie ludică și copilărească."
+    },
+    "house_6": {
+      "keywords": [
+        "muncă",
+        "sănătate",
+        "rutină",
+        "serviciu"
+      ],
+      "description": "Se referă la munca ta zilnică, la obiceiurile care îți întrețin sănătatea corpului, la relația cu colegii și la felul în care pui ordine în cotidian.",
+      "life_area": "Vizează sarcinile tale de serviciu, igiena, alimentația, animalele domestice și disciplina care îți traduce intențiile mari în gesturi mici, repetate zilnic."
+    },
+    "house_7": {
+      "keywords": [
+        "parteneriat",
+        "celălalt",
+        "alianță",
+        "oglindă"
+      ],
+      "description": "Descrie relațiile tale de la egal la egal, partenerul de viață, colaborările profesionale și felul în care ceilalți devin oglinzi ale unor părți din tine.",
+      "life_area": "Vizează căsătoria ta, asocierile de afaceri, contractele importante, adversarii deschiși și dinamica prin care înveți arta angajamentului matur."
+    },
+    "house_8": {
+      "keywords": [
+        "intimitate",
+        "transformare",
+        "resurse comune",
+        "criză"
+      ],
+      "description": "Se referă la ceea ce împarți cu alții la nivel profund: bani, sexualitate, secrete și procesele de transformare declanșate de crize inevitabile.",
+      "life_area": "Vizează moștenirile, datoriile, investițiile comune, terapia, doliul și confruntarea cu tabuuri care te obligă la o reașezare interioară radicală."
+    },
+    "house_9": {
+      "keywords": [
+        "orizont",
+        "sens",
+        "studiu",
+        "călătorie"
+      ],
+      "description": "Descrie căutarea ta de sens prin studii superioare, călătorii îndepărtate, filozofie, spiritualitate sau expunerea la culturi și viziuni asupra lumii diferite.",
+      "life_area": "Vizează universitatea, publicarea, viața religioasă, dreptul, străinătatea și convingerile care îți ghidează deciziile mari din spatele acțiunilor cotidiene."
+    },
+    "house_10": {
+      "keywords": [
+        "carieră",
+        "vocație",
+        "reputație",
+        "autoritate"
+      ],
+      "description": "Se referă la rolul public asumat, la carieră, la felul în care ești perceput în societate și la contribuția vizibilă pe care alegi să o aduci.",
+      "life_area": "Vizează profesia, ambiția, relația cu autoritățile, moștenirea lăsată prin muncă și traiectoria prin care ajungi la o poziție recunoscută public."
+    },
+    "house_11": {
+      "keywords": [
+        "comunitate",
+        "prieteni",
+        "idealuri",
+        "viitor"
+      ],
+      "description": "Descrie rețeaua ta de prieteni, grupurile și cauzele îmbrățișate, precum și viziunea despre viitor care îți orientează colaborările pe termen lung.",
+      "life_area": "Vizează asociațiile, proiectele colective, aspirațiile mari, aliații de idei și felul în care contribui la comunități mai largi decât cercul intim."
+    },
+    "house_12": {
+      "keywords": [
+        "retragere",
+        "inconștient",
+        "compasiune",
+        "dizolvare"
+      ],
+      "description": "Se referă la lumea ta interioară ascunsă, la vise, la ceea ce rămâne nespus, la refugii și la procesele subtile care se desfășoară departe de conștiință.",
+      "life_area": "Vizează singurătatea, spitalele, mănăstirile, culisele, sacrificiul, tiparele tale inconștiente și zona în care poți practica o formă tăcută de compasiune sau creativitate."
+    }
+  },
+  "aspects": {
+    "conjunction": {
+      "keywords": [
+        "fuziune",
+        "intensificare",
+        "focalizare",
+        "unire"
+      ],
+      "description": "Marchează o topire între două funcții psihice care ajung să lucreze ca o singură forță concentrată în tine, greu de separat una de cealaltă.",
+      "influence": "Îți aduce o intensitate crescută în domeniile atinse, cu potențial mare de creație atunci când energiile combinate sunt conștientizate și direcționate deliberat."
+    },
+    "opposition": {
+      "keywords": [
+        "tensiune",
+        "polaritate",
+        "conștientizare",
+        "echilibru"
+      ],
+      "description": "Îți pune față în față două nevoi contrare care îți cer o negociere permanentă și o găsire a echilibrului între poluri aparent ireconciliabile.",
+      "influence": "Îți provoacă o conștientizare crescută prin întâlnirea cu celălalt sau cu propria contradicție, invitându-te la integrarea matură a ambelor tendințe."
+    },
+    "trine": {
+      "keywords": [
+        "fluiditate",
+        "talent",
+        "ușurință",
+        "grație"
+      ],
+      "description": "Descrie o legătură armonioasă în care două funcții colaborează firesc, oferindu-ți daruri naturale pe care le poți folosi fără efort deosebit.",
+      "influence": "Îți aduce ușurință și încredere în domeniile atinse, cu riscul ca darurile să fie considerate de la sine înțelese și insuficient cultivate conștient."
+    },
+    "square": {
+      "keywords": [
+        "fricțiune",
+        "provocare",
+        "creștere",
+        "impuls"
+      ],
+      "description": "Marchează o tensiune internă care te presează spre acțiune, spre depășirea unui blocaj și spre construirea unei noi structuri prin efort susținut.",
+      "influence": "Îți generează frustrare productivă și obstacole care, asumate mai degrabă decât evitate, devin motorul unei maturizări solide și al unor realizări durabile."
+    },
+    "sextile": {
+      "keywords": [
+        "oportunitate",
+        "cooperare",
+        "stimulare",
+        "deschidere"
+      ],
+      "description": "Descrie o legătură prietenoasă care îți oferă șanse de dezvoltare atunci când sunt sesizate și activate printr-un gest deliberat, nu doar așteptate pasiv.",
+      "influence": "Îți facilitează colaborări, învățare și conexiuni utile în domeniile atinse, cu condiția să existe curiozitatea de a răspunde invitațiilor apărute pe drum."
+    }
+  },
+  "nodes": {
+    "north_node": {
+      "keywords": [
+        "destin",
+        "evoluție",
+        "lecție",
+        "creștere"
+      ],
+      "description": "Reprezintă direcția evolutivă a sufletului, lecțiile noi pe care trebuie să le înveți și zona de creștere în care îți găsești împlinirea.",
+      "influence": "Îți indică drumul spre viitor, talentele pe care trebuie să le dezvolți și experiențele care te ajută să îți depășești zona de confort."
+    },
+    "south_node": {
+      "keywords": [
+        "trecut",
+        "confort",
+        "obișnuință",
+        "karma"
+      ],
+      "description": "Simbolizează bagajul karmic, talentele înnăscute și zona de confort din care trebuie să te desprinzi pentru a evolua.",
+      "influence": "Îți arată tendințele automate, obiceiurile vechi și lecțiile deja învățate, care pot deveni o capcană dacă nu le depășești conștient."
+    }
+  },
+  "chiron": {
+    "keywords": [
+      "rana",
+      "vindecare",
+      "înțelepciune",
+      "sensibilitate"
+    ],
+    "description": "Reprezintă rana ta primordială, zona de vulnerabilitate profundă care, odată conștientizată și acceptată, devine o sursă de vindecare și înțelepciune pentru tine și pentru ceilalți.",
+    "influence": "Îți arată unde te simți cel mai puțin întreg, dar și unde ai cel mai mare potențial de a deveni un vindecător sau un ghid pentru alții, prin propria ta experiență de suferință și depășire."
+  },
+  "lilith": {
+    "keywords": [
+      "umbră",
+      "rebeliune",
+      "sexualitate",
+      "putere_feminină"
+    ],
+    "description": "Reprezintă partea ta sălbatică, neîmblânzită, sexualitatea ta primordială și rebeliunea împotriva normelor, o forță care cere să fie recunoscută și integrată.",
+    "influence": "Îți arată unde te simți cel mai provocat să îți asumi puterea, să îți exprimi dorințele autentice și să te eliberezi de constrângerile sociale sau personale."
+  },
+  "asteroids": {
+    "general": {
+      "keywords": [
+        "detalii",
+        "nuanțe",
+        "aspecte_specifice",
+        "subtilități"
+      ],
+      "description": "Asteroizii adaugă nuanțe și detalii fine hărții tale natale, scoțând în evidență aspecte specifice ale personalității și destinului tău care altfel ar putea rămâne neobservate.",
+      "influence": "Îți pot oferi o înțelegere mai profundă a unor talente ascunse, provocări subtile sau domenii de interes particular, completând imaginea de ansamblu a influențelor planetare și caselor."
+    }
+  }
+}
