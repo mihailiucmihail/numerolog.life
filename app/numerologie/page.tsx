@@ -1,21 +1,15 @@
 import { Metadata } from 'next'
+import CalculatorWrapper from '@/components/numerology/calculator-wrapper'
 
 export const metadata: Metadata = {
-  title: 'Cristalul Destinului | Numer ologie',
+  title: 'Cristalul Destinului | Numerologie',
   description: 'Calculator numerologic complet - Metoda Ayren și Julie Po cu 22 Arcane',
 }
 
 export default function NumerologiePage() {
   return (
-    <iframe
-      src="/cristalul-calculator.html"
-      style={{
-        width: '100%',
-        height: '100vh',
-        border: 'none',
-        display: 'block',
-      }}
-      title="Cristalul Destinului Calculator"
-    />
+    <div className="w-full min-h-screen">
+      <CalculatorWrapper />
+    </div>
   )
 }
