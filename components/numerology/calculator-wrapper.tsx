@@ -31,12 +31,14 @@ export default function CalculatorWrapper() {
   }, [])
 
   return (
-    <div
-      ref={containerRef}
-      className="w-full"
-      style={{
-        minHeight: '100vh',
-      }}
-    />
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div
+        ref={containerRef}
+        className="w-full glass-card rounded-2xl overflow-hidden cosmic-glow p-8"
+        style={{
+          minHeight: 'auto',
+        }}
+      />
+    </div>
   )
 }
