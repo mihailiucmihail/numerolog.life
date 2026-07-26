@@ -93,7 +93,7 @@ export default function Home() {
             <div className="hidden md:flex gap-8 items-center">
               <a href="#" className="text-gray-300 hover:text-white transition text-sm">Caracteristici</a>
               <a href="#" className="text-gray-300 hover:text-white transition text-sm">Prețuri</a>
-              <a href="/cristalul" className="text-gray-300 hover:text-white transition text-sm">Cristalul Destinului</a>
+              <a href="/raport" className="text-gray-300 hover:text-white transition text-sm">Raport Numerologic</a>
               <a href="#" className="text-gray-300 hover:text-white transition text-sm">Despre</a>
               <button className="px-6 py-2 rounded-lg bg-gradient-to-r from-amber-400 to-amber-600 text-black font-semibold hover:shadow-lg hover:shadow-amber-500/50 transition">
                 Începe
