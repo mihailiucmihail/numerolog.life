@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { startNumerologieCheckout, getNumerologieSessionStatus } from '@/app/actions/stripe'
+import { saveRaportAndSendEmail } from '@/app/actions/raport'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Loader2 } from 'lucide-react'
 import { useSearchParams, useRouter } from 'next/navigation'
@@ -13,6 +14,7 @@ interface FormData {
   day: number
   month: number
   year: number
+  email: string
 }
 
 export default function CalculatorWrapper() {
@@ -23,7 +25,7 @@ export default function CalculatorWrapper() {
   const router = useRouter()
   const didUnlock = useRef(false)
 
-  // Dupa return de la Stripe, verificam plata si trimitem datele in iframe
+  // Dupa return de la Stripe, verificam plata, salvam raportul si trimitem email
   useEffect(() => {
     const payment = searchParams.get('payment')
     const sessionId = searchParams.get('session_id')
@@ -34,20 +36,29 @@ export default function CalculatorWrapper() {
 
     didUnlock.current = true
 
-    getNumerologieSessionStatus(sessionId).then(({ paymentStatus }) => {
+    getNumerologieSessionStatus(sessionId).then(async ({ paymentStatus }) => {
       if (paymentStatus === 'paid') {
         const formData: FormData = JSON.parse(raw)
         sessionStorage.removeItem('cristalul_form_data')
-        // Curatam URL-ul
+
+        // Salvam raportul in DB si trimitem email cu link permanent
+        try {
+          const { token } = await saveRaportAndSendEmail(sessionId, formData)
+          // Redirectam la pagina raport permanenta
+          router.replace(`/numerologie/raport/${token}`)
+          return
+        } catch {
+          // Daca salvarea esueaza, afisam raportul direct in iframe
+        }
+
+        // Fallback: afisam raportul in iframe pe pagina curenta
         router.replace('/numerologie')
-        // Trimitem datele in iframe dupa ce se incarca
         const sendUnlock = () => {
           iframeRef.current?.contentWindow?.postMessage(
             { type: 'paymentSuccess', formData },
             '*'
           )
         }
-        // Incercam imediat si din nou dupa 1s pentru siguranta
         setTimeout(sendUnlock, 500)
         setTimeout(sendUnlock, 1500)
       }
@@ -59,7 +70,7 @@ export default function CalculatorWrapper() {
     setShowLoading(true)
     try {
       sessionStorage.setItem('cristalul_form_data', JSON.stringify(formData))
-      const checkoutUrl = await startNumerologieCheckout()
+      const checkoutUrl = await startNumerologieCheckout(formData.email)
       window.location.href = checkoutUrl
     } catch {
       setShowLoading(false)
