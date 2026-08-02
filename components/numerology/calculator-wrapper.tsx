@@ -56,16 +56,18 @@ export default function CalculatorWrapper() {
   }, [])
 
   const handleRequestPayment = useCallback(async (formData: FormData) => {
+    console.log('[v0] handleRequestPayment called', formData)
     setShowLoading(true)
     try {
-      // Salvam datele inainte de redirect
       sessionStorage.setItem('cristalul_form_data', JSON.stringify(formData))
+      console.log('[v0] calling startNumerologieCheckout...')
       const checkoutUrl = await startNumerologieCheckout()
+      console.log('[v0] checkoutUrl received:', checkoutUrl)
       window.location.href = checkoutUrl
-    } catch {
+    } catch(err) {
+      console.log('[v0] payment error:', err)
       setShowLoading(false)
       sessionStorage.removeItem('cristalul_form_data')
-      // Reabiliteaza butonul din iframe
       iframeRef.current?.contentWindow?.postMessage({ type: 'paymentCancelled' }, '*')
     }
   }, [])
