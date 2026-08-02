@@ -71,7 +71,7 @@ function ProductPresentation({ onStart }: { onStart: () => void }) {
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Preț</p>
             <p className="font-serif text-3xl font-light text-foreground">
-              99 <span className="text-lg" style={{ color: 'var(--gold)' }}>RON</span>
+              1 <span className="text-lg" style={{ color: 'var(--gold)' }}>EUR</span>
             </p>
             <p className="text-xs text-muted-foreground mt-1">Plată unică — acces permanent</p>
           </div>
