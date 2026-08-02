@@ -1,43 +1,44 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export default function CalculatorWrapper() {
-  const containerRef = useRef<HTMLDivElement>(null)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const [height, setHeight] = useState(800)
 
   useEffect(() => {
-    const loadCalculator = async () => {
-      try {
-        const response = await fetch('/cristalul-calculator.html')
-        const html = await response.text()
-        
-        if (containerRef.current) {
-          containerRef.current.innerHTML = html
-          
-          // Execute any scripts that were in the HTML
-          const scripts = containerRef.current.querySelectorAll('script')
-          scripts.forEach(script => {
-            const newScript = document.createElement('script')
-            newScript.textContent = script.textContent
-            document.body.appendChild(newScript)
-          })
-        }
-      } catch (error) {
-        console.error('[v0] Error loading calculator:', error)
+    const iframe = iframeRef.current
+    if (!iframe) return
+
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'resize' && typeof event.data.height === 'number') {
+        setHeight(event.data.height + 40)
       }
     }
 
-    loadCalculator()
+    window.addEventListener('message', handleMessage)
+
+    const onLoad = () => {
+      try {
+        iframe.contentWindow?.postMessage({ type: 'requestHeight' }, '*')
+      } catch {}
+    }
+    iframe.addEventListener('load', onLoad)
+
+    return () => {
+      window.removeEventListener('message', handleMessage)
+      iframe.removeEventListener('load', onLoad)
+    }
   }, [])
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div
-        ref={containerRef}
-        className="w-full glass-card rounded-2xl overflow-hidden cosmic-glow p-8"
-        style={{
-          minHeight: 'auto',
-        }}
+      <iframe
+        ref={iframeRef}
+        src="/cristalul-calculator.html"
+        style={{ width: '100%', height, border: 'none', display: 'block' }}
+        title="Cristalul Destinului Calculator"
+        scrolling="no"
       />
     </div>
   )
