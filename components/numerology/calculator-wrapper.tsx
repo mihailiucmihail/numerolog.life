@@ -74,6 +74,7 @@ export default function CalculatorWrapper() {
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
+      console.log('[v0] message received:', event.data?.type)
       if (event.data?.type === 'resize' && typeof event.data.height === 'number') {
         setHeight(event.data.height + 40)
       }
