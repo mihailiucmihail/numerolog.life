@@ -56,16 +56,12 @@ export default function CalculatorWrapper() {
   }, [])
 
   const handleRequestPayment = useCallback(async (formData: FormData) => {
-    console.log('[v0] handleRequestPayment called', formData)
     setShowLoading(true)
     try {
       sessionStorage.setItem('cristalul_form_data', JSON.stringify(formData))
-      console.log('[v0] calling startNumerologieCheckout...')
       const checkoutUrl = await startNumerologieCheckout()
-      console.log('[v0] checkoutUrl received:', checkoutUrl)
       window.location.href = checkoutUrl
-    } catch(err) {
-      console.log('[v0] payment error:', err)
+    } catch {
       setShowLoading(false)
       sessionStorage.removeItem('cristalul_form_data')
       iframeRef.current?.contentWindow?.postMessage({ type: 'paymentCancelled' }, '*')
@@ -74,7 +70,6 @@ export default function CalculatorWrapper() {
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      console.log('[v0] message received:', event.data?.type)
       if (event.data?.type === 'resize' && typeof event.data.height === 'number') {
         setHeight(event.data.height + 40)
       }
