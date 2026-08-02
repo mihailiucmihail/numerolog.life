@@ -8,10 +8,10 @@ export async function startNumerologieCheckout(): Promise<string> {
   const product = getProduct('cristalul-destinului')
   if (!product) throw new Error('Produsul nu a fost găsit.')
 
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://astroai.ro'
+
   const stripe = getStripe()
   const session = await stripe.checkout.sessions.create({
-    ui_mode: 'embedded_page',
-    redirect_on_completion: 'never',
     line_items: [
       {
         price_data: {
@@ -26,10 +26,12 @@ export async function startNumerologieCheckout(): Promise<string> {
       },
     ],
     mode: 'payment',
+    success_url: `${baseUrl}/numerologie?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${baseUrl}/numerologie?payment=cancelled`,
   })
 
-  if (!session.client_secret) throw new Error('Nu s-a putut genera sesiunea de plată.')
-  return session.client_secret
+  if (!session.url) throw new Error('Nu s-a putut genera URL-ul de plată.')
+  return session.url
 }
 
 export async function getNumerologieSessionStatus(sessionId: string) {

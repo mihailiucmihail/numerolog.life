@@ -1,4 +1,5 @@
 import { Metadata } from 'next'
+import { Suspense } from 'react'
 import { StarField } from '@/components/star-field'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
@@ -15,7 +16,9 @@ export default function NumerologiePage() {
       <StarField />
       <Navbar />
       <div className="relative z-10 pt-20 pb-20">
-        <NumerologieClient />
+        <Suspense>
+          <NumerologieClient />
+        </Suspense>
       </div>
       <Footer />
     </main>
