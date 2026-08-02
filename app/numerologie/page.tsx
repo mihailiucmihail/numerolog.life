@@ -1,12 +1,12 @@
 import { Metadata } from 'next'
-import CalculatorWrapper from '@/components/numerology/calculator-wrapper'
 import { StarField } from '@/components/star-field'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
+import NumerologieClient from '@/components/numerology/numerologie-client'
 
 export const metadata: Metadata = {
   title: 'Cristalul Destinului | Numerologie',
-  description: 'Calculator numerologic complet - Metoda Ayren și Julie Po cu 22 Arcane',
+  description: 'Raport numerologic complet — Metoda Ayren și Julie Po cu 22 Arcane, metacicle de viată și grafice.',
 }
 
 export default function NumerologiePage() {
@@ -15,7 +15,7 @@ export default function NumerologiePage() {
       <StarField />
       <Navbar />
       <div className="relative z-10 pt-20 pb-20">
-        <CalculatorWrapper />
+        <NumerologieClient />
       </div>
       <Footer />
     </main>

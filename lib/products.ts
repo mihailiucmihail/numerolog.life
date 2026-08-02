@@ -1,3 +1,25 @@
+export interface Product {
+  id: string
+  name: string
+  description: string
+  priceInCents: number
+  currency: string
+}
+
+export const PRODUCTS: Product[] = [
+  {
+    id: 'cristalul-destinului',
+    name: 'Cristalul Destinului',
+    description: 'Raport numerologic complet — Metoda Ayren și Julie Po cu 22 Arcane, metacicle de viată, grafice și Pătrul lui Pitagora.',
+    priceInCents: 9900, // 99 RON
+    currency: 'ron',
+  },
+]
+
+export function getProduct(id: string): Product | undefined {
+  return PRODUCTS.find((p) => p.id === id)
+}
+
 export interface Plan {
   id: string
   name: string

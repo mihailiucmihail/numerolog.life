@@ -1,8 +1,45 @@
 "use server"
 
 import { getStripe } from "@/lib/stripe"
-import { getPlan } from "@/lib/products"
+import { getPlan, getProduct } from "@/lib/products"
 import { createClient } from "@/lib/supabase/server"
+
+export async function startNumerologieCheckout(): Promise<string> {
+  const product = getProduct('cristalul-destinului')
+  if (!product) throw new Error('Produsul nu a fost găsit.')
+
+  const stripe = getStripe()
+  const session = await stripe.checkout.sessions.create({
+    ui_mode: 'embedded_page',
+    redirect_on_completion: 'never',
+    line_items: [
+      {
+        price_data: {
+          currency: product.currency,
+          product_data: {
+            name: product.name,
+            description: product.description,
+          },
+          unit_amount: product.priceInCents,
+        },
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+  })
+
+  if (!session.client_secret) throw new Error('Nu s-a putut genera sesiunea de plată.')
+  return session.client_secret
+}
+
+export async function getNumerologieSessionStatus(sessionId: string) {
+  const stripe = getStripe()
+  const session = await stripe.checkout.sessions.retrieve(sessionId)
+  return {
+    status: session.status,
+    paymentStatus: session.payment_status,
+  }
+}
 
 export async function createEmbeddedCheckoutSession(planId: string) {
   const plan = getPlan(planId)
