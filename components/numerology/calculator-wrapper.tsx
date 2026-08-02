@@ -27,23 +27,29 @@ export default function CalculatorWrapper() {
   const [pendingFormData, setPendingFormData] = useState<FormData | null>(null)
   const [sessionId, setSessionId] = useState<string | null>(null)
 
+  const sessionIdRef = useRef<string | null>(null)
+
   const fetchClientSecret = useCallback(async () => {
     const secret = await startNumerologieCheckout()
     // Extragem sessionId din clientSecret (format: cs_xxx_secret_xxx)
     const id = secret.split('_secret_')[0]
+    sessionIdRef.current = id
     setSessionId(id)
     return secret
   }, [])
 
+  // onComplete stabilizat cu ref — nu se re-creeaza niciodata
   const handlePaymentComplete = useCallback(async () => {
-    if (!sessionId) return
+    const id = sessionIdRef.current
+    if (!id) return
     try {
-      const { paymentStatus } = await getNumerologieSessionStatus(sessionId)
+      const { paymentStatus } = await getNumerologieSessionStatus(id)
       if (paymentStatus === 'paid') {
         setModalState('success')
       }
     } catch {}
-  }, [sessionId])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const unlockAndCalculate = useCallback(() => {
     setModalState('idle')
