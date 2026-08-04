@@ -26,10 +26,16 @@ export default function RaportViewer({ formData }: RaportViewerProps) {
 
   const sendUnlock = () => {
     if (!iframeRef.current?.contentWindow) return
-    iframeRef.current.contentWindow.postMessage(
-      { type: 'paymentSuccess', formData },
-      '*'
-    )
+    // Trimitem de mai multe ori pentru a fi siguri ca listener-ul din iframe e gata
+    const send = () => {
+      iframeRef.current?.contentWindow?.postMessage(
+        { type: 'paymentSuccess', formData },
+        '*'
+      )
+    }
+    send()
+    setTimeout(send, 400)
+    setTimeout(send, 1000)
     setUnlocked(true)
   }
 
@@ -97,10 +103,12 @@ export default function RaportViewer({ formData }: RaportViewerProps) {
         src="/cristalul-calculator.html"
         style={{
           width: '100%',
-          height: unlocked ? height : 0,
+          height: unlocked ? height : 1,
           border: 'none',
           display: 'block',
           overflow: 'hidden',
+          opacity: unlocked ? 1 : 0,
+          pointerEvents: unlocked ? 'auto' : 'none',
         }}
         title="Cristalul Destinului — Raport"
         scrolling="no"
