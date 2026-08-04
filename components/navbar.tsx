@@ -41,7 +41,7 @@ export function Navbar() {
       style={{
         willChange: 'background',
         background: scrolled
-          ? 'linear-gradient(180deg, rgba(10, 10, 20, 0.88) 0%, rgba(8, 8, 16, 0.85) 100%)'
+          ? 'linear-gradient(180deg, rgba(10, 10, 20, 0.45) 0%, rgba(8, 8, 16, 0.42) 100%)'
           : 'linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 70%, transparent 100%)',
         backdropFilter: scrolled ? 'blur(14px)' : 'none',
         WebkitBackdropFilter: scrolled ? 'blur(14px)' : 'none',
