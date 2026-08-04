@@ -11,15 +11,16 @@ export function HeroSection() {
   const locale = useLocale()
   const [mounted, setMounted] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
-  const [counter, setCounter] = useState(10247)
+  const [counter, setCounter] = useState(1000)
   const starsContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setMounted(true)
     
+    // Increment counter by 1 every minute
     const interval = setInterval(() => {
-      setCounter(prev => prev + Math.floor(Math.random() * 3))
-    }, 5000)
+      setCounter(prev => prev + 1)
+    }, 60000)
     
     return () => clearInterval(interval)
   }, [])
