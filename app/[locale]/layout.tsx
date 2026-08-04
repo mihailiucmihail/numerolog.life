@@ -1,13 +1,12 @@
 import type { Metadata } from 'next'
 import { Inter, Cormorant_Garamond } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
-import { NextIntlClientProvider } from 'next-intl'
-import { getMessages } from 'next-intl/server'
+import { NextIntlClientProvider, hasLocale } from 'next-intl'
+import { setRequestLocale, getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import '../globals.css'
 import { RootLayoutClient } from '../layout-client'
-
-const locales = ['ro', 'ru']
+import { routing } from '@/i18n/routing'
 
 const inter = Inter({ 
   subsets: ["latin", "latin-ext", "cyrillic"],
@@ -28,7 +27,7 @@ export const metadata: Metadata = {
 }
 
 export function generateStaticParams() {
-  return [{ locale: 'ro' }, { locale: 'ru' }]
+  return routing.locales.map((locale) => ({ locale }))
 }
 
 export default async function LocaleLayout({
@@ -39,10 +38,15 @@ export default async function LocaleLayout({
   params: Promise<{ locale: string }>
 }>) {
   const { locale } = await params
-  if (!locales.includes(locale)) {
+  if (!hasLocale(routing.locales, locale)) {
     notFound()
   }
+
+  // Activeaza randarea statica
+  setRequestLocale(locale)
+
   const messages = await getMessages()
+
   return (
     <html lang={locale} className={`${inter.variable} ${cormorant.variable} bg-background`} suppressHydrationWarning>
       <body className="font-sans antialiased bg-background">

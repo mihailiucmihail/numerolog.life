@@ -1,41 +1,39 @@
 import createMiddleware from 'next-intl/middleware'
 import { NextRequest } from 'next/server'
+import { routing } from './i18n/routing'
 
-const handleI18nRouting = createMiddleware({
-  locales: ['ro', 'ru'],
-  defaultLocale: 'ru',
-  localePrefix: 'always',
-})
+const handleI18nRouting = createMiddleware(routing)
 
-export function proxy(request: NextRequest) {
+// Verifica daca pathname incepe deja cu un locale valid (/ro sau /ru)
+const LOCALE_REGEX = /^\/(ro|ru)(\/|$)/
+
+export default function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
-  // Daca utilizatorul e deja pe o ruta cu locale (/ro/..., /ru/...), usa next-intl middleware
-  if (pathname.startsWith('/ro') || pathname.startsWith('/ru')) {
+  // Daca URL-ul are deja un locale (/ro/..., /ru/...), lasa next-intl sa gestioneze
+  if (LOCALE_REGEX.test(pathname)) {
     return handleI18nRouting(request)
   }
 
-  // Rute speciale care nu au nevoie de locale (ex: API routes, public assets)
-  if (
-    pathname.startsWith('/api') ||
-    pathname.startsWith('/cristalul-calculator.html') ||
-    pathname.startsWith('/_next')
-  ) {
-    return undefined
-  }
+  // Preferinta salvata in cookie (override manual din language switcher)
+  const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value
 
-  // Geolocation: detecteaza tara utilizatorului din Vercel headers
+  // Geolocation: Romania -> romana; orice alta tara -> rusa
   const country = request.headers.get('x-vercel-ip-country') || ''
-  const locale = country.toUpperCase() === 'RO' ? 'ro' : 'ru'
+  const geoLocale = country.toUpperCase() === 'RO' ? 'ro' : 'ru'
+
+  const finalLocale =
+    cookieLocale === 'ro' || cookieLocale === 'ru' ? cookieLocale : geoLocale
 
   // Redirectioneaza la versiunea localizata
   const url = request.nextUrl.clone()
-  url.pathname = `/${locale}${pathname}`
+  url.pathname = `/${finalLocale}${pathname}`
   return Response.redirect(url)
 }
 
 export const config = {
   matcher: [
-    '/((?!api|_next|.*\\..*|cristalul-calculator\\.html|auth|checkout|preview|profil|dashboard|rapoarte|setari).*)',
+    // Toate rutele cu exceptia: api, _next, _vercel, auth/callback, fisiere cu punct
+    '/((?!api|_next|_vercel|auth/callback|.*\\..*).*)',
   ],
 }
