@@ -100,18 +100,22 @@ export function HeroSection() {
       {/* Removed vignette - was causing visible transition bands */}
       
       <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-8 sm:py-16 md:py-20 text-center relative z-10">
-        {/* Minimal activity badge */}
+        {/* Premium activity badge */}
         <div 
-          className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-full glass mb-14 transition-all duration-1000 ${
+          className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-full mb-14 transition-all duration-1000 backdrop-blur-sm ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
+          style={{
+            background: 'linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(242,212,114,0.08) 100%)',
+            border: '1px solid rgba(212,175,55,0.2)',
+          }}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             <div className="relative">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400/80" />
-              <div className="absolute inset-0 w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping opacity-50" />
+              <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+              <div className="absolute inset-0 w-1.5 h-1.5 rounded-full bg-primary animate-pulse opacity-60" />
             </div>
-            <span className="text-xs font-medium text-muted-foreground/80 tracking-wide">{mounted ? counter.toLocaleString(locale === 'ru' ? 'ru-RU' : 'ro-RO') : '10.247'} {t("reports")}</span>
+            <span className="text-xs font-semibold text-foreground/80 tracking-tight">{mounted ? counter.toLocaleString(locale === 'ru' ? 'ru-RU' : 'ro-RO') : '10.247'} {t("reports")}</span>
           </div>
         </div>
         
