@@ -2,59 +2,66 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Star, Quote } from "lucide-react"
-
-const testimonials = [
-  {
-    name: "Maria A.",
-    location: "București",
-    avatar: "M",
-    rating: 5,
-    text: "Raportul a fost incredibil de precis! Mi-a dezvăluit lucruri despre mine pe care nu le-am spus nimănui.",
-    highlight: "Precizie uimitoare"
-  },
-  {
-    name: "Andrei P.",
-    location: "Cluj-Napoca",
-    avatar: "A",
-    rating: 5,
-    text: "Am încercat multe servicii de astrologie, dar acesta este de departe cel mai detaliat și profesionist.",
-    highlight: "Cel mai bun"
-  },
-  {
-    name: "Elena C.",
-    location: "Timișoara",
-    avatar: "E",
-    rating: 5,
-    text: "Previziunile pentru carieră s-au adeverit! Am primit exact jobul pe care îl doream în perioada indicată.",
-    highlight: "Previziuni exacte"
-  },
-  {
-    name: "Bogdan M.",
-    location: "Iași",
-    avatar: "B",
-    rating: 5,
-    text: "Analiza compatibilității cu partenera mea ne-a ajutat să ne înțelegem mai bine. Un instrument valoros.",
-    highlight: "Relație salvată"
-  },
-  {
-    name: "Diana S.",
-    location: "Constanța",
-    avatar: "D",
-    rating: 5,
-    text: "50 de pagini de analiză detaliată! Nu mă așteptam la atât de multe informații valoroase.",
-    highlight: "Valoare mare"
-  },
-  {
-    name: "Cristian R.",
-    location: "Brașov",
-    avatar: "C",
-    rating: 5,
-    text: "Sceptic la început, convins acum. Detaliile despre provocările mele profesionale au fost exacte.",
-    highlight: "Life-changing"
-  }
-]
+import { useTranslations } from "next-intl"
 
 export function TestimonialsSection() {
+  const t = useTranslations("testimonials")
+  const testimonials = [
+    {
+      name: t("t1Name"),
+      location: t("t1Location"),
+      avatar: t("t1Name").charAt(0),
+      rating: 5,
+      text: t("t1Text"),
+      highlight: t("t1Highlight")
+    },
+    {
+      name: t("t2Name"),
+      location: t("t2Location"),
+      avatar: t("t2Name").charAt(0),
+      rating: 5,
+      text: t("t2Text"),
+      highlight: t("t2Highlight")
+    },
+    {
+      name: t("t3Name"),
+      location: t("t3Location"),
+      avatar: t("t3Name").charAt(0),
+      rating: 5,
+      text: t("t3Text"),
+      highlight: t("t3Highlight")
+    },
+    {
+      name: t("t4Name"),
+      location: t("t4Location"),
+      avatar: t("t4Name").charAt(0),
+      rating: 5,
+      text: t("t4Text"),
+      highlight: t("t4Highlight")
+    },
+    {
+      name: t("t5Name"),
+      location: t("t5Location"),
+      avatar: t("t5Name").charAt(0),
+      rating: 5,
+      text: t("t5Text"),
+      highlight: t("t5Highlight")
+    },
+    {
+      name: t("t6Name"),
+      location: t("t6Location"),
+      avatar: t("t6Name").charAt(0),
+      rating: 5,
+      text: t("t6Text"),
+      highlight: t("t6Highlight")
+    }
+  ]
+  const stats = [
+    { value: "10,000+", label: t("statReports") },
+    { value: "4.9/5", label: t("statRating") },
+    { value: "98%", label: t("statSatisfaction") },
+    { value: "50+", label: t("statPages") }
+  ]
   return (
     <section className="py-32 relative overflow-hidden">
       <div className="absolute inset-0 nebula-bg opacity-30" />
@@ -64,13 +71,13 @@ export function TestimonialsSection() {
         <div className="text-center mb-20">
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full glass-warm mb-8">
             <Star className="h-3.5 w-3.5 text-primary" />
-            <span className="text-xs tracking-widest uppercase text-muted-foreground">Testimoniale</span>
+            <span className="text-xs tracking-widest uppercase text-muted-foreground">{t("badge")}</span>
           </div>
           <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl font-light mb-6">
-            Ce Spun <span className="text-gradient">Utilizatorii</span>
+            {t("titlePlain")} <span className="text-gradient">{t("titleAccent")}</span>
           </h2>
           <p className="text-muted-foreground/80 text-lg max-w-xl mx-auto font-light">
-            Mii de români au descoperit adevăruri profunde despre ei înșiși.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -115,12 +122,7 @@ export function TestimonialsSection() {
 
         {/* Stats */}
         <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8">
-          {[
-            { value: "10,000+", label: "Rapoarte" },
-            { value: "4.9/5", label: "Rating" },
-            { value: "98%", label: "Satisfacție" },
-            { value: "50+", label: "Pagini" }
-          ].map((stat, index) => (
+          {stats.map((stat, index) => (
             <div key={index} className="text-center">
               <p className="font-serif text-4xl sm:text-5xl font-light text-gradient mb-2">{stat.value}</p>
               <p className="text-sm text-muted-foreground/60">{stat.label}</p>

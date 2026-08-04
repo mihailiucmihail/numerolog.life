@@ -14,39 +14,40 @@ import {
   ArrowRight,
   Lock
 } from "lucide-react"
-
-const reportSections = [
-  {
-    icon: Brain,
-    title: "Analiza Personalității",
-    description: "Descoperă trăsăturile tale de caracter, punctele forte și potențialul ascuns.",
-    items: ["Trăsături dominante", "Puncte forte", "Provocări", "Potențial"],
-    accent: "from-primary/15 to-primary/5"
-  },
-  {
-    icon: Heart,
-    title: "Compatibilitate & Dragoste",
-    description: "Înțelege stilul tău în relații și ce cauți la un partener.",
-    items: ["Stilul în relații", "Partenerul ideal", "Blocaje", "Compatibilitate"],
-    accent: "from-rose-400/15 to-rose-400/5"
-  },
-  {
-    icon: Briefcase,
-    title: "Carieră & Finanțe",
-    description: "Află care sunt talentele tale profesionale și cum să atragi abundența.",
-    items: ["Talente", "Carieră ideală", "Perioade favorabile", "Strategii"],
-    accent: "from-emerald-400/15 to-emerald-400/5"
-  },
-  {
-    icon: TrendingUp,
-    title: "Previziuni Personalizate",
-    description: "Primește previziuni detaliate pentru următoarele 12 luni.",
-    items: ["Oportunități", "Perioade dificile", "Momente de noroc", "Sfaturi"],
-    accent: "from-primary/15 to-primary/5"
-  }
-]
+import { useTranslations } from "next-intl"
 
 export function ReportPreviewSection() {
+  const t = useTranslations("reportPreview")
+  const reportSections = [
+    {
+      icon: Brain,
+      title: t("personalityTitle"),
+      description: t("personalityDesc"),
+      items: [t("personalityItem1"), t("personalityItem2"), t("personalityItem3"), t("personalityItem4")],
+      accent: "from-primary/15 to-primary/5"
+    },
+    {
+      icon: Heart,
+      title: t("loveTitle"),
+      description: t("loveDesc"),
+      items: [t("loveItem1"), t("loveItem2"), t("loveItem3"), t("loveItem4")],
+      accent: "from-rose-400/15 to-rose-400/5"
+    },
+    {
+      icon: Briefcase,
+      title: t("careerTitle"),
+      description: t("careerDesc"),
+      items: [t("careerItem1"), t("careerItem2"), t("careerItem3"), t("careerItem4")],
+      accent: "from-emerald-400/15 to-emerald-400/5"
+    },
+    {
+      icon: TrendingUp,
+      title: t("forecastTitle"),
+      description: t("forecastDesc"),
+      items: [t("forecastItem1"), t("forecastItem2"), t("forecastItem3"), t("forecastItem4")],
+      accent: "from-primary/15 to-primary/5"
+    }
+  ]
   return (
     <section className="py-32 relative overflow-hidden">
       <div className="absolute inset-0 nebula-bg opacity-20" />
@@ -56,13 +57,13 @@ export function ReportPreviewSection() {
         <div className="text-center mb-20">
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full glass-warm mb-8">
             <Star className="h-3.5 w-3.5 text-primary" />
-            <span className="text-xs tracking-widest uppercase text-muted-foreground">Previzualizare</span>
+            <span className="text-xs tracking-widest uppercase text-muted-foreground">{t("badge")}</span>
           </div>
           <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl font-light mb-6">
-            Ce Vei <span className="text-gradient">Descoperi</span>
+            {t("titlePlain")} <span className="text-gradient">{t("titleAccent")}</span>
           </h2>
           <p className="text-muted-foreground/80 text-lg max-w-xl mx-auto font-light">
-            Un raport complet de peste 50 de pagini despre toate aspectele vieții tale astrale.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -110,25 +111,23 @@ export function ReportPreviewSection() {
                     <Users className="h-5 w-5 text-primary/70" />
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground/60">Exemplu din raport</p>
-                    <p className="font-serif font-medium text-foreground/90">Analiza Relațiilor</p>
+                    <p className="text-xs text-muted-foreground/60">{t("sampleLabel")}</p>
+                    <p className="font-serif font-medium text-foreground/90">{t("sampleTitle")}</p>
                   </div>
                 </div>
                 
                 <div className="space-y-4 text-sm text-muted-foreground/70">
                   <p className="leading-relaxed">
-                    Cu Venus în casa a 7-a, ești o persoană care valorizează armonia și frumusețea în relații. 
-                    Cauți un partener care să fie atât un prieten cât și un iubit...
+                    {t("sampleText1")}
                   </p>
                   <div className="relative">
                     <p className="leading-relaxed blur-sm">
-                      Aspectul benefic dintre Lună și Venus indică o sensibilitate emoțională profundă care 
-                      te face un partener empatic și dedicat...
+                      {t("sampleText2")}
                     </p>
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-background/70 border border-primary/20">
                         <Lock className="h-4 w-4 text-primary/70" />
-                        <span className="text-xs text-foreground/80">Conținut premium</span>
+                        <span className="text-xs text-foreground/80">{t("premiumContent")}</span>
                       </div>
                     </div>
                   </div>
@@ -138,9 +137,9 @@ export function ReportPreviewSection() {
               {/* CTA */}
               <div className="p-8 flex flex-col justify-center items-center text-center bg-gradient-to-br from-primary/5 to-accent/5">
                 <Sparkles className="h-10 w-10 text-primary/60 mb-5" />
-                <h3 className="font-serif text-2xl font-light mb-3">Descoperă Totul</h3>
+                <h3 className="font-serif text-2xl font-light mb-3">{t("ctaTitle")}</h3>
                 <p className="text-muted-foreground/70 mb-6 max-w-xs text-sm">
-                  Generează raportul tău complet cu toate cele 50+ pagini de analiză.
+                  {t("ctaDesc")}
                 </p>
                 <Button 
                   size="lg" 
@@ -148,12 +147,12 @@ export function ReportPreviewSection() {
                   className="bg-gradient-to-r from-primary via-primary to-[#B8860B] hover:opacity-90 px-8 py-6 rounded-full cosmic-button"
                 >
                   <Link href="/harta-natala">
-                    Generează Raportul
+                    {t("ctaButton")}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
                 <p className="text-xs text-muted-foreground/50 mt-4">
-                  Doar 10 EUR - plată unică
+                  {t("ctaPrice")}
                 </p>
               </div>
             </div>

@@ -56,27 +56,27 @@ export function CompatibilitySection() {
             transition={{ delay: 0.2 }}
           >
             <Star className="h-3.5 w-3.5 text-primary" />
-            <span className="text-xs tracking-widest uppercase text-muted-foreground">Compatibilitate</span>
+            <span className="text-xs tracking-widest uppercase text-muted-foreground">{t("badge")}</span>
           </motion.div>
           
           {/* Title */}
           <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl font-light mb-6">
             <span className="text-gradient">
-              Verifică compatibilitatea
+              {t("title")}
             </span>
           </h2>
           
           {/* Subtitle */}
           <p className="text-lg text-muted-foreground/80 max-w-xl mx-auto mb-10 font-light">
-            Descoperă dinamica relației, punctele forte și potențialul emoțional dintre două persoane.
+            {t("subtitle")}
           </p>
           
           {/* Features */}
           <div className="flex flex-wrap justify-center gap-4 mb-10">
             {[
-              { icon: Heart, text: "Compatibilitate emoțională" },
-              { icon: Users, text: "Analiză karmică" },
-              { icon: Sparkles, text: "Predicții pe termen lung" },
+              { icon: Heart, text: t("featureEmotional") },
+              { icon: Users, text: t("featureKarmic") },
+              { icon: Sparkles, text: t("featureLongTerm") },
             ].map((feature, i) => (
               <motion.div
                 key={i}
@@ -105,7 +105,7 @@ export function CompatibilitySection() {
                 className="bg-gradient-to-r from-primary via-primary to-[#B8860B] hover:opacity-90 px-10 py-7 rounded-full group shadow-lg shadow-primary/20"
               >
                 <Heart className="mr-2 h-5 w-5" />
-                Analizează compatibilitatea
+                {t("cta")}
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
@@ -126,7 +126,7 @@ export function CompatibilitySection() {
                 animate={{ scale: [1, 1.03, 1] }}
                 transition={{ duration: 3, repeat: Infinity }}
               >
-                <span className="text-sm font-serif font-medium text-primary-foreground">Tu</span>
+                <span className="text-sm font-serif font-medium text-primary-foreground">{t("you")}</span>
               </motion.div>
               
               {/* Connection line */}
@@ -156,7 +156,7 @@ export function CompatibilitySection() {
                 animate={{ scale: [1, 1.03, 1] }}
                 transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
               >
-                <span className="text-sm font-serif font-medium text-accent-foreground">El/Ea</span>
+                <span className="text-sm font-serif font-medium text-accent-foreground">{t("partner")}</span>
               </motion.div>
             </div>
           </motion.div>
