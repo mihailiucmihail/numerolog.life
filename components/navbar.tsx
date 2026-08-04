@@ -40,7 +40,14 @@ export function Navbar() {
         borderBottom: 'none',
       }}
     >
-
+      {/* Border glow auriu vizibil doar la scroll */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-px pointer-events-none transition-opacity duration-300"
+        style={{
+          background: 'linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.35) 30%, rgba(242,212,114,0.5) 50%, rgba(212,175,55,0.35) 70%, transparent 100%)',
+          opacity: scrolled ? 1 : 0,
+        }}
+      />
 
       <div className="relative max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex items-center justify-between h-20">
