@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
-import { Menu, X, Sparkles, User, LogOut, LayoutDashboard, Settings, UserCog } from "lucide-react"
+import { Menu, X, User, LogOut, LayoutDashboard, Settings, UserCog } from "lucide-react"
 import { useAuth } from "@/components/providers/auth-provider"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { useTranslations } from "next-intl"
@@ -41,13 +41,106 @@ export function Navbar() {
       <div className="relative max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="relative">
-              <Sparkles className="h-6 w-6 text-primary transition-transform group-hover:scale-110" />
-              <div className="absolute inset-0 blur-md bg-primary/30 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <Link href="/" className="flex items-center gap-3 group select-none">
+            {/* Simbol geometric - romb dublu */}
+            <div className="relative flex items-center justify-center w-7 h-7 shrink-0">
+              <svg viewBox="0 0 28 28" fill="none" className="w-7 h-7" aria-hidden="true">
+                {/* Romb exterior */}
+                <path
+                  d="M14 2 L26 14 L14 26 L2 14 Z"
+                  stroke="url(#logoGradOuter)"
+                  strokeWidth="1.2"
+                  fill="none"
+                  className="transition-all duration-500 group-hover:stroke-[1.8]"
+                />
+                {/* Romb interior */}
+                <path
+                  d="M14 7 L21 14 L14 21 L7 14 Z"
+                  stroke="url(#logoGradInner)"
+                  strokeWidth="0.8"
+                  fill="url(#logoFill)"
+                  fillOpacity="0.15"
+                  className="transition-all duration-500"
+                />
+                {/* Punct central */}
+                <circle cx="14" cy="14" r="1.5" fill="#D4AF37" opacity="0.9" />
+                {/* Glow pe hover */}
+                <circle
+                  cx="14" cy="14" r="6"
+                  fill="url(#logoGlow)"
+                  fillOpacity="0"
+                  className="transition-opacity duration-500 group-hover:fill-opacity-[0.15]"
+                />
+                <defs>
+                  <linearGradient id="logoGradOuter" x1="2" y1="2" x2="26" y2="26" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#D4AF37" />
+                    <stop offset="50%" stopColor="#F0D060" />
+                    <stop offset="100%" stopColor="#B8922E" />
+                  </linearGradient>
+                  <linearGradient id="logoGradInner" x1="7" y1="7" x2="21" y2="21" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#D4AF37" stopOpacity="0.8" />
+                    <stop offset="100%" stopColor="#F0D060" stopOpacity="0.4" />
+                  </linearGradient>
+                  <radialGradient id="logoFill" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stopColor="#D4AF37" />
+                    <stop offset="100%" stopColor="#B8922E" stopOpacity="0" />
+                  </radialGradient>
+                  <radialGradient id="logoGlow" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stopColor="#D4AF37" />
+                    <stop offset="100%" stopColor="#D4AF37" stopOpacity="0" />
+                  </radialGradient>
+                </defs>
+              </svg>
+              {/* Glow blur în spate */}
+              <div
+                className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-md"
+                style={{ background: 'radial-gradient(circle, rgba(212,175,55,0.4) 0%, transparent 70%)' }}
+              />
             </div>
-            <span className="text-xl font-bold text-gradient">AstroAI</span>
+
+            {/* Text NUMEROLOG cu shimmer */}
+            <span
+              className="relative text-[15px] font-semibold tracking-[0.22em] uppercase overflow-hidden"
+              style={{
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                letterSpacing: '0.22em',
+              }}
+            >
+              {/* Strat de baza auriu */}
+              <span
+                style={{
+                  background: 'linear-gradient(135deg, #B8922E 0%, #D4AF37 40%, #F0D060 60%, #D4AF37 80%, #B8922E 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                NUMEROLOG
+              </span>
+              {/* Shimmer overlay animat */}
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: 'linear-gradient(105deg, transparent 30%, rgba(255,245,190,0.55) 50%, transparent 70%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  backgroundSize: '200% 100%',
+                  animation: 'logoShimmer 3.5s ease-in-out infinite',
+                }}
+              >
+                NUMEROLOG
+              </span>
+            </span>
           </Link>
+          <style jsx global>{`
+            @keyframes logoShimmer {
+              0%   { background-position: -100% 0; }
+              60%  { background-position: 200% 0; }
+              100% { background-position: 200% 0; }
+            }
+          `}</style>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-10">
