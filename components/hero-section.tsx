@@ -173,29 +173,27 @@ export function HeroSection() {
               </Link>
             </Button>
             <p className="text-base text-primary font-semibold tracking-wide">{t("ctaPrimaryNote")}</p>
+            
+            {/* Trust badge - moved up right after CTA */}
+            <div 
+              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-foreground/8 backdrop-blur-sm border border-foreground/10 transition-all duration-1000 delay-500 ${
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+              }`}
+            >
+              <div className="flex">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Star key={i} className="h-3 w-3 fill-primary/70 text-primary/70" />
+                ))}
+              </div>
+              <span className="text-xs text-foreground/70 font-medium ml-0.5">4.9</span>
+              <div className="w-px h-3 bg-foreground/15" />
+              <span className="text-xs text-foreground/70 font-medium">2,847 {t("reviews")}</span>
+            </div>
           </div>
         </div>
         
         {/* Spacing adjustment */}
         <div className="mb-12 sm:mb-16" />
-
-        {/* Minimal trust section */}
-        <div 
-          className={`flex items-center justify-center gap-6 transition-all duration-1000 delay-600 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-          }`}
-        >
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-foreground/8 backdrop-blur-sm border border-foreground/10">
-            <div className="flex">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <Star key={i} className="h-3 w-3 fill-primary/70 text-primary/70" />
-              ))}
-            </div>
-            <span className="text-xs text-foreground/70 font-medium ml-0.5">4.9</span>
-            <div className="w-px h-3 bg-foreground/15" />
-            <span className="text-xs text-foreground/70 font-medium">2,847 {t("reviews")}</span>
-          </div>
-        </div>
       </div>
 
     </section>
