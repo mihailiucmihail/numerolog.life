@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Star, Sparkles, ArrowRight } from "lucide-react"
+import { Star, Sparkles } from "lucide-react"
 import { useEffect, useState, useRef } from "react"
 import { useTranslations, useLocale } from "next-intl"
 
@@ -154,13 +154,12 @@ export function HeroSection() {
           <span>{t("trustPrivate")}</span>
         </div>
         
-        {/* Dual CTA - Guest vs Authenticated Flows */}
+        {/* Single CTA - Instant Report */}
         <div 
-          className={`flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mb-12 sm:mb-16 justify-center transition-all duration-1000 delay-500 ${
+          className={`flex justify-center transition-all duration-1000 delay-500 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          {/* Primary CTA: Instant Report */}
           <div className="flex flex-col items-center gap-2">
             <Button 
               size="lg" 
@@ -175,23 +174,10 @@ export function HeroSection() {
             </Button>
             <p className="text-xs text-muted-foreground/60">{t("ctaPrimaryNote")}</p>
           </div>
-          
-          {/* Secondary CTA: Create Account */}
-          <div className="flex flex-col items-center gap-2">
-            <Button 
-              variant="outline" 
-              size="lg"
-              asChild 
-              className="text-sm px-10 sm:px-12 py-6 sm:py-7 rounded-xl font-medium border-primary/30 hover:bg-primary/5"
-            >
-              <Link href="/inregistrare">
-                <span>{t("ctaSecondary")}</span>
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Link>
-            </Button>
-            <p className="text-xs text-muted-foreground/60">{t("ctaSecondaryNote")}</p>
-          </div>
         </div>
+        
+        {/* Spacing adjustment */}
+        <div className="mb-12 sm:mb-16" />
 
         {/* Minimal trust section */}
         <div 
