@@ -1,0 +1,32 @@
+name: Deploy to numerolog.life
+
+on:
+  push:
+    branches:
+      - conversation-summary
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Deploy to Vercel Production
+        id: deploy
+        run: |
+          DEPLOYMENT_URL=$(vercel deploy --prod --yes \
+            --token ${{ secrets.VERCEL_TOKEN }} \
+            --scope team_5ik9VPzTVdivg57q7PQpM15R \
+            2>&1 | grep "https://" | tail -1)
+          echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+          echo "Deployed to: $DEPLOYMENT_URL"
+
+      - name: Alias numerolog.life
+        run: |
+          vercel alias set ${{ steps.deploy.outputs.url }} numerolog.life \
+            --token ${{ secrets.VERCEL_TOKEN }} \
+            --scope team_5ik9VPzTVdivg57q7PQpM15R
+          echo "numerolog.life pointed to ${{ steps.deploy.outputs.url }}"
