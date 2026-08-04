@@ -185,16 +185,16 @@ export function HeroSection() {
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          <div className="flex items-center gap-1.5">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-foreground/8 backdrop-blur-sm border border-foreground/10">
             <div className="flex">
               {[1, 2, 3, 4, 5].map((i) => (
-                <Star key={i} className="h-3 w-3 fill-primary/60 text-primary/60" />
+                <Star key={i} className="h-3 w-3 fill-primary/70 text-primary/70" />
               ))}
             </div>
-            <span className="text-xs text-muted-foreground/50 ml-1.5">4.9</span>
+            <span className="text-xs text-foreground/70 font-medium ml-0.5">4.9</span>
+            <div className="w-px h-3 bg-foreground/15" />
+            <span className="text-xs text-foreground/70 font-medium">2,847 {t("reviews")}</span>
           </div>
-          <div className="w-px h-3 bg-border/20" />
-          <span className="text-xs text-muted-foreground/50">2,847 {t("reviews")}</span>
         </div>
       </div>
 
