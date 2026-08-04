@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Menu, X, User, LogOut, LayoutDashboard, Settings, UserCog } from "lucide-react"
 import { useAuth } from "@/components/providers/auth-provider"
 import { LanguageSwitcher } from "@/components/language-switcher"
@@ -17,48 +17,22 @@ import {
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
   const { user, profile, loading, signOut } = useAuth()
   const t = useTranslations("nav")
-
-  useEffect(() => {
-    let ticking = false
-    const onScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          setScrolled(window.scrollY > 20)
-          ticking = false
-        })
-        ticking = true
-      }
-    }
-    onScroll()
-    window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
 
   return (
     <nav
       className="fixed top-0 left-0 right-0 z-50"
       style={{
-        willChange: 'transform',
-        transform: 'translateZ(0)',
-        backfaceVisibility: 'hidden',
-        background: scrolled
-          ? 'linear-gradient(180deg, rgba(10, 10, 20, 0.88) 0%, rgba(8, 8, 16, 0.85) 100%)'
-          : 'linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 70%, transparent 100%)',
-        borderBottom: 'none',
-        backdropFilter: 'none',
-        WebkitBackdropFilter: 'none',
-        transition: 'background 0.35s ease-out',
+        background: 'linear-gradient(180deg, rgba(10, 10, 20, 0.92) 0%, rgba(8, 8, 16, 0.88) 100%)',
+        borderBottom: '1px solid rgba(212,175,55,0.12)',
       }}
     >
-      {/* Border glow auriu vizibil doar la scroll */}
+      {/* Border glow auriu la bază */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-px pointer-events-none transition-opacity duration-300"
+        className="absolute bottom-0 left-0 right-0 h-px pointer-events-none"
         style={{
           background: 'linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.35) 30%, rgba(242,212,114,0.5) 50%, rgba(212,175,55,0.35) 70%, transparent 100%)',
-          opacity: scrolled ? 1 : 0,
         }}
       />
 
