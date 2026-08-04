@@ -13,26 +13,35 @@ export function HeroSection() {
   const [isVisible, setIsVisible] = useState(true)
   const [counter, setCounter] = useState(50000)
   const starsContainerRef = useRef<HTMLDivElement>(null)
-  // Reference timestamp: August 5, 2026 00:00:00 UTC (today - all users start from 50000 reports)
-  const REFERENCE_TIME = new Date('2026-08-05T00:00:00Z').getTime()
-  const BASE_REPORTS = 50000
 
   useEffect(() => {
     setMounted(true)
     
-    // Calculate counter based on elapsed time since reference date
-    // Adds 1 report per minute for all users (same number globally)
+    // Calculate counter: starts at 50000 today, +1 per minute
+    // Dynamic calculation based on current time ensures same number for all users
     const calculateCounter = () => {
-      const elapsed = Date.now() - REFERENCE_TIME
-      const minutesElapsed = Math.floor(elapsed / 60000)
-      return BASE_REPORTS + minutesElapsed
+      const now = new Date()
+      const minutesSinceMidnightUTC = now.getUTCHours() * 60 + now.getUTCMinutes()
+      // Reference: start of today (00:00 UTC) with base 50000
+      const baseReportsToday = 50000 + minutesSinceMidnightUTC
+      // Minutes elapsed since midnight
+      const minutesFromMidnight = minutesSinceMidnightUTC
+      // Counter: 50000 + minutes that passed since midnight today
+      return baseReportsToday - minutesFromMidnight + minutesFromMidnight
     }
     
-    setCounter(calculateCounter())
+    // Simpler: just return 50000 + minutes since midnight today
+    const simpleCounter = () => {
+      const now = new Date()
+      const minutesSinceMidnightUTC = now.getUTCHours() * 60 + now.getUTCMinutes()
+      return 50000 + minutesSinceMidnightUTC
+    }
+    
+    setCounter(simpleCounter())
     
     // Update every 60 seconds to reflect new minute
     const interval = setInterval(() => {
-      setCounter(calculateCounter())
+      setCounter(simpleCounter())
     }, 60000)
     
     return () => clearInterval(interval)
