@@ -1,0 +1,40 @@
+{
+  "nav": {
+    "home": "Acasă",
+    "numerologie": "Numerologie",
+    "compatibilitate": "Compatibilitate",
+    "previziuni": "Previziuni",
+    "blog": "Blog",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Astrologia și Numerologia Ta",
+    "subtitle": "Descoperă secretele universului și ale destinului tău",
+    "cta": "Începe Acum"
+  },
+  "numerologie": {
+    "title": "Cristalul Destinului",
+    "description": "Calculează raportul complet de numerologie cu cifre cheie și metacicle de viață",
+    "lastName": "Nume de familie",
+    "firstName": "Prenume",
+    "middleName": "Patronimic",
+    "birthDate": "Data nașterii",
+    "day": "Zi",
+    "month": "Lună",
+    "year": "An",
+    "email": "Adresa de email",
+    "emailHint": "(pentru a primi linkul raportului)",
+    "emailPlaceholder": "ex: nume@exemplu.com",
+    "calculate": "Calculează Cristalul",
+    "errorDate": "Introdu o dată de naștere validă (zi, lună, an).",
+    "errorEmail": "Introdu o adresă de email validă pentru a primi raportul.",
+    "report": "Raport complet — acces permanent, fără plată suplimentară",
+    "price": "1 EUR"
+  },
+  "footer": {
+    "copyright": "© 2025 AstroAI. Toate drepturile rezervate.",
+    "privacy": "Politica de confidențialitate",
+    "terms": "Termeni și condiții"
+  },
+  "language": "Limba"
+}

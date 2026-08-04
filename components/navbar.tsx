@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { Menu, X, Sparkles, User, LogOut, LayoutDashboard, Settings, UserCog } from "lucide-react"
 import { useAuth } from "@/components/providers/auth-provider"
+import { LanguageSwitcher } from "@/components/language-switcher"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -70,6 +71,7 @@ export function Navbar() {
 
           {/* Desktop Auth */}
           <div className="hidden md:flex items-center gap-4">
+            <LanguageSwitcher />
             {loading ? (
               <div className="h-9 w-24 bg-white/5 rounded-full animate-pulse" />
             ) : user ? (
@@ -177,6 +179,9 @@ export function Navbar() {
             </Link>
             
             <div className="pt-4 space-y-3 border-t border-white/10">
+              <div className="flex justify-center">
+                <LanguageSwitcher />
+              </div>
               {loading ? (
                 <div className="h-10 w-full bg-white/5 rounded animate-pulse" />
               ) : user ? (
