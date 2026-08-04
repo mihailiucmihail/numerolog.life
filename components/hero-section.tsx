@@ -13,13 +13,26 @@ export function HeroSection() {
   const [isVisible, setIsVisible] = useState(true)
   const [counter, setCounter] = useState(1000)
   const starsContainerRef = useRef<HTMLDivElement>(null)
+  // Reference timestamp: June 1, 2024 00:00:00 UTC (fixed start date for all users)
+  const REFERENCE_TIME = new Date('2024-06-01T00:00:00Z').getTime()
+  const BASE_REPORTS = 1000
 
   useEffect(() => {
     setMounted(true)
     
-    // Increment counter by 1 every minute
+    // Calculate counter based on elapsed time since reference date
+    // Adds 1 report per minute for all users (same number globally)
+    const calculateCounter = () => {
+      const elapsed = Date.now() - REFERENCE_TIME
+      const minutesElapsed = Math.floor(elapsed / 60000)
+      return BASE_REPORTS + minutesElapsed
+    }
+    
+    setCounter(calculateCounter())
+    
+    // Update every 60 seconds to reflect new minute
     const interval = setInterval(() => {
-      setCounter(prev => prev + 1)
+      setCounter(calculateCounter())
     }, 60000)
     
     return () => clearInterval(interval)
