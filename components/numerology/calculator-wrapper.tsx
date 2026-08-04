@@ -46,7 +46,7 @@ export default function CalculatorWrapper() {
 
         // Salvam raportul in DB si trimitem email cu link permanent
         try {
-          const { token } = await saveRaportAndSendEmail(sessionId, formData)
+          const { token } = await saveRaportAndSendEmail(sessionId, formData, locale)
           // Redirectam la pagina raport permanenta cu locale corect
           router.replace(`/${locale}/numerologie/cristalul-raport/${token}`)
           return

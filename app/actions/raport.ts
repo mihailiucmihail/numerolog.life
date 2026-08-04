@@ -16,14 +16,15 @@ interface FormData {
 
 export async function saveRaportAndSendEmail(
   sessionId: string,
-  formData: FormData
+  formData: FormData,
+  locale: string = 'ro'
 ): Promise<{ token: string }> {
   const email = formData.email?.toLowerCase().trim()
   if (!email) throw new Error('Email lipseste.')
 
   const token = crypto.randomBytes(32).toString('hex')
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://astroai.ro'
-  const raportUrl = `${baseUrl}/numerologie/cristalul-raport/${token}`
+  const raportUrl = `${baseUrl}/${locale}/numerologie/cristalul-raport/${token}`
 
   // Salveaza in DB — db.json() serializeaza corect pentru coloana JSONB
   await db`
@@ -38,8 +39,10 @@ export async function saveRaportAndSendEmail(
     if (resendKey) {
       const resend = new Resend(resendKey)
       const numeFull = [formData.first, formData.last].filter(Boolean).join(' ') || 'utilizator'
+      // Folosim domeniul Resend implicit daca astroai.ro nu e verificat inca
+      const fromDomain = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
       await resend.emails.send({
-        from: 'AstroAI <rapoarte@astroai.ro>',
+        from: `AstroAI <${fromDomain}>`,
         to: email,
         subject: 'Raportul tau Cristalul Destinului este gata',
         html: `
@@ -95,8 +98,9 @@ export async function saveRaportAndSendEmail(
         `,
       })
     }
-  } catch {
+  } catch (err) {
     // Emailul esueaza silentios — raportul e salvat oricum
+    console.log('[v0] Email send error:', err)
   }
 
   return { token }
