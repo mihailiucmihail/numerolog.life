@@ -4,32 +4,33 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Calendar, Sparkles, FileText, ArrowRight, Star } from "lucide-react"
-
-const steps = [
-  {
-    step: "01",
-    icon: Calendar,
-    title: "Introdu Datele",
-    description: "Completează formularul cu data, ora și locul nașterii tale. Durează sub 1 minut.",
-    highlight: "60 secunde"
-  },
-  {
-    step: "02",
-    icon: Sparkles,
-    title: "Analiză AI",
-    description: "Algoritmul calculează pozițiile planetare și interpretează configurațiile astrale unice.",
-    highlight: "Tehnologie avansată"
-  },
-  {
-    step: "03",
-    icon: FileText,
-    title: "Raportul Tău",
-    description: "Descarci raportul personalizat de 50+ pagini cu analize detaliate despre viața ta.",
-    highlight: "50+ pagini"
-  }
-]
+import { useTranslations } from "next-intl"
 
 export function HowItWorksSection() {
+  const t = useTranslations("howItWorks")
+  const steps = [
+    {
+      step: "01",
+      icon: Calendar,
+      title: t("step1Title"),
+      description: t("step1Desc"),
+      highlight: t("step1Highlight")
+    },
+    {
+      step: "02",
+      icon: Sparkles,
+      title: t("step2Title"),
+      description: t("step2Desc"),
+      highlight: t("step2Highlight")
+    },
+    {
+      step: "03",
+      icon: FileText,
+      title: t("step3Title"),
+      description: t("step3Desc"),
+      highlight: t("step3Highlight")
+    }
+  ]
   return (
     <section id="cum-functioneaza" className="py-32 relative overflow-hidden">
       <div className="absolute inset-0 cosmic-gradient opacity-20" />
@@ -39,13 +40,13 @@ export function HowItWorksSection() {
         <div className="text-center mb-20">
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full glass-warm mb-8">
             <Star className="h-3.5 w-3.5 text-primary" />
-            <span className="text-xs tracking-widest uppercase text-muted-foreground">Proces</span>
+            <span className="text-xs tracking-widest uppercase text-muted-foreground">{t("badge")}</span>
           </div>
           <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl font-light mb-6">
-            Cum <span className="text-gradient">Funcționează</span>
+            {t("titlePlain")} <span className="text-gradient">{t("titleAccent")}</span>
           </h2>
           <p className="text-muted-foreground/80 text-lg max-w-xl mx-auto font-light">
-            În doar 3 pași simpli, primești cel mai detaliat raport astrologic.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -90,7 +91,7 @@ export function HowItWorksSection() {
           >
             <Link href="/harta-natala">
               <Sparkles className="mr-2 h-5 w-5" />
-              Începe Analiza
+              {t("cta")}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </Button>

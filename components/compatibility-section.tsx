@@ -4,8 +4,10 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 import { Heart, Sparkles, Users, ArrowRight, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useTranslations } from "next-intl"
 
 export function CompatibilitySection() {
+  const t = useTranslations("compatibility")
   return (
     <section className="py-32 px-6 relative overflow-hidden">
       {/* Background */}

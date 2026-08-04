@@ -2,47 +2,48 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Moon, Sun, Star, Zap, Shield, Brain, Heart } from "lucide-react"
-
-const features = [
-  {
-    icon: Brain,
-    title: "Analiză AI Avansată",
-    description: "Algoritmi inteligenți care interpretează harta ta natală cu precizie, combinând înțelepciunea antică cu tehnologia modernă.",
-    accent: "from-primary/20 to-primary/5"
-  },
-  {
-    icon: Moon,
-    title: "Hartă Natală Completă",
-    description: "Pozițiile exacte ale planetelor și punctelor sensibile la momentul și locul nașterii tale.",
-    accent: "from-accent/15 to-accent/5"
-  },
-  {
-    icon: Sun,
-    title: "Previziuni Personalizate",
-    description: "Horoscop bazat pe tranzitele planetare curente peste harta ta natală unică.",
-    accent: "from-primary/15 to-primary/5"
-  },
-  {
-    icon: Heart,
-    title: "Compatibilitate",
-    description: "Descoperă compatibilitatea în dragoste folosind sinastria astrală și analiza compozită.",
-    accent: "from-rose-400/15 to-rose-400/5"
-  },
-  {
-    icon: Zap,
-    title: "Rezultat Instant",
-    description: "Rapoarte detaliate de 50+ pagini în mai puțin de 60 de secunde. Fără așteptare.",
-    accent: "from-emerald-400/15 to-emerald-400/5"
-  },
-  {
-    icon: Shield,
-    title: "Confidențialitate",
-    description: "Datele tale sunt criptate end-to-end. Poți solicita ștergerea oricând.",
-    accent: "from-cyan-400/15 to-cyan-400/5"
-  }
-]
+import { useTranslations } from "next-intl"
 
 export function FeaturesSection() {
+  const t = useTranslations("features")
+  const features = [
+    {
+      icon: Brain,
+      title: t("aiTitle"),
+      description: t("aiDesc"),
+      accent: "from-primary/20 to-primary/5"
+    },
+    {
+      icon: Moon,
+      title: t("chartTitle"),
+      description: t("chartDesc"),
+      accent: "from-accent/15 to-accent/5"
+    },
+    {
+      icon: Sun,
+      title: t("forecastTitle"),
+      description: t("forecastDesc"),
+      accent: "from-primary/15 to-primary/5"
+    },
+    {
+      icon: Heart,
+      title: t("compatTitle"),
+      description: t("compatDesc"),
+      accent: "from-rose-400/15 to-rose-400/5"
+    },
+    {
+      icon: Zap,
+      title: t("instantTitle"),
+      description: t("instantDesc"),
+      accent: "from-emerald-400/15 to-emerald-400/5"
+    },
+    {
+      icon: Shield,
+      title: t("privacyTitle"),
+      description: t("privacyDesc"),
+      accent: "from-cyan-400/15 to-cyan-400/5"
+    }
+  ]
   return (
     <section id="caracteristici" className="py-32 relative">
       {/* Subtle warm gradient background */}
@@ -53,13 +54,13 @@ export function FeaturesSection() {
         <div className="text-center mb-20">
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full glass-warm mb-8">
             <Star className="h-3.5 w-3.5 text-primary" />
-            <span className="text-xs tracking-widest uppercase text-muted-foreground">Tehnologie</span>
+            <span className="text-xs tracking-widest uppercase text-muted-foreground">{t("badge")}</span>
           </div>
           <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl font-light mb-6">
-            De Ce <span className="text-gradient">AstroAI</span>
+            {t("titlePlain")} <span className="text-gradient">AstroAI</span>
           </h2>
           <p className="text-muted-foreground/80 text-lg max-w-xl mx-auto font-light leading-relaxed">
-            Combinăm înțelepciunea străveche a astrologiei cu puterea inteligenței artificiale.
+            {t("subtitle")}
           </p>
         </div>
 

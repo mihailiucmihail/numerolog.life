@@ -4,8 +4,11 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Star, Sparkles, ArrowRight } from "lucide-react"
 import { useEffect, useState, useRef } from "react"
+import { useTranslations, useLocale } from "next-intl"
 
 export function HeroSection() {
+  const t = useTranslations("hero")
+  const locale = useLocale()
   const [mounted, setMounted] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   const [counter, setCounter] = useState(10247)
@@ -108,7 +111,7 @@ export function HeroSection() {
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-400/80" />
               <div className="absolute inset-0 w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping opacity-50" />
             </div>
-            <span className="text-xs font-medium text-muted-foreground/80 tracking-wide">{mounted ? counter.toLocaleString('ro-RO') : '10.247'} rapoarte</span>
+            <span className="text-xs font-medium text-muted-foreground/80 tracking-wide">{mounted ? counter.toLocaleString(locale === 'ru' ? 'ru-RU' : 'ro-RO') : '10.247'} {t("reports")}</span>
           </div>
         </div>
         
@@ -119,13 +122,13 @@ export function HeroSection() {
           }`}
         >
           <span className="block text-sm sm:text-base tracking-[0.3em] uppercase text-primary/70 font-normal mb-8">
-            Astrologie Personalizată
+            {t("eyebrow")}
           </span>
           <span className="block font-serif text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-light tracking-tight text-foreground/90 leading-[1.05]">
-            Harta Ta
+            {t("titleLine1")}
           </span>
           <span className="block font-serif text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-light tracking-tight text-gradient leading-[1.05] mt-1">
-            Cosmică
+            {t("titleLine2")}
           </span>
         </h1>
         
@@ -135,7 +138,7 @@ export function HeroSection() {
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          Descifrează secretele numerologiei și astrologiei prin algoritmi de precizie stelară.
+          {t("subtitle")}
         </p>
 
         {/* Simplified trust - just text with better contrast */}
@@ -144,11 +147,11 @@ export function HeroSection() {
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          <span>Analiza AI</span>
+          <span>{t("trustAI")}</span>
           <span className="text-primary/50">&#9830;</span>
-          <span>60 Secunde</span>
+          <span>{t("trustTime")}</span>
           <span className="text-primary/50">&#9830;</span>
-          <span>100% Privat</span>
+          <span>{t("trustPrivate")}</span>
         </div>
         
         {/* Dual CTA - Guest vs Authenticated Flows */}
@@ -167,10 +170,10 @@ export function HeroSection() {
               <Link href="/numerologie">
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                 <Sparkles className="w-4 h-4 mr-2" />
-                <span>Descoperă-ți Destinul</span>
+                <span>{t("ctaPrimary")}</span>
               </Link>
             </Button>
-            <p className="text-xs text-muted-foreground/60">Rezultat în 30 secunde • Fără cont</p>
+            <p className="text-xs text-muted-foreground/60">{t("ctaPrimaryNote")}</p>
           </div>
           
           {/* Secondary CTA: Create Account */}
@@ -182,11 +185,11 @@ export function HeroSection() {
               className="text-sm px-10 sm:px-12 py-6 sm:py-7 rounded-xl font-medium border-primary/30 hover:bg-primary/5"
             >
               <Link href="/inregistrare">
-                <span>Creează Cont</span>
+                <span>{t("ctaSecondary")}</span>
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
             </Button>
-            <p className="text-xs text-muted-foreground/60">Chat AI • Salvare pe viață • €9.99/lună</p>
+            <p className="text-xs text-muted-foreground/60">{t("ctaSecondaryNote")}</p>
           </div>
         </div>
 
@@ -205,13 +208,13 @@ export function HeroSection() {
             <span className="text-xs text-muted-foreground/50 ml-1.5">4.9</span>
           </div>
           <div className="w-px h-3 bg-border/20" />
-          <span className="text-xs text-muted-foreground/50">2,847 recenzii</span>
+          <span className="text-xs text-muted-foreground/50">2,847 {t("reviews")}</span>
         </div>
       </div>
 
       {/* Elegant scroll indicator */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-40 hover:opacity-70 transition-opacity">
-          <span className="text-xs text-muted-foreground tracking-widest uppercase">Descoperă</span>
+          <span className="text-xs text-muted-foreground tracking-widest uppercase">{t("scroll")}</span>
         <div className="w-5 h-9 rounded-full border border-muted-foreground/30 flex items-start justify-center p-1.5">
           <div className="w-1 h-2 rounded-full bg-primary/60 animate-bounce" />
         </div>

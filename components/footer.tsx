@@ -1,7 +1,12 @@
+"use client"
+
 import Link from "next/link"
 import { Sparkles } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 export function Footer() {
+  const t = useTranslations("footer")
+
   return (
     <footer className="relative z-10 border-t border-primary/10 py-20 bg-transparent">
       <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
@@ -12,68 +17,68 @@ export function Footer() {
               <span className="text-lg font-serif font-medium text-gradient">AstroAI</span>
             </Link>
             <p className="text-muted-foreground/60 text-sm leading-relaxed">
-              Platformă de astrologie bazată pe inteligență artificială. Descoperă-ți destinul cosmic.
+              {t("tagline")}
             </p>
           </div>
 
           <div>
-            <h3 className="font-serif font-medium mb-5 text-foreground/90">Produs</h3>
+            <h3 className="font-serif font-medium mb-5 text-foreground/90">{t("product")}</h3>
             <ul className="space-y-3">
               <li>
                 <Link href="/harta-natala" className="text-muted-foreground/60 hover:text-foreground transition-colors text-sm">
-                  Hartă Natală
+                  {t("natalChart")}
                 </Link>
               </li>
               <li>
                 <Link href="#preturi" className="text-muted-foreground/60 hover:text-foreground transition-colors text-sm">
-                  Prețuri
+                  {t("pricing")}
                 </Link>
               </li>
               <li>
                 <Link href="#caracteristici" className="text-muted-foreground/60 hover:text-foreground transition-colors text-sm">
-                  Caracteristici
+                  {t("features")}
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="font-serif font-medium mb-5 text-foreground/90">Companie</h3>
+            <h3 className="font-serif font-medium mb-5 text-foreground/90">{t("company")}</h3>
             <ul className="space-y-3">
               <li>
                 <Link href="/despre" className="text-muted-foreground/60 hover:text-foreground transition-colors text-sm">
-                  Despre Noi
+                  {t("about")}
                 </Link>
               </li>
               <li>
                 <Link href="/contact" className="text-muted-foreground/60 hover:text-foreground transition-colors text-sm">
-                  Contact
+                  {t("contact")}
                 </Link>
               </li>
               <li>
                 <Link href="/blog" className="text-muted-foreground/60 hover:text-foreground transition-colors text-sm">
-                  Blog
+                  {t("blog")}
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="font-serif font-medium mb-5 text-foreground/90">Legal</h3>
+            <h3 className="font-serif font-medium mb-5 text-foreground/90">{t("legal")}</h3>
             <ul className="space-y-3">
               <li>
                 <Link href="/termeni" className="text-muted-foreground/60 hover:text-foreground transition-colors text-sm">
-                  Termeni și Condiții
+                  {t("terms")}
                 </Link>
               </li>
               <li>
                 <Link href="/confidentialitate" className="text-muted-foreground/60 hover:text-foreground transition-colors text-sm">
-                  Confidențialitate
+                  {t("privacy")}
                 </Link>
               </li>
               <li>
                 <Link href="/cookies" className="text-muted-foreground/60 hover:text-foreground transition-colors text-sm">
-                  Cookies
+                  {t("cookies")}
                 </Link>
               </li>
             </ul>
@@ -84,10 +89,10 @@ export function Footer() {
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-muted-foreground/50 text-sm">
-            &copy; 2024 AstroAI. Toate drepturile rezervate.
+            {t("rights")}
           </p>
           <p className="text-muted-foreground/50 text-sm">
-            Făcut cu dragoste în România
+            {t("madeWith")}
           </p>
         </div>
       </div>

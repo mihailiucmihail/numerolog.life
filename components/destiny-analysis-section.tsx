@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { Sparkles, ArrowRight, Eye, Heart, Coins, Calendar, Star, Zap } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 // Animated life graph component
 function LifeGraph() {
@@ -137,13 +138,14 @@ function FeatureCard({ icon: Icon, title, delay }: { icon: typeof Heart; title: 
 }
 
 export function DestinyAnalysisSection() {
+  const t = useTranslations("destiny")
   const features = [
-    { icon: Calendar, title: "Graficul vieții" },
-    { icon: Coins, title: "Cicluri financiare" },
-    { icon: Heart, title: "Compatibilitate" },
-    { icon: Star, title: "Lecții karmice" },
-    { icon: Zap, title: "Energie vitală" },
-    { icon: Eye, title: "Predicții viitor" },
+    { icon: Calendar, title: t("featureLifeGraph") },
+    { icon: Coins, title: t("featureFinancial") },
+    { icon: Heart, title: t("featureCompatibility") },
+    { icon: Star, title: t("featureKarmic") },
+    { icon: Zap, title: t("featureVital") },
+    { icon: Eye, title: t("featurePredictions") },
   ]
 
   return (
@@ -162,7 +164,7 @@ export function DestinyAnalysisSection() {
               className="inline-flex items-center gap-2 px-5 py-2 rounded-full glass-warm"
             >
               <Sparkles className="h-3.5 w-3.5 text-primary" />
-              <span className="text-xs tracking-widest uppercase text-primary/80">Nou: Analiză Premium</span>
+              <span className="text-xs tracking-widest uppercase text-primary/80">{t("badge")}</span>
             </motion.div>
             
             {/* Title */}
@@ -173,8 +175,8 @@ export function DestinyAnalysisSection() {
               viewport={{ once: true }}
             >
               <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-light tracking-tight mb-4">
-                <span className="block text-foreground/90">Descoperă cine ești</span>
-                <span className="block text-gradient">cu adevărat</span>
+                <span className="block text-foreground/90">{t("titleLine1")}</span>
+                <span className="block text-gradient">{t("titleLine2")}</span>
               </h2>
             </motion.div>
             
@@ -186,8 +188,7 @@ export function DestinyAnalysisSection() {
               transition={{ delay: 0.2 }}
               viewport={{ once: true }}
             >
-              Analiză AI premium bazată pe <span className="text-foreground/90">numerologie</span>, 
-              ciclurile vieții și <span className="text-foreground/90">energia destinului tău</span>.
+              {t("subtitle")}
             </motion.p>
             
             {/* Features grid */}
@@ -217,7 +218,7 @@ export function DestinyAnalysisSection() {
                     transition={{ duration: 2.5, repeat: Infinity, repeatDelay: 1.5 }}
                   />
                   <Sparkles className="mr-2 h-5 w-5" />
-                  <span className="font-medium">Generează analiza</span>
+                  <span className="font-medium">{t("ctaGenerate")}</span>
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
@@ -230,7 +231,7 @@ export function DestinyAnalysisSection() {
               >
                 <Link href="/analiza-destinului#exemplu">
                   <Eye className="mr-2 h-5 w-5 text-primary/70 group-hover:scale-110 transition-transform" />
-                  Vezi exemplu
+                  {t("ctaExample")}
                 </Link>
               </Button>
             </motion.div>
@@ -251,11 +252,11 @@ export function DestinyAnalysisSection() {
               {/* Header */}
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h3 className="font-serif text-lg text-foreground/90">Graficul Vieții Tale</h3>
-                  <p className="text-sm text-muted-foreground/60">Bazat pe data nașterii</p>
+                  <h3 className="font-serif text-lg text-foreground/90">{t("cardTitle")}</h3>
+                  <p className="text-sm text-muted-foreground/60">{t("cardSubtitle")}</p>
                 </div>
                 <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                  <span className="text-xs text-emerald-400/80">Live</span>
+                  <span className="text-xs text-emerald-400/80">{t("cardLive")}</span>
                 </div>
               </div>
               
@@ -277,11 +278,11 @@ export function DestinyAnalysisSection() {
                 <div className="space-y-4">
                   <div className="p-4 rounded-xl bg-primary/5 border border-primary/10">
                     <div className="font-serif text-2xl text-gradient">22</div>
-                    <div className="text-xs text-muted-foreground/60">Număr Destin</div>
+                    <div className="text-xs text-muted-foreground/60">{t("numberDestiny")}</div>
                   </div>
                   <div className="p-4 rounded-xl bg-accent/5 border border-accent/10">
                     <div className="font-serif text-2xl text-foreground/80">7</div>
-                    <div className="text-xs text-muted-foreground/60">Număr Suflet</div>
+                    <div className="text-xs text-muted-foreground/60">{t("numberSoul")}</div>
                   </div>
                 </div>
                 

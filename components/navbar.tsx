@@ -6,6 +6,7 @@ import { useState } from "react"
 import { Menu, X, Sparkles, User, LogOut, LayoutDashboard, Settings, UserCog } from "lucide-react"
 import { useAuth } from "@/components/providers/auth-provider"
 import { LanguageSwitcher } from "@/components/language-switcher"
+import { useTranslations } from "next-intl"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +18,7 @@ import {
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const { user, profile, loading, signOut } = useAuth()
+  const t = useTranslations("nav")
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50">
@@ -53,19 +55,19 @@ export function Navbar() {
               href="/#caracteristici" 
               className="text-sm text-white/80 hover:text-white transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(200,165,80,0.5)]"
             >
-              Caracteristici
+              {t("features")}
             </Link>
             <Link 
               href="/#preturi" 
               className="text-sm text-white/80 hover:text-white transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(200,165,80,0.5)]"
             >
-              Prețuri
+              {t("pricing")}
             </Link>
             <Link 
               href="/#intrebari" 
               className="text-sm text-white/80 hover:text-white transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(200,165,80,0.5)]"
             >
-              Întrebări
+              {t("faq")}
             </Link>
           </div>
 
@@ -84,7 +86,7 @@ export function Navbar() {
                   >
                     <User className="h-4 w-4" />
                     <span className="max-w-[100px] truncate text-sm">
-                      {profile?.full_name || user.email?.split('@')[0] || 'Cont'}
+                      {profile?.full_name || user.email?.split('@')[0] || t("account")}
                     </span>
                   </Button>
                 </DropdownMenuTrigger>
@@ -95,19 +97,19 @@ export function Navbar() {
                   <DropdownMenuItem asChild>
                     <Link href="/dashboard" className="flex items-center gap-2 cursor-pointer text-white/90 hover:text-white">
                       <LayoutDashboard className="h-4 w-4" />
-                      Dashboard
+                      {t("dashboard")}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/profil" className="flex items-center gap-2 cursor-pointer text-white/90 hover:text-white">
                       <User className="h-4 w-4" />
-                      Profil
+                      {t("profile")}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/setari" className="flex items-center gap-2 cursor-pointer text-white/90 hover:text-white">
                       <Settings className="h-4 w-4" />
-                      Setări
+                      {t("settings")}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="bg-white/10" />
@@ -116,7 +118,7 @@ export function Navbar() {
                     className="flex items-center gap-2 cursor-pointer text-red-400 focus:text-red-300"
                   >
                     <LogOut className="h-4 w-4" />
-                    Deconectare
+                    {t("logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -128,14 +130,14 @@ export function Navbar() {
                   asChild 
                   className="text-white/90 hover:text-white hover:bg-white/10 border border-transparent hover:border-white/10"
                 >
-                  <Link href="/auth/login">Conectare</Link>
+                  <Link href="/auth/login">{t("login")}</Link>
                 </Button>
                 <Button 
                   size="sm" 
                   asChild 
                   className="bg-gradient-to-r from-primary/90 to-primary hover:from-primary hover:to-primary/90 text-primary-foreground rounded-full px-5 border border-primary/30 shadow-[0_0_20px_rgba(200,165,80,0.3)] hover:shadow-[0_0_30px_rgba(200,165,80,0.5)] transition-all duration-300"
                 >
-                  <Link href="/auth/sign-up">Începe</Link>
+                  <Link href="/auth/sign-up">{t("start")}</Link>
                 </Button>
               </>
             )}
@@ -145,7 +147,7 @@ export function Navbar() {
           <button
             className="md:hidden p-2 text-white/80 hover:text-white transition-colors"
             onClick={() => setIsOpen(!isOpen)}
-            aria-label={isOpen ? "Închide meniul" : "Deschide meniul"}
+            aria-label={isOpen ? t("closeMenu") : t("openMenu")}
           >
             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -161,21 +163,21 @@ export function Navbar() {
               className="block text-white/80 hover:text-white transition-colors py-2"
               onClick={() => setIsOpen(false)}
             >
-              Caracteristici
+              {t("features")}
             </Link>
             <Link 
               href="/#preturi" 
               className="block text-white/80 hover:text-white transition-colors py-2"
               onClick={() => setIsOpen(false)}
             >
-              Prețuri
+              {t("pricing")}
             </Link>
             <Link 
               href="/#intrebari" 
               className="block text-white/80 hover:text-white transition-colors py-2"
               onClick={() => setIsOpen(false)}
             >
-              Întrebări
+              {t("faq")}
             </Link>
             
             <div className="pt-4 space-y-3 border-t border-white/10">
@@ -193,7 +195,7 @@ export function Navbar() {
                   >
                     <Link href="/dashboard" onClick={() => setIsOpen(false)}>
                       <LayoutDashboard className="h-4 w-4" />
-                      Dashboard
+                      {t("dashboard")}
                     </Link>
                   </Button>
                   <Button 
@@ -205,7 +207,7 @@ export function Navbar() {
                     }}
                   >
                     <LogOut className="h-4 w-4" />
-                    Deconectare
+                    {t("logout")}
                   </Button>
                 </>
               ) : (
@@ -215,13 +217,13 @@ export function Navbar() {
                     asChild 
                     className="w-full text-white/90 hover:bg-white/10 border border-white/10"
                   >
-                    <Link href="/auth/login" onClick={() => setIsOpen(false)}>Conectare</Link>
+                    <Link href="/auth/login" onClick={() => setIsOpen(false)}>{t("login")}</Link>
                   </Button>
                   <Button 
                     asChild 
                     className="w-full bg-gradient-to-r from-primary/90 to-primary shadow-[0_0_20px_rgba(200,165,80,0.3)]"
                   >
-                    <Link href="/auth/sign-up" onClick={() => setIsOpen(false)}>Începe Gratuit</Link>
+                    <Link href="/auth/sign-up" onClick={() => setIsOpen(false)}>{t("startFree")}</Link>
                   </Button>
                 </>
               )}
