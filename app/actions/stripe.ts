@@ -4,7 +4,7 @@ import { getStripe } from "@/lib/stripe"
 import { getPlan, getProduct } from "@/lib/products"
 import { createClient } from "@/lib/supabase/server"
 
-export async function startNumerologieCheckout(email?: string): Promise<string> {
+export async function startNumerologieCheckout(email?: string, locale: string = 'ro'): Promise<string> {
   const product = getProduct('cristalul-destinului')
   if (!product) throw new Error('Produsul nu a fost găsit.')
 
@@ -27,8 +27,8 @@ export async function startNumerologieCheckout(email?: string): Promise<string> 
     ],
     mode: 'payment',
     ...(email ? { customer_email: email } : {}),
-    success_url: `${baseUrl}/numerologie?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${baseUrl}/numerologie?payment=cancelled`,
+    success_url: `${baseUrl}/${locale}/numerologie?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${baseUrl}/${locale}/numerologie?payment=cancelled`,
   })
 
   if (!session.url) throw new Error('Nu s-a putut genera URL-ul de plată.')
