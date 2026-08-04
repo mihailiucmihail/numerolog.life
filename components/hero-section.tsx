@@ -11,11 +11,11 @@ export function HeroSection() {
   const locale = useLocale()
   const [mounted, setMounted] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
-  const [counter, setCounter] = useState(1000)
+  const [counter, setCounter] = useState(50000)
   const starsContainerRef = useRef<HTMLDivElement>(null)
-  // Reference timestamp: June 1, 2024 00:00:00 UTC (fixed start date for all users)
-  const REFERENCE_TIME = new Date('2024-06-01T00:00:00Z').getTime()
-  const BASE_REPORTS = 1000
+  // Reference timestamp: August 5, 2026 00:00:00 UTC (today - all users start from 50000 reports)
+  const REFERENCE_TIME = new Date('2026-08-05T00:00:00Z').getTime()
+  const BASE_REPORTS = 50000
 
   useEffect(() => {
     setMounted(true)
