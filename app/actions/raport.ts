@@ -25,10 +25,10 @@ export async function saveRaportAndSendEmail(
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://astroai.ro'
   const raportUrl = `${baseUrl}/numerologie/cristalul-raport/${token}`
 
-  // Salveaza in DB
+  // Salveaza in DB — db.json() serializeaza corect pentru coloana JSONB
   await db`
     INSERT INTO cristalul_rapoarte (token, email, session_id, form_data)
-    VALUES (${token}, ${email}, ${sessionId}, ${JSON.stringify(formData) as any})
+    VALUES (${token}, ${email}, ${sessionId}, ${db.json(formData as any)})
     ON CONFLICT (token) DO NOTHING
   `
 
@@ -103,9 +103,18 @@ export async function saveRaportAndSendEmail(
 }
 
 export async function getRaportByToken(token: string): Promise<FormData | null> {
-  const rows = await db<{ form_data: FormData }[]>`
+  const rows = await db<{ form_data: FormData | string }[]>`
     SELECT form_data FROM cristalul_rapoarte WHERE token = ${token} LIMIT 1
   `
   if (!rows.length) return null
-  return rows[0].form_data
+  const raw = rows[0].form_data
+  // Gestioneaza atat obiect (JSONB) cat si string (date vechi dublu-encoded)
+  if (typeof raw === 'string') {
+    try {
+      return JSON.parse(raw) as FormData
+    } catch {
+      return null
+    }
+  }
+  return raw as FormData
 }
