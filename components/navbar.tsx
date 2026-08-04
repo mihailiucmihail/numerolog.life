@@ -32,12 +32,12 @@ export function Navbar() {
     <nav
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
       style={{
-        backdropFilter: scrolled ? 'blur(18px) saturate(160%)' : 'none',
-        WebkitBackdropFilter: scrolled ? 'blur(18px) saturate(160%)' : 'none',
+        backdropFilter: scrolled ? 'blur(16px) saturate(140%)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(16px) saturate(140%)' : 'none',
         background: scrolled
-          ? 'rgba(8, 8, 18, 0.82)'
-          : 'linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 70%, transparent 100%)',
-        borderBottom: scrolled ? '1px solid rgba(212,175,55,0.12)' : '1px solid transparent',
+          ? 'rgba(10, 10, 20, 0.45)'
+          : 'linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 70%, transparent 100%)',
+        borderBottom: scrolled ? '1px solid rgba(212,175,55,0.08)' : '1px solid transparent',
       }}
     >
       {/* Border glow auriu vizibil doar la scroll */}
