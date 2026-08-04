@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Menu, X, User, LogOut, LayoutDashboard, Settings, UserCog } from "lucide-react"
 import { useAuth } from "@/components/providers/auth-provider"
 import { LanguageSwitcher } from "@/components/language-switcher"
@@ -17,24 +17,35 @@ import {
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const { user, profile, loading, signOut } = useAuth()
   const t = useTranslations("nav")
 
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20)
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50">
-      {/* Gradient fade background for readability */}
-      <div 
-        className="absolute inset-0 pointer-events-none"
+    <nav
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+      style={{
+        backdropFilter: scrolled ? 'blur(18px) saturate(160%)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(18px) saturate(160%)' : 'none',
+        background: scrolled
+          ? 'rgba(8, 8, 18, 0.82)'
+          : 'linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 70%, transparent 100%)',
+        borderBottom: scrolled ? '1px solid rgba(212,175,55,0.12)' : '1px solid transparent',
+      }}
+    >
+      {/* Border glow auriu vizibil doar la scroll */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-px pointer-events-none transition-opacity duration-300"
         style={{
-          background: 'linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 60%, transparent 100%)'
-        }}
-      />
-      
-      {/* Subtle border glow */}
-      <div 
-        className="absolute bottom-0 left-0 right-0 h-px pointer-events-none"
-        style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(200, 165, 80, 0.2) 20%, rgba(200, 165, 80, 0.3) 50%, rgba(200, 165, 80, 0.2) 80%, transparent 100%)'
+          background: 'linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.35) 30%, rgba(242,212,114,0.5) 50%, rgba(212,175,55,0.35) 70%, transparent 100%)',
+          opacity: scrolled ? 1 : 0,
         }}
       />
 
