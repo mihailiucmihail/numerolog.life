@@ -41,17 +41,16 @@ export function Navbar() {
     <nav
       className="fixed top-0 left-0 right-0 z-50"
       style={{
-        willChange: 'backdrop-filter',
+        willChange: 'transform',
         transform: 'translateZ(0)',
         backfaceVisibility: 'hidden',
-        perspective: 1000,
-        backdropFilter: scrolled ? 'blur(16px) saturate(140%)' : 'blur(0px) saturate(100%)',
-        WebkitBackdropFilter: scrolled ? 'blur(16px) saturate(140%)' : 'blur(0px) saturate(100%)',
         background: scrolled
-          ? 'rgba(10, 10, 20, 0.45)'
+          ? 'linear-gradient(180deg, rgba(10, 10, 20, 0.88) 0%, rgba(8, 8, 16, 0.85) 100%)'
           : 'linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 70%, transparent 100%)',
         borderBottom: 'none',
-        transition: 'background 0.4s ease-out, backdrop-filter 0.4s ease-out',
+        backdropFilter: 'none',
+        WebkitBackdropFilter: 'none',
+        transition: 'background 0.35s ease-out',
       }}
     >
       {/* Border glow auriu vizibil doar la scroll */}
