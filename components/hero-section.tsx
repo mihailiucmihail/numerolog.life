@@ -176,18 +176,23 @@ export function HeroSection() {
             
             {/* Trust badge - moved up right after CTA */}
             <div 
-              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-foreground/8 backdrop-blur-sm border border-foreground/10 transition-all duration-1000 delay-500 ${
+              className={`relative inline-flex items-center gap-2.5 px-4 py-2 rounded-full backdrop-blur-md transition-all duration-1000 delay-500 group ${
                 isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
               }`}
+              style={{
+                background: 'linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(242,212,114,0.08) 100%)',
+                border: '1px solid rgba(212,175,55,0.25)',
+                boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.1), 0 0 12px rgba(212,175,55,0.15)',
+              }}
             >
-              <div className="flex">
+              <div className="flex gap-0.5">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <Star key={i} className="h-3 w-3 fill-primary/70 text-primary/70" />
+                  <Star key={i} className="h-3.5 w-3.5 fill-primary text-primary transition-all group-hover:scale-110" style={{ filter: 'drop-shadow(0 0 3px rgba(212,175,55,0.4))' }} />
                 ))}
               </div>
-              <span className="text-xs text-foreground/70 font-medium ml-0.5">4.9</span>
-              <div className="w-px h-3 bg-foreground/15" />
-              <span className="text-xs text-foreground/70 font-medium">2,847 {t("reviews")}</span>
+              <span className="text-xs font-semibold text-primary ml-0.5 tracking-tight">4.9</span>
+              <div className="w-px h-4 bg-gradient-to-b from-primary/30 via-primary/50 to-primary/30" />
+              <span className="text-xs text-foreground/80 font-semibold">2,847 {t("reviews")}</span>
             </div>
           </div>
         </div>
