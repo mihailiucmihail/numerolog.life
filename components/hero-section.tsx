@@ -160,7 +160,7 @@ export function HeroSection() {
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-col items-center gap-3">
             <Button 
               size="lg" 
               asChild 
@@ -172,7 +172,7 @@ export function HeroSection() {
                 <span>{t("ctaPrimary")}</span>
               </Link>
             </Button>
-            <p className="text-xs text-muted-foreground/60">{t("ctaPrimaryNote")}</p>
+            <p className="text-sm text-foreground/75 font-medium">{t("ctaPrimaryNote")}</p>
           </div>
         </div>
         
