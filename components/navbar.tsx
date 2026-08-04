@@ -41,8 +41,8 @@ export function Navbar() {
       style={{
         willChange: 'background',
         background: scrolled
-          ? 'linear-gradient(180deg, rgba(10, 10, 20, 0.45) 0%, rgba(8, 8, 16, 0.42) 100%)'
-          : 'linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 70%, transparent 100%)',
+          ? 'linear-gradient(180deg, rgba(10, 10, 20, 0.3) 0%, rgba(8, 8, 16, 0.27) 100%)'
+          : 'linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.08) 70%, transparent 100%)',
         backdropFilter: scrolled ? 'blur(14px)' : 'none',
         WebkitBackdropFilter: scrolled ? 'blur(14px)' : 'none',
         borderBottom: 'none',
@@ -60,7 +60,7 @@ export function Navbar() {
       />
 
       <div className="relative max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group select-none" aria-label="Numerolog - Acasă">
             {/* Simbol astral */}
