@@ -41,104 +41,114 @@ export function Navbar() {
       <div className="relative max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group select-none">
-            {/* Simbol geometric - romb dublu */}
-            <div className="relative flex items-center justify-center w-7 h-7 shrink-0">
-              <svg viewBox="0 0 28 28" fill="none" className="w-7 h-7" aria-hidden="true">
-                {/* Romb exterior */}
-                <path
-                  d="M14 2 L26 14 L14 26 L2 14 Z"
-                  stroke="url(#logoGradOuter)"
-                  strokeWidth="1.2"
-                  fill="none"
-                  className="transition-all duration-500 group-hover:stroke-[1.8]"
-                />
-                {/* Romb interior */}
-                <path
-                  d="M14 7 L21 14 L14 21 L7 14 Z"
-                  stroke="url(#logoGradInner)"
-                  strokeWidth="0.8"
-                  fill="url(#logoFill)"
-                  fillOpacity="0.15"
-                  className="transition-all duration-500"
-                />
-                {/* Punct central */}
-                <circle cx="14" cy="14" r="1.5" fill="#D4AF37" opacity="0.9" />
-                {/* Glow pe hover */}
-                <circle
-                  cx="14" cy="14" r="6"
-                  fill="url(#logoGlow)"
-                  fillOpacity="0"
-                  className="transition-opacity duration-500 group-hover:fill-opacity-[0.15]"
-                />
-                <defs>
-                  <linearGradient id="logoGradOuter" x1="2" y1="2" x2="26" y2="26" gradientUnits="userSpaceOnUse">
-                    <stop offset="0%" stopColor="#D4AF37" />
-                    <stop offset="50%" stopColor="#F0D060" />
-                    <stop offset="100%" stopColor="#B8922E" />
-                  </linearGradient>
-                  <linearGradient id="logoGradInner" x1="7" y1="7" x2="21" y2="21" gradientUnits="userSpaceOnUse">
-                    <stop offset="0%" stopColor="#D4AF37" stopOpacity="0.8" />
-                    <stop offset="100%" stopColor="#F0D060" stopOpacity="0.4" />
-                  </linearGradient>
-                  <radialGradient id="logoFill" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stopColor="#D4AF37" />
-                    <stop offset="100%" stopColor="#B8922E" stopOpacity="0" />
-                  </radialGradient>
-                  <radialGradient id="logoGlow" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stopColor="#D4AF37" />
-                    <stop offset="100%" stopColor="#D4AF37" stopOpacity="0" />
-                  </radialGradient>
-                </defs>
-              </svg>
-              {/* Glow blur în spate */}
+          <Link href="/" className="flex items-center gap-3 group select-none" aria-label="Numerolog - Acasă">
+            {/* Simbol astral */}
+            <div className="relative flex items-center justify-center shrink-0" style={{ width: 36, height: 36 }}>
+              {/* Glow radial permanent */}
               <div
-                className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-md"
-                style={{ background: 'radial-gradient(circle, rgba(212,175,55,0.4) 0%, transparent 70%)' }}
+                className="absolute inset-0 rounded-full transition-all duration-700 group-hover:scale-125"
+                style={{
+                  background: 'radial-gradient(circle, rgba(212,175,55,0.25) 0%, rgba(212,175,55,0.08) 50%, transparent 75%)',
+                  animation: 'logoPulse 4s ease-in-out infinite',
+                }}
               />
+              <svg viewBox="0 0 36 36" fill="none" className="relative z-10" width="36" height="36" aria-hidden="true">
+                <defs>
+                  <linearGradient id="lg1" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#C8A84B" />
+                    <stop offset="45%" stopColor="#F2D472" />
+                    <stop offset="100%" stopColor="#A8782A" />
+                  </linearGradient>
+                  <radialGradient id="rg1" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stopColor="#F2D472" stopOpacity="0.5" />
+                    <stop offset="100%" stopColor="#C8A84B" stopOpacity="0" />
+                  </radialGradient>
+                  <filter id="glow">
+                    <feGaussianBlur stdDeviation="1.2" result="blur" />
+                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                </defs>
+                {/* Romb mare exterior */}
+                <path
+                  d="M18 2 L34 18 L18 34 L2 18 Z"
+                  stroke="url(#lg1)"
+                  strokeWidth="1.1"
+                  fill="url(#rg1)"
+                  filter="url(#glow)"
+                />
+                {/* Romb mic interior */}
+                <path
+                  d="M18 9 L27 18 L18 27 L9 18 Z"
+                  stroke="url(#lg1)"
+                  strokeWidth="0.7"
+                  fill="none"
+                  strokeOpacity="0.7"
+                />
+                {/* Cruce centrala subtila */}
+                <line x1="18" y1="13" x2="18" y2="23" stroke="url(#lg1)" strokeWidth="0.5" strokeOpacity="0.5" />
+                <line x1="13" y1="18" x2="23" y2="18" stroke="url(#lg1)" strokeWidth="0.5" strokeOpacity="0.5" />
+                {/* Punct central stralucitor */}
+                <circle cx="18" cy="18" r="2.2" fill="url(#lg1)" />
+                <circle cx="18" cy="18" r="1" fill="#FFF5C0" fillOpacity="0.9" />
+              </svg>
             </div>
 
-            {/* Text NUMEROLOG cu shimmer */}
-            <span
-              className="relative text-[15px] font-semibold tracking-[0.22em] uppercase overflow-hidden"
+            {/* Separator vertical subtil */}
+            <div
+              className="hidden sm:block shrink-0"
               style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
-                letterSpacing: '0.22em',
+                width: 1,
+                height: 22,
+                background: 'linear-gradient(180deg, transparent, rgba(212,175,55,0.35), transparent)',
               }}
-            >
-              {/* Strat de baza auriu */}
+            />
+
+            {/* Text NUMEROLOG */}
+            <div className="flex flex-col leading-none">
               <span
-                style={{
-                  background: 'linear-gradient(135deg, #B8922E 0%, #D4AF37 40%, #F0D060 60%, #D4AF37 80%, #B8922E 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
+                className="relative block overflow-hidden"
+                style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
               >
-                NUMEROLOG
+                {/* Text de baza cu gradient auriu */}
+                <span
+                  className="block text-[17px] font-bold tracking-[0.28em]"
+                  style={{
+                    background: 'linear-gradient(100deg, #A8782A 0%, #D4AF37 30%, #F2D472 55%, #D4AF37 75%, #A8782A 100%)',
+                    backgroundSize: '200% 100%',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    animation: 'logoShimmer 4s ease-in-out infinite',
+                  }}
+                >
+                  NUMEROLOG
+                </span>
               </span>
-              {/* Shimmer overlay animat */}
+              {/* Linie decorativa sub text */}
               <span
-                aria-hidden="true"
-                className="absolute inset-0 pointer-events-none"
+                className="block mt-[3px] transition-all duration-500 group-hover:opacity-100"
                 style={{
-                  background: 'linear-gradient(105deg, transparent 30%, rgba(255,245,190,0.55) 50%, transparent 70%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  backgroundSize: '200% 100%',
-                  animation: 'logoShimmer 3.5s ease-in-out infinite',
+                  height: 1,
+                  background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.6), transparent)',
+                  opacity: 0.4,
+                  animation: 'lineExpand 4s ease-in-out infinite',
                 }}
-              >
-                NUMEROLOG
-              </span>
-            </span>
+              />
+            </div>
           </Link>
           <style jsx global>{`
             @keyframes logoShimmer {
-              0%   { background-position: -100% 0; }
-              60%  { background-position: 200% 0; }
-              100% { background-position: 200% 0; }
+              0%   { background-position: 100% 0; }
+              50%  { background-position: -100% 0; }
+              100% { background-position: 100% 0; }
+            }
+            @keyframes logoPulse {
+              0%, 100% { opacity: 0.6; transform: scale(1); }
+              50%       { opacity: 1;   transform: scale(1.08); }
+            }
+            @keyframes lineExpand {
+              0%, 100% { opacity: 0.3; transform: scaleX(0.7); }
+              50%       { opacity: 0.7; transform: scaleX(1); }
             }
           `}</style>
 
