@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Menu, X, User, LogOut, LayoutDashboard, Settings, UserCog } from "lucide-react"
 import { useAuth } from "@/components/providers/auth-provider"
 import { LanguageSwitcher } from "@/components/language-switcher"
@@ -17,15 +17,36 @@ import {
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const lastUpdateRef = useRef(0)
   const { user, profile, loading, signOut } = useAuth()
   const t = useTranslations("nav")
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const now = Date.now()
+      // Throttle updates la 200ms interval pentru a evita vibrația
+      if (now - lastUpdateRef.current > 200) {
+        setScrolled(window.scrollY > 20)
+        lastUpdateRef.current = now
+      }
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   return (
     <nav
       className="fixed top-0 left-0 right-0 z-50"
       style={{
-        background: 'linear-gradient(180deg, rgba(10, 10, 20, 0.92) 0%, rgba(8, 8, 16, 0.88) 100%)',
-        borderBottom: '1px solid rgba(212,175,55,0.12)',
+        willChange: 'background',
+        background: scrolled
+          ? 'linear-gradient(180deg, rgba(10, 10, 20, 0.88) 0%, rgba(8, 8, 16, 0.85) 100%)'
+          : 'linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.1) 70%, transparent 100%)',
+        backdropFilter: scrolled ? 'blur(14px)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(14px)' : 'none',
+        borderBottom: 'none',
+        transition: 'background 0.25s ease-out, backdrop-filter 0.25s ease-out',
       }}
     >
       {/* Border glow auriu la bază */}
@@ -33,6 +54,8 @@ export function Navbar() {
         className="absolute bottom-0 left-0 right-0 h-px pointer-events-none"
         style={{
           background: 'linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.35) 30%, rgba(242,212,114,0.5) 50%, rgba(212,175,55,0.35) 70%, transparent 100%)',
+          opacity: scrolled ? 1 : 0,
+          transition: 'opacity 0.25s ease-out',
         }}
       />
 
