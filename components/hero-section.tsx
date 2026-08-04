@@ -198,13 +198,6 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Elegant scroll indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-40 hover:opacity-70 transition-opacity">
-          <span className="text-xs text-muted-foreground tracking-widest uppercase">{t("scroll")}</span>
-        <div className="w-5 h-9 rounded-full border border-muted-foreground/30 flex items-start justify-center p-1.5">
-          <div className="w-1 h-2 rounded-full bg-primary/60 animate-bounce" />
-        </div>
-      </div>
     </section>
   )
 }
