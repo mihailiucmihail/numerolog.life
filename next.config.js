@@ -9,9 +9,6 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  experimental: {
-    staticGenerationRetryCount: 0,
-  },
   async headers() {
     return [
       {
