@@ -17,24 +17,44 @@ import {
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const lastUpdateRef = useRef(0)
   const { user, profile, loading, signOut } = useAuth()
   const t = useTranslations("nav")
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const now = Date.now()
+      // Throttle updates la 200ms interval pentru a evita vibrația
+      if (now - lastUpdateRef.current > 200) {
+        setScrolled(window.scrollY > 20)
+        lastUpdateRef.current = now
+      }
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   return (
     <nav
       className="fixed top-0 left-0 right-0 z-50"
       style={{
-        background: 'linear-gradient(180deg, rgba(10, 10, 20, 0.25) 0%, rgba(8, 8, 16, 0.22) 100%)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
+        willChange: 'background',
+        background: scrolled
+          ? 'linear-gradient(180deg, rgba(10, 10, 20, 0.3) 0%, rgba(8, 8, 16, 0.27) 100%)'
+          : 'linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.08) 70%, transparent 100%)',
+        backdropFilter: scrolled ? 'blur(14px)' : 'none',
+        WebkitBackdropFilter: scrolled ? 'blur(14px)' : 'none',
         borderBottom: 'none',
+        transition: 'background 0.25s ease-out, backdrop-filter 0.25s ease-out',
       }}
     >
       {/* Border glow auriu la bază */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-px pointer-events-none"
+        className="absolute bottom-0 left-0 right-0 h-px pointer-events-none transition-opacity duration-300"
         style={{
-          background: 'linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.3) 30%, rgba(242,212,114,0.45) 50%, rgba(212,175,55,0.3) 70%, transparent 100%)',
+          background: 'linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.35) 30%, rgba(242,212,114,0.5) 50%, rgba(212,175,55,0.35) 70%, transparent 100%)',
+          opacity: scrolled ? 1 : 0,
         }}
       />
 
