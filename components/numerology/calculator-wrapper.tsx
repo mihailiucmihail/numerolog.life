@@ -45,7 +45,7 @@ export default function CalculatorWrapper() {
         try {
           const { token } = await saveRaportAndSendEmail(sessionId, formData)
           // Redirectam la pagina raport permanenta
-          router.replace(`/numerologie/raport/${token}`)
+          router.replace(`/numerologie/cristalul-raport/${token}`)
           return
         } catch {
           // Daca salvarea esueaza, afisam raportul direct in iframe

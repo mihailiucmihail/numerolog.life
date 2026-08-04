@@ -23,7 +23,7 @@ export async function saveRaportAndSendEmail(
 
   const token = crypto.randomBytes(32).toString('hex')
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://astroai.ro'
-  const raportUrl = `${baseUrl}/numerologie/raport/${token}`
+  const raportUrl = `${baseUrl}/numerologie/cristalul-raport/${token}`
 
   // Salveaza in DB
   await db`
