@@ -5,7 +5,7 @@ import { startNumerologieCheckout, getNumerologieSessionStatus } from '@/app/act
 import { saveRaportAndSendEmail } from '@/app/actions/raport'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Loader2 } from 'lucide-react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 
 interface FormData {
   last: string
@@ -23,6 +23,9 @@ export default function CalculatorWrapper() {
   const [showLoading, setShowLoading] = useState(false)
   const searchParams = useSearchParams()
   const router = useRouter()
+  const pathname = usePathname()
+  // Extrage locale-ul din path (ex: /ro/numerologie -> ro)
+  const locale = pathname?.split('/')[1] || 'ro'
   const didUnlock = useRef(false)
 
   // Dupa return de la Stripe, verificam plata, salvam raportul si trimitem email
@@ -31,7 +34,7 @@ export default function CalculatorWrapper() {
     const sessionId = searchParams.get('session_id')
     if (payment !== 'success' || !sessionId || didUnlock.current) return
 
-    const raw = sessionStorage.getItem('cristalul_form_data')
+    const raw = localStorage.getItem('cristalul_form_data')
     if (!raw) return
 
     didUnlock.current = true
@@ -39,20 +42,20 @@ export default function CalculatorWrapper() {
     getNumerologieSessionStatus(sessionId).then(async ({ paymentStatus }) => {
       if (paymentStatus === 'paid') {
         const formData: FormData = JSON.parse(raw)
-        sessionStorage.removeItem('cristalul_form_data')
+        localStorage.removeItem('cristalul_form_data')
 
         // Salvam raportul in DB si trimitem email cu link permanent
         try {
-          const { token } = await saveRaportAndSendEmail(sessionId, formData)
-          // Redirectam la pagina raport permanenta
-          router.replace(`/numerologie/cristalul-raport/${token}`)
+          const { token } = await saveRaportAndSendEmail(sessionId, formData, locale)
+          // Redirectam la pagina raport permanenta cu locale corect
+          router.replace(`/${locale}/numerologie/cristalul-raport/${token}`)
           return
         } catch {
           // Daca salvarea esueaza, afisam raportul direct in iframe
         }
 
         // Fallback: afisam raportul in iframe pe pagina curenta
-        router.replace('/numerologie')
+        router.replace(`/${locale}/numerologie`)
         const sendUnlock = () => {
           iframeRef.current?.contentWindow?.postMessage(
             { type: 'paymentSuccess', formData },
@@ -69,12 +72,13 @@ export default function CalculatorWrapper() {
   const handleRequestPayment = useCallback(async (formData: FormData) => {
     setShowLoading(true)
     try {
-      sessionStorage.setItem('cristalul_form_data', JSON.stringify(formData))
-      const checkoutUrl = await startNumerologieCheckout(formData.email)
+      // localStorage persista cross-redirect (spre deosebire de sessionStorage care se pierde)
+      localStorage.setItem('cristalul_form_data', JSON.stringify(formData))
+      const checkoutUrl = await startNumerologieCheckout(formData.email, locale)
       window.location.href = checkoutUrl
     } catch {
       setShowLoading(false)
-      sessionStorage.removeItem('cristalul_form_data')
+      localStorage.removeItem('cristalul_form_data')
       iframeRef.current?.contentWindow?.postMessage({ type: 'paymentCancelled' }, '*')
     }
   }, [])

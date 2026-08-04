@@ -31,13 +31,13 @@ export default function ContactPage() {
             <div className="glass-card p-6 rounded-2xl text-center">
               <Mail className="h-8 w-8 text-primary mx-auto mb-4" />
               <h3 className="font-serif font-medium mb-2">Email</h3>
-              <p className="text-muted-foreground/80 text-sm">contact@astroai.ro</p>
+              <p className="text-muted-foreground/80 text-sm">contact@numerolog.life</p>
             </div>
             
             <div className="glass-card p-6 rounded-2xl text-center">
               <MessageSquare className="h-8 w-8 text-primary mx-auto mb-4" />
               <h3 className="font-serif font-medium mb-2">Suport</h3>
-              <p className="text-muted-foreground/80 text-sm">suport@astroai.ro</p>
+              <p className="text-muted-foreground/80 text-sm">suport@numerolog.life</p>
             </div>
             
             <div className="glass-card p-6 rounded-2xl text-center">
