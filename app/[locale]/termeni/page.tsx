@@ -68,7 +68,7 @@ export default function TermeniPage() {
             <section className="space-y-4">
               <h2 className="text-xl font-serif text-foreground/90">6. Contact</h2>
               <p>
-                Pentru întrebări despre acești termeni, vă rugăm să ne contactați la: contact@astroai.ro
+                Pentru întrebări despre acești termeni, vă rugăm să ne contactați la: contact@numerolog.life
               </p>
             </section>
           </div>

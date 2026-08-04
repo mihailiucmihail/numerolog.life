@@ -57,7 +57,7 @@ export default function CookiesPage() {
             <section className="space-y-4">
               <h2 className="text-xl font-serif text-foreground/90">4. Contact</h2>
               <p>
-                Pentru întrebări despre utilizarea cookie-urilor, vă rugăm să ne contactați la: contact@astroai.ro
+                Pentru întrebări despre utilizarea cookie-urilor, vă rugăm să ne contactați la: contact@numerolog.life
               </p>
             </section>
           </div>

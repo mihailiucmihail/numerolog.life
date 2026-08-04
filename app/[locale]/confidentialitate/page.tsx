@@ -68,7 +68,7 @@ export default function ConfidentialitatePage() {
             <section className="space-y-4">
               <h2 className="text-xl font-serif text-foreground/90">6. Contact</h2>
               <p>
-                Pentru întrebări despre această politică de confidențialitate, vă rugăm să ne contactați la: privacy@astroai.ro
+                Pentru întrebări despre această politică de confidențialitate, vă rugăm să ne contactați la: privacy@numerolog.life
               </p>
             </section>
           </div>

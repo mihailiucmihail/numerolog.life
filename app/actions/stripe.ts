@@ -8,7 +8,7 @@ export async function startNumerologieCheckout(email?: string, locale: string = 
   const product = getProduct('cristalul-destinului')
   if (!product) throw new Error('Produsul nu a fost găsit.')
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://astroai.ro'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
 
   const stripe = getStripe()
   const session = await stripe.checkout.sessions.create({

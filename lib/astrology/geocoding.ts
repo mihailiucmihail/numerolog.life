@@ -141,7 +141,7 @@ export async function geocodeCity(city: string): Promise<GeoCoordinates | null> 
       `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1`,
       {
         headers: {
-          "User-Agent": "AstroAI/1.0 (contact@astroai.ro)"
+          "User-Agent": "AstroAI/1.0 (contact@numerolog.life)"
         }
       }
     )

@@ -23,7 +23,7 @@ export async function saveRaportAndSendEmail(
   if (!email) throw new Error('Email lipseste.')
 
   const token = crypto.randomBytes(32).toString('hex')
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://astroai.ro'
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
   const raportUrl = `${baseUrl}/${locale}/numerologie/cristalul-raport/${token}`
 
   // Salveaza in DB — db.json() serializeaza corect pentru coloana JSONB
@@ -86,7 +86,7 @@ export async function saveRaportAndSendEmail(
                   <tr>
                     <td style="padding:24px 40px;border-top:1px solid rgba(212,175,55,0.1);text-align:center;">
                       <p style="margin:0;color:rgba(237,227,207,0.3);font-size:11px;">
-                        AstroAI &mdash; astroai.ro
+                        AstroAI &mdash; numerolog.life
                       </p>
                     </td>
                   </tr>
