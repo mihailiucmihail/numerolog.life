@@ -12,6 +12,8 @@ interface FormData {
   month: number
   year: number
   email: string
+  gender?: string
+  nameAlphabetKey?: string
 }
 
 export async function saveRaportAndSendEmail(
