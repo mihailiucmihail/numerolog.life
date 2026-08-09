@@ -79,6 +79,7 @@ export default function NumerologyReportPage({ params }: { params: Promise<{ rep
   const [error, setError] = useState<string | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [showNumbers, setShowNumbers] = useState(true)
+  const [audioEl, setAudioEl] = useState<HTMLAudioElement | null>(null)
 
   useEffect(() => {
     const loadReport = async () => {
@@ -108,21 +109,44 @@ export default function NumerologyReportPage({ params }: { params: Promise<{ rep
     loadReport()
   }, [reportId])
 
+  const speakWithBrowserVoice = (text: string) => {
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.lang = 'ro-RO'
+    utterance.rate = 0.9
+    utterance.onend = () => setIsPlaying(false)
+    window.speechSynthesis.cancel()
+    window.speechSynthesis.speak(utterance)
+  }
+
   const handleAudioPlay = async () => {
-    setIsPlaying(!isPlaying)
-    
-    if (!isPlaying && report) {
-      // Simulate AI reading - in production, use TTS API
-      const utterance = new SpeechSynthesisUtterance(report.interpretation)
-      utterance.lang = 'ro-RO'
-      utterance.rate = 0.9
-      
+    if (isPlaying) {
       window.speechSynthesis.cancel()
-      window.speechSynthesis.speak(utterance)
-      
-      utterance.onend = () => setIsPlaying(false)
-    } else {
-      window.speechSynthesis.cancel()
+      audioEl?.pause()
+      setIsPlaying(false)
+      return
+    }
+
+    if (!report) return
+    setIsPlaying(true)
+
+    try {
+      const res = await fetch('/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: report.interpretation }),
+      })
+      if (!res.ok) throw new Error('TTS request failed')
+
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const audio = new Audio(url)
+      audio.onended = () => setIsPlaying(false)
+      audio.onerror = () => speakWithBrowserVoice(report.interpretation)
+      setAudioEl(audio)
+      await audio.play()
+    } catch (err) {
+      console.error('[tts] falling back to browser voice:', err)
+      speakWithBrowserVoice(report.interpretation)
     }
   }
 
