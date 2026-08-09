@@ -37,13 +37,16 @@ export default function CalculatorWrapper() {
     if (payment !== 'success' || !sessionId || didUnlock.current) return
 
     const raw = localStorage.getItem('cristalul_form_data')
-    if (!raw) return
 
     didUnlock.current = true
 
-    getNumerologieSessionStatus(sessionId).then(async ({ paymentStatus }) => {
+    getNumerologieSessionStatus(sessionId).then(async ({ paymentStatus, formData: metadataFormData }) => {
       if (paymentStatus === 'paid') {
-        const formData: FormData = JSON.parse(raw)
+        // Stripe metadata este fallback-ul sigur dacă browserul a pierdut localStorage.
+        if (!raw && !metadataFormData) return
+        const formData: FormData = raw
+          ? JSON.parse(raw)
+          : JSON.parse(metadataFormData as string)
         localStorage.removeItem('cristalul_form_data')
 
         // Salvam raportul in DB si trimitem email cu link permanent
@@ -76,7 +79,7 @@ export default function CalculatorWrapper() {
     try {
       // localStorage persista cross-redirect (spre deosebire de sessionStorage care se pierde)
       localStorage.setItem('cristalul_form_data', JSON.stringify(formData))
-      const checkoutUrl = await startNumerologieCheckout(formData.email, locale)
+      const checkoutUrl = await startNumerologieCheckout(formData.email, locale, formData)
       window.location.href = checkoutUrl
     } catch {
       setShowLoading(false)
