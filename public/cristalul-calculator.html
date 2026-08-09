@@ -4849,8 +4849,10 @@ function hideTooltip(){ document.getElementById('chartTooltip').classList.remove
     reportCtx = context;
     history = [];
     walkthrough = context.walkthrough || [];
+    // Nu pornim redarea automat: browserele blochează audio/voce fără un click real al
+    // utilizatorului (mai ales pe pagina de raport permanent, unde totul rulează automat).
+    // Bula pulsează și invită la click — abia acel click e un gest real, care poate porni sunetul.
     document.getElementById("numAssistantBubble").classList.add("show");
-    if(walkthrough.length) playWalkthrough(walkthrough);
   };
 })();
   </script>
