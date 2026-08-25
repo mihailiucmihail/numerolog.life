@@ -101,7 +101,7 @@ export function NewsletterForm({ onSuccess, compact = false }: NewsletterFormPro
         </div>
       </div>
       <div>
-        <label htmlFor="nl-email" className="sr-only">{t("email")}</label>
+        <label htmlFor="nl-email" className="mb-1.5 block px-1 text-xs font-medium uppercase tracking-[0.12em] text-primary/80">{t("email")}</label>
         <input
           id="nl-email"
           type="email"
@@ -110,8 +110,10 @@ export function NewsletterForm({ onSuccess, compact = false }: NewsletterFormPro
           onChange={(e) => setEmail(e.target.value)}
           placeholder={t("emailPlaceholder")}
           autoComplete="email"
-          className="min-h-12 w-full rounded-xl border border-border/50 bg-card/40 px-4 text-base text-foreground placeholder:text-muted-foreground/50 focus:border-primary/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
+          aria-describedby="nl-email-hint"
+          className="min-h-12 w-full rounded-xl border border-border/50 bg-card/40 px-4 text-base text-foreground placeholder:text-muted-foreground/65 focus:border-primary/60 focus:outline-none focus:ring-1 focus:ring-primary/40"
         />
+        <p id="nl-email-hint" className="mt-1.5 px-1 text-xs text-muted-foreground/70">{t("emailHint")}</p>
       </div>
 
       {status === "error" && (

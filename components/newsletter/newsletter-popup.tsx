@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl"
 import { X, Gift } from "lucide-react"
 import { NewsletterForm } from "./newsletter-form"
 
-const STORAGE_KEY = "nl_popup_seen_v1"
+const STORAGE_KEY = "nl_popup_subscribed_v2"
 
 export function NewsletterPopup() {
   const t = useTranslations("newsletter")
@@ -26,9 +26,9 @@ export function NewsletterPopup() {
       setOpen(true)
     }
 
-    // Mobil: dupa 18s. Desktop: exit-intent + fallback 30s.
+    // Afișăm oferta rapid, fără să întrerupem prima interacțiune.
     const isDesktop = window.matchMedia("(min-width: 768px)").matches
-    const timer = window.setTimeout(trigger, isDesktop ? 30000 : 18000)
+    const timer = window.setTimeout(trigger, isDesktop ? 12000 : 7000)
 
     const onMouseLeave = (e: MouseEvent) => {
       if (e.clientY <= 0) trigger()
