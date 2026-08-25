@@ -146,7 +146,7 @@ export function ReportPreviewSection() {
                   asChild 
                   className="bg-gradient-to-r from-primary via-primary to-[#B8860B] hover:opacity-90 px-8 py-6 rounded-full cosmic-button"
                 >
-                  <Link href="/harta-natala">
+                  <Link href="/numerologie">
                     {t("ctaButton")}
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>

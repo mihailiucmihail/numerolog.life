@@ -89,7 +89,7 @@ export function HowItWorksSection() {
             asChild 
             className="bg-gradient-to-r from-primary via-primary to-[#B8860B] hover:opacity-90 px-10 py-7 rounded-full cosmic-button shadow-lg shadow-primary/20"
           >
-            <Link href="/harta-natala">
+            <Link href="/numerologie">
               <Sparkles className="mr-2 h-5 w-5" />
               {t("cta")}
               <ArrowRight className="ml-2 h-5 w-5" />
