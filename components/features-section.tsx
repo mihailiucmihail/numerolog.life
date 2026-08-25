@@ -1,6 +1,6 @@
 "use client"
 
-import { Moon, Sun, Star, Zap, Shield, Brain, Heart } from "lucide-react"
+import { Moon, Sun, Star, Zap, Shield, Brain, Heart, Sparkles, CircleDot } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 export function FeaturesSection() {
@@ -41,6 +41,24 @@ export function FeaturesSection() {
       title: t("privacyTitle"),
       description: t("privacyDesc"),
       accent: "from-cyan-400/15 to-cyan-400/5"
+    },
+    {
+      icon: Sparkles,
+      title: t("ancestralTitle"),
+      description: t("ancestralDesc"),
+      accent: "from-amber-400/15 to-amber-400/5"
+    },
+    {
+      icon: Heart,
+      title: t("soulTitle"),
+      description: t("soulDesc"),
+      accent: "from-fuchsia-400/15 to-fuchsia-400/5"
+    },
+    {
+      icon: CircleDot,
+      title: t("mandalaTitle"),
+      description: t("mandalaDesc"),
+      accent: "from-violet-400/15 to-violet-400/5"
     }
   ]
   return (
