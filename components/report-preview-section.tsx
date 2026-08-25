@@ -100,7 +100,7 @@ const SECTION_I18N = {
     qualityNote: "Твоя энергия и потенциал год за годом — от рождения до 90 лет.",
     lockTitle: "Полный ответ — в твоём отчёте",
     lockNote: "Индивидуальные расчёты покажут твои числа, периоды, отношения, ресурсы и конкретные точки роста.",
-    cta: "Получить мой анализ",
+    cta: "Получить мой разбор",
     price: "14,99 € — разовая оплата",
   },
 } as const
@@ -131,7 +131,7 @@ export function ReportPreviewSection() {
             <div className="mb-4 flex items-start justify-between gap-4">
               <div>
                 <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
-                <h3 className="font-serif text-xl text-foreground/90 sm:text-2xl">{locale === "ru" ? "Карьерный путь и жизненная энергия" : "Carier și energie vitală"}</h3>
+                <h3 className="font-serif text-xl text-foreground/90 sm:text-2xl">{locale === "ru" ? "��арьерный путь и жизненная энергия" : "Carier și energie vitală"}</h3>
               </div>
               <span className="rounded-full bg-primary/10 px-3 py-1 font-mono text-[10px] text-primary">40 лет · 8.2</span>
             </div>
