@@ -12,7 +12,7 @@ import type { KarmicPeriod } from "@/lib/numerology/types"
 
 // ==== Exemplu identic cu algoritmul din cristalul-calculator.html ====
 const AGES = Array.from({ length: 10 }, (_, i) => i * 10)
-const SOURCE_EXAMPLE = { day: 14, month: 2, year: 1985 }
+const SOURCE_EXAMPLE = { day: 5, month: 10, year: 1992 }
 
 function magicDigits(raw: number, targetLen = 7, reverse = false) {
   let value = String(Math.round(raw))
@@ -31,10 +31,18 @@ function buildSourceCareerSeries(day: number, month: number, year: number) {
   })]
 }
 
+function derivedValues(seed: number, scale = 10) {
+  return AGES.map((_, i) => Math.round((((seed * (i + 3) + i * 17) % 91) / 10) * scale) / scale)
+}
+
+const EXAMPLE_SEED = SOURCE_EXAMPLE.day * SOURCE_EXAMPLE.month * SOURCE_EXAMPLE.year
+const CURRENT_AGE = 33
+const EXAMPLE_VALUES = derivedValues(EXAMPLE_SEED)
+
 function buildSeries(values: number[], phases: string[]) {
   return AGES.map((age, i) => ({
     age,
-    year: 1985 + age,
+    year: SOURCE_EXAMPLE.year + age,
     value: values[i],
     label: `${age}`,
     isPast: i < 4,
@@ -46,18 +54,18 @@ function buildSeries(values: number[], phases: string[]) {
 
 const previewCareer = buildSourceCareerSeries(SOURCE_EXAMPLE.day, SOURCE_EXAMPLE.month, SOURCE_EXAMPLE.year)
 const previewMoney = buildSeries(
-  [2.5, 3.4, 4.2, 5.6, 6.9, 8.2, 8.9, 8.4, 8.0, 8.6],
+  derivedValues(EXAMPLE_SEED + 11),
   ["dependent", "dependent", "inceput", "acumulare", "crestere", "varf", "varf", "conservare", "conservare", "mostenire"],
 )
 const previewRelationship = buildSeries(
-  [5.5, 6.2, 5.0, 6.8, 7.4, 8.1, 8.6, 8.3, 8.0, 8.4],
+  derivedValues(EXAMPLE_SEED + 23),
   ["familie", "familie", "descoperire", "explorare", "maturizare", "stabilitate", "stabilitate", "profunzime", "profunzime", "profunzime"],
 )
 
 const previewTimeline = AGES.map((age, i) => ({
   age,
-  year: 1985 + age,
-  energy: [4.0, 5.2, 6.6, 6.1, 8.2, 7.6, 8.6, 8.0, 8.4, 8.1][i],
+  year: SOURCE_EXAMPLE.year + age,
+  energy: derivedValues(EXAMPLE_SEED + 37)[i],
   theme: ["Основа", "Поиск", "Формирование", "Опора", "Реализация", "Перемены", "Мудрость", "Мастерство", "Опыт", "Наследие"][i],
   phase: ["childhood", "early_growth", "adolescence", "young_adult", "maturation", "midlife", "wisdom", "mastery", "elder", "legacy"][i],
 }))
@@ -86,8 +94,8 @@ function QualityOfLifePreview({ locale }: { locale: string }) {
         </div>
         <div className="shrink-0 rounded-xl border border-primary/60 bg-background/90 px-3 py-2 text-right shadow-[0_0_18px_rgba(217,169,79,0.18)]">
           <div className="text-[9px] text-muted-foreground">{locale === "ru" ? "Сейчас" : "Acum"}</div>
-          <strong className="font-mono text-lg text-foreground">40 {locale === "ru" ? "лет" : "ani"}</strong>
-          <div className="text-[10px] text-primary">{locale === "ru" ? "Энергия" : "Energie"} 8.2</div>
+          <strong className="font-mono text-lg text-foreground">{CURRENT_AGE} {locale === "ru" ? "лет" : "ani"}</strong>
+          <div className="text-[10px] text-primary">{locale === "ru" ? "Энергия" : "Energie"} {previewTimeline[3]?.energy.toFixed(1)}</div>
         </div>
       </div>
       <div className="relative flex h-44 items-end gap-1 border-b border-primary/20 px-2 pt-4">
@@ -144,9 +152,9 @@ export function ReportPreviewSection() {
         <div className="mb-8 grid gap-4 sm:gap-5 lg:grid-cols-12">
           <div className="lg:col-span-8">
             <div>
-              <CareerGraph data={previewCareer} currentAge={40} height={228} animated={false} showLegend={false} showTooltip={false} className="rounded-[14px] border border-primary/30 bg-card/35 p-3 shadow-none sm:p-4" />
+              <CareerGraph data={previewCareer} currentAge={CURRENT_AGE} height={228} animated={false} showLegend={false} showTooltip={false} className="rounded-[14px] border border-primary/30 bg-card/35 p-3 shadow-none sm:p-4" />
               <p className="mt-2 px-1 text-[10px] leading-5 text-muted-foreground/70">
-                {locale === "ru" ? "Пример: 14.02.1985 → 1402 × 1985 = 2782970 → уровни графика: 2, 7, 8, 2, 9, 7, 0." : "Exemplu: 14.02.1985 → 1402 × 1985 = 2782970 → nivelurile graficului: 2, 7, 8, 2, 9, 7, 0."}
+                {locale === "ru" ? "Пример: 05.10.1992 → 0510 × 1992 = 1015920 → персональные уровни графика." : "Exemplu: 05.10.1992 → 0510 × 1992 = 1015920 → nivelurile personale ale graficului."}
               </p>
             </div>
           </div>
@@ -166,16 +174,16 @@ export function ReportPreviewSection() {
           </aside>
 
           <div className="lg:col-span-5">
-            <MoneyGraph data={previewMoney} currentAge={40} height={190} animated={false} showTooltip={false} />
+            <MoneyGraph data={previewMoney} currentAge={CURRENT_AGE} height={190} animated={false} showTooltip={false} />
           </div>
           <div className="lg:col-span-7">
             <QualityOfLifePreview locale={locale} />
           </div>
           <div className="lg:col-span-6">
-            <RelationshipGraph data={previewRelationship} currentAge={40} height={190} animated={false} showTooltip={false} />
+            <RelationshipGraph data={previewRelationship} currentAge={CURRENT_AGE} height={190} animated={false} showTooltip={false} />
           </div>
           <div className="lg:col-span-6">
-            <KarmicPeriods periods={previewKarmic} currentAge={40} maxAge={80} animated={false} />
+            <KarmicPeriods periods={previewKarmic} currentAge={CURRENT_AGE} maxAge={80} animated={false} />
           </div>
         </div>
 
