@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { Calendar, Sparkles, FileText, ArrowRight, Star } from "lucide-react"
+import { Calendar, FileText, ArrowRight, Star } from "lucide-react"
 import { NumerologSymbol } from "@/components/numerolog-symbol"
 import { useTranslations } from "next-intl"
 
@@ -18,7 +18,7 @@ export function HowItWorksSection() {
     },
     {
       step: "02",
-      icon: Sparkles,
+      icon: NumerologSymbol,
       title: t("step2Title"),
       description: t("step2Desc"),
       highlight: t("step2Highlight")
