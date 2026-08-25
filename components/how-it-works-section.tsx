@@ -67,7 +67,14 @@ export function HowItWorksSection() {
                     <h3 className="font-serif text-xl font-medium text-foreground/95 sm:text-2xl">{item.title}</h3>
                     <span className="hidden whitespace-nowrap pt-1 text-[9px] uppercase tracking-[0.2em] text-primary/70 sm:block">{item.highlight}</span>
                   </div>
-                  <p className="text-sm leading-6 text-muted-foreground/75 sm:max-w-2xl sm:text-base">{item.description}</p>
+                  <p className="text-sm leading-6 text-muted-foreground/75 sm:max-w-2xl sm:text-base">
+                    {index === 0 && item.description.includes("Время и место рождения не нужны.") ? (
+                      <>
+                        {item.description.replace(" Время и место рождения не нужны.", "")}
+                        <strong className="mt-2 block font-medium text-primary">Время и место рождения не нужны.</strong>
+                      </>
+                    ) : item.description}
+                  </p>
                   <span className="mt-4 inline-block text-[10px] uppercase tracking-[0.18em] text-primary/75 sm:hidden">{item.highlight}</span>
                 </div>
               </div>
