@@ -10,8 +10,26 @@ import { RelationshipGraph } from "@/components/numerology/RelationshipGraph"
 import { KarmicPeriods } from "@/components/numerology/KarmicPeriods"
 import type { KarmicPeriod } from "@/lib/numerology/types"
 
-// ==== Sample data (0-90) ====
+// ==== Exemplu identic cu algoritmul din cristalul-calculator.html ====
 const AGES = Array.from({ length: 10 }, (_, i) => i * 10)
+const SOURCE_EXAMPLE = { day: 14, month: 2, year: 1985 }
+
+function magicDigits(raw: number, targetLen = 7, reverse = false) {
+  let value = String(Math.round(raw))
+  if (reverse) value = value.split("").reverse().join("")
+  if (value.length < targetLen) value += "0".repeat(targetLen - value.length)
+  return value.slice(0, targetLen).split("").map(Number)
+}
+
+function buildSourceCareerSeries(day: number, month: number, year: number) {
+  // Formula originală: seed = concatenarea ZZLL × anul; fiecare cifră = nivel 0–9.
+  const seed = Number(`${String(day).padStart(2, "0")}${String(month).padStart(2, "0")}`) * year
+  const digits = magicDigits(seed)
+  return [{ age: 0, year, value: 0, label: "0", isPast: true, isCurrent: false, isFuture: false, phase: "precareer" }, ...digits.map((value, index) => {
+    const age = (index + 1) * 10
+    return { age, year: year + age, value, label: `${age}`, isPast: age < 40, isCurrent: age === 40, isFuture: age > 40, phase: "dezvoltare" }
+  })]
+}
 
 function buildSeries(values: number[], phases: string[]) {
   return AGES.map((age, i) => ({
@@ -26,10 +44,7 @@ function buildSeries(values: number[], phases: string[]) {
   }))
 }
 
-const previewCareer = buildSeries(
-  [3.8, 5.0, 6.4, 6.0, 8.4, 8.1, 8.7, 8.2, 7.9, 8.3],
-  ["precareer", "educatie", "inceput", "dezvoltare", "varf", "varf", "consolidare", "mentor", "mentor", "mostenire"],
-)
+const previewCareer = buildSourceCareerSeries(SOURCE_EXAMPLE.day, SOURCE_EXAMPLE.month, SOURCE_EXAMPLE.year)
 const previewMoney = buildSeries(
   [2.5, 3.4, 4.2, 5.6, 6.9, 8.2, 8.9, 8.4, 8.0, 8.6],
   ["dependent", "dependent", "inceput", "acumulare", "crestere", "varf", "varf", "conservare", "conservare", "mostenire"],
@@ -128,7 +143,12 @@ export function ReportPreviewSection() {
         {/* Premium report dashboard */}
         <div className="mb-8 grid gap-4 sm:gap-5 lg:grid-cols-12">
           <div className="lg:col-span-8">
-            <CareerGraph data={previewCareer} currentAge={40} height={228} animated={false} showLegend={false} showTooltip={false} className="rounded-[14px] border border-primary/30 bg-card/35 p-3 shadow-none sm:p-4" />
+            <div>
+              <CareerGraph data={previewCareer} currentAge={40} height={228} animated={false} showLegend={false} showTooltip={false} className="rounded-[14px] border border-primary/30 bg-card/35 p-3 shadow-none sm:p-4" />
+              <p className="mt-2 px-1 text-[10px] leading-5 text-muted-foreground/70">
+                {locale === "ru" ? "Пример: 14.02.1985 → 1402 × 1985 = 2782970 → уровни графика: 2, 7, 8, 2, 9, 7, 0." : "Exemplu: 14.02.1985 → 1402 × 1985 = 2782970 → nivelurile graficului: 2, 7, 8, 2, 9, 7, 0."}
+              </p>
+            </div>
           </div>
 
           <aside className="grid grid-cols-2 gap-3 lg:col-span-4 lg:grid-cols-1">
