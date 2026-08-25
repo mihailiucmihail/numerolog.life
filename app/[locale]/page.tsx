@@ -9,6 +9,8 @@ import { FAQSection } from "@/components/faq-section"
 import { Footer } from "@/components/footer"
 import { StarField } from "@/components/star-field"
 import { MobileReportCta } from "@/components/mobile-report-cta"
+import { NewsletterSection } from "@/components/newsletter/newsletter-section"
+import { NewsletterPopup } from "@/components/newsletter/newsletter-popup"
 
 export default function HomePage() {
   return (
@@ -20,9 +22,11 @@ export default function HomePage() {
       <ReportPreviewSection />
       <HowItWorksSection />
       <PricingSection />
+      <NewsletterSection />
       <FAQSection />
       <Footer />
       <MobileReportCta />
+      <NewsletterPopup />
     </main>
   )
 }

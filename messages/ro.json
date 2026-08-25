@@ -251,5 +251,37 @@
     "report": "Raport complet — acces permanent, fără plată suplimentară",
     "price": "14,99 €"
   },
+  "newsletter": {
+    "badge": "Reducere -15%",
+    "title": "Primește -15% la raportul tău",
+    "subtitle": "Lasă-ne numele, prenumele și emailul, iar noi îți trimitem imediat un cod promoțional personal de 15% reducere la raportul complet „Cristalul Destinului”.",
+    "firstName": "Prenume",
+    "lastName": "Nume de familie",
+    "email": "Adresa de email",
+    "firstNamePlaceholder": "Prenumele tău",
+    "lastNamePlaceholder": "Numele tău",
+    "emailPlaceholder": "nume@exemplu.com",
+    "submit": "Primește -15%",
+    "submitting": "Se trimite...",
+    "consent": "Lăsând datele, ești de acord să primești emailuri de la NUMEROLOG.life. Te poți dezabona cu un click oricând.",
+    "successTitle": "Gata! Codul tău de reducere:",
+    "successText": "Ți-am trimis codul și pe email. Aplică-l la finalizarea comenzii pentru a primi 15% reducere.",
+    "successCta": "Comandă raportul cu reducere",
+    "errorEmail": "Introdu o adresă de email validă.",
+    "errorName": "Te rugăm să introduci numele și prenumele.",
+    "errorServer": "Ceva nu a mers. Încearcă din nou.",
+    "popupTitle": "Stai — reducerea ta de -15%",
+    "popupSubtitle": "Lasă-ne datele și primești un cod promoțional personal pentru raportul complet.",
+    "popupClose": "Închide",
+    "popupDismiss": "Nu, mulțumesc"
+  },
+  "unsubscribe": {
+    "processing": "Procesăm cererea ta...",
+    "successTitle": "Te-ai dezabonat",
+    "successText": "Nu îți vom mai trimite emailuri. Te poți întoarce oricând.",
+    "errorTitle": "Link invalid",
+    "errorText": "Nu am găsit un abonament pentru acest link. Este posibil să fii deja dezabonat.",
+    "home": "Spre pagina principală"
+  },
   "language": "Limba"
 }
