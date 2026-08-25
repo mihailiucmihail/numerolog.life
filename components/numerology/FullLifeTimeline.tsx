@@ -290,7 +290,7 @@ export function FullLifeTimeline({
                 dataKey="age" 
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+                tick={{ fill: "hsl(var(--foreground) / 0.82)", fontSize: 10, fontWeight: 500 }}
                 ticks={[0, 10, 20, 30, 40, 50, 60, 70, 80, 90]}
                 tickFormatter={(value) => `${value}`}
                 domain={[0, 90]}
@@ -300,7 +300,7 @@ export function FullLifeTimeline({
                 domain={[0, 10]}
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+                tick={{ fill: "hsl(var(--foreground) / 0.82)", fontSize: 10, fontWeight: 500 }}
                 ticks={[2, 4, 6, 8, 10]}
                 width={30}
               />

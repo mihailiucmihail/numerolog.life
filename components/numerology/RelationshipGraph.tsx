@@ -150,7 +150,7 @@ export function RelationshipGraph({
               dataKey="age" 
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
+              tick={{ fill: "hsl(var(--foreground) / 0.82)", fontSize: 11, fontWeight: 500 }}
               ticks={[0, 10, 20, 30, 40, 50, 60, 70, 80, 90]}
             />
             
@@ -158,7 +158,7 @@ export function RelationshipGraph({
               domain={[0, 10]}
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
+              tick={{ fill: "hsl(var(--foreground) / 0.82)", fontSize: 11, fontWeight: 500 }}
               ticks={[2, 4, 6, 8, 10]}
             />
             
