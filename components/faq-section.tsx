@@ -19,7 +19,8 @@ export function FAQSection() {
     { question: t("q5"), answer: t("a5") },
     { question: t("q6"), answer: t("a6") },
     { question: t("q7"), answer: t("a7") },
-    { question: t("q8"), answer: t("a8") }
+    { question: t("q8"), answer: t("a8") },
+    { question: t("q9"), answer: t("a9") }
   ]
   return (
     <section id="intrebari" className="py-32 relative">
