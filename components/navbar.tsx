@@ -57,8 +57,8 @@ export function Navbar() {
         }}
       />
 
-      <div className="relative max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="flex items-center justify-between h-16">
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-8 lg:px-12">
+        <div className="flex items-center justify-between h-14 md:h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group select-none" aria-label="Numerolog - Acasă">
             {/* Simbol astral */}
