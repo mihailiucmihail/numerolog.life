@@ -60,13 +60,13 @@ export function HeroSection() {
   }, [])
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center pt-28 pb-24 overflow-hidden">
+    <section className="relative min-h-0 md:min-h-screen flex flex-col items-center justify-center pt-20 pb-8 md:pt-28 md:pb-24 overflow-hidden">
       {/* ═══════════════════════════════════════════════════════════════════════
           All background overlays removed - StarField provides the cosmic background
       ═══════════════════════════════════════════════════════════════════════ */}
       
       {/* Premium activity badge */}
-      <div className="relative z-10 flex justify-center mb-10 sm:mb-14">
+      <div className="relative z-10 flex justify-center mb-5 sm:mb-14">
         <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full backdrop-blur-sm" style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(242,212,114,0.08) 100%)', border: '1px solid rgba(212,175,55,0.2)' }}>
           <span className="relative flex h-1.5 w-1.5">
             <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-60 animate-ping" />
@@ -111,14 +111,14 @@ export function HeroSection() {
       
       {/* Removed vignette - was causing visible transition bands */}
       
-      <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-8 sm:py-16 md:py-20 text-center relative z-10">
+      <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-2 sm:py-16 md:py-20 text-center relative z-10">
         {/* Cinematic headline with serif font */}
         <h1 
           className={`mb-6 sm:mb-10 transition-all duration-1000 delay-150 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          <span className="block text-sm sm:text-base tracking-[0.3em] uppercase text-primary/70 font-normal mb-8">
+          <span className="block text-sm sm:text-base tracking-[0.3em] uppercase text-primary/70 font-normal mb-4 sm:mb-8">
             {t("eyebrow")}
           </span>
           <span className="block font-serif text-4xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-light tracking-tight text-foreground/90 leading-[1.05]">
@@ -176,7 +176,7 @@ export function HeroSection() {
         </div>
         
         {/* Spacing adjustment */}
-        <div className="mb-12 sm:mb-16" />
+        <div className="mb-2 sm:mb-16" />
       </div>
 
     </section>
