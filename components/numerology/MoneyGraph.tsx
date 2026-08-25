@@ -164,7 +164,7 @@ export function MoneyGraph({
               dataKey="age" 
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "hsl(var(--foreground) / 0.82)", fontSize: 11, fontWeight: 500 }}
+              tick={{ fill: "#f3ead8", fontSize: 11, fontWeight: 600 }}
               ticks={[0, 10, 20, 30, 40, 50, 60, 70, 80, 90]}
             />
             
@@ -172,7 +172,7 @@ export function MoneyGraph({
               domain={[0, 10]}
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "hsl(var(--foreground) / 0.82)", fontSize: 11, fontWeight: 500 }}
+              tick={{ fill: "#f3ead8", fontSize: 11, fontWeight: 600 }}
               ticks={[2, 4, 6, 8, 10]}
             />
             

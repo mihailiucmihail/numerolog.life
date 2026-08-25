@@ -123,3 +123,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Recharts renders axis labels as SVG text; keep them readable on the dark report theme. */
+.recharts-cartesian-axis-tick text,
+.recharts-cartesian-axis-tick tspan {
+  fill: #f3ead8 !important;
+  color: #f3ead8 !important;
+}
