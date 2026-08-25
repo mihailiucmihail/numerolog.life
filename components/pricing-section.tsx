@@ -52,7 +52,7 @@ export function PricingSection() {
           <CardHeader className="pb-6 pt-10 text-center relative">
             <CardTitle className="font-serif text-2xl font-light">{t("cardTitle")}</CardTitle>
             <CardDescription className="text-muted-foreground/70 mt-2 max-w-xl mx-auto">
-              Analiză personală compactă: 22 Arcane, Cristalul Destinului, cicluri de viață, harta numelui, straturi karmice și tranzite planetare.
+              {t("cardDesc")}
             </CardDescription>
             <div className="mt-8 flex items-baseline justify-center">
               <span className="font-serif text-7xl font-light text-gradient">14.99</span>
