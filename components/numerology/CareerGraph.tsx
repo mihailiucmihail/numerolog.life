@@ -30,6 +30,7 @@ interface CareerGraphProps {
   height?: number
   showTooltip?: boolean
   animated?: boolean
+  showLegend?: boolean
   className?: string
 }
 
@@ -39,6 +40,7 @@ export function CareerGraph({
   height = 250,
   showTooltip = true,
   animated = true,
+  showLegend = true,
   className = ""
 }: CareerGraphProps) {
   // Handle empty or undefined data
@@ -218,7 +220,7 @@ export function CareerGraph({
         </ResponsiveContainer>
         
         {/* Life phases legend */}
-        <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-border/30">
+        {showLegend && <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-border/30">
           {["educatie", "inceput", "dezvoltare", "varf", "consolidare", "mentor"].map((phase, i) => (
             <div 
               key={phase}
@@ -231,7 +233,7 @@ export function CareerGraph({
               {phaseLabels[phase]}
             </div>
           ))}
-        </div>
+        </div>}
       </div>
     </motion.div>
   )

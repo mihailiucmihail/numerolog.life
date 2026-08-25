@@ -3,159 +3,122 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { 
-  Brain, 
-  Heart, 
-  Briefcase, 
-  Sparkles, 
-  TrendingUp, 
-  Users,
-  Star,
-  ArrowRight,
-  Lock
-} from "lucide-react"
+import { ArrowRight, Brain, Briefcase, Heart, Lock, Sparkles, Star, TrendingUp } from "lucide-react"
 import { useTranslations } from "next-intl"
+import { CareerGraph } from "@/components/numerology/CareerGraph"
+import { FullLifeTimeline } from "@/components/numerology/FullLifeTimeline"
+import { DestinyMatrix } from "@/components/numerology/DestinyMatrix"
+import type { DestinyMatrixData } from "@/lib/numerology/types"
+
+const previewCareer = Array.from({ length: 10 }, (_, index) => ({
+  age: index * 10,
+  year: 1990 + index * 10,
+  value: [4.2, 5.1, 6.8, 6.1, 8.4, 7.3, 8.8, 7.9, 8.6, 8.1][index],
+  label: `Возраст ${index * 10}`,
+  isPast: index < 4,
+  isCurrent: index === 4,
+  isFuture: index > 4,
+  phase: ["childhood", "early_growth", "adolescence", "young_adult", "peak_career", "midlife", "wisdom", "mastery", "elder", "legacy"][index],
+}))
+
+const previewTimeline = Array.from({ length: 10 }, (_, index) => ({
+  age: index * 10,
+  year: 1990 + index * 10,
+  energy: [4.2, 5.1, 6.8, 6.1, 8.4, 7.3, 8.8, 7.9, 8.6, 8.1][index],
+  theme: ["Детство", "Рост", "Формирование", "Самостоятельность", "Реализация", "Перемены", "Мудрость", "Мастерство", "Опыт", "Наследие"][index],
+  phase: ["childhood", "early_growth", "adolescence", "young_adult", "peak_career", "midlife", "wisdom", "mastery", "elder", "legacy"][index],
+}))
+
+const previewMatrix: DestinyMatrixData = {
+  center: 7,
+  positions: [1, 4, 7, 2, 7, 5, 3, 6, 9],
+  lines: [
+    { from: 0, to: 4, energy: 0.8 },
+    { from: 2, to: 4, energy: 0.7 },
+    { from: 4, to: 8, energy: 0.9 },
+  ],
+}
 
 export function ReportPreviewSection() {
   const t = useTranslations("reportPreview")
-  const reportSections = [
-    {
-      icon: Brain,
-      title: t("personalityTitle"),
-      description: t("personalityDesc"),
-      items: [t("personalityItem1"), t("personalityItem2"), t("personalityItem3"), t("personalityItem4")],
-      accent: "from-primary/15 to-primary/5"
-    },
-    {
-      icon: Heart,
-      title: t("loveTitle"),
-      description: t("loveDesc"),
-      items: [t("loveItem1"), t("loveItem2"), t("loveItem3"), t("loveItem4")],
-      accent: "from-rose-400/15 to-rose-400/5"
-    },
-    {
-      icon: Briefcase,
-      title: t("careerTitle"),
-      description: t("careerDesc"),
-      items: [t("careerItem1"), t("careerItem2"), t("careerItem3"), t("careerItem4")],
-      accent: "from-emerald-400/15 to-emerald-400/5"
-    },
-    {
-      icon: TrendingUp,
-      title: t("forecastTitle"),
-      description: t("forecastDesc"),
-      items: [t("forecastItem1"), t("forecastItem2"), t("forecastItem3"), t("forecastItem4")],
-      accent: "from-primary/15 to-primary/5"
-    }
-  ]
   return (
-    <section className="py-32 relative overflow-hidden">
+    <section className="relative overflow-hidden py-24 sm:py-32">
       <div className="absolute inset-0 nebula-bg opacity-20" />
-      
-      <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
-        {/* Editorial header */}
-        <div className="text-center mb-20">
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full glass-warm mb-8">
-            <Star className="h-3.5 w-3.5 text-primary" />
-            <span className="text-xs tracking-widest uppercase text-muted-foreground">{t("badge")}</span>
+      <div className="relative z-10 mx-auto max-w-6xl px-5 sm:px-8 lg:px-12">
+        <header className="mx-auto mb-14 max-w-2xl text-center sm:mb-20">
+          <div className="glass-warm mb-7 inline-flex items-center gap-2 rounded-full px-5 py-2">
+            <Star className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+            <span className="text-xs uppercase tracking-widest text-muted-foreground">{t("badge")}</span>
           </div>
-          <h2 aria-label={`${t("titlePlain")} ${t("titleAccent")}`} className="font-serif text-4xl sm:text-5xl md:text-6xl font-light mb-6">
-            <span>{t("titlePlain")}</span>{" "}<span className="text-gradient">{t("titleAccent")}</span>
+          <h2 className="mb-5 font-serif text-4xl font-light sm:text-5xl md:text-6xl">
+            {t("titlePlain")} <span className="text-gradient">{t("titleAccent")}</span>
           </h2>
-          <p className="text-muted-foreground/80 text-lg max-w-xl mx-auto font-light">
-            {t("subtitle")}
-          </p>
+          <p className="text-pretty text-base font-light leading-relaxed text-muted-foreground/80 sm:text-lg">{t("subtitle")}</p>
+        </header>
+
+        <div className="mb-8 grid gap-6 lg:grid-cols-[1.45fr_0.8fr]">
+          <Card className="glass-card overflow-hidden border-0">
+            <CardContent className="p-4 sm:p-7">
+              <div className="mb-5 flex items-center justify-between gap-3">
+                <div>
+                  <p className="mb-1 text-[11px] uppercase tracking-[0.2em] text-primary/70">Пример из отчёта</p>
+                  <h3 className="font-serif text-xl text-foreground/90 sm:text-2xl">ЖИЗНЕННЫЕ ЦИКЛЫ</h3>
+                </div>
+                <TrendingUp className="h-5 w-5 text-primary/70" aria-hidden="true" />
+              </div>
+              <FullLifeTimeline data={previewTimeline} birthYear={1990} currentAge={40} height={245} animated={false} />
+            </CardContent>
+          </Card>
+
+          <Card className="glass-warm overflow-hidden border-primary/15">
+            <CardContent className="p-5 sm:p-7">
+              <p className="mb-1 text-[11px] uppercase tracking-[0.2em] text-primary/70">Пример из отчёта</p>
+              <h3 className="mb-5 font-serif text-xl text-foreground/90">КЛЮЧЕВЫЕ ЧИСЛА</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {[['7', 'Путь жизни'], ['4', 'Число судьбы'], ['2', 'Душа'], ['9', 'Личность']].map(([value, label]) => (
+                  <div key={label} className="rounded-xl border border-border/40 bg-card/40 p-4">
+                    <strong className="font-serif text-3xl font-light text-primary">{value}</strong>
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{label}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-5 rounded-xl border border-primary/15 bg-primary/5 p-4">
+                <p className="text-xs uppercase tracking-widest text-primary/70">22 Аркана</p>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Основные энергии и повторяющиеся темы твоего пути.</p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Report sections grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-          {reportSections.map((section, index) => (
-            <Card 
-              key={index} 
-              className="glass-card border-0 overflow-hidden group hover:border-primary/15 transition-all duration-500"
-            >
-              <CardContent className="p-0">
-                <div className={`h-1 bg-gradient-to-r ${section.accent}`} />
-                <div className="p-7">
-                  <div className="flex items-start gap-5">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${section.accent} flex items-center justify-center shrink-0`}>
-                      <section.icon className="h-5 w-5 text-primary/70" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-serif text-lg font-medium mb-2 text-foreground/90">{section.title}</h3>
-                      <p className="text-muted-foreground/70 text-sm mb-4">{section.description}</p>
-                      <div className="grid grid-cols-2 gap-2">
-                        {section.items.map((item, i) => (
-                          <div key={i} className="flex items-center gap-2">
-                            <Star className="h-3 w-3 text-primary/50 shrink-0" />
-                            <span className="text-xs text-muted-foreground/60">{item}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+        <div className="mb-8 grid gap-6 md:grid-cols-2">
+          <Card className="glass-card overflow-hidden border-0">
+            <CardContent className="p-5 sm:p-7">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="rounded-xl bg-primary/10 p-3"><Brain className="h-5 w-5 text-primary/70" aria-hidden="true" /></div>
+                <div><p className="text-[11px] uppercase tracking-[0.2em] text-primary/70">Пример из отчёта</p><h3 className="font-serif text-xl">КАРТА ИМЕНИ</h3></div>
+              </div>
+              <div className="flex items-center justify-center overflow-hidden py-2"><DestinyMatrix data={previewMatrix} size={250} animated={false} /></div>
+              <p className="text-center text-sm leading-relaxed text-muted-foreground">Значение имени, внутренние качества и скрытые ресурсы.</p>
+            </CardContent>
+          </Card>
+
+          <Card className="glass-card overflow-hidden border-0">
+            <CardContent className="p-5 sm:p-7">
+              <div className="mb-5 flex items-center gap-3"><div className="rounded-xl bg-emerald-500/10 p-3"><Briefcase className="h-5 w-5 text-emerald-400" aria-hidden="true" /></div><div><p className="text-[11px] uppercase tracking-[0.2em] text-primary/70">Пример из отчёта</p><h3 className="font-serif text-xl">КАРЬЕРА И САМОРЕАЛИЗАЦИЯ</h3></div></div>
+              <CareerGraph data={previewCareer} currentAge={40} height={220} animated={false} showLegend={false} className="[&>div:first-child]:hidden" />
+              <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-muted-foreground"><span>Таланты и сильные стороны</span><span>Подходящие направления</span><span>Потенциал реализации</span><span>Ключевые этапы</span></div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Preview card */}
-        <Card className="glass-warm border-primary/20 overflow-hidden">
-          <CardContent className="p-0">
-            <div className="grid md:grid-cols-2 gap-0">
-              {/* Sample content */}
-              <div className="p-8 border-r border-primary/10">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <Users className="h-5 w-5 text-primary/70" />
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground/60">{t("sampleLabel")}</p>
-                    <p className="font-serif font-medium text-foreground/90">{t("sampleTitle")}</p>
-                  </div>
-                </div>
-                
-                <div className="space-y-4 text-sm text-muted-foreground/70">
-                  <p className="leading-relaxed">
-                    {t("sampleText1")}
-                  </p>
-                  <div className="relative">
-                    <p className="leading-relaxed blur-sm">
-                      {t("sampleText2")}
-                    </p>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-background/70 border border-primary/20">
-                        <Lock className="h-4 w-4 text-primary/70" />
-                        <span className="text-xs text-foreground/80">{t("premiumContent")}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* CTA */}
-              <div className="p-8 flex flex-col justify-center items-center text-center bg-gradient-to-br from-primary/5 to-accent/5">
-                <Sparkles className="h-10 w-10 text-primary/60 mb-5" />
-                <h3 className="font-serif text-2xl font-light mb-3">{t("ctaTitle")}</h3>
-                <p className="text-muted-foreground/70 mb-6 max-w-xs text-sm">
-                  {t("ctaDesc")}
-                </p>
-                <Button 
-                  size="lg" 
-                  asChild 
-                  className="bg-gradient-to-r from-primary via-primary to-[#B8860B] hover:opacity-90 px-8 py-6 rounded-full cosmic-button"
-                >
-                  <Link href="/numerologie">
-                    {t("ctaButton")}
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Link>
-                </Button>
-                <p className="text-xs text-muted-foreground/50 mt-4">
-                  {t("ctaPrice")}
-                </p>
-              </div>
+        <Card className="glass-warm overflow-hidden border-primary/20">
+          <CardContent className="grid gap-0 p-0 md:grid-cols-2">
+            <div className="border-b border-primary/10 p-6 sm:p-8 md:border-b-0 md:border-r">
+              <div className="mb-5 flex items-center gap-3"><div className="rounded-xl bg-rose-400/10 p-3"><Heart className="h-5 w-5 text-rose-300" aria-hidden="true" /></div><h3 className="font-serif text-xl">ЛЮБОВЬ И ОТНОШЕНИЯ</h3></div>
+              <p className="mb-5 text-sm leading-relaxed text-muted-foreground">Стиль близости, совместимость, повторяющиеся сценарии и точки роста.</p>
+              <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground"><span>Стиль в отношениях</span><span>Совместимость</span><span>Сценарии</span><span>Точки роста</span></div>
             </div>
+            <div className="flex flex-col items-center justify-center bg-primary/5 p-6 text-center sm:p-8"><Lock className="mb-4 h-6 w-6 text-primary/70" aria-hidden="true" /><p className="mb-5 max-w-sm text-sm leading-relaxed text-muted-foreground">Полный анализ с индивидуальными расчётами, жизненными циклами и визуальными графиками.</p><Button size="lg" asChild className="cosmic-button rounded-full bg-gradient-to-r from-primary via-primary to-[#B8860B] px-7 py-6 hover:opacity-90"><Link href="/numerologie">Получить мой анализ<ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" /></Link></Button><span className="mt-4 text-xs text-muted-foreground/60">14,99 € — разовая оплата</span></div>
           </CardContent>
         </Card>
       </div>
