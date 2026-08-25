@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useState, useEffect, useRef } from "react"
-import { Menu, X, User, LogOut, LayoutDashboard, Settings, UserCog } from "lucide-react"
+import { User, LogOut, LayoutDashboard, Settings, UserCog } from "lucide-react"
 import { useAuth } from "@/components/providers/auth-provider"
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { useTranslations } from "next-intl"
@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 export function Navbar() {
-  const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const lastUpdateRef = useRef(0)
   const { user, profile, loading, signOut } = useAuth()
@@ -266,94 +265,13 @@ export function Navbar() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2 text-white/80 hover:text-white transition-colors"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label={isOpen ? t("closeMenu") : t("openMenu")}
-          >
-            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
+          {/* Mobile language selector */}
+          <div className="md:hidden">
+            <LanguageSwitcher />
+          </div>
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden bg-black/95 backdrop-blur-xl border-b border-white/10">
-          <div className="px-6 py-6 space-y-4">
-            <Link 
-              href="/#caracteristici" 
-              className="block text-white/80 hover:text-white transition-colors py-2"
-              onClick={() => setIsOpen(false)}
-            >
-              {t("features")}
-            </Link>
-            <Link 
-              href="/#preturi" 
-              className="block text-white/80 hover:text-white transition-colors py-2"
-              onClick={() => setIsOpen(false)}
-            >
-              {t("pricing")}
-            </Link>
-            <Link 
-              href="/#intrebari" 
-              className="block text-white/80 hover:text-white transition-colors py-2"
-              onClick={() => setIsOpen(false)}
-            >
-              {t("faq")}
-            </Link>
-            
-            <div className="pt-4 space-y-3 border-t border-white/10">
-              <div className="flex justify-center">
-                <LanguageSwitcher />
-              </div>
-              {loading ? (
-                <div className="h-10 w-full bg-white/5 rounded animate-pulse" />
-              ) : user ? (
-                <>
-                  <Button 
-                    variant="outline" 
-                    asChild 
-                    className="w-full justify-start gap-2 border-white/20 text-white/90 hover:bg-white/10"
-                  >
-                    <Link href="/dashboard" onClick={() => setIsOpen(false)}>
-                      <LayoutDashboard className="h-4 w-4" />
-                      {t("dashboard")}
-                    </Link>
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    className="w-full justify-start gap-2 text-red-400 hover:text-red-300 hover:bg-white/5"
-                    onClick={() => {
-                      signOut()
-                      setIsOpen(false)
-                    }}
-                  >
-                    <LogOut className="h-4 w-4" />
-                    {t("logout")}
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button 
-                    variant="ghost" 
-                    asChild 
-                    className="w-full text-white/90 hover:bg-white/10 border border-white/10"
-                  >
-                    <Link href="/auth/login" onClick={() => setIsOpen(false)}>{t("login")}</Link>
-                  </Button>
-                  <Button 
-                    asChild 
-                    className="w-full bg-gradient-to-r from-primary/90 to-primary shadow-[0_0_20px_rgba(200,165,80,0.3)]"
-                  >
-                    <Link href="/auth/sign-up" onClick={() => setIsOpen(false)}>{t("startFree")}</Link>
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </nav>
   )
 }
