@@ -3,6 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Check, Sparkles, Star, Shield, Zap } from "lucide-react"
+import { NumerologSymbol } from "@/components/numerolog-symbol"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 
@@ -83,7 +84,7 @@ export function PricingSection() {
               size="lg"
             >
               <Link href="/numerologie">
-                <Sparkles className="mr-2 h-4 w-4" />
+                <NumerologSymbol size="sm" className="mr-1" />
                 {t("cta")}
               </Link>
             </Button>

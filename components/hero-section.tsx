@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Sparkles } from "lucide-react"
+import { NumerologSymbol } from "@/components/numerolog-symbol"
 import { useEffect, useState, useRef } from "react"
 import { useTranslations, useLocale } from "next-intl"
 
@@ -165,7 +166,7 @@ export function HeroSection() {
             >
               <Link href="/numerologie">
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                <Sparkles className="w-4 h-4 mr-2" />
+                <NumerologSymbol size="sm" className="mr-1" />
                 <span>{t("ctaPrimary")}</span>
               </Link>
             </Button>

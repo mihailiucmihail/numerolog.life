@@ -3,7 +3,8 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useTranslations, useLocale } from "next-intl"
-import { ArrowRight, Check, Loader2, Sparkles } from "lucide-react"
+import { ArrowRight, Check, Loader2 } from "lucide-react"
+import { NumerologSymbol } from "@/components/numerolog-symbol"
 import { subscribeToNewsletter } from "@/app/actions/newsletter"
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -72,7 +73,7 @@ export function NewsletterForm({ onSuccess, compact = false }: NewsletterFormPro
       </label>
       {status === "error" && <p role="alert" className="text-sm text-destructive">{errorMsg}</p>}
       <button type="submit" disabled={status === "loading"} className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60">
-        {status === "loading" ? <><Loader2 className="size-4 animate-spin" aria-hidden="true" />{t("submitting")}</> : <><Sparkles className="size-4" aria-hidden="true" />{t("submit")}</>}
+        {status === "loading" ? <><Loader2 className="size-4 animate-spin" aria-hidden="true" />{t("submitting")}</> : <><NumerologSymbol size="sm" />{t("submit")}</>}
       </button>
       <p className="text-center text-xs leading-relaxed text-muted-foreground/60">{t("privacyConsent")}</p>
     </form>

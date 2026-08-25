@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from "react"
 import { User, LogOut, LayoutDashboard, Settings, UserCog } from "lucide-react"
 import { useAuth } from "@/components/providers/auth-provider"
 import { LanguageSwitcher } from "@/components/language-switcher"
+import { NumerologSymbol } from "@/components/numerolog-symbol"
 import { useTranslations } from "next-intl"
 import {
   DropdownMenu,
