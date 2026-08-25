@@ -6,9 +6,9 @@ interface NumerologSymbolProps {
 }
 
 const sizes = {
-  sm: 16,
-  md: 24,
-  lg: 36,
+  sm: 28,
+  md: 36,
+  lg: 44,
 }
 
 export function NumerologSymbol({ size = "md", className = "" }: NumerologSymbolProps) {
