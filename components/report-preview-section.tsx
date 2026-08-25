@@ -125,32 +125,54 @@ export function ReportPreviewSection() {
           <p className="text-pretty text-sm leading-6 text-muted-foreground/80 sm:text-base">{t("subtitle")}</p>
         </header>
 
-        {/* Quality of life over the years */}
-        <div className="mb-8">
-          <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
-          <h3 className="mb-1 font-serif text-xl text-foreground/90 sm:text-2xl">{S.quality}</h3>
-          <p className="mb-4 text-sm leading-6 text-muted-foreground/80">{S.qualityNote}</p>
-          <QualityOfLifePreview locale={locale} />
-        </div>
+        {/* Premium report dashboard */}
+        <div className="mb-8 grid gap-4 sm:gap-5 lg:grid-cols-12">
+          <article className="overflow-hidden rounded-2xl border border-primary/20 bg-card/45 p-4 shadow-[0_18px_60px_rgba(0,0,0,0.18)] sm:p-6 lg:col-span-8">
+            <div className="mb-4 flex items-start justify-between gap-4">
+              <div>
+                <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
+                <h3 className="font-serif text-xl text-foreground/90 sm:text-2xl">{locale === "ru" ? "Карьерный путь и жизненная энергия" : "Carier și energie vitală"}</h3>
+              </div>
+              <span className="rounded-full bg-primary/10 px-3 py-1 font-mono text-[10px] text-primary">40 лет · 8.2</span>
+            </div>
+            <CareerGraph data={previewCareer} currentAge={40} height={240} animated={false} showLegend={false} showTooltip={false} />
+          </article>
 
-        {/* Career + Money + Relationships */}
-        <div className="mb-8 grid gap-8 lg:grid-cols-2">
-          <div>
-            <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
-            <CareerGraph data={previewCareer} currentAge={40} height={180} animated={false} showLegend={false} showTooltip={false} />
-          </div>
-          <div>
-            <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
-            <RelationshipGraph data={previewRelationship} currentAge={40} height={180} animated={false} showTooltip={false} />
-          </div>
-          <div>
-            <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
-            <MoneyGraph data={previewMoney} currentAge={40} height={180} animated={false} showTooltip={false} />
-          </div>
-          <div>
-            <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
+          <aside className="grid grid-cols-2 gap-3 lg:col-span-4 lg:grid-cols-1">
+            {[
+              [locale === "ru" ? "Арканы" : "Arcane", "22"],
+              [locale === "ru" ? "Карта имени" : "Harta numelui", "7"],
+              [locale === "ru" ? "Циклы жизни" : "Cicluri de viață", "5"],
+              [locale === "ru" ? "Точки роста" : "Puncte de creștere", "12"],
+            ].map(([label, value]) => (
+              <div key={label} className="rounded-2xl border border-primary/15 bg-card/35 p-4 lg:flex lg:items-center lg:justify-between">
+                <span className="text-xs text-muted-foreground">{label}</span>
+                <strong className="mt-2 block font-serif text-2xl text-primary lg:mt-0">{value}</strong>
+              </div>
+            ))}
+          </aside>
+
+          <article className="rounded-2xl border border-primary/15 bg-card/35 p-4 sm:p-5 lg:col-span-5">
+            <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
+            <h3 className="mb-3 font-serif text-xl">{locale === "ru" ? "Финансовый поток" : "Flux financiar"}</h3>
+            <MoneyGraph data={previewMoney} currentAge={40} height={190} animated={false} showTooltip={false} />
+          </article>
+          <article className="rounded-2xl border border-primary/15 bg-card/35 p-4 sm:p-5 lg:col-span-7">
+            <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
+            <h3 className="mb-3 font-serif text-xl">{locale === "ru" ? "Качество жизни по годам" : S.quality}</h3>
+            <QualityOfLifePreview locale={locale} />
+          </article>
+
+          <article className="rounded-2xl border border-primary/15 bg-card/35 p-4 sm:p-5 lg:col-span-6">
+            <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
+            <h3 className="mb-3 font-serif text-xl">{locale === "ru" ? "Отношения" : "Relații"}</h3>
+            <RelationshipGraph data={previewRelationship} currentAge={40} height={190} animated={false} showTooltip={false} />
+          </article>
+          <article className="rounded-2xl border border-primary/15 bg-card/35 p-4 sm:p-5 lg:col-span-6">
+            <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
+            <h3 className="mb-3 font-serif text-xl">{locale === "ru" ? "Кармические периоды" : "Perioade karmice"}</h3>
             <KarmicPeriods periods={previewKarmic} currentAge={40} maxAge={80} animated={false} />
-          </div>
+          </article>
         </div>
 
         {/* CTA */}
