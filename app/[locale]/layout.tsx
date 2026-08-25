@@ -20,9 +20,9 @@ const cormorant = Cormorant_Garamond({
 })
 
 export const metadata: Metadata = {
-  title: 'NUMEROLOG.life | Cristalul Destinului',
-  description: 'Descoperă-ți Cristalul Destinului printr-o analiză numerologică personalizată a numelui, datei de naștere și etapelor vieții.',
-  keywords: 'numerologie, Cristalul Destinului, 22 Arcane, harta numelui, cicluri de viață',
+  title: 'NUMEROLOG.life | Кристалл судьбы',
+  description: 'Откройте свой Кристалл судьбы с помощью персонального нумерологического анализа имени, даты рождения и жизненных этапов.',
+  keywords: 'нумерология, Кристалл судьбы, 22 Аркана, карта имени, жизненные циклы',
   robots: 'index, follow',
 }
 

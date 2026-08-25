@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { useState, useEffect, useRef } from "react"
 import { User, LogOut, LayoutDashboard, Settings, UserCog } from "lucide-react"
 import { useAuth } from "@/components/providers/auth-provider"
-import { LanguageSwitcher } from "@/components/language-switcher"
 import { NumerologSymbol } from "@/components/numerolog-symbol"
 import { useTranslations } from "next-intl"
 import {
@@ -196,7 +195,6 @@ export function Navbar() {
 
           {/* Desktop Auth */}
           <div className="hidden md:flex items-center gap-4">
-            <LanguageSwitcher />
             {loading ? (
               <div className="h-9 w-24 bg-white/5 rounded-full animate-pulse" />
             ) : user ? (
@@ -268,7 +266,6 @@ export function Navbar() {
 
           {/* Mobile language selector */}
           <div className="md:hidden">
-            <LanguageSwitcher />
           </div>
         </div>
       </div>
