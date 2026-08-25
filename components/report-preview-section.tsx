@@ -8,7 +8,6 @@ import { CareerGraph } from "@/components/numerology/CareerGraph"
 import { MoneyGraph } from "@/components/numerology/MoneyGraph"
 import { RelationshipGraph } from "@/components/numerology/RelationshipGraph"
 import { KarmicPeriods } from "@/components/numerology/KarmicPeriods"
-import { FullLifeTimeline } from "@/components/numerology/FullLifeTimeline"
 import type { KarmicPeriod } from "@/lib/numerology/types"
 
 // ==== Sample data (0-90) ====
@@ -56,6 +55,35 @@ const previewKarmic: KarmicPeriod[] = [
   { startAge: 56, endAge: 80, type: "karmic_gift", intensity: 7 },
 ]
 
+const QUALITY_VALUES = [4.2, 5.1, 6.8, 6.1, 8.2, 7.6, 8.6, 8.1, 8.4, 8.1]
+
+function QualityOfLifePreview({ locale }: { locale: string }) {
+  const labels = locale === "ru"
+    ? ["Рождение", "Юность", "Зрелость", "Расцвет", "Мудрость"]
+    : ["Naștere", "Tinerețe", "Maturitate", "Înflorire", "Înțelepciune"]
+  return (
+    <div className="rounded-xl bg-black/15 px-3 pb-4 pt-4 ring-1 ring-primary/20">
+      <div className="mb-3 flex items-end justify-between gap-3">
+        <div className="flex flex-wrap gap-2">
+          {["Детство", "Рост", "Подростковый возраст", "Молодость", "Взросление"].map((label, i) => (
+            <span key={label} className={`rounded-full px-2.5 py-1 text-[10px] ${i === 4 ? "bg-primary/20 text-primary" : "bg-white/5 text-muted-foreground"}`}>{locale === "ru" ? label : ["Copilărie", "Creștere", "Adolescență", "Tinerețe", "Maturizare"][i]}</span>
+          ))}
+        </div>
+        <div className="shrink-0 rounded-xl border border-primary/60 bg-background/90 px-3 py-2 text-right shadow-[0_0_18px_rgba(217,169,79,0.18)]">
+          <div className="text-[9px] text-muted-foreground">{locale === "ru" ? "Сейчас" : "Acum"}</div>
+          <strong className="font-mono text-lg text-foreground">40 {locale === "ru" ? "лет" : "ani"}</strong>
+          <div className="text-[10px] text-primary">{locale === "ru" ? "Энергия" : "Energie"} 8.2</div>
+        </div>
+      </div>
+      <div className="relative flex h-44 items-end gap-1 border-b border-primary/20 px-2 pt-4">
+        {QUALITY_VALUES.map((value, i) => <div key={i} className="flex h-full flex-1 flex-col justify-end"><div className={`w-full rounded-t-sm ${i < 4 ? "bg-gradient-to-t from-[#6e2334] to-[#c97a89]" : "bg-gradient-to-t from-[#4a3a63] to-[#d9a94f]"}`} style={{ height: `${value * 10}%` }}><span className="sr-only">{value}</span></div></div>)}
+      </div>
+      <div className="mt-2 flex justify-between px-2 font-mono text-[9px] text-foreground/80"><span>0</span><span>10</span><span>20</span><span>30</span><span>40</span><span>50</span><span>60</span><span>70</span><span>80</span><span>90</span></div>
+      <div className="mt-5 flex justify-between gap-1 text-[9px] text-foreground/75">{labels.map((label) => <span key={label}>{label}</span>)}</div>
+    </div>
+  )
+}
+
 const SECTION_I18N = {
   ro: {
     eyebrow: "Exemplu de calcul",
@@ -102,13 +130,7 @@ export function ReportPreviewSection() {
           <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
           <h3 className="mb-1 font-serif text-xl text-foreground/90 sm:text-2xl">{S.quality}</h3>
           <p className="mb-4 text-sm leading-6 text-muted-foreground/80">{S.qualityNote}</p>
-          <FullLifeTimeline
-            data={previewTimeline}
-            birthYear={1985}
-            currentAge={40}
-            height={200}
-            animated={false}
-          />
+          <QualityOfLifePreview locale={locale} />
         </div>
 
         {/* Career + Money + Relationships */}
