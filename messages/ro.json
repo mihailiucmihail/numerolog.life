@@ -17,9 +17,9 @@
   "hero": {
     "reports": "rapoarte",
     "eyebrow": "Numerologie Personalizată",
-    "titleLine1": "Numărul Tău",
-    "titleLine2": "al Destinului",
-    "subtitle": "Descoperă secretele numerologiei — ciclurile vieții tale, energia destinului și potențialul ascuns.",
+    "titleLine1": "Descoperă-ți",
+    "titleLine2": "Cristalul Destinului",
+    "subtitle": "Analiză numerologică personală a numelui, datei de naștere, relațiilor, banilor și etapelor-cheie din viața ta.",
     "trustAI": "Calcul Precis",
     "trustTime": "60 Secunde",
     "trustPrivate": "100% Privat",
@@ -67,7 +67,8 @@
   },
   "features": {
     "badge": "Tehnologie",
-    "titlePlain": "De Ce",
+    "titlePlain": "Ce descoperi în",
+    "titleAccent": "Cristalul Destinului",
     "subtitle": "Un instrument de autocunoaștere bazat pe simboluri numerologice și etapele vieții.",
     "aiTitle": "22 de Arcane",
     "aiDesc": "Vezi ce teme, resurse și provocări se activează în Cristalul tău al Destinului.",
