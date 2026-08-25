@@ -147,8 +147,6 @@ export function HeroSection() {
         >
           <span>{t("trustAI")}</span>
           <span className="text-primary/50">&#9830;</span>
-          <span>{t("trustTime")}</span>
-          <span className="text-primary/50">&#9830;</span>
           <span>{t("trustPrivate")}</span>
         </div>
         
