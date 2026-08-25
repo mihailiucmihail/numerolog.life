@@ -23,15 +23,15 @@
     "trustAI": "Calcul Precis",
     "trustTime": "60 Secunde",
     "trustPrivate": "100% Privat",
-    "ctaPrimary": "Descoperă-ți Destinul",
+    "ctaPrimary": "Primește analiza mea",
     "ctaPrimaryNote": "Analiză personală • acces după plata securizată • 14,99 EUR",
     "ctaSecondary": "Vezi ce primești",
     "ctaSecondaryNote": "22 Arcane • harta numelui • cicluri și recomandări",
     "reviews": "recenzii",
     "scroll": "Descoperă"
   },
-  "destiny": {
-    "badge": "Nou: Raport Premium",
+    "destiny": {
+    "badge": "Cristalul Destinului",
     "titleLine1": "Descoperă cine ești",
     "titleLine2": "cu adevărat",
     "subtitle": "O hartă personală construită din numele și data ta de naștere.",
@@ -212,7 +212,7 @@
     "q8": "Este o predicție sigură?",
     "a8": "Nu. Raportul este un instrument de reflecție și autocunoaștere, nu o promisiune despre viitor și nu înlocuiește sfaturile profesioniștilor.",
     "disclaimerTitle": "Disclaimer Important",
-    "disclaimerText": "AstroAI este un serviciu de divertisment și ghidare spirituală. Rapoartele noastre nu constituie sfaturi medicale, legale sau financiare. Deciziile importante trebuie luate în consultare cu profesioniști calificați. Astrologia este un instrument de reflecție personală, nu o știință exactă."
+    "disclaimerText": "Numerolog este un instrument de reflecție și autocunoaștere. Raportul nu oferă certitudini și nu înlocuiește sfaturile medicale, juridice sau financiare ale profesioniștilor."
   },
   "footer": {
     "tagline": "Numerologie personalizată pentru autocunoaștere. Descoperă-ți Cristalul Destinului.",
@@ -228,7 +228,7 @@
     "terms": "Termeni și Condiții",
     "privacy": "Confidențialitate",
     "cookies": "Cookies",
-    "rights": "© 2024 AstroAI. Toate drepturile rezervate.",
+    "rights": "© 2026 Numerolog. Toate drepturile rezervate.",
     "madeWith": "Făcut cu dragoste în România"
   },
   "numerologie": {
