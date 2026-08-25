@@ -4,7 +4,6 @@ import { HeroSection } from "@/components/hero-section"
 import { HowItWorksSection } from "@/components/how-it-works-section"
 import { FeaturesSection } from "@/components/features-section"
 import { ReportPreviewSection } from "@/components/report-preview-section"
-import { PricingSection } from "@/components/pricing-section"
 import { FAQSection } from "@/components/faq-section"
 import { Footer } from "@/components/footer"
 import { StarField } from "@/components/star-field"
@@ -21,7 +20,6 @@ export default function HomePage() {
       <FeaturesSection />
       <ReportPreviewSection />
       <HowItWorksSection />
-      <PricingSection />
       <NewsletterSection />
       <FAQSection />
       <Footer />
