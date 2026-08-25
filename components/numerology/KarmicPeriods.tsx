@@ -4,6 +4,18 @@ import { motion } from "framer-motion"
 import { Sparkles, AlertTriangle, Gift, Minus } from "lucide-react"
 import type { KarmicPeriod } from "@/lib/numerology/types"
 import { mapKarmicPeriodsToSegments } from "@/lib/numerology/chart-mappers"
+import { useLocale } from "next-intl"
+
+const KARMA_I18N = {
+  ro: {
+    title: "Karma neamului", years: "ani",
+    labels: { karmic_debt: "Datorie karmică", karmic_lesson: "Lecție karmică", karmic_gift: "Dar karmic", neutral: "Perioadă neutră" },
+  },
+  ru: {
+    title: "Карма рода", years: "лет",
+    labels: { karmic_debt: "Кармический долг", karmic_lesson: "Кармический урок", karmic_gift: "Кармический дар", neutral: "Нейтральный период" },
+  },
+} as const
 
 interface KarmicPeriodsProps {
   periods: KarmicPeriod[]
@@ -20,13 +32,6 @@ const typeIcons = {
   neutral: Minus
 }
 
-const typeLabels = {
-  karmic_debt: "Datorie Karmica",
-  karmic_lesson: "Lectie Karmica",
-  karmic_gift: "Dar Karmic",
-  neutral: "Perioada Neutra"
-}
-
 export function KarmicPeriods({
   periods,
   currentAge = 30,
@@ -34,6 +39,9 @@ export function KarmicPeriods({
   animated = true,
   className = ""
 }: KarmicPeriodsProps) {
+  const locale = useLocale()
+  const L = KARMA_I18N[locale as keyof typeof KARMA_I18N] ?? KARMA_I18N.ro
+  const typeLabels = L.labels
   // Handle empty or undefined periods
   if (!periods || periods.length === 0) {
     return null
@@ -53,7 +61,7 @@ export function KarmicPeriods({
         <div className="p-2 rounded-lg bg-violet-500/10">
           <Sparkles className="h-5 w-5 text-violet-500" />
         </div>
-        <h3 className="font-semibold text-foreground">Perioade Karmice</h3>
+        <h3 className="font-semibold text-foreground">{L.title}</h3>
       </div>
       
       {/* Glassmorphism container */}
@@ -107,7 +115,7 @@ export function KarmicPeriods({
               transition={{ delay: 1 }}
             >
               <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium text-foreground whitespace-nowrap">
-                {currentAge} ani
+                {currentAge} {L.years}
               </div>
             </motion.div>
           </div>

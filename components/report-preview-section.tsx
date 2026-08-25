@@ -2,48 +2,147 @@
 
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { ArrowRight, Brain, Briefcase, Heart, Lock, Star, TrendingUp } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { ArrowRight, Lock, Star } from "lucide-react"
+import { useLocale, useTranslations } from "next-intl"
 import { CareerGraph } from "@/components/numerology/CareerGraph"
+import { MoneyGraph } from "@/components/numerology/MoneyGraph"
+import { RelationshipGraph } from "@/components/numerology/RelationshipGraph"
+import { KarmicPeriods } from "@/components/numerology/KarmicPeriods"
 import { FullLifeTimeline } from "@/components/numerology/FullLifeTimeline"
-import { DestinyMatrix } from "@/components/numerology/DestinyMatrix"
-import type { DestinyMatrixData } from "@/lib/numerology/types"
+import type { KarmicPeriod } from "@/lib/numerology/types"
 
-const previewCareer = Array.from({ length: 10 }, (_, index) => ({ age: index * 10, year: 1990 + index * 10, value: [4.2, 5.1, 6.8, 6.1, 8.4, 7.3, 8.8, 7.9, 8.6, 8.1][index], label: `Возраст ${index * 10}`, isPast: index < 4, isCurrent: index === 4, isFuture: index > 4, phase: ["childhood", "early_growth", "adolescence", "young_adult", "peak_career", "midlife", "wisdom", "mastery", "elder", "legacy"][index] }))
-const previewTimeline = previewCareer.map(({ age, year, value, phase }) => ({ age, year, energy: value, theme: ["Детство", "Рост", "Формирование", "Самостоятельность", "Реализация", "Перемены", "Мудрость", "Мастерство", "Опыт", "Наследие"][age / 10], phase }))
-const previewMatrix: DestinyMatrixData = { center: 7, positions: [1, 4, 7, 2, 7, 5, 3, 6, 9], lines: [{ from: 0, to: 4, energy: 0.8 }, { from: 2, to: 4, energy: 0.7 }, { from: 4, to: 8, energy: 0.9 }] }
+// ==== Sample data (0-90) ====
+const AGES = Array.from({ length: 10 }, (_, i) => i * 10)
 
-const insightRows = [
-  { icon: Brain, title: "КАРТА ИМЕНИ", text: "Как ты проявляешь себя, какие качества видят другие и где скрыт твой внутренний ресурс." },
-  { icon: Heart, title: "ЛЮБОВЬ И ОТНОШЕНИЯ", text: "Твой стиль близости, сценарии отношений, образ подходящего партнёра и точки роста." },
-  { icon: Briefcase, title: "ДЕНЬГИ И РЕАЛИЗАЦИЯ", text: "Сильные стороны, подходящие направления, финансовые блоки и условия роста." },
-  { icon: TrendingUp, title: "ПЕРИОДЫ ЖИЗНИ", text: "Что происходит сейчас, какие этапы приближаются и когда действовать смелее." },
+function buildSeries(values: number[], phases: string[]) {
+  return AGES.map((age, i) => ({
+    age,
+    year: 1985 + age,
+    value: values[i],
+    label: `${age}`,
+    isPast: i < 4,
+    isCurrent: i === 4,
+    isFuture: i > 4,
+    phase: phases[i],
+  }))
+}
+
+const previewCareer = buildSeries(
+  [3.8, 5.0, 6.4, 6.0, 8.4, 8.1, 8.7, 8.2, 7.9, 8.3],
+  ["precareer", "educatie", "inceput", "dezvoltare", "varf", "varf", "consolidare", "mentor", "mentor", "mostenire"],
+)
+const previewMoney = buildSeries(
+  [2.5, 3.4, 4.2, 5.6, 6.9, 8.2, 8.9, 8.4, 8.0, 8.6],
+  ["dependent", "dependent", "inceput", "acumulare", "crestere", "varf", "varf", "conservare", "conservare", "mostenire"],
+)
+const previewRelationship = buildSeries(
+  [5.5, 6.2, 5.0, 6.8, 7.4, 8.1, 8.6, 8.3, 8.0, 8.4],
+  ["familie", "familie", "descoperire", "explorare", "maturizare", "stabilitate", "stabilitate", "profunzime", "profunzime", "profunzime"],
+)
+
+const previewTimeline = AGES.map((age, i) => ({
+  age,
+  year: 1985 + age,
+  energy: [4.0, 5.2, 6.6, 6.1, 8.2, 7.6, 8.6, 8.0, 8.4, 8.1][i],
+  theme: ["Основа", "Поиск", "Формирование", "Опора", "Реализация", "Перемены", "Мудрость", "Мастерство", "Опыт", "Наследие"][i],
+  phase: ["childhood", "early_growth", "adolescence", "young_adult", "peak_career", "midlife", "wisdom", "mastery", "elder", "legacy"][i],
+}))
+
+const previewKarmic: KarmicPeriod[] = [
+  { startAge: 0, endAge: 14, type: "karmic_gift", intensity: 6 },
+  { startAge: 14, endAge: 29, type: "karmic_lesson", intensity: 7 },
+  { startAge: 29, endAge: 42, type: "karmic_debt", intensity: 8 },
+  { startAge: 42, endAge: 56, type: "neutral", intensity: 4 },
+  { startAge: 56, endAge: 80, type: "karmic_gift", intensity: 7 },
 ]
+
+const SECTION_I18N = {
+  ro: {
+    eyebrow: "Exemplu de calcul",
+    quality: "Calitatea vieții pe ani",
+    qualityNote: "Energia și potențialul tău, an cu an — de la naștere până la 90 de ani.",
+    lockTitle: "Răspunsul complet — în raportul tău",
+    lockNote: "Calculele individuale arată numerele tale, perioadele, relațiile, resursele și punctele concrete de creștere.",
+    cta: "Primesc analiza mea",
+    price: "14,99 € — o singură plată",
+  },
+  ru: {
+    eyebrow: "Пример расчёта",
+    quality: "Качество жизни по годам",
+    qualityNote: "Твоя энергия и потенциал год за годом — от рождения до 90 лет.",
+    lockTitle: "Полный ответ — в твоём отчёте",
+    lockNote: "Индивидуальные расчёты покажут твои числа, периоды, отношения, ресурсы и конкретные точки роста.",
+    cta: "Получить мой анализ",
+    price: "14,99 € — разовая оплата",
+  },
+} as const
 
 export function ReportPreviewSection() {
   const t = useTranslations("reportPreview")
+  const locale = useLocale()
+  const S = SECTION_I18N[locale as keyof typeof SECTION_I18N] ?? SECTION_I18N.ru
+
   return (
-    <section className="relative overflow-hidden py-14 sm:py-20">
-      <div className="absolute inset-0 nebula-bg opacity-15" />
-      <div className="relative z-10 mx-auto max-w-5xl px-5 sm:px-8">
-        <header className="mx-auto mb-9 max-w-2xl text-center sm:mb-12">
-          <div className="mb-4 inline-flex items-center gap-2 text-primary/80"><Star className="h-3.5 w-3.5" aria-hidden="true" /><span className="text-[10px] uppercase tracking-[0.2em]">{t("badge")}</span></div>
-          <h2 className="mb-3 font-serif text-3xl font-light leading-tight sm:text-5xl">{t("titlePlain")} <span className="text-gradient">{t("titleAccent")}</span></h2>
+    <section className="relative overflow-hidden py-12 sm:py-16">
+      <div className="absolute inset-0 nebula-bg opacity-15" aria-hidden="true" />
+      <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-8">
+        <header className="mx-auto mb-8 max-w-2xl text-center sm:mb-10">
+          <div className="mb-3 inline-flex items-center gap-2 text-primary/80">
+            <Star className="h-3.5 w-3.5" aria-hidden="true" />
+            <span className="text-[10px] uppercase tracking-[0.2em]">{t("badge")}</span>
+          </div>
+          <h2 className="mb-3 font-serif text-[1.7rem] font-light leading-tight sm:text-5xl">
+            {t("titlePlain")} <span className="text-gradient">{t("titleAccent")}</span>
+          </h2>
           <p className="text-pretty text-sm leading-6 text-muted-foreground/80 sm:text-base">{t("subtitle")}</p>
         </header>
 
-        <div className="mb-10 divide-y divide-border/25 border-y border-border/25 sm:mb-14">
-          {insightRows.map(({ icon: Icon, title, text }) => <article key={title} className="flex gap-4 py-5 sm:gap-6 sm:py-6"><Icon className="mt-1 h-5 w-5 shrink-0 text-primary/75" aria-hidden="true" /><div><h3 className="font-serif text-lg text-foreground/90 sm:text-xl">{title}</h3><p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">{text}</p></div></article>)}
+        {/* Quality of life over the years */}
+        <div className="mb-8">
+          <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
+          <h3 className="mb-1 font-serif text-xl text-foreground/90 sm:text-2xl">{S.quality}</h3>
+          <p className="mb-4 text-sm leading-6 text-muted-foreground/80">{S.qualityNote}</p>
+          <FullLifeTimeline
+            data={previewTimeline}
+            birthYear={1985}
+            currentAge={40}
+            height={200}
+            animated={false}
+          />
         </div>
 
-        <div className="mb-10 grid gap-8 lg:grid-cols-[1.3fr_0.9fr] sm:mb-14">
-          <div className="border-t border-primary/30 pt-4"><p className="mb-4 text-[10px] uppercase tracking-[0.2em] text-primary/75">Пример расчёта</p><h3 className="mb-5 font-serif text-2xl text-foreground/90">Жизненные циклы</h3><FullLifeTimeline data={previewTimeline} birthYear={1990} currentAge={40} height={210} animated={false} labels={{ current: "Сейчас", years: "лет", energy: "Энергия", phases: { childhood: "Детство", early_growth: "Рост", adolescence: "Подростковый возраст", young_adult: "Молодость", peak_career: "Пик карьеры", midlife: "Середина жизни", wisdom: "Мудрость", mastery: "Мастерство", elder: "Зрелость", legacy: "Наследие" } }} /></div>
-          <div className="border-t border-primary/30 pt-4"><p className="mb-4 text-[10px] uppercase tracking-[0.2em] text-primary/75">Пример расчёта</p><h3 className="mb-2 font-serif text-2xl text-foreground/90">Ключевые числа</h3><p className="mb-5 text-sm leading-6 text-muted-foreground">Три опорных значения, которые раскрывают характер, ресурсы и главные уроки пути.</p><div className="flex gap-5">{[["7", "Путь"], ["4", "Характер"], ["2", "Урок"]].map(([value, label]) => <div key={label}><strong className="font-serif text-4xl font-light text-primary">{value}</strong><p className="mt-1 text-xs text-muted-foreground">{label}</p></div>)}</div><p className="mt-6 border-l border-primary/40 pl-3 text-sm leading-6 text-muted-foreground">22 Аркана показывают повторяющиеся сценарии, кармические темы и энергию решений.</p></div>
+        {/* Career + Money + Relationships */}
+        <div className="mb-8 grid gap-8 lg:grid-cols-2">
+          <div>
+            <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
+            <CareerGraph data={previewCareer} currentAge={40} height={180} animated={false} showLegend={false} showTooltip={false} />
+          </div>
+          <div>
+            <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
+            <RelationshipGraph data={previewRelationship} currentAge={40} height={180} animated={false} showTooltip={false} />
+          </div>
+          <div>
+            <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
+            <MoneyGraph data={previewMoney} currentAge={40} height={180} animated={false} showTooltip={false} />
+          </div>
+          <div>
+            <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
+            <KarmicPeriods periods={previewKarmic} currentAge={40} maxAge={80} animated={false} />
+          </div>
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2"><div className="border-t border-primary/30 pt-4"><p className="mb-4 text-[10px] uppercase tracking-[0.2em] text-primary/75">Пример расчёта</p><h3 className="mb-3 font-serif text-2xl">Карта имени</h3><div className="flex justify-center"><DestinyMatrix data={previewMatrix} size={220} animated={false} /></div><p className="text-sm leading-6 text-muted-foreground">Значение имени, внутренние качества, способы самовыражения и скрытые ресурсы.</p></div><div className="border-t border-primary/30 pt-4"><p className="mb-4 text-[10px] uppercase tracking-[0.2em] text-primary/75">Пример расчёта</p><h3 className="mb-3 font-serif text-2xl">Потенциал реализации</h3><CareerGraph data={previewCareer} currentAge={40} height={190} animated={false} showLegend={false} className="[&>div:first-child]:hidden" /><p className="mt-3 text-sm leading-6 text-muted-foreground">Таланты, подходящие направления и периоды, когда легче всего раскрыть потенциал.</p></div></div>
-
-        <div className="mt-12 border-t border-primary/35 pt-7 text-center sm:mt-16"><Lock className="mx-auto mb-3 h-5 w-5 text-primary/75" aria-hidden="true" /><h3 className="font-serif text-2xl">Полный ответ — в твоём отчёте</h3><p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-muted-foreground">Индивидуальные расчёты покажут не общие фразы, а твои числа, периоды, отношения, ресурсы и конкретные точки роста.</p><Button size="lg" asChild className="cosmic-button mt-5 rounded-full px-7"><Link href="/numerologie">Получить мой анализ <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" /></Link></Button><p className="mt-3 text-xs text-muted-foreground/60">14,99 € — разовая оплата</p></div>
+        {/* CTA */}
+        <div className="mt-10 border-t border-primary/30 pt-7 text-center sm:mt-12">
+          <Lock className="mx-auto mb-3 h-5 w-5 text-primary/75" aria-hidden="true" />
+          <h3 className="font-serif text-xl sm:text-2xl">{S.lockTitle}</h3>
+          <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-muted-foreground">{S.lockNote}</p>
+          <Button size="lg" asChild className="cosmic-button mt-5 rounded-full px-7">
+            <Link href="/numerologie">
+              {S.cta} <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+            </Link>
+          </Button>
+          <p className="mt-3 text-xs text-muted-foreground/60">{S.price}</p>
+        </div>
       </div>
     </section>
   )

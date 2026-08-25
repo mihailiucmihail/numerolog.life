@@ -12,6 +12,28 @@ import {
   ReferenceDot
 } from "recharts"
 import { Briefcase, Sparkles } from "lucide-react"
+import { useLocale } from "next-intl"
+
+const CAREER_I18N = {
+  ro: {
+    title: "Evoluția carierei (0-90 ani)",
+    now: "Poziția actuală",
+    years: "ani",
+    energy: "Energie",
+    past: "Trecut", present: "Prezent", future: "Viitor",
+    tooltip: "Energie carieră", age: "Vârsta",
+    phases: { precareer: "Pre-carieră", educatie: "Educație", inceput: "Început", dezvoltare: "Dezvoltare", varf: "Vârf", consolidare: "Consolidare", mentor: "Mentor", mostenire: "Moștenire" } as Record<string, string>,
+  },
+  ru: {
+    title: "Эволюция карьеры (0-90 лет)",
+    now: "Текущая позиция",
+    years: "лет",
+    energy: "Энергия",
+    past: "Прошлое", present: "Сейчас", future: "Будущее",
+    tooltip: "Энергия карьеры", age: "Возраст",
+    phases: { precareer: "До карьеры", educatie: "Образование", inceput: "Начало", dezvoltare: "Развитие", varf: "Пик", consolidare: "Закрепление", mentor: "Наставник", mostenire: "Наследие" } as Record<string, string>,
+  },
+} as const
 
 interface CareerDataPoint {
   age: number
@@ -43,6 +65,8 @@ export function CareerGraph({
   showLegend = true,
   className = ""
 }: CareerGraphProps) {
+  const locale = useLocale()
+  const L = CAREER_I18N[locale as keyof typeof CAREER_I18N] ?? CAREER_I18N.ro
   // Handle empty or undefined data
   if (!data || data.length === 0) {
     return null
@@ -53,17 +77,7 @@ export function CareerGraph({
   const currentValue = currentData?.value || 5
   const currentPhase = currentData?.phase || "dezvoltare"
 
-  // Phase labels in Romanian
-  const phaseLabels: Record<string, string> = {
-    precareer: "Pre-cariera",
-    educatie: "Educatie",
-    inceput: "Inceput",
-    dezvoltare: "Dezvoltare",
-    varf: "Varf",
-    consolidare: "Consolidare",
-    mentor: "Mentor",
-    mostenire: "Mostenire"
-  }
+  const phaseLabels = L.phases
 
   return (
     <motion.div 
@@ -78,7 +92,7 @@ export function CareerGraph({
           <div className="p-2 rounded-lg bg-emerald-500/10">
             <Briefcase className="h-5 w-5 text-emerald-500" />
           </div>
-          <h3 className="font-semibold text-foreground">Evolutia Carierei (0-90 ani)</h3>
+          <h3 className="font-semibold text-foreground">{L.title}</h3>
         </div>
       </div>
       
@@ -96,13 +110,13 @@ export function CareerGraph({
               <div className="absolute inset-0 w-3 h-3 bg-emerald-500 rounded-full animate-ping opacity-50" />
             </div>
             <div className="flex-1">
-              <p className="text-xs text-muted-foreground">Pozitia Actuala</p>
+              <p className="text-xs text-muted-foreground">{L.now}</p>
               <div className="flex items-center gap-2">
-                <span className="text-lg font-bold text-emerald-400">{currentAge} ani</span>
+                <span className="text-lg font-bold text-emerald-400">{currentAge} {L.years}</span>
                 <span className="text-sm text-muted-foreground">|</span>
                 <span className="text-sm text-emerald-300">{phaseLabels[currentPhase] || currentPhase}</span>
                 <span className="text-sm text-muted-foreground">|</span>
-                <span className="text-sm font-medium text-emerald-400">Energie: {currentValue.toFixed(1)}/10</span>
+                <span className="text-sm font-medium text-emerald-400">{L.energy}: {currentValue.toFixed(1)}/10</span>
               </div>
             </div>
             <Sparkles className="h-5 w-5 text-emerald-400/50" />
@@ -181,10 +195,10 @@ export function CareerGraph({
                 }}
                 formatter={(value: number, name: string, props: any) => {
                   const point = props.payload
-                  const status = point.isPast ? "Trecut" : point.isCurrent ? "Prezent" : "Viitor"
-                  return [`${value.toFixed(1)}/10`, `Energie Cariera (${status})`]
+                  const status = point.isPast ? L.past : point.isCurrent ? L.present : L.future
+                  return [`${value.toFixed(1)}/10`, `${L.tooltip} (${status})`]
                 }}
-                labelFormatter={(label) => `Varsta: ${label} ani`}
+                labelFormatter={(label) => `${L.age}: ${label} ${L.years}`}
               />
             )}
             

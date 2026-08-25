@@ -14,6 +14,22 @@ import {
   AreaChart
 } from "recharts"
 import { Heart, Sparkles } from "lucide-react"
+import { useLocale } from "next-intl"
+
+const REL_I18N = {
+  ro: {
+    title: "Evoluția relațiilor (0-90 ani)",
+    now: "Poziția actuală", years: "ani", compat: "Compatibilitate",
+    past: "Trecut", present: "Prezent", future: "Viitor", age: "Vârsta",
+    phases: { familie: "Familie", prietenii: "Prietenii", descoperire: "Descoperire", explorare: "Explorare", maturizare: "Maturizare", stabilitate: "Stabilitate", profunzime: "Profunzime", companionship: "Companie" } as Record<string, string>,
+  },
+  ru: {
+    title: "Личная жизнь (0-90 лет)",
+    now: "Текущая позиция", years: "лет", compat: "Совместимость",
+    past: "Прошлое", present: "Сейчас", future: "Будущее", age: "Возраст",
+    phases: { familie: "Семья", prietenii: "Дружба", descoperire: "Открытие", explorare: "Поиск", maturizare: "Взросление", stabilitate: "Стабильность", profunzime: "Глубина", companionship: "Партнёрство" } as Record<string, string>,
+  },
+} as const
 
 interface RelationshipDataPoint {
   age: number
@@ -43,6 +59,8 @@ export function RelationshipGraph({
   animated = true,
   className = ""
 }: RelationshipGraphProps) {
+  const locale = useLocale()
+  const L = REL_I18N[locale as keyof typeof REL_I18N] ?? REL_I18N.ro
   // Handle empty or undefined data
   if (!data || data.length === 0) {
     return null
@@ -53,17 +71,7 @@ export function RelationshipGraph({
   const currentValue = currentData?.value || 5
   const currentPhase = currentData?.phase || "stabilitate"
 
-  // Phase labels in Romanian
-  const phaseLabels: Record<string, string> = {
-    familie: "Familie",
-    prietenii: "Prietenii",
-    descoperire: "Descoperire",
-    explorare: "Explorare",
-    maturizare: "Maturizare",
-    stabilitate: "Stabilitate",
-    profunzime: "Profunzime",
-    companionship: "Companie"
-  }
+  const phaseLabels = L.phases
 
   return (
     <motion.div 
@@ -78,7 +86,7 @@ export function RelationshipGraph({
           <div className="p-2 rounded-lg bg-pink-500/10">
             <Heart className="h-5 w-5 text-pink-500" />
           </div>
-          <h3 className="font-semibold text-foreground">Evolutia Relatiilor (0-90 ani)</h3>
+          <h3 className="font-semibold text-foreground">{L.title}</h3>
         </div>
       </div>
       
@@ -96,13 +104,13 @@ export function RelationshipGraph({
               <div className="absolute inset-0 w-3 h-3 bg-pink-500 rounded-full animate-ping opacity-50" />
             </div>
             <div className="flex-1">
-              <p className="text-xs text-muted-foreground">Pozitia Actuala</p>
+              <p className="text-xs text-muted-foreground">{L.now}</p>
               <div className="flex items-center gap-2">
-                <span className="text-lg font-bold text-pink-400">{currentAge} ani</span>
+                <span className="text-lg font-bold text-pink-400">{currentAge} {L.years}</span>
                 <span className="text-sm text-muted-foreground">|</span>
                 <span className="text-sm text-pink-300">{phaseLabels[currentPhase] || currentPhase}</span>
                 <span className="text-sm text-muted-foreground">|</span>
-                <span className="text-sm font-medium text-pink-400">Compatibilitate: {currentValue.toFixed(1)}/10</span>
+                <span className="text-sm font-medium text-pink-400">{L.compat}: {currentValue.toFixed(1)}/10</span>
               </div>
             </div>
             <Sparkles className="h-5 w-5 text-pink-400/50" />
@@ -182,10 +190,10 @@ export function RelationshipGraph({
                 }}
                 formatter={(value: number, name: string, props: any) => {
                   const point = props.payload
-                  const status = point.isPast ? "Trecut" : point.isCurrent ? "Prezent" : "Viitor"
-                  return [`${value.toFixed(1)}/10`, `Compatibilitate (${status})`]
+                  const status = point.isPast ? L.past : point.isCurrent ? L.present : L.future
+                  return [`${value.toFixed(1)}/10`, `${L.compat} (${status})`]
                 }}
-                labelFormatter={(label) => `Varsta: ${label} ani`}
+                labelFormatter={(label) => `${L.age}: ${label} ${L.years}`}
               />
             )}
             
