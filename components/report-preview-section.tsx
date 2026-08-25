@@ -56,6 +56,16 @@ export function ReportPreviewSection() {
           <p className="text-pretty text-base font-light leading-relaxed text-muted-foreground/80 sm:text-lg">{t("subtitle")}</p>
         </header>
 
+        <div className="mb-6 grid gap-3 sm:grid-cols-3">
+          {[['ДЕНЬ РОЖДЕНИЯ', '5', 'характер и подсознание'], ['МЕСЯЦ РОЖДЕНИЯ', '10', 'связь с родом'], ['ГОД РОЖДЕНИЯ', '1992', 'накопленный опыт']].map(([label, value, detail]) => (
+            <div key={label} className="border border-border/35 bg-card/25 px-4 py-3 text-center">
+              <p className="text-[10px] uppercase tracking-[0.14em] text-primary/70">{label}</p>
+              <p className="mt-1 font-serif text-2xl text-foreground/90">{value}</p>
+              <p className="text-[11px] text-muted-foreground">{detail}</p>
+            </div>
+          ))}
+        </div>
+
         <div className="mb-8 grid gap-6 lg:grid-cols-[1.45fr_0.8fr]">
           <Card className="glass-card overflow-hidden border-0">
             <CardContent className="p-4 sm:p-7">
@@ -66,25 +76,26 @@ export function ReportPreviewSection() {
                 </div>
                 <TrendingUp className="h-5 w-5 text-primary/70" aria-hidden="true" />
               </div>
-              <FullLifeTimeline data={previewTimeline} birthYear={1990} currentAge={40} height={245} animated={false} />
+              <FullLifeTimeline data={previewTimeline} birthYear={1990} currentAge={40} height={245} animated={false} labels={{ current: "Сейчас", years: "лет", energy: "Энергия", phases: { childhood: "Детство", early_growth: "Рост", adolescence: "Подростковый возраст", young_adult: "Молодость", peak_career: "Пик карьеры", midlife: "Середина жизни", wisdom: "Мудрость", mastery: "Мастерство", elder: "Зрелость", legacy: "Наследие" } }} />
             </CardContent>
           </Card>
 
           <Card className="glass-warm overflow-hidden border-primary/15">
             <CardContent className="p-5 sm:p-7">
               <p className="mb-1 text-[11px] uppercase tracking-[0.2em] text-primary/70">Пример из отчёта</p>
-              <h3 className="mb-5 font-serif text-xl text-foreground/90">КЛЮЧЕВЫЕ ЧИСЛА</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {[['7', 'Путь жизни'], ['4', 'Число судьбы'], ['2', 'Душа'], ['9', 'Личность']].map(([value, label]) => (
-                  <div key={label} className="rounded-xl border border-border/40 bg-card/40 p-4">
+              <h3 className="mb-2 font-serif text-xl text-foreground/90">КЛЮЧЕВЫЕ ЧИСЛА</h3>
+              <p className="mb-5 text-xs leading-relaxed text-muted-foreground">Ядро методики: три числа, на которые опирается весь дальнейший разбор.</p>
+              <div className="grid grid-cols-3 gap-2">
+                {[['7', 'Мнимые препятствия'], ['4', 'Черты характера'], ['2', 'Ошибка прошлого']].map(([value, label]) => (
+                  <div key={label} className="flex min-h-28 flex-col items-center justify-center border border-primary/35 bg-card/40 p-2 text-center">
                     <strong className="font-serif text-3xl font-light text-primary">{value}</strong>
-                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{label}</p>
+                    <p className="mt-2 text-[10px] leading-tight text-muted-foreground">{label}</p>
                   </div>
                 ))}
               </div>
-              <div className="mt-5 rounded-xl border border-primary/15 bg-primary/5 p-4">
+              <div className="mt-5 border border-border/40 bg-card/30 p-4">
                 <p className="text-xs uppercase tracking-widest text-primary/70">22 Аркана</p>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Основные энергии и повторяющиеся темы твоего пути.</p>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Основные энергии, кармические темы и повторяющиеся сценарии твоего пути.</p>
               </div>
             </CardContent>
           </Card>

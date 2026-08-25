@@ -27,6 +27,12 @@ interface FullLifeTimelineProps {
   currentAge: number
   height?: number
   animated?: boolean
+  labels?: {
+    current?: string
+    years?: string
+    energy?: string
+    phases?: Record<string, string>
+  }
   className?: string
 }
 
@@ -64,8 +70,10 @@ export function FullLifeTimeline({
   currentAge,
   height = 300,
   animated = true,
+  labels,
   className = ""
 }: FullLifeTimelineProps) {
+  const localizedPhaseLabels = labels?.phases ? { ...phaseLabels, ...labels.phases } : phaseLabels
   const [hoveredAge, setHoveredAge] = useState<number | null>(null)
   const [selectedPhase, setSelectedPhase] = useState<string | null>(null)
 
@@ -166,12 +174,12 @@ export function FullLifeTimeline({
                     </div>
                     
                     <div>
-                      <p className="text-xs text-muted-foreground">Esti aici</p>
-                      <p className="text-lg font-bold text-foreground">{currentAge} ani</p>
+                      <p className="text-xs text-muted-foreground">{labels?.current ?? "Esti aici"}</p>
+                      <p className="text-lg font-bold text-foreground">{currentAge} {labels?.years ?? "ani"}</p>
                     </div>
                     
                     <div className="pl-3 border-l border-border/50">
-                      <p className="text-xs text-muted-foreground">Energie</p>
+                      <p className="text-xs text-muted-foreground">{labels?.energy ?? "Energie"}</p>
                       <p className="text-lg font-bold text-primary">{currentPoint.energy.toFixed(1)}</p>
                     </div>
                   </div>
@@ -200,7 +208,7 @@ export function FullLifeTimeline({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              {phaseLabels[phase.phase] || phase.phase}
+              {localizedPhaseLabels[phase.phase] || phase.phase}
             </motion.button>
           ))}
         </div>
@@ -325,7 +333,7 @@ export function FullLifeTimeline({
                         <div className="flex justify-between gap-4">
                           <span className="text-muted-foreground">Faza</span>
                           <span className="font-medium" style={{ color: phaseColors[point.phase || ""] }}>
-                            {phaseLabels[point.phase || ""] || point.phase}
+                            {localizedPhaseLabels[point.phase || ""] || point.phase}
                           </span>
                         </div>
                         <div className="flex justify-between gap-4">
