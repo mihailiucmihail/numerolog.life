@@ -43,7 +43,7 @@ export function HowItWorksSection() {
             <span className="text-xs tracking-widest uppercase text-muted-foreground">{t("badge")}</span>
           </div>
           <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl font-light mb-6">
-            {t("titlePlain")} <span className="text-gradient">{t("titleAccent")}</span>
+            {t("titlePlain")}{" "}<span className="text-gradient">{t("titleAccent")}</span>
           </h2>
           <p className="text-muted-foreground/80 text-lg max-w-xl mx-auto font-light">
             {t("subtitle")}
