@@ -33,17 +33,17 @@ export function HowItWorksSection() {
     }
   ]
   return (
-    <section id="cum-functioneaza" className="py-32 relative overflow-hidden">
-      <div className="absolute inset-0 cosmic-gradient opacity-20" />
+    <section id="cum-functioneaza" className="relative overflow-hidden py-16 sm:py-20">
+      <div className="absolute inset-0 cosmic-gradient opacity-15" />
       
-      <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
-        {/* Editorial header */}
-        <div className="text-center mb-20">
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full glass-warm mb-8">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-8 lg:px-12">
+        {/* Compact editorial header */}
+        <div className="mx-auto mb-10 max-w-2xl text-center sm:mb-12">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/15 bg-card/20 px-4 py-1.5 backdrop-blur-sm">
             <Star className="h-3.5 w-3.5 text-primary" />
             <span className="text-xs tracking-widest uppercase text-muted-foreground">{t("badge")}</span>
           </div>
-          <h2 aria-label={`${t("titlePlain")} ${t("titleAccent")}`} className="font-serif text-4xl sm:text-5xl md:text-6xl font-light mb-6">
+          <h2 aria-label={`${t("titlePlain")} ${t("titleAccent")}`} className="mb-4 font-serif text-4xl font-light sm:text-5xl md:text-6xl">
             <span>{t("titlePlain")}</span>{" "}<span className="text-gradient">{t("titleAccent")}</span>
           </h2>
           <p className="text-muted-foreground/80 text-lg max-w-xl mx-auto font-light">
@@ -52,7 +52,7 @@ export function HowItWorksSection() {
         </div>
 
         {/* Steps grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6 mb-10">
           {steps.map((item, index) => (
             <div key={index} className="relative">
               {/* Connection line */}
@@ -61,8 +61,8 @@ export function HowItWorksSection() {
               )}
               
               <Card className="glass-card border-0 h-full group hover:border-primary/20 transition-all duration-500">
-                <CardContent className="p-8 text-center">
-                  <div className="relative inline-block mb-8">
+                <CardContent className="p-5 text-center sm:p-6">
+                  <div className="relative mb-5 inline-block">
                     <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center group-hover:from-primary/25 group-hover:to-primary/10 transition-all duration-500">
                       <item.icon className="h-7 w-7 text-primary/80" />
                     </div>
