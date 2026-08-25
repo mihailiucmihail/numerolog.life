@@ -76,7 +76,7 @@ function QualityOfLifePreview({ locale }: { locale: string }) {
         </div>
       </div>
       <div className="relative flex h-44 items-end gap-1 border-b border-primary/20 px-2 pt-4">
-        {QUALITY_VALUES.map((value, i) => <div key={i} className="flex h-full flex-1 flex-col justify-end"><div className={`w-full rounded-t-sm ${i < 4 ? "bg-gradient-to-t from-[#6e2334] to-[#c97a89]" : "bg-gradient-to-t from-[#4a3a63] to-[#d9a94f]"}`} style={{ height: `${value * 10}%` }}><span className="sr-only">{value}</span></div></div>)}
+        {QUALITY_VALUES.map((value, i) => <div key={i} className="flex h-full flex-1 flex-col justify-end"><div className={`relative w-full rounded-t-sm ${value === 0 ? "bg-gradient-to-t from-[#8a2f42] to-[#6e2334]" : value <= 3 ? "bg-gradient-to-t from-[#a35566] to-[#c97a89]" : value <= 6 ? "bg-gradient-to-t from-[#a5793a] to-[#d9a94f]" : "bg-gradient-to-t from-[#b9893e] to-[#f0c35a]"}`} style={{ height: `${Math.max(value * 10 + 10, 8)}%` }}><span className="absolute -top-4 left-0 right-0 text-center font-mono text-[9px] text-primary">{value}</span></div></div>)}
       </div>
       <div className="mt-2 flex justify-between px-2 font-mono text-[9px] text-foreground/80"><span>0</span><span>10</span><span>20</span><span>30</span><span>40</span><span>50</span><span>60</span><span>70</span><span>80</span><span>90</span></div>
       <div className="mt-5 flex justify-between gap-1 text-[9px] text-foreground/75">{labels.map((label) => <span key={label}>{label}</span>)}</div>
