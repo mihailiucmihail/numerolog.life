@@ -152,27 +152,18 @@ export function ReportPreviewSection() {
             ))}
           </aside>
 
-          <article className="rounded-2xl border border-primary/15 bg-card/35 p-4 sm:p-5 lg:col-span-5">
-            <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
-            <h3 className="mb-3 font-serif text-xl">{locale === "ru" ? "Финансовый поток" : "Flux financiar"}</h3>
+          <div className="lg:col-span-5">
             <MoneyGraph data={previewMoney} currentAge={40} height={190} animated={false} showTooltip={false} />
-          </article>
-          <article className="rounded-2xl border border-primary/15 bg-card/35 p-4 sm:p-5 lg:col-span-7">
-            <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
-            <h3 className="mb-3 font-serif text-xl">{locale === "ru" ? "Качество жизни по годам" : S.quality}</h3>
+          </div>
+          <div className="lg:col-span-7">
             <QualityOfLifePreview locale={locale} />
-          </article>
-
-          <article className="rounded-2xl border border-primary/15 bg-card/35 p-4 sm:p-5 lg:col-span-6">
-            <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
-            <h3 className="mb-3 font-serif text-xl">{locale === "ru" ? "Отношения" : "Relații"}</h3>
+          </div>
+          <div className="lg:col-span-6">
             <RelationshipGraph data={previewRelationship} currentAge={40} height={190} animated={false} showTooltip={false} />
-          </article>
-          <article className="rounded-2xl border border-primary/15 bg-card/35 p-4 sm:p-5 lg:col-span-6">
-            <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-primary/70">{S.eyebrow}</p>
-            <h3 className="mb-3 font-serif text-xl">{locale === "ru" ? "Кармические периоды" : "Perioade karmice"}</h3>
+          </div>
+          <div className="lg:col-span-6">
             <KarmicPeriods periods={previewKarmic} currentAge={40} maxAge={80} animated={false} />
-          </article>
+          </div>
         </div>
 
         {/* CTA */}
