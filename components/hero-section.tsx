@@ -4,11 +4,25 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Sparkles } from "lucide-react"
 import { useEffect, useState, useRef } from "react"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 
 export function HeroSection() {
   const t = useTranslations("hero")
+  const locale = useLocale()
   const [isVisible, setIsVisible] = useState(true)
+  const [mounted, setMounted] = useState(false)
+  const [counter, setCounter] = useState(50000)
+
+  useEffect(() => {
+    setMounted(true)
+    const getCounter = () => {
+      const now = new Date()
+      return 50000 + now.getUTCHours() * 60 + now.getUTCMinutes()
+    }
+    setCounter(getCounter())
+    const interval = setInterval(() => setCounter(getCounter()), 60000)
+    return () => clearInterval(interval)
+  }, [])
   const starsContainerRef = useRef<HTMLDivElement>(null)
 
   // Create stars via DOM manipulation to avoid hydration mismatch
@@ -51,6 +65,17 @@ export function HeroSection() {
           All background overlays removed - StarField provides the cosmic background
       ═══════════════════════════════════════════════════════════════════════ */}
       
+      {/* Premium activity badge */}
+      <div className="relative z-10 flex justify-center mb-10 sm:mb-14">
+        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full backdrop-blur-sm" style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(242,212,114,0.08) 100%)', border: '1px solid rgba(212,175,55,0.2)' }}>
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-60 animate-ping" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+          </span>
+          <span className="text-xs font-semibold text-foreground/80 tracking-tight">{mounted ? counter.toLocaleString(locale === 'ru' ? 'ru-RU' : 'ro-RO') : '50.000'} {t("reports")}</span>
+        </div>
+      </div>
+
       {/* Zodiac wheel - subtle circular pattern */}
       <div 
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] opacity-[0.04] pointer-events-none"
