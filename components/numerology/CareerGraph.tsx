@@ -8,7 +8,6 @@ import {
   YAxis, 
   Tooltip, 
   ResponsiveContainer,
-  ReferenceLine,
   ReferenceDot
 } from "recharts"
 import { Briefcase, Sparkles } from "lucide-react"
@@ -99,7 +98,7 @@ export function CareerGraph({
       {/* Current position premium card */}
       {currentData && (
         <motion.div 
-          className="mb-4 p-3 rounded-xl bg-gradient-to-r from-emerald-500/10 via-emerald-400/5 to-transparent border border-emerald-500/20"
+          className="mb-3 rounded-xl border border-emerald-500/25 bg-emerald-500/5 p-3"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.3 }}
@@ -173,17 +172,6 @@ export function CareerGraph({
               tick={{ fill: "#f3ead8", fontSize: 11, fontWeight: 600 }}
               ticks={[2, 4, 6, 8, 10]}
             />
-            
-            {/* Current position vertical line with glow */}
-            {currentAge && (
-              <ReferenceLine 
-                x={currentAge} 
-                stroke="#22c55e"
-                strokeWidth={2}
-                strokeDasharray="none"
-                filter="url(#careerGlow)"
-              />
-            )}
             
             {showTooltip && (
               <Tooltip

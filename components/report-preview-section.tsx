@@ -128,7 +128,7 @@ export function ReportPreviewSection() {
         {/* Premium report dashboard */}
         <div className="mb-8 grid gap-4 sm:gap-5 lg:grid-cols-12">
           <div className="lg:col-span-8">
-            <CareerGraph data={previewCareer} currentAge={40} height={240} animated={false} showLegend={false} showTooltip={false} className="rounded-2xl border border-primary/20 bg-card/45 p-4 shadow-[0_18px_60px_rgba(0,0,0,0.18)] sm:p-6" />
+            <CareerGraph data={previewCareer} currentAge={40} height={228} animated={false} showLegend={false} showTooltip={false} className="rounded-[14px] border border-primary/30 bg-card/35 p-3 shadow-none sm:p-4" />
           </div>
 
           <aside className="grid grid-cols-2 gap-3 lg:col-span-4 lg:grid-cols-1">
