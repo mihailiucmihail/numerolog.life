@@ -141,13 +141,13 @@ export function HeroSection() {
 
         {/* Simplified trust - just text with better contrast */}
         <div 
-          className={`flex flex-wrap items-center justify-center gap-x-4 gap-y-2 px-2 mb-10 sm:mb-16 text-xs tracking-widest uppercase text-muted-foreground/70 transition-all duration-1000 delay-400 ${
+          className={`flex flex-col items-center justify-center gap-y-2 px-2 mb-10 sm:mb-16 text-xs tracking-widest uppercase text-muted-foreground/70 transition-all duration-1000 delay-400 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          <span>{t("trustAI")}</span>
+          <span className="text-center">{t("trustAI")}</span>
           <span className="text-primary/50">&#9830;</span>
-          <span>{t("trustPrivate")}</span>
+          <span className="text-center">{t("trustPrivate")}</span>
         </div>
         
         {/* Single CTA - Instant Report */}
