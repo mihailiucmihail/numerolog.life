@@ -10,39 +10,13 @@ import { RelationshipGraph } from "@/components/numerology/RelationshipGraph"
 import { KarmicPeriods } from "@/components/numerology/KarmicPeriods"
 import type { KarmicPeriod } from "@/lib/numerology/types"
 
-// ==== Exemplu identic cu algoritmul din cristalul-calculator.html ====
+// ==== Sample data (0-90) ====
 const AGES = Array.from({ length: 10 }, (_, i) => i * 10)
-const SOURCE_EXAMPLE = { day: 5, month: 10, year: 1992 }
-
-function magicDigits(raw: number, targetLen = 7, reverse = false) {
-  let value = String(Math.round(raw))
-  if (reverse) value = value.split("").reverse().join("")
-  if (value.length < targetLen) value += "0".repeat(targetLen - value.length)
-  return value.slice(0, targetLen).split("").map(Number)
-}
-
-function buildSourceCareerSeries(day: number, month: number, year: number) {
-  // Formula originală: seed = concatenarea ZZLL × anul; fiecare cifră = nivel 0–9.
-  const seed = Number(`${String(day).padStart(2, "0")}${String(month).padStart(2, "0")}`) * year
-  const digits = magicDigits(seed)
-  return [{ age: 0, year, value: 0, label: "0", isPast: true, isCurrent: false, isFuture: false, phase: "precareer" }, ...digits.map((value, index) => {
-    const age = (index + 1) * 10
-    return { age, year: year + age, value, label: `${age}`, isPast: age < 40, isCurrent: age === 40, isFuture: age > 40, phase: "dezvoltare" }
-  })]
-}
-
-function derivedValues(seed: number, scale = 10) {
-  return AGES.map((_, i) => Math.round((((seed * (i + 3) + i * 17) % 91) / 10) * scale) / scale)
-}
-
-const EXAMPLE_SEED = SOURCE_EXAMPLE.day * SOURCE_EXAMPLE.month * SOURCE_EXAMPLE.year
-const CURRENT_AGE = 33
-const EXAMPLE_VALUES = derivedValues(EXAMPLE_SEED)
 
 function buildSeries(values: number[], phases: string[]) {
   return AGES.map((age, i) => ({
     age,
-    year: SOURCE_EXAMPLE.year + age,
+    year: 1985 + age,
     value: values[i],
     label: `${age}`,
     isPast: i < 4,
@@ -52,20 +26,23 @@ function buildSeries(values: number[], phases: string[]) {
   }))
 }
 
-const previewCareer = buildSourceCareerSeries(SOURCE_EXAMPLE.day, SOURCE_EXAMPLE.month, SOURCE_EXAMPLE.year)
+const previewCareer = buildSeries(
+  [3.8, 5.0, 6.4, 6.0, 8.4, 8.1, 8.7, 8.2, 7.9, 8.3],
+  ["precareer", "educatie", "inceput", "dezvoltare", "varf", "varf", "consolidare", "mentor", "mentor", "mostenire"],
+)
 const previewMoney = buildSeries(
-  derivedValues(EXAMPLE_SEED + 11),
+  [2.5, 3.4, 4.2, 5.6, 6.9, 8.2, 8.9, 8.4, 8.0, 8.6],
   ["dependent", "dependent", "inceput", "acumulare", "crestere", "varf", "varf", "conservare", "conservare", "mostenire"],
 )
 const previewRelationship = buildSeries(
-  derivedValues(EXAMPLE_SEED + 23),
+  [5.5, 6.2, 5.0, 6.8, 7.4, 8.1, 8.6, 8.3, 8.0, 8.4],
   ["familie", "familie", "descoperire", "explorare", "maturizare", "stabilitate", "stabilitate", "profunzime", "profunzime", "profunzime"],
 )
 
 const previewTimeline = AGES.map((age, i) => ({
   age,
-  year: SOURCE_EXAMPLE.year + age,
-  energy: derivedValues(EXAMPLE_SEED + 37)[i],
+  year: 1985 + age,
+  energy: [4.0, 5.2, 6.6, 6.1, 8.2, 7.6, 8.6, 8.0, 8.4, 8.1][i],
   theme: ["Основа", "Поиск", "Формирование", "Опора", "Реализация", "Перемены", "Мудрость", "Мастерство", "Опыт", "Наследие"][i],
   phase: ["childhood", "early_growth", "adolescence", "young_adult", "maturation", "midlife", "wisdom", "mastery", "elder", "legacy"][i],
 }))
@@ -94,8 +71,8 @@ function QualityOfLifePreview({ locale }: { locale: string }) {
         </div>
         <div className="shrink-0 rounded-xl border border-primary/60 bg-background/90 px-3 py-2 text-right shadow-[0_0_18px_rgba(217,169,79,0.18)]">
           <div className="text-[9px] text-muted-foreground">{locale === "ru" ? "Сейчас" : "Acum"}</div>
-          <strong className="font-mono text-lg text-foreground">{CURRENT_AGE} {locale === "ru" ? "лет" : "ani"}</strong>
-          <div className="text-[10px] text-primary">{locale === "ru" ? "Энергия" : "Energie"} {previewTimeline[3]?.energy.toFixed(1)}</div>
+          <strong className="font-mono text-lg text-foreground">40 {locale === "ru" ? "лет" : "ani"}</strong>
+          <div className="text-[10px] text-primary">{locale === "ru" ? "Энергия" : "Energie"} 8.2</div>
         </div>
       </div>
       <div className="relative flex h-44 items-end gap-1 border-b border-primary/20 px-2 pt-4">
@@ -151,12 +128,7 @@ export function ReportPreviewSection() {
         {/* Premium report dashboard */}
         <div className="mb-8 grid gap-4 sm:gap-5 lg:grid-cols-12">
           <div className="lg:col-span-8">
-            <div>
-              <CareerGraph data={previewCareer} currentAge={CURRENT_AGE} height={228} animated={false} showLegend={false} showTooltip={false} className="rounded-[14px] border border-primary/30 bg-card/35 p-3 shadow-none sm:p-4" />
-              <p className="mt-2 px-1 text-[10px] leading-5 text-muted-foreground/70">
-                {locale === "ru" ? "Пример: 05.10.1992 → 0510 × 1992 = 1015920 → персональные уровни графика." : "Exemplu: 05.10.1992 → 0510 × 1992 = 1015920 → nivelurile personale ale graficului."}
-              </p>
-            </div>
+            <CareerGraph data={previewCareer} currentAge={40} height={228} animated={false} showLegend={false} showTooltip={false} className="rounded-[14px] border border-primary/30 bg-card/35 p-3 shadow-none sm:p-4" />
           </div>
 
           <aside className="grid grid-cols-2 gap-3 lg:col-span-4 lg:grid-cols-1">
@@ -174,16 +146,16 @@ export function ReportPreviewSection() {
           </aside>
 
           <div className="lg:col-span-5">
-            <MoneyGraph data={previewMoney} currentAge={CURRENT_AGE} height={190} animated={false} showTooltip={false} />
+            <MoneyGraph data={previewMoney} currentAge={40} height={190} animated={false} showTooltip={false} />
           </div>
           <div className="lg:col-span-7">
             <QualityOfLifePreview locale={locale} />
           </div>
           <div className="lg:col-span-6">
-            <RelationshipGraph data={previewRelationship} currentAge={CURRENT_AGE} height={190} animated={false} showTooltip={false} />
+            <RelationshipGraph data={previewRelationship} currentAge={40} height={190} animated={false} showTooltip={false} />
           </div>
           <div className="lg:col-span-6">
-            <KarmicPeriods periods={previewKarmic} currentAge={CURRENT_AGE} maxAge={80} animated={false} />
+            <KarmicPeriods periods={previewKarmic} currentAge={40} maxAge={80} animated={false} />
           </div>
         </div>
 
