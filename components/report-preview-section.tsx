@@ -45,7 +45,7 @@ const previewTimeline = AGES.map((age, i) => ({
   year: 1985 + age,
   energy: [4.0, 5.2, 6.6, 6.1, 8.2, 7.6, 8.6, 8.0, 8.4, 8.1][i],
   theme: ["Основа", "Поиск", "Формирование", "Опора", "Реализация", "Перемены", "Мудрость", "Мастерство", "Опыт", "Наследие"][i],
-  phase: ["childhood", "early_growth", "adolescence", "young_adult", "peak_career", "midlife", "wisdom", "mastery", "elder", "legacy"][i],
+  phase: ["childhood", "early_growth", "adolescence", "young_adult", "maturation", "midlife", "wisdom", "mastery", "elder", "legacy"][i],
 }))
 
 const previewKarmic: KarmicPeriod[] = [
