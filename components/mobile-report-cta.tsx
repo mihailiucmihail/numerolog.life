@@ -2,7 +2,8 @@
 
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { ArrowRight, Diamond } from "lucide-react"
+import { ArrowRight } from "lucide-react"
+import { NumerologMark } from "@/components/numerolog-mark"
 
 export function MobileReportCta() {
   const t = useTranslations("pricing")
@@ -12,7 +13,7 @@ export function MobileReportCta() {
         href="/numerologie"
         className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-lg transition-opacity hover:opacity-90"
       >
-        <Diamond className="size-4" aria-hidden="true" />
+        <NumerologMark size="sm" className="mr-1" />
         <span>{t("ctaMobile")}</span>
         <ArrowRight className="size-4" aria-hidden="true" />
       </Link>

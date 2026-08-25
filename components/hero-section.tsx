@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Sparkles } from "lucide-react"
+import { NumerologMark } from "@/components/numerolog-mark"
 import { useEffect, useState, useRef } from "react"
 import { useTranslations, useLocale } from "next-intl"
 
@@ -165,7 +165,7 @@ export function HeroSection() {
             >
               <Link href="/numerologie">
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                <Sparkles className="w-4 h-4 mr-2" />
+                <NumerologMark size="sm" className="mr-2" />
                 <span>{t("ctaPrimary")}</span>
               </Link>
             </Button>

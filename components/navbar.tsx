@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from "react"
 import { User, LogOut, LayoutDashboard, Settings, UserCog } from "lucide-react"
 import { useAuth } from "@/components/providers/auth-provider"
 import { LanguageSwitcher } from "@/components/language-switcher"
+import { NumerologMark } from "@/components/numerolog-mark"
 import { useTranslations } from "next-intl"
 import {
   DropdownMenu,
@@ -71,7 +72,9 @@ export function Navbar() {
                   animation: 'logoPulse 4s ease-in-out infinite',
                 }}
               />
-              <svg viewBox="0 0 36 36" fill="none" className="relative z-10" width="36" height="36" aria-hidden="true">
+              <NumerologMark size="lg" className="relative z-10" />
+              {/* Simbolul este componenta centralizată NUMEROLOG. */}
+              <svg viewBox="0 0 36 36" fill="none" className="hidden" width="36" height="36" aria-hidden="true">
                 <defs>
                   <linearGradient id="lg1" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
                     <stop offset="0%" stopColor="#C8A84B" />
