@@ -8,8 +8,10 @@ const DISCOUNT_CODE = process.env.NEWSLETTER_DISCOUNT_CODE || 'CRISTAL15'
 
 interface SubscribeInput {
   email: string
-  firstName: string
-  lastName: string
+  firstName?: string
+  lastName?: string
+  marketingConsent?: boolean
+  source?: string
   locale?: string
 }
 
@@ -49,6 +51,8 @@ export async function subscribeToNewsletter(input: SubscribeInput): Promise<Subs
     const email = input.email?.toLowerCase().trim()
     const firstName = input.firstName?.trim() || null
     const lastName = input.lastName?.trim() || null
+    const marketingConsent = input.marketingConsent === true
+    const source = input.source || 'discount_popup'
     const locale = input.locale === 'ro' ? 'ro' : 'ru'
 
     if (!email || !EMAIL_RE.test(email)) {
@@ -59,8 +63,8 @@ export async function subscribeToNewsletter(input: SubscribeInput): Promise<Subs
 
     // Upsert: reactiveaza abonatii existenti, pastreaza tokenul existent daca exista
     const rows = await db<{ unsubscribe_token: string }[]>`
-      INSERT INTO newsletter_subscribers (email, first_name, last_name, locale, discount_code, subscribed, unsubscribe_token)
-      VALUES (${email}, ${firstName}, ${lastName}, ${locale}, ${DISCOUNT_CODE}, TRUE, ${token})
+      INSERT INTO newsletter_subscribers (email, first_name, last_name, locale, discount_code, subscribed, unsubscribe_token, marketing_consent, marketing_consent_at, source, discount_percent, discount_activated_at)
+      VALUES (${email}, ${firstName}, ${lastName}, ${locale}, ${DISCOUNT_CODE}, TRUE, ${token}, ${marketingConsent}, ${marketingConsent ? new Date() : null}, ${source}, 15, now())
       ON CONFLICT (email) DO UPDATE SET
         first_name = COALESCE(EXCLUDED.first_name, newsletter_subscribers.first_name),
         last_name = COALESCE(EXCLUDED.last_name, newsletter_subscribers.last_name),

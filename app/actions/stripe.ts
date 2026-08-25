@@ -3,16 +3,23 @@
 import { getStripe } from "@/lib/stripe"
 import { getPlan, getProduct } from "@/lib/products"
 import { createClient } from "@/lib/supabase/server"
+import { db } from "@/lib/db"
 
 export async function startNumerologieCheckout(
   email?: string,
   locale: string = 'ro',
   formData?: Record<string, unknown>,
+  discountCode?: string,
 ): Promise<string> {
   const product = getProduct('cristalul-destinului')
   if (!product) throw new Error('Produsul nu a fost găsit.')
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
+  const normalizedCode = discountCode?.trim().toUpperCase()
+  const eligible = normalizedCode
+    ? await db<{ email: string }[]>`SELECT email FROM newsletter_subscribers WHERE email = ${email?.toLowerCase().trim()} AND discount_code = ${normalizedCode} AND discount_activated_at IS NOT NULL LIMIT 1`
+    : []
+  const unitAmount = eligible.length ? 1274 : 1499
 
   const stripe = getStripe()
   const session = await stripe.checkout.sessions.create({

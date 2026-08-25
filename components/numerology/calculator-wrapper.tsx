@@ -29,6 +29,7 @@ export default function CalculatorWrapper() {
   // Extrage locale-ul din path (ex: /ro/numerologie -> ro)
   const locale = pathname?.split('/')[1] || 'ro'
   const didUnlock = useRef(false)
+  const discountCode = searchParams.get('discount') || undefined
 
   // Dupa return de la Stripe, verificam plata, salvam raportul si trimitem email
   useEffect(() => {
@@ -79,14 +80,14 @@ export default function CalculatorWrapper() {
     try {
       // localStorage persista cross-redirect (spre deosebire de sessionStorage care se pierde)
       localStorage.setItem('cristalul_form_data', JSON.stringify(formData))
-      const checkoutUrl = await startNumerologieCheckout(formData.email, locale, formData)
+      const checkoutUrl = await startNumerologieCheckout(formData.email, locale, formData, discountCode)
       window.location.href = checkoutUrl
     } catch {
       setShowLoading(false)
       localStorage.removeItem('cristalul_form_data')
       iframeRef.current?.contentWindow?.postMessage({ type: 'paymentCancelled' }, '*')
     }
-  }, [])
+  }, [locale, discountCode])
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
