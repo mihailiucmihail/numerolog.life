@@ -165,5 +165,5 @@ export const HOUSES = [
 export const REPORT_PRICE = {
   amount: 1499, // 14.99 EUR in cents
   currency: "eur",
-  displayPrice: "14.99 EUR"
+  displayPrice: "14,99 €"
 }

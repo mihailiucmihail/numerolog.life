@@ -70,9 +70,7 @@ function ProductPresentation({ onStart }: { onStart: () => void }) {
         <div className="flex items-center justify-between border-t pt-6" style={{ borderColor: 'rgba(212,175,55,0.15)' }}>
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Preț</p>
-            <p className="font-serif text-3xl font-light text-foreground">
-              1 <span className="text-lg" style={{ color: 'var(--gold)' }}>EUR</span>
-            </p>
+            <p className="font-serif text-3xl font-light text-foreground">14,99 €</p>
             <p className="text-xs text-muted-foreground mt-1">Plată unică — acces permanent</p>
           </div>
 
