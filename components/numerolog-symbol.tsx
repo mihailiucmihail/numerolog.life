@@ -20,7 +20,7 @@ export function NumerologSymbol({ size = "md", className = "" }: NumerologSymbol
       alt=""
       width={dimension}
       height={dimension}
-      className={`shrink-0 object-contain ${className}`}
+      className={`shrink-0 object-contain brightness-0 saturate-100 invert-[78%] sepia-[48%] saturate-[700%] hue-rotate-[5deg] brightness-[98%] contrast-[92%] ${className}`}
       aria-hidden="true"
     />
   )
