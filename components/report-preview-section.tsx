@@ -59,8 +59,8 @@ export function ReportPreviewSection() {
             <Star className="h-3.5 w-3.5 text-primary" />
             <span className="text-xs tracking-widest uppercase text-muted-foreground">{t("badge")}</span>
           </div>
-          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl font-light mb-6">
-            {t("titlePlain")}{" "}<span className="text-gradient">{t("titleAccent")}</span>
+          <h2 aria-label={`${t("titlePlain")} ${t("titleAccent")}`} className="font-serif text-4xl sm:text-5xl md:text-6xl font-light mb-6">
+            <span>{t("titlePlain")}</span>{" "}<span className="text-gradient">{t("titleAccent")}</span>
           </h2>
           <p className="text-muted-foreground/80 text-lg max-w-xl mx-auto font-light">
             {t("subtitle")}
