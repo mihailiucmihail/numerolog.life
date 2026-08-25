@@ -81,7 +81,7 @@ export function PricingSection() {
               className="w-full py-7 text-base bg-gradient-to-r from-primary via-primary to-[#B8860B] hover:opacity-90 rounded-xl cosmic-button"
               size="lg"
             >
-              <Link href="/harta-natala">
+              <Link href="/numerologie">
                 <Sparkles className="mr-2 h-4 w-4" />
                 {t("cta")}
               </Link>
