@@ -12,7 +12,7 @@ import { MobileReportCta } from "@/components/mobile-report-cta"
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-background relative">
+    <main className="min-h-screen bg-background relative pb-24 md:pb-0">
       <StarField />
       <Navbar />
       <HeroSection />

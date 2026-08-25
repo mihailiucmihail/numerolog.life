@@ -2,50 +2,14 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Star, Sparkles } from "lucide-react"
+import { Sparkles } from "lucide-react"
 import { useEffect, useState, useRef } from "react"
-import { useTranslations, useLocale } from "next-intl"
+import { useTranslations } from "next-intl"
 
 export function HeroSection() {
   const t = useTranslations("hero")
-  const locale = useLocale()
-  const [mounted, setMounted] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
-  const [counter, setCounter] = useState(50000)
   const starsContainerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    setMounted(true)
-    
-    // Calculate counter: starts at 50000 today, +1 per minute
-    // Dynamic calculation based on current time ensures same number for all users
-    const calculateCounter = () => {
-      const now = new Date()
-      const minutesSinceMidnightUTC = now.getUTCHours() * 60 + now.getUTCMinutes()
-      // Reference: start of today (00:00 UTC) with base 50000
-      const baseReportsToday = 50000 + minutesSinceMidnightUTC
-      // Minutes elapsed since midnight
-      const minutesFromMidnight = minutesSinceMidnightUTC
-      // Counter: 50000 + minutes that passed since midnight today
-      return baseReportsToday - minutesFromMidnight + minutesFromMidnight
-    }
-    
-    // Simpler: just return 50000 + minutes since midnight today
-    const simpleCounter = () => {
-      const now = new Date()
-      const minutesSinceMidnightUTC = now.getUTCHours() * 60 + now.getUTCMinutes()
-      return 50000 + minutesSinceMidnightUTC
-    }
-    
-    setCounter(simpleCounter())
-    
-    // Update every 60 seconds to reflect new minute
-    const interval = setInterval(() => {
-      setCounter(simpleCounter())
-    }, 60000)
-    
-    return () => clearInterval(interval)
-  }, [])
 
   // Create stars via DOM manipulation to avoid hydration mismatch
   useEffect(() => {
@@ -123,25 +87,6 @@ export function HeroSection() {
       {/* Removed vignette - was causing visible transition bands */}
       
       <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-8 sm:py-16 md:py-20 text-center relative z-10">
-        {/* Premium activity badge */}
-        <div 
-          className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-full mb-14 transition-all duration-1000 backdrop-blur-sm ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-          }`}
-          style={{
-            background: 'linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(242,212,114,0.08) 100%)',
-            border: '1px solid rgba(212,175,55,0.2)',
-          }}
-        >
-          <div className="flex items-center gap-1.5">
-            <div className="relative">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-              <div className="absolute inset-0 w-1.5 h-1.5 rounded-full bg-primary animate-pulse opacity-60" />
-            </div>
-            <span className="text-xs font-semibold text-foreground/80 tracking-tight">{mounted ? counter.toLocaleString(locale === 'ru' ? 'ru-RU' : 'ro-RO') : '10.247'} {t("reports")}</span>
-          </div>
-        </div>
-        
         {/* Cinematic headline with serif font */}
         <h1 
           className={`mb-6 sm:mb-10 transition-all duration-1000 delay-150 ${
@@ -151,7 +96,7 @@ export function HeroSection() {
           <span className="block text-sm sm:text-base tracking-[0.3em] uppercase text-primary/70 font-normal mb-8">
             {t("eyebrow")}
           </span>
-          <span className="block font-serif text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-light tracking-tight text-foreground/90 leading-[1.05]">
+          <span className="block font-serif text-4xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-light tracking-tight text-foreground/90 leading-[1.05]">
             {t("titleLine1")}
           </span>
           <span className="block font-serif text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-light tracking-tight text-gradient leading-[1.05] mt-1">
@@ -170,7 +115,7 @@ export function HeroSection() {
 
         {/* Simplified trust - just text with better contrast */}
         <div 
-          className={`flex items-center justify-center gap-8 mb-10 sm:mb-16 text-xs tracking-widest uppercase text-muted-foreground/70 transition-all duration-1000 delay-400 ${
+          className={`flex flex-wrap items-center justify-center gap-x-4 gap-y-2 px-2 mb-10 sm:mb-16 text-xs tracking-widest uppercase text-muted-foreground/70 transition-all duration-1000 delay-400 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
@@ -201,24 +146,7 @@ export function HeroSection() {
             </Button>
             <p className="text-base text-primary font-semibold tracking-wide">{t("ctaPrimaryNote")}</p>
             
-            {/* Trust badge - moved up right after CTA */}
-            <div 
-              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-sm border border-primary/20 transition-all duration-1000 delay-500 ${
-                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-              }`}
-              style={{
-                background: 'rgba(212, 175, 55, 0.08)',
-              }}
-            >
-              <div className="flex gap-0.5">
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <Star key={i} className="h-3 w-3 fill-primary/70 text-primary/70" />
-                ))}
-              </div>
-              <span className="text-xs text-primary/80 font-medium">4.9</span>
-              <div className="w-px h-3 bg-primary/20" />
-              <span className="text-xs text-foreground/70 font-medium">2,847 {t("reviews")}</span>
-            </div>
+
           </div>
         </div>
         
