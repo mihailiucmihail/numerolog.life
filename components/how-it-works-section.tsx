@@ -60,10 +60,10 @@ export function HowItWorksSection() {
                 <div className="hidden md:block absolute top-16 left-[60%] w-[80%] h-px bg-gradient-to-r from-primary/30 to-transparent" />
               )}
               
-              <Card className="glass-card border-0 h-full group hover:border-primary/20 transition-all duration-500">
-                <CardContent className="p-5 text-center sm:p-6">
-                  <div className="relative mb-5 inline-block">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center group-hover:from-primary/25 group-hover:to-primary/10 transition-all duration-500">
+              <Card className="group h-full border-0 border-t border-primary/15 bg-transparent shadow-none transition-all duration-500 hover:border-primary/35">
+                <CardContent className="px-2 py-5 text-center sm:px-4 sm:py-6">
+                  <div className="relative mb-4 inline-block">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-xl border border-primary/15 bg-primary/8 transition-all duration-500 group-hover:border-primary/30 group-hover:bg-primary/15">
                       <item.icon className="h-7 w-7 text-primary/80" />
                     </div>
                     <div className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-primary/90 flex items-center justify-center text-xs font-medium text-primary-foreground">
@@ -71,10 +71,10 @@ export function HowItWorksSection() {
                     </div>
                   </div>
                   
-                  <h3 className="font-serif text-xl font-medium mb-3 text-foreground/90">{item.title}</h3>
-                  <p className="text-muted-foreground/70 mb-5 leading-relaxed text-sm">{item.description}</p>
+                  <h3 className="mb-2 font-serif text-xl font-medium text-foreground/90">{item.title}</h3>
+                  <p className="mb-4 text-sm leading-relaxed text-muted-foreground/70">{item.description}</p>
                   
-                  <div className="inline-block px-3 py-1.5 rounded-full bg-primary/10 border border-primary/15">
+                  <div className="inline-block rounded-full border border-primary/15 bg-primary/10 px-3 py-1.5">
                     <span className="text-xs text-primary/80">{item.highlight}</span>
                   </div>
                 </CardContent>
