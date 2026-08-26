@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Sparkles } from "lucide-react"
+import { NumerologSymbol } from "@/components/numerolog-symbol"
 import { useTranslations } from "next-intl"
 
 export function Footer() {
@@ -13,8 +13,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="md:col-span-1">
             <Link href="/" className="flex items-center gap-2.5 mb-5">
-              <Sparkles className="h-5 w-5 text-primary" />
-              <span className="text-lg font-serif font-medium text-gradient">AstroAI</span>
+              <NumerologSymbol size="md" />
+              <span className="text-lg font-serif font-medium text-gradient">NUMEROLOG</span>
             </Link>
             <p className="text-muted-foreground/60 text-sm leading-relaxed">
               {t("tagline")}
@@ -25,7 +25,7 @@ export function Footer() {
             <h3 className="font-serif font-medium mb-5 text-foreground/90">{t("product")}</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/harta-natala" className="text-muted-foreground/60 hover:text-foreground transition-colors text-sm">
+                <Link href="/numerologie" className="text-muted-foreground/60 hover:text-foreground transition-colors text-sm">
                   {t("natalChart")}
                 </Link>
               </li>

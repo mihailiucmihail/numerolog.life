@@ -50,7 +50,7 @@ export default function CompatibilityPage() {
 
   const isAstrology = analysisType === 'astrology'
   const titleText = isAstrology ? (language === 'ro' ? 'Compatibilitate Astrologică' : 'Астрологическая совместимость') : (language === 'ro' ? 'Compatibilitate Numerologică' : 'Нумерологическая совместимость')
-  const descriptionText = isAstrology ? (language === 'ro' ? 'Analizează sinastria astrologică, compatibilitatea planetelor și potențialul relației pe termen lung.' : 'Анализируйте астрологическую синастрию, совместимость планет и потенциал отношений в долгосрочной перспективе.') : (language === 'ro' ? 'Descoperă dinamica profundă a relației tale, punctele forte și conflictele ascunse.' : 'Откройте глубокую динамику вашего отношения, сильные стороны и скрытые конфликты.')
+  const descriptionText = isAstrology ? (language === 'ro' ? 'Analizează sinastria astrologică, compatibilitatea planetelor și potențialul relației pe termen lung.' : 'Разберите астрологическую синастрию, совместимость планет и потенциал отношений в долгосрочной перспективе.') : (language === 'ro' ? 'Descoperă dinamica profundă a relației tale, punctele forte și conflictele ascunse.' : 'Откройте глубокую динамику вашего отношения, сильные стороны и скрытые конфликты.')
 
   return (
     <main className="min-h-screen bg-background relative">
@@ -63,7 +63,7 @@ export default function CompatibilityPage() {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-pink-500/10 border border-pink-500/20 mb-4">
               <Heart className="h-4 w-4 text-pink-500" />
-              <span className="text-sm text-pink-400">{language === 'ro' ? 'Analiza Premium' : 'Премиум анализ'}</span>
+              <span className="text-sm text-pink-400">{language === 'ro' ? 'Analiza Premium' : 'Премиум разбор'}</span>
             </div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-pink-400 via-violet-400 to-blue-400 bg-clip-text text-transparent">
               {titleText}
@@ -78,7 +78,7 @@ export default function CompatibilityPage() {
               {/* Analysis Type Selector - ALWAYS VISIBLE */}
               <Card className="bg-background/40 backdrop-blur-xl border-violet-500/20 mb-8">
                 <CardHeader>
-                  <CardTitle className="text-center">{language === 'ro' ? 'Alege Tip Analiză' : 'Выберите тип анализа'}</CardTitle>
+                  <CardTitle className="text-center">{language === 'ro' ? 'Alege Tip Analiză' : 'Выберите тип разбора'}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex gap-4 justify-center flex-wrap">
@@ -199,7 +199,7 @@ export default function CompatibilityPage() {
                 {error && <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-4 mb-8 text-red-400">{error}</div>}
 
                 <Button type="submit" disabled={isLoading} className="w-full py-6 text-lg">
-                  {isLoading ? (language === 'ro' ? 'Se analizează...' : 'Анализируется...') : (language === 'ro' ? 'Analizează Compatibilitatea' : 'Анализировать совместимость')}
+                  {isLoading ? (language === 'ro' ? 'Se analizează...' : 'Разбираем...') : (language === 'ro' ? 'Analizează Compatibilitatea' : 'Разобрать совместимость')}
                 </Button>
               </form>
             </>
@@ -210,7 +210,7 @@ export default function CompatibilityPage() {
                   <div dangerouslySetInnerHTML={{ __html: result.analysis || result.report || JSON.stringify(result) }} />
                 </div>
                 <Button onClick={() => setResult(null)} className="mt-8 w-full">
-                  {language === 'ro' ? 'Noua Analiză' : 'Новый анализ'}
+                  {language === 'ro' ? 'Noua Analiză' : 'Новый разбор'}
                 </Button>
               </CardContent>
             </Card>

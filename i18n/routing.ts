@@ -2,7 +2,7 @@ import { defineRouting } from 'next-intl/routing'
 
 export const routing = defineRouting({
   // Limbile suportate
-  locales: ['ro', 'ru'],
+  locales: ['ru'],
 
   // Limba implicita (cand nu se potriveste nimic)
   defaultLocale: 'ru',

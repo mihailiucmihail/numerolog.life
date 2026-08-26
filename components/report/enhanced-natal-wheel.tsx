@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
+import { useLocale } from 'next-intl'
 
 interface PlanetData {
   name: string
@@ -18,19 +19,14 @@ interface EnhancedNatalWheelProps {
 }
 
 const ZODIAC_SIGNS = [
-  'Aries',
-  'Taurus',
-  'Gemini',
-  'Cancer',
-  'Leo',
-  'Virgo',
-  'Libra',
-  'Scorpio',
-  'Sagittarius',
-  'Capricorn',
-  'Aquarius',
-  'Pisces',
+  'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
+  'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces',
 ]
+
+const ZODIAC_NAMES = {
+  ro: ['Berbec', 'Taur', 'Gemeni', 'Rac', 'Leu', 'Fecioară', 'Balanță', 'Scorpion', 'Săgetător', 'Capricorn', 'Vărsător', 'Pești'],
+  ru: ['Овен', 'Телец', 'Близнецы', 'Рак', 'Лев', 'Дева', 'Весы', 'Скорпион', 'Стрелец', 'Козерог', 'Водолей', 'Рыбы'],
+} as const
 
 export function EnhancedNatalWheel({
   planets,
@@ -38,6 +34,8 @@ export function EnhancedNatalWheel({
   animationDelay = 0,
   onPlanetHover,
 }: EnhancedNatalWheelProps) {
+  const locale = useLocale() as keyof typeof ZODIAC_NAMES
+  const localizedZodiacSigns = ZODIAC_NAMES[locale] ?? ZODIAC_NAMES.ro
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [hoveredPlanet, setHoveredPlanet] = useState<string | null>(null)
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
@@ -79,7 +77,7 @@ export function EnhancedNatalWheel({
       ctx.fillStyle = 'rgba(165, 142, 251, 0.6)'
       ctx.font = 'bold 9px sans-serif'
       ctx.textAlign = 'center'
-      ctx.fillText(sign.substring(0, 3).toUpperCase(), 0, 0)
+      ctx.fillText(localizedZodiacSigns[i], 0, 0)
       ctx.restore()
 
       // Zodiac division lines

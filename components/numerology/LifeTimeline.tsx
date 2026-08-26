@@ -64,7 +64,7 @@ export function LifeTimeline({
               dataKey="year" 
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
+              tick={{ fill: "#f3ead8", fontSize: 11, fontWeight: 600 }}
               tickFormatter={(value) => value.toString()}
             />
             
@@ -72,7 +72,7 @@ export function LifeTimeline({
               domain={[0, 10]}
               axisLine={false}
               tickLine={false}
-              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
+              tick={{ fill: "#f3ead8", fontSize: 11, fontWeight: 600 }}
             />
             
             {/* Current year reference line */}

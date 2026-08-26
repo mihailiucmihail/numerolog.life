@@ -20,9 +20,9 @@ const cormorant = Cormorant_Garamond({
 })
 
 export const metadata: Metadata = {
-  title: 'AstroAI | Astrologie Personalizata',
-  description: 'Descopera-ti destinul cu AstroAI - platforma de astrologie cu inteligenta artificiala.',
-  keywords: 'astrologie, horoscop, AI, zodiac, previziuni, numerologie',
+  title: 'NUMEROLOG.life | Кристалл судьбы',
+  description: 'Откройте свой Кристалл судьбы с помощью персонального нумерологического разбора имени, даты рождения и жизненных этапов.',
+  keywords: 'нумерология, Кристалл судьбы, 22 Аркана, карта имени, жизненные циклы',
   robots: 'index, follow',
 }
 

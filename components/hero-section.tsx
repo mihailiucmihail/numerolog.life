@@ -2,27 +2,29 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Star, Sparkles, ArrowRight } from "lucide-react"
+import { Sparkles } from "lucide-react"
+import { NumerologSymbol } from "@/components/numerolog-symbol"
 import { useEffect, useState, useRef } from "react"
 import { useTranslations, useLocale } from "next-intl"
 
 export function HeroSection() {
   const t = useTranslations("hero")
   const locale = useLocale()
-  const [mounted, setMounted] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
-  const [counter, setCounter] = useState(10247)
-  const starsContainerRef = useRef<HTMLDivElement>(null)
+  const [mounted, setMounted] = useState(false)
+  const [counter, setCounter] = useState(50000)
 
   useEffect(() => {
     setMounted(true)
-    
-    const interval = setInterval(() => {
-      setCounter(prev => prev + Math.floor(Math.random() * 3))
-    }, 5000)
-    
+    const getCounter = () => {
+      const now = new Date()
+      return 50000 + now.getUTCHours() * 60 + now.getUTCMinutes()
+    }
+    setCounter(getCounter())
+    const interval = setInterval(() => setCounter(getCounter()), 60000)
     return () => clearInterval(interval)
   }, [])
+  const starsContainerRef = useRef<HTMLDivElement>(null)
 
   // Create stars via DOM manipulation to avoid hydration mismatch
   useEffect(() => {
@@ -59,11 +61,22 @@ export function HeroSection() {
   }, [])
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-28 pb-24 overflow-hidden">
+    <section className="relative min-h-0 md:min-h-screen flex flex-col items-center justify-center pt-20 pb-8 md:pt-28 md:pb-24 overflow-hidden">
       {/* ═══════════════════════════════════════════════════════════════════════
           All background overlays removed - StarField provides the cosmic background
       ═══════════════════════════════════════════════════════════════════════ */}
       
+      {/* Premium activity badge */}
+      <div className="relative z-10 flex justify-center mb-5 sm:mb-14">
+        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full backdrop-blur-sm" style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(242,212,114,0.08) 100%)', border: '1px solid rgba(212,175,55,0.2)' }}>
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-60 animate-ping" />
+            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+          </span>
+          <span className="text-xs font-semibold text-foreground/80 tracking-tight">{mounted ? counter.toLocaleString(locale === 'ru' ? 'ru-RU' : 'ro-RO') : '50.000'} {t("reports")}</span>
+        </div>
+      </div>
+
       {/* Zodiac wheel - subtle circular pattern */}
       <div 
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] opacity-[0.04] pointer-events-none"
@@ -99,32 +112,17 @@ export function HeroSection() {
       
       {/* Removed vignette - was causing visible transition bands */}
       
-      <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-20 text-center relative z-10">
-        {/* Minimal activity badge */}
-        <div 
-          className={`inline-flex items-center gap-3 px-5 py-2.5 rounded-full glass mb-14 transition-all duration-1000 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-          }`}
-        >
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400/80" />
-              <div className="absolute inset-0 w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping opacity-50" />
-            </div>
-            <span className="text-xs font-medium text-muted-foreground/80 tracking-wide">{mounted ? counter.toLocaleString(locale === 'ru' ? 'ru-RU' : 'ro-RO') : '10.247'} {t("reports")}</span>
-          </div>
-        </div>
-        
+      <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-2 sm:py-16 md:py-20 text-center relative z-10">
         {/* Cinematic headline with serif font */}
         <h1 
-          className={`mb-10 transition-all duration-1000 delay-150 ${
+          className={`mb-6 sm:mb-10 transition-all duration-1000 delay-150 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          <span className="block text-sm sm:text-base tracking-[0.3em] uppercase text-primary/70 font-normal mb-8">
+          <span className="block text-sm sm:text-base tracking-[0.3em] uppercase text-primary/70 font-normal mb-4 sm:mb-8">
             {t("eyebrow")}
           </span>
-          <span className="block font-serif text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-light tracking-tight text-foreground/90 leading-[1.05]">
+          <span className="block font-serif text-4xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-light tracking-tight text-foreground/90 leading-[1.05]">
             {t("titleLine1")}
           </span>
           <span className="block font-serif text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-light tracking-tight text-gradient leading-[1.05] mt-1">
@@ -134,7 +132,7 @@ export function HeroSection() {
         
         {/* Elegant subheadline - more breathing room and better contrast */}
         <p 
-          className={`text-base sm:text-lg md:text-xl text-muted-foreground/80 max-w-xl mx-auto mb-12 sm:mb-14 leading-relaxed font-light transition-all duration-1000 delay-300 ${
+          className={`text-base sm:text-lg md:text-xl text-muted-foreground/80 max-w-xl mx-auto mb-8 sm:mb-12 md:mb-14 leading-relaxed font-light transition-all duration-1000 delay-300 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
@@ -143,25 +141,22 @@ export function HeroSection() {
 
         {/* Simplified trust - just text with better contrast */}
         <div 
-          className={`flex items-center justify-center gap-8 mb-16 text-xs tracking-widest uppercase text-muted-foreground/70 transition-all duration-1000 delay-400 ${
+          className={`flex flex-col items-center justify-center gap-y-2 px-2 mb-10 sm:mb-16 text-xs tracking-widest uppercase text-muted-foreground/70 transition-all duration-1000 delay-400 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          <span>{t("trustAI")}</span>
+          <span className="text-center">{t("trustAI")}</span>
           <span className="text-primary/50">&#9830;</span>
-          <span>{t("trustTime")}</span>
-          <span className="text-primary/50">&#9830;</span>
-          <span>{t("trustPrivate")}</span>
+          <span className="text-center">{t("trustPrivate")}</span>
         </div>
         
-        {/* Dual CTA - Guest vs Authenticated Flows */}
+        {/* Single CTA - Instant Report */}
         <div 
-          className={`flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mb-12 sm:mb-16 justify-center transition-all duration-1000 delay-500 ${
+          className={`flex justify-center transition-all duration-1000 delay-500 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          {/* Primary CTA: Instant Report */}
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-col items-center gap-3">
             <Button 
               size="lg" 
               asChild 
@@ -169,56 +164,20 @@ export function HeroSection() {
             >
               <Link href="/numerologie">
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                <Sparkles className="w-4 h-4 mr-2" />
+                <NumerologSymbol size="sm" className="mr-1" />
                 <span>{t("ctaPrimary")}</span>
               </Link>
             </Button>
-            <p className="text-xs text-muted-foreground/60">{t("ctaPrimaryNote")}</p>
-          </div>
-          
-          {/* Secondary CTA: Create Account */}
-          <div className="flex flex-col items-center gap-2">
-            <Button 
-              variant="outline" 
-              size="lg"
-              asChild 
-              className="text-sm px-10 sm:px-12 py-6 sm:py-7 rounded-xl font-medium border-primary/30 hover:bg-primary/5"
-            >
-              <Link href="/inregistrare">
-                <span>{t("ctaSecondary")}</span>
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Link>
-            </Button>
-            <p className="text-xs text-muted-foreground/60">{t("ctaSecondaryNote")}</p>
-          </div>
-        </div>
+            <p className="text-base text-primary font-semibold tracking-wide">{t("ctaPrimaryNote")}</p>
+            
 
-        {/* Minimal trust section */}
-        <div 
-          className={`flex items-center justify-center gap-6 transition-all duration-1000 delay-600 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-          }`}
-        >
-          <div className="flex items-center gap-1.5">
-            <div className="flex">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <Star key={i} className="h-3 w-3 fill-primary/60 text-primary/60" />
-              ))}
-            </div>
-            <span className="text-xs text-muted-foreground/50 ml-1.5">4.9</span>
           </div>
-          <div className="w-px h-3 bg-border/20" />
-          <span className="text-xs text-muted-foreground/50">2,847 {t("reviews")}</span>
         </div>
+        
+        {/* Spacing adjustment */}
+        <div className="mb-2 sm:mb-16" />
       </div>
 
-      {/* Elegant scroll indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 opacity-40 hover:opacity-70 transition-opacity">
-          <span className="text-xs text-muted-foreground tracking-widest uppercase">{t("scroll")}</span>
-        <div className="w-5 h-9 rounded-full border border-muted-foreground/30 flex items-start justify-center p-1.5">
-          <div className="w-1 h-2 rounded-full bg-primary/60 animate-bounce" />
-        </div>
-      </div>
     </section>
   )
 }

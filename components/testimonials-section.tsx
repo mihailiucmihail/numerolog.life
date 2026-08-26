@@ -11,7 +11,6 @@ export function TestimonialsSection() {
       name: t("t1Name"),
       location: t("t1Location"),
       avatar: t("t1Name").charAt(0),
-      rating: 5,
       text: t("t1Text"),
       highlight: t("t1Highlight")
     },
@@ -19,7 +18,6 @@ export function TestimonialsSection() {
       name: t("t2Name"),
       location: t("t2Location"),
       avatar: t("t2Name").charAt(0),
-      rating: 5,
       text: t("t2Text"),
       highlight: t("t2Highlight")
     },
@@ -27,7 +25,6 @@ export function TestimonialsSection() {
       name: t("t3Name"),
       location: t("t3Location"),
       avatar: t("t3Name").charAt(0),
-      rating: 5,
       text: t("t3Text"),
       highlight: t("t3Highlight")
     },
@@ -35,7 +32,6 @@ export function TestimonialsSection() {
       name: t("t4Name"),
       location: t("t4Location"),
       avatar: t("t4Name").charAt(0),
-      rating: 5,
       text: t("t4Text"),
       highlight: t("t4Highlight")
     },
@@ -43,7 +39,6 @@ export function TestimonialsSection() {
       name: t("t5Name"),
       location: t("t5Location"),
       avatar: t("t5Name").charAt(0),
-      rating: 5,
       text: t("t5Text"),
       highlight: t("t5Highlight")
     },
@@ -51,16 +46,9 @@ export function TestimonialsSection() {
       name: t("t6Name"),
       location: t("t6Location"),
       avatar: t("t6Name").charAt(0),
-      rating: 5,
       text: t("t6Text"),
       highlight: t("t6Highlight")
     }
-  ]
-  const stats = [
-    { value: "10,000+", label: t("statReports") },
-    { value: "4.9/5", label: t("statRating") },
-    { value: "98%", label: t("statSatisfaction") },
-    { value: "50+", label: t("statPages") }
   ]
   return (
     <section className="py-32 relative overflow-hidden">
@@ -74,7 +62,7 @@ export function TestimonialsSection() {
             <span className="text-xs tracking-widest uppercase text-muted-foreground">{t("badge")}</span>
           </div>
           <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl font-light mb-6">
-            {t("titlePlain")} <span className="text-gradient">{t("titleAccent")}</span>
+            {t("titlePlain")}{" "}<span className="text-gradient">{t("titleAccent")}</span>
           </h2>
           <p className="text-muted-foreground/80 text-lg max-w-xl mx-auto font-light">
             {t("subtitle")}
@@ -102,12 +90,6 @@ export function TestimonialsSection() {
                   <Quote className="h-6 w-6 text-primary/15 group-hover:text-primary/30 transition-colors" />
                 </div>
                 
-                <div className="flex items-center gap-0.5 mb-4">
-                  {Array.from({ length: testimonial.rating }).map((_, i) => (
-                    <Star key={i} className="h-3.5 w-3.5 fill-primary/80 text-primary/80" />
-                  ))}
-                </div>
-                
                 <p className="text-muted-foreground/70 leading-relaxed mb-5 text-sm">
                   {`"${testimonial.text}"`}
                 </p>
@@ -120,15 +102,6 @@ export function TestimonialsSection() {
           ))}
         </div>
 
-        {/* Stats */}
-        <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8">
-          {stats.map((stat, index) => (
-            <div key={index} className="text-center">
-              <p className="font-serif text-4xl sm:text-5xl font-light text-gradient mb-2">{stat.value}</p>
-              <p className="text-sm text-muted-foreground/60">{stat.label}</p>
-            </div>
-          ))}
-        </div>
       </div>
     </section>
   )

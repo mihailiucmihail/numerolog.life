@@ -3,6 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Check, Sparkles, Star, Shield, Zap } from "lucide-react"
+import { NumerologSymbol } from "@/components/numerolog-symbol"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 
@@ -29,8 +30,8 @@ export function PricingSection() {
             <Star className="h-3.5 w-3.5 text-primary" />
             <span className="text-xs tracking-widest uppercase text-muted-foreground">{t("badge")}</span>
           </div>
-          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl font-light mb-6">
-            {t("titlePlain")} <span className="text-gradient">{t("titleAccent")}</span>
+          <h2 aria-label={`${t("titlePlain")} ${t("titleAccent")}`} className="font-serif text-4xl sm:text-5xl md:text-6xl font-light mb-6">
+            <span>{t("titlePlain")}</span>{" "}<span className="text-gradient">{t("titleAccent")}</span>
           </h2>
           <p className="text-muted-foreground/80 text-lg max-w-xl mx-auto font-light">
             {t("subtitle")}
@@ -51,12 +52,13 @@ export function PricingSection() {
           
           <CardHeader className="pb-6 pt-10 text-center relative">
             <CardTitle className="font-serif text-2xl font-light">{t("cardTitle")}</CardTitle>
-            <CardDescription className="text-muted-foreground/70 mt-2">
-              {t("cardDesc")}
+            <CardDescription className="text-muted-foreground/70 mt-2 max-w-xl mx-auto">
+              <span className="block font-medium text-foreground/90">{t("cardDesc")}</span>
+              <span className="block mt-2">{t("cardValue")}</span>
             </CardDescription>
             <div className="mt-8 flex items-baseline justify-center">
-              <span className="font-serif text-7xl font-light text-gradient">10</span>
-              <span className="text-xl text-muted-foreground/60 ml-2">EUR</span>
+              <span className="font-serif text-7xl font-light text-gradient">14,99</span>
+              <span className="text-xl text-muted-foreground/60 ml-2">€</span>
             </div>
             <p className="text-sm text-muted-foreground/50 mt-3">{t("noSubscription")}</p>
           </CardHeader>
@@ -81,8 +83,8 @@ export function PricingSection() {
               className="w-full py-7 text-base bg-gradient-to-r from-primary via-primary to-[#B8860B] hover:opacity-90 rounded-xl cosmic-button"
               size="lg"
             >
-              <Link href="/harta-natala">
-                <Sparkles className="mr-2 h-4 w-4" />
+              <Link href="/numerologie">
+                <NumerologSymbol size="sm" className="mr-1" />
                 {t("cta")}
               </Link>
             </Button>

@@ -12,6 +12,8 @@ interface FormData {
   month: number
   year: number
   email: string
+  gender?: string
+  nameAlphabetKey?: string
 }
 
 interface RaportViewerProps {
@@ -31,6 +33,8 @@ export default function RaportViewer({ formData }: RaportViewerProps) {
     day: String(formData.day),
     month: String(formData.month),
     year: String(formData.year),
+    ...(formData.gender ? { gender: formData.gender } : {}),
+    ...(formData.nameAlphabetKey ? { alpha: formData.nameAlphabetKey } : {}),
   })
   const iframeSrc = `/cristalul-calculator.html?${params.toString()}`
 

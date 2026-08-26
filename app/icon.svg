@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none">
+  <defs>
+    <linearGradient id="lg1" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#C8A84B" />
+      <stop offset="45%" stop-color="#F2D472" />
+      <stop offset="100%" stop-color="#A8782A" />
+    </linearGradient>
+    <radialGradient id="rg1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#F2D472" stop-opacity=".5" />
+      <stop offset="100%" stop-color="#C8A84B" stop-opacity="0" />
+    </radialGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="1.2" result="blur" /><feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+  </defs>
+  <path d="M18 2 34 18 18 34 2 18Z" stroke="url(#lg1)" stroke-width="1.1" fill="url(#rg1)" filter="url(#glow)" />
+  <path d="M18 9 27 18 18 27 9 18Z" stroke="url(#lg1)" stroke-width=".7" fill="none" stroke-opacity=".7" />
+  <line x1="18" y1="13" x2="18" y2="23" stroke="url(#lg1)" stroke-width=".5" stroke-opacity=".5" />
+  <line x1="13" y1="18" x2="23" y2="18" stroke="url(#lg1)" stroke-width=".5" stroke-opacity=".5" />
+  <circle cx="18" cy="18" r="2.2" fill="url(#lg1)" />
+  <circle cx="18" cy="18" r="1" fill="#FFF5C0" fill-opacity=".9" />
+</svg>

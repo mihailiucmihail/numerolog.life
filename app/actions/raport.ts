@@ -12,6 +12,8 @@ interface FormData {
   month: number
   year: number
   email: string
+  gender?: string
+  nameAlphabetKey?: string
 }
 
 export async function saveRaportAndSendEmail(
@@ -42,7 +44,7 @@ export async function saveRaportAndSendEmail(
       // Folosim domeniul Resend implicit daca astroai.ro nu e verificat inca
       const fromDomain = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
       await resend.emails.send({
-        from: `AstroAI <${fromDomain}>`,
+        from: `Numerolog.life <${fromDomain}>`,
         to: email,
         subject: 'Raportul tau Cristalul Destinului este gata',
         html: `
@@ -55,7 +57,7 @@ export async function saveRaportAndSendEmail(
                 <table width="600" cellpadding="0" cellspacing="0" style="background:#0D0D1A;border:1px solid rgba(212,175,55,0.2);border-radius:12px;overflow:hidden;">
                   <tr>
                     <td style="background:linear-gradient(135deg,#0A0A14,#1a1a2e);padding:40px;text-align:center;border-bottom:1px solid rgba(212,175,55,0.15);">
-                      <p style="margin:0 0 8px;color:rgba(212,175,55,0.7);font-size:11px;letter-spacing:4px;text-transform:uppercase;">AstroAI</p>
+                      <p style="margin:0 0 8px;color:rgba(212,175,55,0.7);font-size:11px;letter-spacing:4px;text-transform:uppercase;">numerolog.life</p>
                       <h1 style="margin:0;color:#D4AF37;font-size:28px;font-weight:400;">Cristalul Destinului</h1>
                       <p style="margin:12px 0 0;color:rgba(237,227,207,0.6);font-size:14px;">Raportul tau numerologic complet</p>
                     </td>
@@ -67,7 +69,7 @@ export async function saveRaportAndSendEmail(
                       </p>
                       <p style="color:rgba(237,227,207,0.7);font-size:14px;line-height:1.7;margin:0 0 32px;">
                         Raportul tau numerologic bazat pe metoda Cristalul Destinului a fost generat cu succes. 
-                        Acceseaza-l oricand folosind linkul de mai jos — nu este necesara o alta plata.
+                        Acceseaza-l oricand folosind linkul de mai jos &mdash; nu este necesara o alta plata.
                       </p>
                       <table width="100%" cellpadding="0" cellspacing="0">
                         <tr><td align="center">
@@ -86,7 +88,7 @@ export async function saveRaportAndSendEmail(
                   <tr>
                     <td style="padding:24px 40px;border-top:1px solid rgba(212,175,55,0.1);text-align:center;">
                       <p style="margin:0;color:rgba(237,227,207,0.3);font-size:11px;">
-                        AstroAI &mdash; numerolog.life
+                        numerolog.life
                       </p>
                     </td>
                   </tr>

@@ -15,6 +15,8 @@ interface FormData {
   month: number
   year: number
   email: string
+  gender?: string
+  nameAlphabetKey?: string
 }
 
 export default function CalculatorWrapper() {
@@ -27,6 +29,7 @@ export default function CalculatorWrapper() {
   // Extrage locale-ul din path (ex: /ro/numerologie -> ro)
   const locale = pathname?.split('/')[1] || 'ro'
   const didUnlock = useRef(false)
+  const discountCode = searchParams.get('discount') || undefined
 
   // Dupa return de la Stripe, verificam plata, salvam raportul si trimitem email
   useEffect(() => {
@@ -35,13 +38,16 @@ export default function CalculatorWrapper() {
     if (payment !== 'success' || !sessionId || didUnlock.current) return
 
     const raw = localStorage.getItem('cristalul_form_data')
-    if (!raw) return
 
     didUnlock.current = true
 
-    getNumerologieSessionStatus(sessionId).then(async ({ paymentStatus }) => {
+    getNumerologieSessionStatus(sessionId).then(async ({ paymentStatus, formData: metadataFormData }) => {
       if (paymentStatus === 'paid') {
-        const formData: FormData = JSON.parse(raw)
+        // Stripe metadata este fallback-ul sigur dacă browserul a pierdut localStorage.
+        if (!raw && !metadataFormData) return
+        const formData: FormData = raw
+          ? JSON.parse(raw)
+          : JSON.parse(metadataFormData as string)
         localStorage.removeItem('cristalul_form_data')
 
         // Salvam raportul in DB si trimitem email cu link permanent
@@ -74,14 +80,14 @@ export default function CalculatorWrapper() {
     try {
       // localStorage persista cross-redirect (spre deosebire de sessionStorage care se pierde)
       localStorage.setItem('cristalul_form_data', JSON.stringify(formData))
-      const checkoutUrl = await startNumerologieCheckout(formData.email, locale)
+      const checkoutUrl = await startNumerologieCheckout(formData.email, locale, formData, discountCode)
       window.location.href = checkoutUrl
     } catch {
       setShowLoading(false)
       localStorage.removeItem('cristalul_form_data')
       iframeRef.current?.contentWindow?.postMessage({ type: 'paymentCancelled' }, '*')
     }
-  }, [])
+  }, [locale, discountCode])
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {

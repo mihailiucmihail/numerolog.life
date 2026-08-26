@@ -1,7 +1,21 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import { useLocale } from "next-intl"
 import { motion, AnimatePresence } from "framer-motion"
+
+const TIMELINE_I18N = {
+  ro: {
+    now: "(Acum)", year: "Anul", energy: "Energie", phase: "Faza", theme: "Tema", years: "ani",
+    milestones: ["Naștere", "Adolescență", "Adult", "Maturitate", "Înțelepciune"],
+    phases: { childhood: "Copilărie", early_growth: "Creștere", adolescence: "Adolescență", young_adult: "Tânăr adult", maturation: "Maturizare", peak_career: "Vârf carieră", midlife: "Mijlocul vieții", wisdom: "Înțelepciune", mastery: "Măiestrie", elder: "Bătrânețe", legacy: "Moștenire" } as Record<string, string>,
+  },
+  ru: {
+    now: "(Сейчас)", year: "Год", energy: "Энергия", phase: "Фаза", theme: "Тема", years: "лет",
+    milestones: ["Рождение", "Юность", "Зрелость", "Расцвет", "Мудрость"],
+    phases: { childhood: "Детство", early_growth: "Рост", adolescence: "Подростковый возраст", young_adult: "Молодость", maturation: "Взросление", peak_career: "Пик карьеры", midlife: "Середина жизни", wisdom: "Мудрость", mastery: "Мастерство", elder: "Зрелость", legacy: "Наследие" } as Record<string, string>,
+  },
+} as const
 import { 
   AreaChart, 
   Area, 
@@ -27,6 +41,12 @@ interface FullLifeTimelineProps {
   currentAge: number
   height?: number
   animated?: boolean
+  labels?: {
+    current?: string
+    years?: string
+    energy?: string
+    phases?: Record<string, string>
+  }
   className?: string
 }
 
@@ -64,8 +84,12 @@ export function FullLifeTimeline({
   currentAge,
   height = 300,
   animated = true,
+  labels,
   className = ""
 }: FullLifeTimelineProps) {
+  const locale = useLocale()
+  const L = TIMELINE_I18N[locale as keyof typeof TIMELINE_I18N] ?? TIMELINE_I18N.ro
+  const localizedPhaseLabels = { ...L.phases, ...(labels?.phases ?? {}) }
   const [hoveredAge, setHoveredAge] = useState<number | null>(null)
   const [selectedPhase, setSelectedPhase] = useState<string | null>(null)
 
@@ -166,12 +190,12 @@ export function FullLifeTimeline({
                     </div>
                     
                     <div>
-                      <p className="text-xs text-muted-foreground">Esti aici</p>
-                      <p className="text-lg font-bold text-foreground">{currentAge} ani</p>
+                      <p className="text-xs text-muted-foreground">{labels?.current ?? "Esti aici"}</p>
+                      <p className="text-lg font-bold text-foreground">{currentAge} {labels?.years ?? "ani"}</p>
                     </div>
                     
                     <div className="pl-3 border-l border-border/50">
-                      <p className="text-xs text-muted-foreground">Energie</p>
+                      <p className="text-xs text-muted-foreground">{labels?.energy ?? "Energie"}</p>
                       <p className="text-lg font-bold text-primary">{currentPoint.energy.toFixed(1)}</p>
                     </div>
                   </div>
@@ -200,7 +224,7 @@ export function FullLifeTimeline({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              {phaseLabels[phase.phase] || phase.phase}
+              {localizedPhaseLabels[phase.phase] || phase.phase}
             </motion.button>
           ))}
         </div>
@@ -266,7 +290,7 @@ export function FullLifeTimeline({
                 dataKey="age" 
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+                tick={{ fill: "#f3ead8", fontSize: 10, fontWeight: 600 }}
                 ticks={[0, 10, 20, 30, 40, 50, 60, 70, 80, 90]}
                 tickFormatter={(value) => `${value}`}
                 domain={[0, 90]}
@@ -276,7 +300,7 @@ export function FullLifeTimeline({
                 domain={[0, 10]}
                 axisLine={false}
                 tickLine={false}
-                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+                tick={{ fill: "#f3ead8", fontSize: 10, fontWeight: 600 }}
                 ticks={[2, 4, 6, 8, 10]}
                 width={30}
               />
@@ -310,26 +334,26 @@ export function FullLifeTimeline({
                           />
                         )}
                         <span className="font-bold text-foreground">
-                          {point.age} ani {point.isCurrent && "(Acum)"}
+                          {point.age} {labels?.years ?? L.years} {point.isCurrent && L.now}
                         </span>
                       </div>
                       <div className="space-y-1 text-sm">
                         <div className="flex justify-between gap-4">
-                          <span className="text-muted-foreground">Anul</span>
+                          <span className="text-muted-foreground">{L.year}</span>
                           <span className="font-medium text-foreground">{point.year}</span>
                         </div>
                         <div className="flex justify-between gap-4">
-                          <span className="text-muted-foreground">Energie</span>
+                          <span className="text-muted-foreground">{labels?.energy ?? L.energy}</span>
                           <span className="font-medium text-primary">{point.energy.toFixed(1)}/10</span>
                         </div>
                         <div className="flex justify-between gap-4">
-                          <span className="text-muted-foreground">Faza</span>
+                          <span className="text-muted-foreground">{L.phase}</span>
                           <span className="font-medium" style={{ color: phaseColors[point.phase || ""] }}>
-                            {phaseLabels[point.phase || ""] || point.phase}
+                            {localizedPhaseLabels[point.phase || ""] || point.phase}
                           </span>
                         </div>
                         <div className="flex justify-between gap-4">
-                          <span className="text-muted-foreground">Tema</span>
+                          <span className="text-muted-foreground">{L.theme}</span>
                           <span className="font-medium text-foreground">{point.theme}</span>
                         </div>
                       </div>
@@ -356,11 +380,7 @@ export function FullLifeTimeline({
         {/* Milestone markers */}
         <div className="relative z-10 px-6 pb-4">
           <div className="flex justify-between text-xs text-muted-foreground">
-            <span>Nastere</span>
-            <span>Adolescenta</span>
-            <span>Adult</span>
-            <span>Maturitate</span>
-            <span>Intelepciune</span>
+            {L.milestones.map((m) => <span key={m}>{m}</span>)}
           </div>
         </div>
 

@@ -3,12 +3,23 @@
 import { getStripe } from "@/lib/stripe"
 import { getPlan, getProduct } from "@/lib/products"
 import { createClient } from "@/lib/supabase/server"
+import { db } from "@/lib/db"
 
-export async function startNumerologieCheckout(email?: string, locale: string = 'ro'): Promise<string> {
+export async function startNumerologieCheckout(
+  email?: string,
+  locale: string = 'ro',
+  formData?: Record<string, unknown>,
+  discountCode?: string,
+): Promise<string> {
   const product = getProduct('cristalul-destinului')
   if (!product) throw new Error('Produsul nu a fost găsit.')
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
+  const normalizedCode = discountCode?.trim().toUpperCase()
+  const eligible = normalizedCode
+    ? await db<{ email: string }[]>`SELECT email FROM newsletter_subscribers WHERE email = ${email?.toLowerCase().trim()} AND discount_code = ${normalizedCode} AND discount_activated_at IS NOT NULL LIMIT 1`
+    : []
+  const unitAmount = eligible.length ? 1274 : 1499
 
   const stripe = getStripe()
   const session = await stripe.checkout.sessions.create({
@@ -27,6 +38,7 @@ export async function startNumerologieCheckout(email?: string, locale: string = 
     ],
     mode: 'payment',
     ...(email ? { customer_email: email } : {}),
+    metadata: formData ? { formData: JSON.stringify(formData) } : undefined,
     success_url: `${baseUrl}/${locale}/numerologie?payment=success&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/${locale}/numerologie?payment=cancelled`,
   })
@@ -42,6 +54,7 @@ export async function getNumerologieSessionStatus(sessionId: string) {
     status: session.status,
     paymentStatus: session.payment_status,
     customerEmail: session.customer_details?.email ?? null,
+    formData: session.metadata?.formData ?? null,
   }
 }
 

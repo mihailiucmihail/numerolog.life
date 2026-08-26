@@ -19,7 +19,8 @@ export function FAQSection() {
     { question: t("q5"), answer: t("a5") },
     { question: t("q6"), answer: t("a6") },
     { question: t("q7"), answer: t("a7") },
-    { question: t("q8"), answer: t("a8") }
+    { question: t("q8"), answer: t("a8") },
+    { question: t("q9"), answer: t("a9") }
   ]
   return (
     <section id="intrebari" className="py-32 relative">
@@ -32,8 +33,8 @@ export function FAQSection() {
             <Star className="h-3.5 w-3.5 text-primary" />
             <span className="text-xs tracking-widest uppercase text-muted-foreground">{t("badge")}</span>
           </div>
-          <h2 className="font-serif text-4xl sm:text-5xl md:text-6xl font-light mb-6">
-            {t("titlePlain")} <span className="text-gradient">{t("titleAccent")}</span>
+          <h2 aria-label={`${t("titlePlain")} ${t("titleAccent")}`} className="font-serif text-4xl sm:text-5xl md:text-6xl font-light mb-6">
+            <span>{t("titlePlain")}</span>{" "}<span className="text-gradient">{t("titleAccent")}</span>
           </h2>
           <p className="text-muted-foreground/80 text-lg font-light">
             {t("subtitle")}
