@@ -103,7 +103,7 @@ export function Footer() {
               <Instagram className="size-5 shrink-0 text-[#E1306C] transition-transform group-hover:scale-110" aria-hidden="true" />
               <span className="flex flex-col">
                 <span className="font-serif text-sm tracking-wide text-primary/90">Mihailiuc Daria</span>
-                <span className="text-[11px] leading-4 text-muted-foreground/60">Fondatoarea proiectului NUMEROLOG</span>
+                <span className="text-[11px] leading-4 text-muted-foreground/60">Основательница проекта NUMEROLOG</span>
               </span>
             </a>
           </div>
