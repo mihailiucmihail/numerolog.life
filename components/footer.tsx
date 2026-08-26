@@ -89,7 +89,7 @@ export function Footer() {
         <div className="divider-cosmic my-12" />
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex w-full items-center justify-between gap-4 md:w-auto md:justify-end">
+          <div className="flex w-full flex-col gap-4 md:w-auto md:flex-row md:items-center md:justify-end md:gap-8">
             <p className="text-muted-foreground/50 text-sm">
               {t("rights")}
             </p>
@@ -97,10 +97,14 @@ export function Footer() {
               href="https://instagram.com/mihailiucdaria"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Instagram Mihailiuc Daria"
-              className="group inline-flex size-10 items-center justify-center rounded-full border border-primary/20 bg-card/30 text-[#E1306C] shadow-[0_8px_24px_rgba(225,48,108,0.12)] transition-all hover:-translate-y-0.5 hover:border-[#E1306C]/50 hover:bg-[#E1306C]/10"
+              aria-label="Instagram Mihailiuc Daria, fondatoarea NUMEROLOG"
+              className="group inline-flex items-center gap-2.5 text-left transition-opacity hover:opacity-80"
             >
-              <Instagram className="size-5 transition-transform group-hover:scale-110" aria-hidden="true" />
+              <Instagram className="size-5 shrink-0 text-[#E1306C] transition-transform group-hover:scale-110" aria-hidden="true" />
+              <span className="flex flex-col">
+                <span className="font-serif text-sm tracking-wide text-primary/90">Mihailiuc Daria</span>
+                <span className="text-[11px] leading-4 text-muted-foreground/60">Fondatoarea proiectului NUMEROLOG</span>
+              </span>
             </a>
           </div>
         </div>
