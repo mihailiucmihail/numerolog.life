@@ -34,8 +34,6 @@ export function HowItWorksSection() {
   return (
     <section id="cum-functioneaza" className="relative overflow-hidden py-14 sm:py-20">
       <div className="absolute inset-0 cosmic-gradient-intense opacity-20" />
-      <div className="absolute left-1/2 top-36 h-64 w-px -translate-x-1/2 bg-gradient-to-b from-primary/0 via-primary/35 to-primary/0 md:hidden" />
-
       <div className="relative z-10 mx-auto max-w-6xl px-5 sm:px-8 lg:px-12">
         <div className="mx-auto mb-12 max-w-3xl text-center sm:mb-16">
           <div className="mb-6 inline-flex items-center gap-2 border border-primary/25 bg-primary/5 px-4 py-2 text-[10px] uppercase tracking-[0.28em] text-primary shadow-[0_0_30px_rgba(212,175,55,0.08)]">
