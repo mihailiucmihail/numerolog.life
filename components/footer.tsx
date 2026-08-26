@@ -91,9 +91,6 @@ export function Footer() {
           <p className="text-muted-foreground/50 text-sm">
             {t("rights")}
           </p>
-          <p className="text-muted-foreground/50 text-sm">
-            {t("madeWith")}
-          </p>
         </div>
       </div>
     </footer>
