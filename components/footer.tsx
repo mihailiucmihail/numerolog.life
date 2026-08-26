@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { NumerologSymbol } from "@/components/numerolog-symbol"
 import { useTranslations } from "next-intl"
+import { Instagram } from "lucide-react"
 
 export function Footer() {
   const t = useTranslations("footer")
@@ -88,9 +89,20 @@ export function Footer() {
         <div className="divider-cosmic my-12" />
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-muted-foreground/50 text-sm">
-            {t("rights")}
-          </p>
+          <div className="flex w-full items-center justify-between gap-4 md:w-auto md:justify-end">
+            <p className="text-muted-foreground/50 text-sm">
+              {t("rights")}
+            </p>
+            <a
+              href="https://instagram.com/mihailiucdaria"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram Mihailiuc Daria"
+              className="group inline-flex size-10 items-center justify-center rounded-full border border-primary/20 bg-card/30 text-[#E1306C] shadow-[0_8px_24px_rgba(225,48,108,0.12)] transition-all hover:-translate-y-0.5 hover:border-[#E1306C]/50 hover:bg-[#E1306C]/10"
+            >
+              <Instagram className="size-5 transition-transform group-hover:scale-110" aria-hidden="true" />
+            </a>
+          </div>
         </div>
       </div>
     </footer>
