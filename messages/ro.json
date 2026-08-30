@@ -24,7 +24,7 @@
     "trustTime": "60 Secunde",
     "trustPrivate": "100% Privat",
     "ctaPrimary": "Primește analiza mea",
-    "ctaPrimaryNote": "Analiză personală • acces după plata securizată • 19,00 €",
+    "ctaPrimaryNote": "Analiză personală • acces după plata securizată • 1,00 €",
     "ctaSecondary": "Vezi ce primești",
     "ctaSecondaryNote": "22 Arcane • harta numelui • cicluri și recomandări",
     "reviews": "recenzii",
@@ -131,7 +131,7 @@
     "ctaTitle": "Cristalul tău al Destinului — complet",
     "ctaDesc": "Primește analiza personalizată completă cu calcule individuale, cicluri de viață și grafice vizuale.",
     "ctaButton": "Primește analiza mea",
-    "ctaPrice": "19,00 € — plată unică"
+    "ctaPrice": "1,00 € — plată unică"
   },
   "testimonials": {
     "badge": "Testimoniale",
@@ -185,8 +185,8 @@
     "feature6": "Carieră, relații și autorealizare",
     "feature7": "Interpretări, recomandări și sinteză personalizată",
     "feature8": "Raport complet în format ușor de consultat",
-    "cta": "Primește analiza mea — 19,00 €",
-    "ctaNote": "Primești acces după plata securizată · 19,00 €",
+    "cta": "Primește analiza mea — 1,00 €",
+    "ctaNote": "Primești acces după plata securizată · 1,00 €",
     "trustSecure": "Plată securizată",
     "trustInstant": "Livrare instant",
     "trustGuarantee": "Garanție 30 zile"
@@ -207,7 +207,7 @@
     "q5": "Este sigură confidențialitatea datelor mele?",
     "a5": "Datele tale sunt protejate cu criptare de nivel bancar (AES-256). Nu partajăm niciodată informațiile tale cu terți și nu le folosim în alte scopuri decât generarea raportului tău. Poți solicita ștergerea completă a datelor oricând din setările contului.",
     "q6": "Ce include analiza completă?",
-    "a6": "Primești o interpretare structurată a celor 22 de Arcane, harta numelui, metaciclu, cronologia etapelor, straturile karmice, graficul vieții, tranzitele planetare și recomandări personalizate — totul pentru 19,00 €, cu plată unică.",
+    "a6": "Primești o interpretare structurată a celor 22 de Arcane, harta numelui, metaciclu, cronologia etapelor, straturile karmice, graficul vieții, tranzitele planetare și recomandări personalizate — totul pentru 1,00 €, cu plată unică.",
     "q7": "Cum pot contacta suportul?",
     "a7": "Poți contacta echipa noastră de suport prin email la suport@numerolog.life sau prin chat-ul din aplicație (disponibil 24/7). Răspundem de obicei în maxim 24 de ore.",
     "q8": "Este o predicție sigură?",
@@ -249,7 +249,7 @@
     "errorDate": "Introdu o dată de naștere validă (zi, lună, an).",
     "errorEmail": "Introdu o adresă de email validă pentru a primi raportul.",
     "report": "Raport complet — acces permanent, fără plată suplimentară",
-    "price": "19,00 €"
+    "price": "1,00 €"
   },
   "newsletter": {
     "badge": "Reducere -15%",
