@@ -54,13 +54,13 @@ export default function RaportViewer({ formData }: RaportViewerProps) {
   const numeFull = [formData.first, formData.last].filter(Boolean).join(' ')
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="w-full px-0">
       {/* Banner informativ */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="mb-6 flex items-center gap-3 px-4 py-3 rounded-lg"
+        className="mb-6 flex w-full items-center gap-3 rounded-none border-x-0 px-4 py-3 sm:rounded-lg sm:border-x"
         style={{
           background: 'rgba(212,175,55,0.06)',
           border: '1px solid rgba(212,175,55,0.2)',

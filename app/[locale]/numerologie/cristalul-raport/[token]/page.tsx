@@ -27,7 +27,7 @@ export default async function CristalulRaportPage({
     <main className="min-h-screen bg-background relative">
       <StarField />
       <Navbar />
-      <div className="relative z-10 pt-28 pb-20">
+      <div className="relative z-10 pt-20 pb-8">
         <RaportViewer formData={formData} />
       </div>
       <Footer />
