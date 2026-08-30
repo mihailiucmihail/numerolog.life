@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter, Cormorant_Garamond } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
+import Script from 'next/script'
 import { NextIntlClientProvider, hasLocale } from 'next-intl'
 import { setRequestLocale, getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
@@ -55,7 +55,18 @@ export default async function LocaleLayout({
             {children}
           </RootLayoutClient>
         </NextIntlClientProvider>
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-TJRHG2E2ZZ"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-TJRHG2E2ZZ');
+          `}
+        </Script>
       </body>
     </html>
   )
