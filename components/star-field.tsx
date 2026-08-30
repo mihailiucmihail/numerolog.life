@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { useLocale } from "next-intl"
 
 // Coordonatele constelatiilor zodiacale (normalizate 0-100)
 const CONSTELLATIONS = {
@@ -106,7 +107,15 @@ const CONSTELLATION_ORDER = [
   'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'
 ]
 
+const ZODIAC_NAMES_RU: Record<string, string> = {
+  aries: 'Овен', taurus: 'Телец', gemini: 'Близнецы', cancer: 'Рак',
+  leo: 'Лев', virgo: 'Дева', libra: 'Весы', scorpio: 'Скорпион',
+  sagittarius: 'Стрелец', capricorn: 'Козерог', aquarius: 'Водолей', pisces: 'Рыбы',
+}
+
 export function StarField() {
+  const locale = useLocale()
+
   const [activeConstellation, setActiveConstellation] = useState(0)
   const [isClient, setIsClient] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -169,6 +178,7 @@ export function StarField() {
 
   const currentKey = CONSTELLATION_ORDER[activeConstellation]
   const currentConstellation = CONSTELLATIONS[currentKey as keyof typeof CONSTELLATIONS]
+  const constellationName = locale === 'ru' ? ZODIAC_NAMES_RU[currentKey] : currentConstellation.name
 
   return (
     <>
@@ -315,7 +325,7 @@ export function StarField() {
                     textAnchor="middle"
                     className="animate-fade-in"
                   >
-                    {constellation.name}
+                    {constellationName}
                   </text>
                 )}
               </g>
