@@ -221,6 +221,15 @@
   border: 1px solid rgba(200, 165, 80, 0.06);
 }
 
+.premium-logo-pulse {
+  animation: premium-logo-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes premium-logo-pulse {
+  0%, 100% { transform: scale(0.96) rotate(-2deg); filter: drop-shadow(0 0 8px rgba(212,175,55,0.22)); }
+  50% { transform: scale(1.04) rotate(2deg); filter: drop-shadow(0 0 24px rgba(212,175,55,0.5)); }
+}
+
 /* Subtle pulse animation for CTA buttons */
 .animate-pulse-subtle {
   animation: pulse-subtle 3s ease-in-out infinite;

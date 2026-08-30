@@ -52,6 +52,8 @@ export default function CalculatorWrapper() {
 
         // Salvam raportul in DB si trimitem email cu link permanent
         try {
+          setShowLoading(true)
+          await new Promise((resolve) => setTimeout(resolve, 5000))
           const { token } = await saveRaportAndSendEmail(sessionId, formData, locale)
           // Redirectam la pagina raport permanenta cu locale corect
           router.replace(`/${locale}/numerologie/cristalul-raport/${token}`)
@@ -139,15 +141,13 @@ export default function CalculatorWrapper() {
               animate={{ opacity: 1, scale: 1 }}
               className="flex flex-col items-center gap-6 text-center px-8"
             >
-              <div
-                className="w-20 h-20 rounded-full flex items-center justify-center"
-                style={{
-                  background: 'rgba(212,175,55,0.1)',
-                  border: '1px solid rgba(212,175,55,0.3)',
-                  boxShadow: '0 0 40px rgba(212,175,55,0.15)',
-                }}
-              >
-                <Loader2 size={36} className="animate-spin" style={{ color: '#D4AF37' }} />
+              <div className="flex flex-col items-center gap-5">
+                <div className="premium-logo-pulse flex items-center justify-center" aria-hidden="true">
+                  <div className="relative flex size-20 rotate-45 items-center justify-center border border-primary/70 bg-primary/10 shadow-[0_0_45px_rgba(212,175,55,0.3)]">
+                    <div className="size-12 border border-primary/50 bg-primary/10" />
+                  </div>
+                </div>
+                <div className="font-mono text-xs tracking-[0.35em] text-primary/80">NUMEROLOG</div>
               </div>
               <div>
                 <p className="font-mono text-xs tracking-widest uppercase mb-2"
@@ -155,10 +155,10 @@ export default function CalculatorWrapper() {
                   Cristalul Destinului
                 </p>
                 <h2 className="font-serif text-2xl text-white mb-2">
-                  Se redirecteaza la plata
+                  Plata este confirmată
                 </h2>
                 <p className="text-sm" style={{ color: 'rgba(237,227,207,0.5)' }}>
-                  Vei fi redirectat catre pagina securizata Stripe...
+                  Se pregătește raportul tău personalizat...
                 </p>
               </div>
               <div className="flex items-center gap-2 mt-2">

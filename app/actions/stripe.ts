@@ -19,7 +19,7 @@ export async function startNumerologieCheckout(
   const eligible = normalizedCode
     ? await db<{ email: string }[]>`SELECT email FROM newsletter_subscribers WHERE email = ${email?.toLowerCase().trim()} AND discount_code = ${normalizedCode} AND discount_activated_at IS NOT NULL LIMIT 1`
     : []
-  const unitAmount = eligible.length ? 1274 : 1499
+  const unitAmount = eligible.length ? 1615 : 1900 // 15% reducere sau preț întreg de 19 EUR
 
   const stripe = getStripe()
   const session = await stripe.checkout.sessions.create({
@@ -31,7 +31,7 @@ export async function startNumerologieCheckout(
             name: product.name,
             description: product.description,
           },
-          unit_amount: product.priceInCents,
+          unit_amount: unitAmount,
         },
         quantity: 1,
       },
