@@ -11,7 +11,7 @@ export default function NumerologiePage() {
     <main className="min-h-screen bg-background relative">
       <StarField />
       <Navbar />
-      <div className="relative z-10 pt-16">
+      <div className="relative z-10 pt-24 sm:pt-28">
         <Suspense>
           <NumerologieClient />
         </Suspense>
