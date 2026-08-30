@@ -120,7 +120,7 @@ export default function CalculatorWrapper() {
         <iframe
           ref={iframeRef}
           src="/cristalul-calculator.html"
-          style={{ width: '100%', height, border: 'none', display: 'block', background: 'transparent' }}
+          style={{ width: '100%', height, border: 'none', display: 'block', background: 'transparent', colorScheme: 'light' }}
           title="Cristalul Destinului Calculator"
           scrolling="no"
           allowTransparency={true}
