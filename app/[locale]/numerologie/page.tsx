@@ -8,10 +8,9 @@ import NumerologieClient from '@/components/numerology/numerologie-client'
 
 export default function NumerologiePage() {
   return (
-    <main className="min-h-screen bg-background relative">
-      <StarField />
+    <main className="min-h-screen relative" style={{ backgroundColor: '#161022' }}>
       <Navbar />
-      <div className="relative z-10 pt-24 sm:pt-28">
+      <div className="relative z-10 pt-14 md:pt-16">
         <Suspense>
           <NumerologieClient />
         </Suspense>
