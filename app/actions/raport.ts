@@ -46,7 +46,7 @@ export async function saveRaportAndSendEmail(
       await resend.emails.send({
         from: `Numerolog.life <${fromDomain}>`,
         to: email,
-        subject: 'Raportul tau Cristalul Destinului este gata',
+        subject: 'Твой отчёт «Кристалл Судьбы» готов',
         html: `
           <!DOCTYPE html>
           <html>
@@ -59,28 +59,28 @@ export async function saveRaportAndSendEmail(
                     <td style="background:linear-gradient(135deg,#0A0A14,#1a1a2e);padding:40px;text-align:center;border-bottom:1px solid rgba(212,175,55,0.15);">
                       <p style="margin:0 0 8px;color:rgba(212,175,55,0.7);font-size:11px;letter-spacing:4px;text-transform:uppercase;">numerolog.life</p>
                       <h1 style="margin:0;color:#D4AF37;font-size:28px;font-weight:400;">Cristalul Destinului</h1>
-                      <p style="margin:12px 0 0;color:rgba(237,227,207,0.6);font-size:14px;">Raportul tau numerologic complet</p>
+                      <p style="margin:12px 0 0;color:rgba(237,227,207,0.6);font-size:14px;">Твой полный нумерологический отчёт</p>
                     </td>
                   </tr>
                   <tr>
                     <td style="padding:40px;">
                       <p style="color:rgba(237,227,207,0.9);font-size:16px;line-height:1.7;margin:0 0 24px;">
-                        Buna ziua, <strong style="color:#D4AF37;">${numeFull}</strong>,
+                        Здравствуйте, <strong style="color:#D4AF37;">${numeFull}</strong>,
                       </p>
                       <p style="color:rgba(237,227,207,0.7);font-size:14px;line-height:1.7;margin:0 0 32px;">
-                        Raportul tau numerologic bazat pe metoda Cristalul Destinului a fost generat cu succes. 
-                        Acceseaza-l oricand folosind linkul de mai jos &mdash; nu este necesara o alta plata.
+                        Твой нумерологический отчёт по методу «Кристалл Судьбы» успешно создан.
+                        Открывай его в любое время по ссылке ниже — дополнительная оплата не требуется.
                       </p>
                       <table width="100%" cellpadding="0" cellspacing="0">
                         <tr><td align="center">
                           <a href="${raportUrl}"
                              style="display:inline-block;background:linear-gradient(135deg,#D4AF37,#B8922E);color:#0A0A14;font-size:15px;font-weight:600;letter-spacing:1px;text-decoration:none;padding:16px 40px;border-radius:6px;">
-                            Acceseaza Raportul Tau
+                            Открыть твой отчёт
                           </a>
                         </td></tr>
                       </table>
                       <p style="margin:32px 0 0;color:rgba(237,227,207,0.4);font-size:12px;text-align:center;line-height:1.6;">
-                        Sau copiaza acest link in browser:<br>
+                        Или скопируй эту ссылку в браузер:<br>
                         <span style="color:rgba(212,175,55,0.6);word-break:break-all;">${raportUrl}</span>
                       </p>
                     </td>
