@@ -16,20 +16,21 @@ export function NewsletterPopup() {
   useEffect(() => {
     const isMobile = window.matchMedia("(max-width: 767px)").matches
     if (sessionStorage.getItem(SESSION_KEY) || Number(localStorage.getItem(HIDE_KEY) || 0) > Date.now()) return
+    const start = Date.now()
+    const minimumDelay = 15_000
     const trigger = () => {
-      if (triggered.current || document.querySelector('[role="dialog"]')) return
+      if (triggered.current || document.querySelector('[role="dialog"]') || Date.now() - start < minimumDelay) return
       triggered.current = true
       sessionStorage.setItem(SESSION_KEY, "1")
       setOpen(true)
     }
-    const start = Date.now()
-    const timer = window.setTimeout(trigger, isMobile ? 30000 : 25000)
+    const timer = window.setTimeout(trigger, minimumDelay)
     const onScroll = () => {
       const progress = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight
       if (progress >= (isMobile ? 0.45 : 0.4)) trigger()
     }
     const onMouseLeave = (event: MouseEvent) => {
-      if (!isMobile && event.clientY <= 0 && Date.now() - start > 1500) trigger()
+      if (!isMobile && event.clientY <= 0) trigger()
     }
     window.addEventListener("scroll", onScroll, { passive: true })
     if (!isMobile) document.addEventListener("mouseleave", onMouseLeave)
