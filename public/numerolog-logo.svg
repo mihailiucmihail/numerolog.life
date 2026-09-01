@@ -1,36 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 72" role="img" aria-labelledby="title desc">
-  <title id="title">NUMEROLOG</title>
-  <desc id="desc">Logo-ul NUMEROLOG cu simbol diamant auriu și text serif</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420" role="img" aria-labelledby="title desc">
+  <title id="title">NUMEROLOG.life</title>
+  <desc id="desc">Logo Numerolog cu iconița de cristal deasupra textului</desc>
   <defs>
-    <linearGradient id="symbolGold" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#C8A84B"/>
-      <stop offset="45%" stop-color="#F2D472"/>
-      <stop offset="100%" stop-color="#A8782A"/>
-    </linearGradient>
-    <linearGradient id="textGold" x1="0" y1="0" x2="260" y2="0" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#A8782A"/>
-      <stop offset="30%" stop-color="#D4AF37"/>
-      <stop offset="55%" stop-color="#F2D472"/>
-      <stop offset="75%" stop-color="#D4AF37"/>
-      <stop offset="100%" stop-color="#A8782A"/>
-    </linearGradient>
-    <radialGradient id="symbolGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#F2D472" stop-opacity=".5"/>
-      <stop offset="100%" stop-color="#C8A84B" stop-opacity="0"/>
-    </radialGradient>
-    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur stdDeviation="1.2" result="blur"/>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
       <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f5d477"/>
+      <stop offset="0.5" stop-color="#d4af37"/>
+      <stop offset="1" stop-color="#b78928"/>
+    </linearGradient>
   </defs>
-  <g transform="translate(2 18)" filter="url(#glow)">
-    <path d="M18 2 34 18 18 34 2 18Z" stroke="url(#symbolGold)" stroke-width="1.1" fill="url(#symbolGlow)"/>
-    <path d="M18 9 27 18 18 27 9 18Z" stroke="url(#symbolGold)" stroke-width=".7" fill="none" stroke-opacity=".7"/>
-    <path d="M18 13v10M13 18h10" stroke="url(#symbolGold)" stroke-width=".5" stroke-opacity=".5"/>
-    <circle cx="18" cy="18" r="2.2" fill="url(#symbolGold)"/>
-    <circle cx="18" cy="18" r="1" fill="#FFF5C0" fill-opacity=".9"/>
+  <g transform="translate(360 132)" filter="url(#glow)" fill="none" stroke="url(#gold)" stroke-linejoin="round">
+    <rect x="-72" y="-72" width="144" height="144" rx="12" stroke-width="7" transform="rotate(45)"/>
+    <rect x="-38" y="-38" width="76" height="76" rx="7" stroke-width="5" transform="rotate(45)"/>
+    <path d="M-48 0H48M0-48V48" stroke-width="2" opacity=".7"/>
+    <circle cx="0" cy="0" r="9" fill="#f5d477" stroke="none"/>
   </g>
-  <path d="M62 24v24" stroke="#D4AF37" stroke-opacity=".35"/>
-  <text x="80" y="45" fill="url(#textGold)" font-family="Cormorant Garamond, Georgia, serif" font-size="25" font-weight="700" letter-spacing="7">NUMEROLOG</text>
-  <path d="M80 53h300" stroke="#D4AF37" stroke-opacity=".6"/>
+  <text x="360" y="325" text-anchor="middle" fill="url(#gold)" font-family="Georgia, 'Times New Roman', serif" font-size="64" font-weight="500" letter-spacing="13">NUMEROLOG<tspan letter-spacing="1">.life</tspan></text>
 </svg>
