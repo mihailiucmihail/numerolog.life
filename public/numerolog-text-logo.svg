@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="220" viewBox="0 0 1200 220">
+  <defs>
+    <filter id="glow" x="-20%" y="-40%" width="140%" height="180%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <text x="600" y="145" text-anchor="middle" fill="#d4af37" filter="url(#glow)" font-family="Georgia, Times New Roman, serif" font-size="104" font-weight="500" letter-spacing="18">NUMEROLOG<tspan letter-spacing="3">.life</tspan></text>
+</svg>
