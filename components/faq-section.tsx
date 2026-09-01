@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Star, Shield } from "lucide-react"
+import { Star } from "lucide-react"
 import { useTranslations } from "next-intl"
 
 export function FAQSection() {
@@ -58,20 +58,7 @@ export function FAQSection() {
           ))}
         </Accordion>
 
-        {/* Disclaimer */}
-        <div className="mt-16 p-8 rounded-2xl glass-warm">
-          <div className="flex items-start gap-5">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <Shield className="h-5 w-5 text-primary/70" />
-            </div>
-            <div>
-              <h4 className="font-serif font-medium mb-3 text-foreground/90">{t("disclaimerTitle")}</h4>
-              <p className="text-sm text-muted-foreground/70 leading-relaxed">
-                {t("disclaimerText")}
-              </p>
-            </div>
-          </div>
-        </div>
+
       </div>
     </section>
   )
