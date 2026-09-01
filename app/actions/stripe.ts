@@ -19,7 +19,7 @@ export async function startNumerologieCheckout(
   const eligible = normalizedCode
     ? await db<{ email: string }[]>`SELECT email FROM newsletter_subscribers WHERE email = ${email?.toLowerCase().trim()} AND discount_code = ${normalizedCode} AND discount_activated_at IS NOT NULL LIMIT 1`
     : []
-  const unitAmount = 100 // Temporar: 1 EUR pentru testarea plății
+  const unitAmount = 1900 // 19 EUR
 
   const stripe = getStripe()
   const session = await stripe.checkout.sessions.create({

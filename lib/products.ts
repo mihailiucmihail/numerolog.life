@@ -11,7 +11,7 @@ export const PRODUCTS: Product[] = [
     id: 'cristalul-destinului',
     name: 'Cristalul Destinului',
     description: 'Raport numerologic complet — Metoda Ayren și Julie Po cu 22 Arcane, metacicle de viată, grafice și Pătrul lui Pitagora.',
-    priceInCents: 100, // 1 EUR — temporar pentru testarea plății
+    priceInCents: 1900, // 19 EUR
     currency: 'eur',
   },
 ]
