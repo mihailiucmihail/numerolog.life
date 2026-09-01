@@ -50,19 +50,20 @@ export default function CalculatorWrapper() {
           : JSON.parse(metadataFormData as string)
         localStorage.removeItem('cristalul_form_data')
 
-        // Salvam raportul in DB si trimitem email cu link permanent
+        // Salvăm raportul în DB și trimitem email cu link permanent.
+        // Loading-ul apare abia după confirmarea plății, nu în timpul redirectării către Stripe.
+        setShowLoading(true)
         try {
-          setShowLoading(true)
-          await new Promise((resolve) => setTimeout(resolve, 5000))
           const { token } = await saveRaportAndSendEmail(sessionId, formData, locale)
           // Redirectam la pagina raport permanenta cu locale corect
           router.replace(`/${locale}/numerologie/cristalul-raport/${token}`)
           return
         } catch {
-          // Daca salvarea esueaza, afisam raportul direct in iframe
+          // Dacă salvarea eșuează, ascundem loading-ul și afișăm raportul direct în iframe.
+          setShowLoading(false)
         }
 
-        // Fallback: afisam raportul in iframe pe pagina curenta
+        // Fallback: afișăm raportul în iframe pe pagina curentă
         router.replace(`/${locale}/numerologie`)
         const sendUnlock = () => {
           iframeRef.current?.contentWindow?.postMessage(
@@ -78,7 +79,6 @@ export default function CalculatorWrapper() {
   }, [])
 
   const handleRequestPayment = useCallback(async (formData: FormData) => {
-    setShowLoading(true)
     try {
       // localStorage persista cross-redirect (spre deosebire de sessionStorage care se pierde)
       localStorage.setItem('cristalul_form_data', JSON.stringify(formData))
