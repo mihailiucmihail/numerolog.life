@@ -11,44 +11,23 @@ export function Footer() {
   return (
     <footer className="relative z-10 border-t border-primary/10 py-20 bg-transparent">
       <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
-          <div>
-            <Link href="/" className="mb-5 flex items-center gap-2.5">
-              <NumerologSymbol size="md" />
-              <span className="text-lg font-serif font-medium text-gradient">NUMEROLOG</span>
-            </Link>
-            <p className="text-muted-foreground/60 text-sm leading-relaxed">
-              {t("tagline")}
-            </p>
-          </div>
-
-          <div>
-            <h3 className="font-serif font-medium mb-5 text-foreground/90">{t("company")}</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link href="/contact" className="text-muted-foreground/60 hover:text-foreground transition-colors text-sm">
-                  {t("contact")}
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-serif font-medium mb-5 text-foreground/90">{t("legal")}</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link href="/cookies" className="text-muted-foreground/60 hover:text-foreground transition-colors text-sm">
-                  {t("cookies")}
-                </Link>
-              </li>
-            </ul>
-          </div>
+        <div className="mb-12">
+          <Link href="/" className="mb-5 flex items-center gap-2.5">
+            <NumerologSymbol size="md" />
+            <span className="text-lg font-serif font-medium text-gradient">NUMEROLOG</span>
+          </Link>
+          <p className="max-w-xs text-muted-foreground/60 text-sm leading-relaxed">
+            {t("tagline")}
+          </p>
         </div>
 
-        <div className="divider-cosmic my-12" />
+        <div className="divider-cosmic mb-8" />
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex w-full flex-col gap-4 md:w-auto md:flex-row md:items-center md:justify-end md:gap-8">
+            <Link href="/contact" className="text-muted-foreground/60 hover:text-foreground transition-colors text-sm">
+              {t("contact")}
+            </Link>
             <p className="text-muted-foreground/50 text-sm">
               {t("rights")}
             </p>
