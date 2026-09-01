@@ -57,7 +57,7 @@ export function PricingSection() {
               <span className="block mt-2">{t("cardValue")}</span>
             </CardDescription>
             <div className="mt-8 flex items-baseline justify-center">
-              <span className="font-serif text-7xl font-light text-gradient">14,99</span>
+              <span className="font-serif text-7xl font-light text-gradient">19,00</span>
               <span className="text-xl text-muted-foreground/60 ml-2">€</span>
             </div>
             <p className="text-sm text-muted-foreground/50 mt-3">{t("noSubscription")}</p>
