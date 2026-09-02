@@ -62,7 +62,7 @@ export function FeaturesSection() {
     }
   ]
   return (
-    <section id="caracteristici" className="pt-4 pb-16 sm:pt-6 sm:pb-20 relative">
+    <section id="caracteristici" className="pt-4 pb-4 sm:pt-6 sm:pb-6 relative">
       {/* Subtle warm gradient background */}
       <div className="absolute inset-0 cosmic-gradient opacity-20" />
       
