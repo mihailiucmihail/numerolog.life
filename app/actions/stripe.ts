@@ -71,7 +71,7 @@ export async function startGraniCheckout(
     }],
     customer_email: normalizedEmail,
     metadata: { productId: product.id, facet },
-    success_url: `${baseUrl}/${locale}?grani_payment=success&facet=${encodeURIComponent(facet)}`,
+    success_url: `${baseUrl}/${locale}/grani?grani_payment=success&facet=${encodeURIComponent(facet)}`,
     cancel_url: `${baseUrl}/${locale}?grani_payment=cancelled`,
   })
   if (!session.url) throw new Error('Nu s-a putut genera URL-ul de plată.')
