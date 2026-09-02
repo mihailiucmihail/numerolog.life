@@ -15,13 +15,14 @@ export function Footer() {
             <p className="text-muted-foreground/50 text-sm">
               {t("rights")}
             </p>
-            <a
-              href="https://instagram.com/mihailiucdaria"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Instagram Mihailiuc Daria, fondatoarea NUMEROLOG"
-              className="group inline-flex items-center gap-2.5 text-left transition-opacity hover:opacity-80"
-            >
+            <div className="group inline-flex items-center gap-2.5 text-left">
+              <a
+                href="https://instagram.com/mihailiucdaria"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram Mihailiuc Daria, fondatoarea NUMEROLOG"
+                className="inline-flex items-center gap-2.5 transition-opacity hover:opacity-80"
+              >
               <Instagram className="size-5 shrink-0 text-[#E1306C] transition-transform group-hover:scale-110" aria-hidden="true" />
               <span className="flex flex-col">
                 <span className="flex items-center gap-3">
@@ -32,7 +33,8 @@ export function Footer() {
                 </span>
                 <span className="text-[11px] leading-4 text-muted-foreground/60">Основательница проекта NUMEROLOG</span>
               </span>
-            </a>
+              </a>
+            </div>
           </div>
         </div>
       </div>
