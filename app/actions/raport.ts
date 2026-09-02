@@ -43,7 +43,7 @@ export async function saveRaportAndSendEmail(
       const numeFull = [formData.first, formData.last].filter(Boolean).join(' ') || 'utilizator'
       // Folosim domeniul Resend implicit daca astroai.ro nu e verificat inca
       const fromDomain = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
-      await resend.emails.send({
+      const { error: emailError } = await resend.emails.send({
         from: `Numerolog.life <${fromDomain}>`,
         to: email,
         subject: 'Твой отчёт «Кристалл Судьбы» готов',
@@ -99,10 +99,12 @@ export async function saveRaportAndSendEmail(
           </html>
         `,
       })
+      if (emailError) {
+        console.error('[v0] Grani email send error:', emailError.message)
+      }
     }
   } catch (err) {
-    // Emailul esueaza silentios — raportul e salvat oricum
-    console.log('[v0] Email send error:', err)
+    console.error('[v0] Grani email send error:', err)
   }
 
   return { token }
