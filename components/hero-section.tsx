@@ -67,7 +67,7 @@ export function HeroSection() {
       ═══════════════════════════════════════════════════════════════════════ */}
       
       {/* Premium activity badge */}
-      <div className="relative z-10 flex justify-center mb-5 sm:mb-14">
+      <div className="relative z-10 flex justify-center mb-5 sm:mb-6">
         <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full backdrop-blur-sm" style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(242,212,114,0.08) 100%)', border: '1px solid rgba(212,175,55,0.2)' }}>
           <span className="relative flex h-1.5 w-1.5">
             <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-60 animate-ping" />
@@ -112,7 +112,7 @@ export function HeroSection() {
       
       {/* Removed vignette - was causing visible transition bands */}
       
-      <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-2 sm:py-16 md:py-20 text-center relative z-10">
+      <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-2 sm:py-4 md:py-6 text-center relative z-10">
         {/* Cinematic headline with serif font */}
         <h1 
           className={`mb-6 sm:mb-10 transition-all duration-1000 delay-150 ${
