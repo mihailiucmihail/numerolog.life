@@ -175,28 +175,6 @@ export function Navbar() {
             }
           `}</style>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-10">
-            <Link 
-              href="/#caracteristici" 
-              className="text-sm text-white/80 hover:text-white transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(200,165,80,0.5)]"
-            >
-              {t("features")}
-            </Link>
-            <Link 
-              href="/#preturi" 
-              className="text-sm text-white/80 hover:text-white transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(200,165,80,0.5)]"
-            >
-              {t("pricing")}
-            </Link>
-            <Link 
-              href="/#intrebari" 
-              className="text-sm text-white/80 hover:text-white transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(200,165,80,0.5)]"
-            >
-              {t("faq")}
-            </Link>
-          </div>
-
           {/* Desktop Auth */}
           <div className="hidden md:flex items-center gap-4">
             {loading ? (
@@ -249,14 +227,6 @@ export function Navbar() {
               </DropdownMenu>
             ) : (
               <>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  asChild 
-                  className="text-white/90 hover:text-white hover:bg-white/10 border border-transparent hover:border-white/10"
-                >
-                  <Link href="/auth/login">{t("login")}</Link>
-                </Button>
                 <Button 
                   size="sm" 
                   asChild 
