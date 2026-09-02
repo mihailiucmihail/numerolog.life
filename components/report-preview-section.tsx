@@ -58,7 +58,6 @@ export function ReportPreviewSection() {
         <div className="mt-10 border-t border-primary/30 pt-7 text-center sm:mt-12">
           <Lock className="mx-auto mb-3 h-5 w-5 text-primary/75" aria-hidden="true" />
           <h3 className="font-serif text-xl sm:text-2xl">{S.lockTitle}</h3>
-          <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-muted-foreground">{S.lockNote}</p>
           <Button size="lg" asChild className="cosmic-button mt-5 rounded-full px-7">
             <Link href="/numerologie">
               {S.cta} <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
