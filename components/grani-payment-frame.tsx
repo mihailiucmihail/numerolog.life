@@ -9,6 +9,19 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
+    const resizeFrame = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin || event.data?.type !== "grani-resize") return
+      const height = Number(event.data.height)
+      if (Number.isFinite(height) && height > 0) {
+        const frame = iframeRef.current
+        if (frame) frame.style.height = `${Math.ceil(height)}px`
+      }
+    }
+    window.addEventListener("message", resizeFrame)
+    return () => window.removeEventListener("message", resizeFrame)
+  }, [])
+
+  useEffect(() => {
     const onMessage = async (event: MessageEvent) => {
       if (event.origin !== window.location.origin || !["grani-payment", "grani-navigate"].includes(event.data?.type)) return
       if (event.data.type === "grani-navigate") {
@@ -33,7 +46,7 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
     <div className="relative">
       {loading && <div className="absolute inset-0 z-10 grid place-items-center bg-background/80 text-sm text-foreground">Se pregătește plata…</div>}
       {error && <p role="alert" className="mb-3 text-center text-sm text-destructive">{error}</p>}
-      <iframe ref={iframeRef} src={preview ? "/grani-live.html?mode=preview" : "/grani-live.html"} title="Raportul Grani" className={`w-full border-0 ${preview ? "h-[1500px] sm:h-[1100px] lg:h-[850px]" : "h-[3600px] sm:h-[3000px] lg:h-[2600px]"}`} scrolling="no" />
+      <iframe ref={iframeRef} src={preview ? "/grani-live.html?mode=preview" : "/grani-live.html"} title="Raportul Grani" className="w-full border-0" scrolling="no" />
     </div>
   )
 }
