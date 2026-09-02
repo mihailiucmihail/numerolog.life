@@ -61,8 +61,8 @@ export async function saveRaportAndSendEmail(
                   <tr>
                     <td style="background:linear-gradient(135deg,#0A0A14,#1a1a2e);padding:40px;text-align:center;border-bottom:1px solid rgba(212,175,55,0.15);">
                       <p style="margin:0 0 8px;color:rgba(212,175,55,0.7);font-size:11px;letter-spacing:4px;text-transform:uppercase;">numerolog.life</p>
-                      <h1 style="margin:0;color:#D4AF37;font-size:28px;font-weight:400;">Cristalul Destinului</h1>
-                      <p style="margin:12px 0 0;color:rgba(237,227,207,0.6);font-size:14px;">Твой полный нумерологический отчёт</p>
+                      <h1 style="margin:0;color:#D4AF37;font-size:28px;font-weight:400;">${reportType === 'grani' ? 'Грани Судьбы' : 'Cristalul Destinului'}</h1>
+                      <p style="margin:12px 0 0;color:rgba(237,227,207,0.6);font-size:14px;">${reportType === 'grani' ? 'Твой полный отчёт по граням судьбы' : 'Твой полный нумерологический отчёт'}</p>
                     </td>
                   </tr>
                   <tr>
@@ -71,7 +71,7 @@ export async function saveRaportAndSendEmail(
                         Здравствуйте, <strong style="color:#D4AF37;">${numeFull}</strong>,
                       </p>
                       <p style="color:rgba(237,227,207,0.7);font-size:14px;line-height:1.7;margin:0 0 32px;">
-                        Твой нумерологический отчёт по методу «Кристалл Судьбы» успешно создан.
+                        ${reportType === 'grani' ? 'Твой отчёт «Грани Судьбы» успешно создан.' : 'Твой нумерологический отчёт по методу «Кристалл Судьбы» успешно создан.'}
                         Открывай его в любое время по ссылке ниже — дополнительная оплата не требуется.
                       </p>
                       <table width="100%" cellpadding="0" cellspacing="0">
