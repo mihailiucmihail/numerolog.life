@@ -9,7 +9,6 @@ import { StarField } from "@/components/star-field"
 import { NewsletterSection } from "@/components/newsletter/newsletter-section"
 import { NewsletterPopup } from "@/components/newsletter/newsletter-popup"
 import { ReportPreviewSection } from "@/components/report-preview-section"
-import { GraniPaymentFrame } from "@/components/grani-payment-frame"
 
 export default function HomePage() {
   return (
