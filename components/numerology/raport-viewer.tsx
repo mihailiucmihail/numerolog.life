@@ -14,10 +14,12 @@ interface FormData {
   email: string
   gender?: string
   nameAlphabetKey?: string
+  facet?: string
 }
 
 interface RaportViewerProps {
   formData: FormData
+  reportType?: 'cristal' | 'grani'
 }
 
 export default function RaportViewer({ formData }: RaportViewerProps) {
@@ -36,7 +38,9 @@ export default function RaportViewer({ formData }: RaportViewerProps) {
     ...(formData.gender ? { gender: formData.gender } : {}),
     ...(formData.nameAlphabetKey ? { alpha: formData.nameAlphabetKey } : {}),
   })
-  const iframeSrc = `/cristalul-calculator.html?${params.toString()}`
+  const iframeSrc = reportType === 'grani'
+    ? `/grani-live.html?${params.toString()}#/${formData.facet || 'professiya'}`
+    : `/cristalul-calculator.html?${params.toString()}`
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -83,7 +87,7 @@ export default function RaportViewer({ formData }: RaportViewerProps) {
           display: 'block',
           overflow: 'hidden',
         }}
-        title="Cristalul Destinului — Raport"
+        title={reportType === 'grani' ? 'Грани Судьбы — Отчёт' : 'Cristalul Destinului — Raport'}
         scrolling="no"
       />
     </div>

@@ -25,7 +25,7 @@ export default async function GraniRaportPage({
       <StarField />
       <Navbar />
       <div className="relative z-10 pb-8 pt-20">
-        <RaportViewer formData={formData} />
+        <RaportViewer formData={formData} reportType="grani" />
       </div>
       <Footer />
     </main>
