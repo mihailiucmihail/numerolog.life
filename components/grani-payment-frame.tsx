@@ -51,7 +51,7 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
     <div className="relative">
       {loading && <div className="absolute inset-0 z-10 grid place-items-center bg-background/80 text-sm text-foreground">Se pregătește plata…</div>}
       {error && <p role="alert" className="mb-3 text-center text-sm text-destructive">{error}</p>}
-      <iframe ref={iframeRef} src={preview ? "/grani-live.html?mode=preview" : "/grani-live.html"} title="Raportul Grani" className="w-full border-0" scrolling="no" />
+      <iframe ref={iframeRef} src={preview ? "/grani-live.html?mode=preview" : "/grani-live.html"} title="Raportul Grani" className="h-[2200px] w-full border-0" scrolling="no" onLoad={() => { if (iframeRef.current && iframeRef.current.clientHeight < 500) iframeRef.current.style.height = "2200px" }} />
     </div>
   )
 }
