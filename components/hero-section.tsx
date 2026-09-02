@@ -168,14 +168,10 @@ export function HeroSection() {
                 <span>{t("ctaPrimary")}</span>
               </Link>
             </Button>
-            <p className="text-base text-primary font-semibold tracking-wide">{t("ctaPrimaryNote")}</p>
-            
-
           </div>
         </div>
-        
-        {/* Spacing adjustment */}
-        <div className="mb-2 sm:mb-16" />
+
+        <div className="mb-2" />
       </div>
 
     </section>
