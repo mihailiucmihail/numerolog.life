@@ -51,7 +51,7 @@ export async function startGraniCheckout(
   email: string,
   facet: string,
   locale: string = 'ro',
-  formData?: { day: number; month: number; year: number },
+  formData?: Record<string, unknown>,
 ): Promise<string> {
   const product = getProduct('grani-professiya')
   if (!product) throw new Error('Produsul Grani nu a fost găsit.')

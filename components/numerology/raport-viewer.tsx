@@ -14,6 +14,7 @@ interface FormData {
   email: string
   gender?: string
   nameAlphabetKey?: string
+  alpha?: string
   facet?: string
 }
 
@@ -36,7 +37,7 @@ export default function RaportViewer({ formData, reportType = 'cristal' }: Rapor
     month: String(formData.month),
     year: String(formData.year),
     ...(formData.gender ? { gender: formData.gender } : {}),
-    ...(formData.nameAlphabetKey ? { alpha: formData.nameAlphabetKey } : {}),
+    ...((formData.nameAlphabetKey || formData.alpha) ? { alpha: (formData.nameAlphabetKey || formData.alpha) as string } : {}),
     ...(reportType === 'grani' ? { report: '1', email: formData.email || '', facet: formData.facet || 'professiya' } : {}),
   })
   const iframeSrc = reportType === 'grani'
