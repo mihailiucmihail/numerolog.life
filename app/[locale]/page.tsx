@@ -3,7 +3,6 @@ export const dynamic = 'force-dynamic'
 import { HeroSection } from "@/components/hero-section"
 import { HowItWorksSection } from "@/components/how-it-works-section"
 import { FeaturesSection } from "@/components/features-section"
-import CalculatorWrapper from "@/components/numerology/calculator-wrapper"
 import { FAQSection } from "@/components/faq-section"
 import { Footer } from "@/components/footer"
 import { StarField } from "@/components/star-field"
@@ -18,7 +17,14 @@ export default function HomePage() {
       <HeroSection />
       <FeaturesSection />
       <section id="cristalul-destinului" className="relative z-10 py-8 sm:py-12">
-        <CalculatorWrapper />
+        <div className="mx-auto w-full max-w-7xl overflow-hidden px-4 sm:px-6 lg:px-8">
+          <iframe
+            src="/grani-live.html"
+            title="Raportul Cristalul Destinului"
+            className="h-[2200px] w-full border-0 sm:h-[2800px] lg:h-[3400px]"
+            loading="lazy"
+          />
+        </div>
       </section>
       <HowItWorksSection />
       <NewsletterSection />
