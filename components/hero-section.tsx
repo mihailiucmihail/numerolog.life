@@ -129,6 +129,14 @@ export function HeroSection() {
             {t("titleLine2")}
           </span>
         </h1>
+
+        <p
+          className={`text-base sm:text-lg md:text-xl text-muted-foreground/80 max-w-xl mx-auto mb-8 sm:mb-12 leading-relaxed font-light transition-all duration-1000 delay-300 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+          }`}
+        >
+          {t("subtitle")}
+        </p>
         
         {/* Simplified trust - just text with better contrast */}
         <div 
