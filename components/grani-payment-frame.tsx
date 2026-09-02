@@ -61,7 +61,9 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
 
   const frameSrc = preview
     ? "/grani-live.html?mode=preview"
-    : `/grani-live.html#/${encodeURIComponent(initialFacet || "professiya")}`
+    : initialFacet
+      ? `/grani-live.html#/${encodeURIComponent(initialFacet)}`
+      : "/grani-live.html"
 
   return (
     <div className="relative">
