@@ -55,7 +55,7 @@ export async function startGraniCheckout(
   const product = getProduct('grani-professiya')
   if (!product) throw new Error('Produsul Grani nu a fost găsit.')
   const normalizedEmail = email.trim().toLowerCase()
-  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(normalizedEmail)) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(normalizedEmail)) {
     throw new Error('Introdu o adresă de email validă.')
   }
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
