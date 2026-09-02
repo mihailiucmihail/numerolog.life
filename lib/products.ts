@@ -14,6 +14,13 @@ export const PRODUCTS: Product[] = [
     priceInCents: 1900, // 19 EUR
     currency: 'eur',
   },
+  {
+    id: 'grani-professiya',
+    name: 'Grani — raport individual',
+    description: 'Un calcul personal din raportul Grani al Destinului.',
+    priceInCents: 100, // 1 EUR
+    currency: 'eur',
+  },
 ]
 
 export function getProduct(id: string): Product | undefined {

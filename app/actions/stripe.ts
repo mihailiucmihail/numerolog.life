@@ -47,6 +47,37 @@ export async function startNumerologieCheckout(
   return session.url
 }
 
+export async function startGraniCheckout(
+  email: string,
+  facet: string,
+  locale: string = 'ro',
+): Promise<string> {
+  const product = getProduct('grani-professiya')
+  if (!product) throw new Error('Produsul Grani nu a fost găsit.')
+  const normalizedEmail = email.trim().toLowerCase()
+  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(normalizedEmail)) {
+    throw new Error('Introdu o adresă de email validă.')
+  }
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
+  const session = await getStripe().checkout.sessions.create({
+    mode: 'payment',
+    line_items: [{
+      price_data: {
+        currency: product.currency,
+        product_data: { name: `${product.name} — ${facet}`, description: product.description },
+        unit_amount: product.priceInCents,
+      },
+      quantity: 1,
+    }],
+    customer_email: normalizedEmail,
+    metadata: { productId: product.id, facet },
+    success_url: `${baseUrl}/${locale}?grani_payment=success&facet=${encodeURIComponent(facet)}`,
+    cancel_url: `${baseUrl}/${locale}?grani_payment=cancelled`,
+  })
+  if (!session.url) throw new Error('Nu s-a putut genera URL-ul de plată.')
+  return session.url
+}
+
 export async function getNumerologieSessionStatus(sessionId: string) {
   const stripe = getStripe()
   const session = await stripe.checkout.sessions.retrieve(sessionId)
