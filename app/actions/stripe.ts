@@ -8,19 +8,16 @@ import { db } from "@/lib/db"
 export async function startNumerologieCheckout(
   email?: string,
   locale: string = 'ro',
-  formData?: Record<string, unknown
-,
+  formData?: Record<string, unknown>,
   discountCode?: string,
-): Promise<string
- {
+): Promise<string> {
   const product = getProduct('cristalul-destinului')
   if (!product) throw new Error('Produsul nu a fost găsit.')
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
   const normalizedCode = discountCode?.trim().toUpperCase()
   const eligible = normalizedCode
-    ? await db<{ email: string }[]
-`SELECT email FROM newsletter_subscribers WHERE email = ${email?.toLowerCase().trim()} AND discount_code = ${normalizedCode} AND discount_activated_at IS NOT NULL LIMIT 1`
+    ? await db<{ email: string }[]>`SELECT email FROM newsletter_subscribers WHERE email = ${email?.toLowerCase().trim()} AND discount_code = ${normalizedCode} AND discount_activated_at IS NOT NULL LIMIT 1`
     : []
   const unitAmount = 1900 // 19 EUR
 
@@ -54,8 +51,7 @@ export async function startGraniCheckout(
   email: string,
   facet: string,
   locale: string = 'ro',
-): Promise<string
- {
+): Promise<string> {
   const product = getProduct('grani-professiya')
   if (!product) throw new Error('Produsul Grani nu a fost găsit.')
   const normalizedEmail = email.trim().toLowerCase()
