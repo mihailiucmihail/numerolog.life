@@ -53,7 +53,7 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
     if (!sessionId) return
     fetch(`/api/grani/session?session_id=${encodeURIComponent(sessionId)}`)
       .then((response) => response.ok ? response.json() : null)
-      .then((data) => { if (data?.formData && iframeRef.current?.contentWindow) iframeRef.current.contentWindow.postMessage({ type: "grani-report-data", facet: data.facet, formData: data.formData }, window.location.origin) })
+      .then((data) => { if (data?.token) window.location.href = `/${locale}/numerologie/cristalul-raport/${data.token}` })
       .catch(() => undefined)
   }, [preview])
 
