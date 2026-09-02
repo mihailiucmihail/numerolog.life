@@ -61,7 +61,7 @@ export function HeroSection() {
   }, [])
 
   return (
-    <section className="relative min-h-0 md:min-h-screen flex flex-col items-center justify-center pt-20 pb-8 md:pt-28 md:pb-24 overflow-hidden">
+    <section className="relative min-h-0 flex flex-col items-center justify-center pt-20 pb-4 md:pt-24 md:pb-8 overflow-hidden">
       {/* ═══════════════════════════════════════════════════════════════════════
           All background overlays removed - StarField provides the cosmic background
       ═══════════════════════════════════════════════════════════════════════ */}
