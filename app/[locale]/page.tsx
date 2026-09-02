@@ -18,7 +18,7 @@ export default function HomePage() {
       <Navbar />
       <HeroSection />
       <FeaturesSection />
-      <section id="grani" className="relative z-10 py-8 sm:py-12">
+      <section id="grani" className="relative z-10 py-2 sm:py-4">
         <div className="mx-auto w-full max-w-7xl overflow-hidden px-4 sm:px-6 lg:px-8">
           <GraniPaymentFrame locale="ru" preview />
         </div>

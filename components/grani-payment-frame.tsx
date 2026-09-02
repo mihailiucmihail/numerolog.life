@@ -33,7 +33,7 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
     <div className="relative">
       {loading && <div className="absolute inset-0 z-10 grid place-items-center bg-background/80 text-sm text-foreground">Se pregătește plata…</div>}
       {error && <p role="alert" className="mb-3 text-center text-sm text-destructive">{error}</p>}
-      <iframe ref={iframeRef} src={preview ? "/grani-live.html?mode=preview" : "/grani-live.html"} title="Raportul Grani" className="h-[3600px] w-full border-0 sm:h-[3000px] lg:h-[2600px]" scrolling="no" />
+      <iframe ref={iframeRef} src={preview ? "/grani-live.html?mode=preview" : "/grani-live.html"} title="Raportul Grani" className={`w-full border-0 ${preview ? "h-[1500px] sm:h-[1100px] lg:h-[850px]" : "h-[3600px] sm:h-[3000px] lg:h-[2600px]"}`} scrolling="no" />
     </div>
   )
 }
