@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { startGraniCheckout } from "@/app/actions/stripe"
 
 export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false }: { initialFacet?: string; locale?: string; preview?: boolean }) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
@@ -31,8 +30,14 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
       setError(null)
       setLoading(true)
       try {
-        const url = await startGraniCheckout(event.data.email, event.data.facet || initialFacet || "grani", locale)
-        window.location.href = url
+        const response = await fetch("/api/grani/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: event.data.email, facet: event.data.facet || initialFacet || "grani", locale }),
+        })
+        const result = await response.json()
+        if (!response.ok || !result.url) throw new Error(result.error || "Plata nu a putut fi inițiată.")
+        window.location.href = result.url
       } catch (err) {
         setError(err instanceof Error ? err.message : "Plata nu a putut fi inițiată.")
         setLoading(false)
