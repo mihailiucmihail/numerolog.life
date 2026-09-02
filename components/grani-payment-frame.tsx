@@ -24,7 +24,7 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
     const onMessage = async (event: MessageEvent) => {
       if (event.origin !== window.location.origin || !["grani-payment", "grani-navigate"].includes(event.data?.type)) return
       if (event.data.type === "grani-navigate") {
-        window.location.href = `/${locale}/grani/${encodeURIComponent(event.data.facet || "professiya")}`
+        window.location.href = `/${locale}/grani?facet=${encodeURIComponent(event.data.facet || "professiya")}`
         return
       }
       setError(null)
