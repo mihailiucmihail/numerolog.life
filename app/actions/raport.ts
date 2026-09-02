@@ -19,14 +19,17 @@ interface FormData {
 export async function saveRaportAndSendEmail(
   sessionId: string,
   formData: FormData,
-  locale: string = 'ro'
+  locale: string = 'ro',
+  reportType: 'cristal' | 'grani' = 'cristal'
 ): Promise<{ token: string }> {
   const email = formData.email?.toLowerCase().trim()
   if (!email) throw new Error('Email lipseste.')
 
   const token = crypto.randomBytes(32).toString('hex')
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
-  const raportUrl = `${baseUrl}/${locale}/numerologie/cristalul-raport/${token}`
+  const raportUrl = reportType === 'grani'
+    ? `${baseUrl}/${locale}/grani/raport/${token}`
+    : `${baseUrl}/${locale}/numerologie/cristalul-raport/${token}`
 
   // Salveaza in DB — db.json() serializeaza corect pentru coloana JSONB
   await db`
@@ -46,7 +49,7 @@ export async function saveRaportAndSendEmail(
       const { error: emailError } = await resend.emails.send({
         from: `Numerolog.life <${fromDomain}>`,
         to: email,
-        subject: 'Твой отчёт «Кристалл Судьбы» готов',
+        subject: reportType === 'grani' ? 'Твой отчёт «Грани Судьбы» готов' : 'Твой отчёт «Кристалл Судьбы» готов',
         html: `
           <!DOCTYPE html>
           <html>

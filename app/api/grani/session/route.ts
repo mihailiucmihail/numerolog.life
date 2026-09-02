@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     const formData = metadata.formData ? JSON.parse(metadata.formData) : null
     if (!formData) return NextResponse.json({ error: "Datele raportului lipsesc." }, { status: 422 })
     const email = session.customer_details?.email ?? session.customer_email ?? ""
-    const result = await saveRaportAndSendEmail(session.id, { ...formData, email, first: formData.first ?? "", last: formData.last ?? "", middle: formData.middle ?? "" }, "ru")
+    const result = await saveRaportAndSendEmail(session.id, { ...formData, email, first: formData.first ?? "", last: formData.last ?? "", middle: formData.middle ?? "" }, "ru", "grani")
     return NextResponse.json({ token: result.token })
   } catch { return NextResponse.json({ error: "Sesiune invalidă." }, { status: 400 }) }
 }
