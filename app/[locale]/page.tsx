@@ -21,7 +21,7 @@ export default function HomePage() {
       <ReportPreviewSection />
       <section id="grani" className="relative z-10 px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto w-full max-w-7xl overflow-hidden">
-          <GraniPaymentFrame locale={locale} preview />
+          <GraniPaymentFrame locale="ru" preview />
         </div>
       </section>
       <HowItWorksSection />

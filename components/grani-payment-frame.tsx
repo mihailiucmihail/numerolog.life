@@ -8,13 +8,25 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
+    const resizeFrame = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin || event.data?.type !== "grani-resize") return
+      const height = Number(event.data.height)
+      if (Number.isFinite(height) && height > 0) {
+        const frame = iframeRef.current
+        if (frame) frame.style.height = `${Math.ceil(height)}px`
+      }
+    }
+    window.addEventListener("message", resizeFrame)
+    return () => window.removeEventListener("message", resizeFrame)
+  }, [])
+
+  useEffect(() => {
     const onMessage = async (event: MessageEvent) => {
-      if (event.origin !== window.location.origin) return
-      if (event.data?.type === "grani-navigate") {
+      if (event.origin !== window.location.origin || !["grani-payment", "grani-navigate"].includes(event.data?.type)) return
+      if (event.data.type === "grani-navigate") {
         window.location.href = `/${locale}/grani/${encodeURIComponent(event.data.facet || "professiya")}`
         return
       }
-      if (event.data?.type !== "grani-payment") return
       setError(null)
       setLoading(true)
       try {
@@ -33,15 +45,17 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
     }
     window.addEventListener("message", onMessage)
     return () => window.removeEventListener("message", onMessage)
-  }, [initialFacet, locale])
+  }, [])
 
-  const frameSrc = preview ? "/grani-live.html?mode=preview" : `/grani-live.html#/${encodeURIComponent(initialFacet || "professiya")}`
+  const frameSrc = preview
+    ? "/grani-live.html?mode=preview"
+    : `/grani-live.html#/${encodeURIComponent(initialFacet || "professiya")}`
 
   return (
     <div className="relative">
       {loading && <div className="absolute inset-0 z-10 grid place-items-center bg-background/80 text-sm text-foreground">Se pregătește plata…</div>}
       {error && <p role="alert" className="mb-3 text-center text-sm text-destructive">{error}</p>}
-      <iframe ref={iframeRef} src={frameSrc} title="Raportul Grani" className="h-[2200px] w-full border-0" scrolling="no" />
+      <iframe ref={iframeRef} src={frameSrc} title="Raportul Grani" className="h-[2200px] w-full border-0" scrolling="no" onLoad={() => { if (iframeRef.current && iframeRef.current.clientHeight < 500) iframeRef.current.style.height = "2200px" }} />
     </div>
   )
 }
