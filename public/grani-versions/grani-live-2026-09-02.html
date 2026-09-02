@@ -1,0 +1,1535 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Живые Грани</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap">
+<style>
+:root{
+  color-scheme: normal;
+  --ink:#161022;
+  --ink-2:#1c1529;
+  --parchment:#ede3cf;
+  --parchment-dim:#c9bda3;
+  --brass:#b8863b;
+  --brass-bright:#d9a94f;
+  --wine:#6e2334;
+  --violet:#4a3a63;
+  --line:rgba(184,134,59,0.35);
+  --line-soft:rgba(184,134,59,0.16);
+  --display:'Cormorant Garamond',Georgia,'Times New Roman',serif;
+  --sans:'Inter',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Arial,sans-serif;
+  --num:'Space Grotesk','Inter',ui-sans-serif,system-ui,sans-serif;
+}
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0;
+  background:transparent !important;
+  color:var(--parchment);
+  font-family:var(--sans);
+  font-size:clamp(15px,0.5vw + 14px,16.5px);
+  line-height:1.65;
+  letter-spacing:-0.005em;
+  -webkit-font-smoothing:antialiased;
+  padding:34px 18px 90px;
+  min-height:100vh;
+}
+.wrap{max-width:880px;margin:0 auto;}
+
+/* ---------- hero ---------- */
+.hero{text-align:center;margin-bottom:34px;}
+.hero .eyebrow{
+  display:block;font-family:var(--sans);font-size:10.5px;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--brass);margin-bottom:12px;
+}
+.hero h1{
+  margin:0 0 10px;font-family:var(--display);font-style:italic;font-weight:500;
+  font-size:clamp(38px,8vw,62px);line-height:1.06;text-wrap:balance;
+  background:linear-gradient(90deg,var(--brass) 0%,var(--brass-bright) 25%,#fff3d6 50%,var(--brass-bright) 75%,var(--brass) 100%);
+  background-size:220% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:shimmer 6s ease-in-out infinite;
+  filter:drop-shadow(0 0 22px rgba(217,169,79,0.22));
+}
+@keyframes shimmer{0%{background-position:0% 50%;}100%{background-position:220% 50%;}}
+.hero p{margin:0 auto;max-width:52ch;color:var(--parchment-dim);font-size:16px;}
+
+/* ---------- facet grid ---------- */
+.facets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+.facet{
+  display:flex;flex-direction:column;gap:9px;
+  text-align:left;text-decoration:none;color:inherit;
+  background:linear-gradient(180deg,rgba(255,255,255,0.035),rgba(255,255,255,0.008)),var(--ink-2);
+  border:1px solid var(--line);border-radius:2px;
+  padding:22px 22px 20px;position:relative;cursor:pointer;
+  font:inherit;
+  transition:border-color .35s ease, box-shadow .35s ease, transform .2s ease;
+}
+.facet::before{content:"";position:absolute;inset:5px;border:1px solid var(--line-soft);pointer-events:none;}
+.facet:hover,.facet:focus-visible{border-color:rgba(217,169,79,0.62);box-shadow:0 0 26px rgba(217,169,79,0.09);transform:translateY(-2px);}
+.facet:focus-visible{outline:2px solid var(--brass-bright);outline-offset:3px;}
+.facet[disabled]{cursor:default;opacity:.5;}
+.facet[disabled]:hover{transform:none;border-color:var(--line);box-shadow:none;}
+.facet .glyph{font-family:var(--display);font-size:30px;line-height:1;color:var(--brass-bright);}
+.facet .name{font-family:var(--display);font-size:25px;font-weight:600;line-height:1.15;}
+.facet .desc{color:var(--parchment-dim);font-size:14px;line-height:1.55;}
+.facet .tag{
+  margin-top:auto;padding-top:10px;font-family:var(--sans);font-size:10px;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--brass);
+}
+.facet[disabled] .tag{color:var(--parchment-dim);}
+
+/* ---------- cards ---------- */
+.card{
+  background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01)),var(--ink-2);
+  border:1px solid var(--line);border-radius:2px;
+  padding:26px 28px;margin-bottom:22px;position:relative;
+}
+.card::before{content:"";position:absolute;inset:5px;border:1px solid var(--line-soft);pointer-events:none;}
+.section-title{
+  font-family:var(--sans);font-size:15px;font-weight:650;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--brass-bright);margin:0 0 16px;display:flex;align-items:center;gap:14px;
+}
+.section-title::after{content:"";flex:1;height:1px;background:var(--line);min-width:24px;}
+
+/* ---------- form ---------- */
+.date-row{display:grid;grid-template-columns:1fr 1fr 1.25fr;gap:12px;}
+label{display:block;font-family:var(--sans);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass-bright);margin-bottom:7px;}
+input{
+  width:100%;background:rgba(0,0,0,0.25);border:1px solid var(--line);color:var(--parchment);
+  padding:11px 12px;font-family:var(--num);font-size:16px;border-radius:1px;
+}
+input:focus{outline:none;border-color:var(--brass-bright);box-shadow:0 0 0 3px rgba(217,169,79,0.14);}
+input::placeholder{color:rgba(237,227,207,0.28);font-family:var(--sans);}
+.btn{
+  margin-top:20px;width:100%;
+  background:linear-gradient(180deg,var(--brass-bright),var(--brass));
+  color:#1a1220;border:none;padding:14px;font-family:var(--sans);
+  letter-spacing:.16em;text-transform:uppercase;font-size:12.5px;font-weight:600;
+  cursor:pointer;border-radius:1px;transition:filter .15s ease,transform .1s ease;
+}
+.btn:hover{filter:brightness(1.08);}
+.btn:active{transform:translateY(1px);}
+.btn:focus-visible{outline:2px solid #fff3d6;outline-offset:2px;}
+.err{color:#e59a9a;font-size:13px;margin-top:12px;min-height:1.2em;}
+
+/* ---------- result ---------- */
+.crest{display:flex;align-items:center;gap:22px;flex-wrap:wrap;}
+.crest .ring{
+  flex:0 0 auto;width:112px;height:112px;border-radius:50%;
+  border:1px solid var(--brass);display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 35%,rgba(217,169,79,0.20),rgba(217,169,79,0.03) 62%,transparent 72%);
+  position:relative;
+}
+.crest .ring::after{content:"";position:absolute;inset:7px;border:1px solid var(--line-soft);border-radius:50%;}
+.crest .num{font-family:var(--num);font-size:44px;font-weight:700;color:var(--brass-bright);line-height:1;font-variant-numeric:tabular-nums;}
+.crest .who{flex:1 1 220px;min-width:0;}
+.crest .kicker{font-family:var(--sans);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--brass);}
+.crest .cardname{font-family:var(--display);font-style:italic;font-size:clamp(30px,5.4vw,42px);line-height:1.1;margin:2px 0 6px;color:var(--parchment);}
+.crest .lead{color:var(--parchment-dim);font-size:15px;margin:0;}
+
+.headline{
+  font-family:var(--display);font-size:clamp(20px,2.6vw,25px);line-height:1.4;
+  color:var(--parchment);margin:0;
+}
+.body-txt{color:var(--parchment-dim);margin:0;}
+.body-txt + .body-txt{margin-top:12px;}
+
+.steps{display:flex;flex-direction:column;gap:0;font-family:var(--num);font-size:14.5px;font-variant-numeric:tabular-nums;}
+.step{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:9px 0;border-top:1px solid var(--line-soft);}
+.step:first-child{border-top:none;}
+.step .k{font-family:var(--sans);font-size:13px;color:var(--parchment-dim);letter-spacing:.01em;}
+.step .v{color:var(--brass-bright);font-weight:500;white-space:nowrap;}
+.step.total .v{font-size:19px;font-weight:700;}
+.formula{
+  font-family:var(--num);font-size:15px;color:var(--parchment);
+  background:rgba(0,0,0,0.22);border-left:2px solid var(--brass);
+  padding:11px 14px;margin:0 0 16px;overflow-x:auto;white-space:nowrap;
+}
+details{border-top:1px solid var(--line-soft);padding-top:14px;margin-top:16px;}
+summary{cursor:pointer;font-family:var(--sans);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass);list-style:none;}
+summary::-webkit-details-marker{display:none;}
+summary::before{content:"▸ ";}
+details[open] summary::before{content:"▾ ";}
+details p{color:var(--parchment-dim);margin:12px 0 0;}
+
+.backlink{
+  display:inline-flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;
+  font-family:var(--sans);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--brass);padding:0;margin-bottom:22px;
+}
+.backlink:hover{color:var(--brass-bright);}
+.example-note{
+  font-family:var(--sans);font-size:11px;letter-spacing:.06em;color:var(--parchment-dim);
+  border:1px dashed var(--line);border-radius:1px;padding:7px 11px;display:inline-block;margin-bottom:16px;
+}
+.foot{text-align:center;color:var(--parchment-dim);font-size:13px;margin-top:30px;line-height:1.6;}
+.foot em{font-family:var(--display);font-style:italic;font-size:15px;color:var(--brass);}
+[hidden]{display:none !important;}
+@media (prefers-reduced-motion:reduce){
+  .hero h1{animation:none;background-position:0 0;}
+  .facet{transition:none;}
+}
+@media (max-width:520px){
+  .card{padding:22px 18px;}
+  .crest{gap:16px;}
+  .crest .ring{width:88px;height:88px;}
+  .crest .num{font-size:34px;}
+}
+</style>
+<style>
+/* ================= ЖИВЫЕ КАРТОЧКИ ================= */
+.facets{gap:20px;}
+
+.facet{
+  padding:0;overflow:hidden;gap:0;
+  transition:border-color .45s ease, box-shadow .45s ease, transform .35s cubic-bezier(.16,.84,.44,1);
+}
+.facet::before{inset:6px;z-index:3;}
+
+/* световая полоса, проходящая по карточке при наведении */
+.facet::after{
+  content:"";position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0;
+  background:linear-gradient(105deg,transparent 32%,rgba(255,243,214,0.13) 47%,rgba(255,243,214,0.03) 55%,transparent 68%);
+  transform:translateX(-120%);
+}
+.facet:hover::after,.facet:focus-visible::after{opacity:1;animation:sweep 1.05s cubic-bezier(.3,.7,.4,1);}
+@keyframes sweep{to{transform:translateX(120%);}}
+
+.facet:hover:not([disabled]),.facet:focus-visible:not([disabled]){
+  transform:translateY(-4px);
+  border-color:rgba(217,169,79,0.75);
+  box-shadow:0 14px 38px rgba(0,0,0,0.45), 0 0 34px rgba(217,169,79,0.12);
+}
+
+/* сцена */
+.scene{
+  position:relative;height:132px;display:block;width:100%;
+  background:
+    radial-gradient(ellipse at 50% 120%, rgba(217,169,79,0.14), transparent 62%),
+    linear-gradient(180deg, rgba(0,0,0,0.34), rgba(0,0,0,0.06));
+  border-bottom:1px solid var(--line-soft);
+}
+.scene svg{position:absolute;inset:0;width:100%;height:100%;}
+
+.facet-body{padding:20px 22px 20px;display:flex;flex-direction:column;gap:9px;flex:1;position:relative;z-index:4;}
+.facet .name{font-family:var(--display);font-size:26px;font-weight:600;line-height:1.12;}
+.facet .desc{color:var(--parchment-dim);font-size:14px;line-height:1.55;}
+.facet .tag{
+  margin-top:auto;padding-top:12px;font-family:var(--sans);font-size:10px;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--brass);
+  display:flex;align-items:center;gap:8px;
+}
+.facet .tag .arrow{transition:transform .35s cubic-bezier(.16,.84,.44,1);display:inline-block;}
+.facet:hover .tag .arrow{transform:translateX(5px);}
+.facet[disabled]{opacity:.62;}
+.facet[disabled] .tag{color:var(--parchment-dim);}
+.facet[disabled] .scene{filter:grayscale(.45) brightness(.72);}
+
+/* ---- общие анимации сцен ---- */
+.spin-slow{transform-box:fill-box;transform-origin:center;animation:spin 44s linear infinite;}
+.spin-back{transform-box:fill-box;transform-origin:center;animation:spin 62s linear infinite reverse;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.facet:hover .spin-slow{animation-duration:11s;}
+.facet:hover .spin-back{animation-duration:16s;}
+
+.breathe{animation:breathe 5.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+@keyframes breathe{0%,100%{opacity:.5;transform:scale(1);}50%{opacity:1;transform:scale(1.09);}}
+
+.draw{stroke-dasharray:320;stroke-dashoffset:320;animation:draw 5.4s ease-in-out infinite;}
+@keyframes draw{
+  0%{stroke-dashoffset:320;}
+  45%{stroke-dashoffset:0;}
+  85%{stroke-dashoffset:0;opacity:1;}
+  100%{stroke-dashoffset:0;opacity:0;}
+}
+.facet:hover .draw{animation-duration:2.6s;}
+
+.pulse{animation:pulse 2.6s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+@keyframes pulse{0%,100%{opacity:.35;r:2.6;}50%{opacity:1;r:4.4;}}
+
+.rise{animation:rise 6.5s linear infinite;}
+@keyframes rise{
+  0%{transform:translateY(16px);opacity:0;}
+  18%{opacity:.95;}
+  80%{opacity:.6;}
+  100%{transform:translateY(-66px);opacity:0;}
+}
+.facet:hover .rise{animation-duration:3.4s;}
+
+.orbit{transform-box:fill-box;transform-origin:center;animation:spin 15s linear infinite;}
+.orbit.slow{animation-duration:25s;animation-direction:reverse;}
+.facet:hover .orbit{animation-duration:5.5s;}
+.facet:hover .orbit.slow{animation-duration:9s;}
+
+.twinkle{animation:tw 3.4s ease-in-out infinite;}
+@keyframes tw{0%,100%{opacity:.18;}50%{opacity:.85;}}
+
+.arcnum{font-family:var(--num);font-weight:700;fill:var(--brass-bright);animation:num 6.6s steps(1) infinite;}
+@keyframes num{0%,100%{opacity:1;}49%{opacity:1;}50%{opacity:0;}99%{opacity:0;}}
+
+@media (prefers-reduced-motion:reduce){
+  .spin-slow,.spin-back,.breathe,.draw,.pulse,.rise,.orbit,.twinkle,.arcnum{animation:none !important;}
+  .draw{stroke-dashoffset:0;}
+  .facet::after{display:none;}
+  .facet:hover:not([disabled]){transform:none;}
+}
+.lab-note{
+  display:inline-block;margin:0 auto 26px;padding:7px 14px;
+  border:1px dashed var(--line);border-radius:1px;
+  font-family:var(--sans);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass);
+}
+</style>
+<style>
+#view-hub .hero{margin-bottom:30px;}
+#view-hub .hero h1{margin-bottom:10px;}
+</style>
+<style>
+/* ---------- график ---------- */
+.chart-wrap{position:relative;width:100%;overflow-x:auto;}
+.chart{display:block;width:100%;min-width:420px;height:auto;}
+.chart .grid{stroke:rgba(184,134,59,0.14);stroke-width:1;}
+.chart .axis{stroke:rgba(184,134,59,0.35);stroke-width:1;}
+.chart .avg{stroke:#c9bda3;stroke-width:1;stroke-dasharray:5 6;opacity:.55;}
+.chart .lifeline{fill:none;stroke:#d9a94f;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.chart .lifearea{fill:#d9a94f;opacity:.07;}
+.chart .node{fill:#161022;stroke:#d9a94f;stroke-width:2;}
+.chart .node.up{fill:#d9a94f;}
+.chart .tick{font-family:'Space Grotesk',sans-serif;font-size:11px;fill:#c9bda3;}
+.chart .dlabel{font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:600;fill:#ede3cf;}
+.chart .nowline{stroke:#c9a6e0;stroke-width:1;stroke-dasharray:3 4;opacity:.8;}
+.chart .nowtag{font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.12em;fill:#c9a6e0;text-transform:uppercase;}
+.chart .hit{fill:transparent;cursor:pointer;}
+.chart .cross{stroke:#ede3cf;stroke-width:1;opacity:0;}
+.chart .cross.on{opacity:.45;}
+.tip{
+  position:absolute;pointer-events:none;opacity:0;transition:opacity .12s ease;
+  background:#1c1529;border:1px solid var(--line);border-radius:1px;padding:8px 11px;
+  font-family:var(--sans);font-size:12.5px;color:var(--parchment);white-space:nowrap;z-index:5;
+  box-shadow:0 8px 22px rgba(0,0,0,.5);
+}
+.tip.on{opacity:1;}
+.tip b{font-family:var(--num);color:var(--brass-bright);}
+.legendrow{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0 0;font-size:12.5px;color:var(--parchment-dim);}
+.legendrow span{display:inline-flex;align-items:center;gap:7px;}
+.swatch{width:16px;height:0;border-top:2px solid #d9a94f;display:inline-block;}
+.swatch.dash{border-top:1px dashed #c9bda3;}
+.swatch.now{border-top:1px dashed #c9a6e0;}
+.periods{display:flex;flex-direction:column;gap:0;margin-top:4px;}
+.period{display:flex;gap:14px;align-items:baseline;padding:11px 0;border-top:1px solid var(--line-soft);}
+.period:first-child{border-top:none;}
+.period .yrs{flex:0 0 96px;font-family:var(--num);font-size:14.5px;font-weight:600;font-variant-numeric:tabular-nums;}
+.period.up .yrs{color:#8fc79b;}
+.period.down .yrs{color:#d18f8f;}
+.period.flat .yrs{color:#c9bda3;}
+.period .txt{flex:1;color:var(--parchment-dim);font-size:14.5px;line-height:1.55;}
+.period.current{background:rgba(201,166,224,0.07);}
+.period.current .txt{color:var(--parchment);}
+.energy{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+.energy .big{font-family:var(--num);font-size:52px;font-weight:700;color:var(--brass-bright);line-height:1;font-variant-numeric:tabular-nums;}
+.energy .band{flex:1 1 220px;}
+.energy .bandname{font-family:var(--display);font-style:italic;font-size:26px;color:var(--parchment);line-height:1.2;}
+.energy .norm{font-family:var(--sans);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass);margin-top:4px;}
+.rowdigits{display:flex;gap:7px;flex-wrap:wrap;margin-top:4px;}
+.rowdigits i{
+  font-style:normal;font-family:var(--num);font-size:16px;font-weight:600;color:var(--brass-bright);
+  width:34px;height:34px;display:grid;place-items:center;
+  border:1px solid var(--line);background:rgba(0,0,0,0.25);
+}
+</style>
+<style>
+/* ---------- стоимость ---------- */
+.facet .tag{justify-content:space-between;}
+.facet .tag .tagtext{display:inline-flex;align-items:center;gap:8px;}
+.price{
+  font-family:var(--num);font-size:12.5px;font-weight:600;letter-spacing:.01em;
+  text-transform:none;color:var(--brass-bright);
+  border:1px solid var(--line);border-radius:20px;
+  padding:2px 10px;background:rgba(184,134,59,0.09);
+  white-space:nowrap;
+}
+.facet[disabled] .price{color:var(--parchment-dim);background:transparent;}
+.facet:hover:not([disabled]) .price{border-color:rgba(217,169,79,0.7);background:rgba(184,134,59,0.16);}
+
+.pricerow{
+  display:flex;align-items:baseline;gap:10px;margin-top:20px;
+  font-family:var(--sans);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass);
+}
+.pricerow .leader{flex:1;border-bottom:1px dotted var(--line);transform:translateY(-3px);}
+.pricerow .amount{
+  font-family:var(--num);font-size:17px;font-weight:700;letter-spacing:0;text-transform:none;
+  color:var(--brass-bright);font-variant-numeric:tabular-nums;
+}
+.pricerow + .btn{margin-top:12px;}
+</style>
+<style>
+/* ---------- сожаления ---------- */
+.sjlist{margin:0;padding:0;list-style:none;}
+.sjlist li{position:relative;padding:10px 0 10px 24px;border-top:1px solid var(--line-soft);
+  color:var(--parchment);font-size:14.5px;line-height:1.55;}
+.sjlist li:first-child{border-top:none;padding-top:2px;}
+.sjlist li::before{content:"—";position:absolute;left:0;top:10px;color:var(--brass);}
+.sjlist li:first-child::before{top:2px;}
+.daystrip{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:6px;margin-top:6px;}
+.daycell{border:1px solid var(--line-soft);background:rgba(0,0,0,0.22);padding:6px 0 7px;text-align:center;border-radius:1px;}
+.daycell .d{display:block;font-family:var(--sans);font-size:9.5px;letter-spacing:.06em;color:var(--parchment-dim);}
+.daycell .a{display:block;font-family:var(--num);font-size:15px;font-weight:600;line-height:1.25;color:var(--parchment-dim);}
+.daycell.same{border-color:rgba(184,134,59,0.45);background:rgba(184,134,59,0.10);}
+.daycell.same .a{color:var(--brass-bright);}
+.daycell.me{border-color:var(--brass-bright);background:rgba(217,169,79,0.20);box-shadow:0 0 18px rgba(217,169,79,0.18);}
+.daycell.me .d{color:var(--parchment);}
+.daycell.me .a{color:#fff3d6;}
+.datelist{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px;}
+.datelist i{font-style:normal;font-family:var(--num);font-size:13px;color:var(--parchment);
+  border:1px solid var(--line);background:rgba(0,0,0,0.25);padding:4px 9px;border-radius:20px;white-space:nowrap;}
+.datelist i.me{border-color:var(--brass-bright);background:rgba(217,169,79,0.18);color:#fff3d6;}
+</style>
+<style>
+/* ---------- финансовые потоки ---------- */
+.chdate{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:4px;}
+.chdate .big{font-family:var(--num);font-size:38px;font-weight:700;color:var(--parchment);
+  line-height:1;font-variant-numeric:tabular-nums;letter-spacing:.02em;}
+.chdate .cap{font-family:var(--sans);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--brass);}
+.digits{display:flex;gap:7px;flex-wrap:wrap;margin-top:16px;}
+.digits .dig{width:42px;height:52px;display:grid;place-items:center;border:1px solid var(--line-soft);
+  background:rgba(0,0,0,0.25);font-family:var(--num);font-size:21px;font-weight:600;color:var(--parchment-dim);border-radius:1px;}
+.digits .dig.one{border-color:var(--brass-bright);background:rgba(217,169,79,0.18);color:#fff3d6;
+  box-shadow:0 0 18px rgba(217,169,79,0.16);}
+.digits .sep{width:12px;display:grid;place-items:center;color:var(--brass);font-family:var(--num);align-self:center;}
+.loshu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:340px;margin-top:6px;}
+.palace{border:1px solid var(--line-soft);background:rgba(0,0,0,0.22);padding:11px 8px 10px;text-align:center;border-radius:1px;}
+.palace .pn{display:block;font-family:var(--num);font-size:17px;font-weight:600;color:var(--parchment-dim);line-height:1.1;}
+.palace .pl{display:block;font-family:var(--sans);font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--parchment-dim);margin-top:5px;}
+.palace .pc{display:block;font-family:var(--num);font-size:12px;color:var(--brass);margin-top:4px;}
+.palace.filled .pn{color:var(--brass-bright);}
+.palace.money{border-color:var(--brass-bright);background:rgba(217,169,79,0.16);box-shadow:0 0 20px rgba(217,169,79,0.14);}
+.palace.money .pn{color:#fff3d6;font-size:20px;}
+.palace.money .pl{color:var(--parchment);}
+.rarity-note{font-family:var(--num);font-size:12.5px;color:var(--brass-bright);}
+</style>
+<style>
+/* ---------- почта ---------- */
+.mail{margin-top:16px;}
+.mail input{font-family:var(--sans);font-size:15px;letter-spacing:0;}
+.mail .note{margin:8px 0 0;font-size:12.5px;line-height:1.5;color:var(--parchment-dim);}
+.delivery{
+  margin-top:22px;border:1px dashed var(--line);border-radius:1px;padding:14px 16px;
+  display:flex;gap:12px;align-items:baseline;flex-wrap:wrap;
+}
+.delivery .lbl{font-family:var(--sans);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--brass);}
+.delivery .addr{font-family:var(--num);font-size:15px;color:var(--parchment);word-break:break-all;}
+.delivery .sub{flex:1 1 100%;font-size:12.5px;color:var(--parchment-dim);line-height:1.5;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section id="view-hub">
+    <header class="hero">
+      <h1>Грани Судьбы</h1>
+      <p>Выбери грань, введи дату рождения — и получи разбор по этой одной теме.</p>
+    </header>
+
+    <div class="facets" id="facetGrid"></div>
+
+    <p class="foot"><em>Каждая грань — отдельный расчёт.</em><br>Полный разбор по всем инструментам сразу — в «Кристалле Судьбы».</p>
+  </section>
+
+  <!-- ============ ИДЕАЛЬНАЯ ПРОФЕССИЯ ============ -->
+  <section id="view-professiya" hidden>
+    <button class="backlink" type="button" onclick="goHub()">← Все грани</button>
+    <header class="hero" style="margin-bottom:26px;">
+      <span class="eyebrow">Грань первая · аркан ПР</span>
+      <h1>Какая твоя идеальная профессия?</h1>
+      <p>Для каждого человека существует сфера, которая максимально раскрывает его суть. Она с��итается по арканам дня, месяца и года рождения.</p>
+    </header>
+    <div class="card">
+      <h2 class="section-title">Дата рождения</h2>
+      <div class="date-row">
+        <div><label for="pDay">День</label><input id="pDay" type="number" min="1" max="31" inputmode="numeric" placeholder="дд"></div>
+        <div><label for="pMonth">Месяц</label><input id="pMonth" type="number" min="1" max="12" inputmode="numeric" placeholder="мм"></div>
+        <div><label for="pYear">Год</label><input id="pYear" type="number" min="1900" max="2100" inputmode="numeric" placeholder="гггг"></div>
+      </div>
+      <div class="mail">
+        <label for="pMail">Электронная почта</label>
+        <input id="pMail" type="email" inputmode="email" autocomplete="email" placeholder="ivan@example.com">
+        <p class="note">На неё придёт ссылка на расчёт после оплаты. Почта нужна только для этого.</p>
+      </div>
+      <div class="pricerow"><span>Стоимость расчёта</span><span class="leader"></span><span class="amount">1 €</span></div>
+      <button class="btn" type="button" onclick="requestGraniPayment('professiya')">Узнать профессию</button>
+      <div class="err" id="pErr" role="status"></div>
+    </div>
+    <div id="pResult"><div class="example-note">Введи дату рождения и нажми кнопку — расчёт появится здесь.</div></div>
+  </section>
+
+  <!-- ============ ГРАФИК ЛИЧНОЙ ЖИЗНИ ============ -->
+  <section id="view-lichnaya" hidden>
+    <button class="backlink" type="button" onclick="goHub()">← Все грани</button>
+    <header class="hero" style="margin-bottom:26px;">
+      <span class="eyebrow">Грань вторая · график</span>
+      <h1>Что показывает твой график личной жизни?</h1>
+      <p>Когда в жизни открываются периоды удачи в лирических отношениях, а когда приходят разочарования и сомнения.</p>
+    </header>
+    <div class="card">
+      <h2 class="section-title">Дата рождения</h2>
+      <div class="date-row">
+        <div><label for="lDay">День</label><input id="lDay" type="number" min="1" max="31" inputmode="numeric" placeholder="дд"></div>
+        <div><label for="lMonth">Месяц</label><input id="lMonth" type="number" min="1" max="12" inputmode="numeric" placeholder="мм"></div>
+        <div><label for="lYear">Год</label><input id="lYear" type="number" min="1900" max="2100" inputmode="numeric" placeholder="гггг"></div>
+      </div>
+      <div class="mail">
+        <label for="lMail">Электронная почта</label>
+        <input id="lMail" type="email" inputmode="email" autocomplete="email" placeholder="ivan@example.com">
+        <p class="note">На неё придёт ссылка на расчёт после оплаты. Почта нужна только для этого.</p>
+      </div>
+      <div class="pricerow"><span>Стоимость расчёта</span><span class="leader"></span><span class="amount">1 €</span></div>
+      <button class="btn" type="button" onclick="requestGraniPayment('lichnaya')">Построить мой график</button>
+      <div class="err" id="lErr" role="status"></div>
+    </div>
+    <div id="lResult"><div class="example-note">Введи дату рождения и нажми кнопку — расчёт появится здесь.</div></div>
+  </section>
+
+  <!-- ============ ПОТЕНЦИАЛ БОГАТСТВА ============ -->
+  <section id="view-finansy" hidden>
+    <button class="backlink" type="button" onclick="goHub()">← Все грани</button>
+    <header class="hero" style="margin-bottom:26px;">
+      <span class="eyebrow">Грань третья · график</span>
+      <h1>Какой у тебя потенциал богатства?</h1>
+      <p>Какой уровень достатка наработан в прошлом воплощении и как денежные средства распределяются по годам жизни.</p>
+    </header>
+    <div class="card">
+      <h2 class="section-title">Дата рождения</h2>
+      <div class="date-row">
+        <div><label for="fDay">День</label><input id="fDay" type="number" min="1" max="31" inputmode="numeric" placeholder="дд"></div>
+        <div><label for="fMonth">Месяц</label><input id="fMonth" type="number" min="1" max="12" inputmode="numeric" placeholder="мм"></div>
+        <div><label for="fYear">Год</label><input id="fYear" type="number" min="1900" max="2100" inputmode="numeric" placeholder="гггг"></div>
+      </div>
+      <div class="mail">
+        <label for="fMail">Электронная почта</label>
+        <input id="fMail" type="email" inputmode="email" autocomplete="email" placeholder="ivan@example.com">
+        <p class="note">На неё придёт ссылка на расчёт после оплаты. Почта нужна только для этого.</p>
+      </div>
+      <div class="pricerow"><span>Стоимость расчёта</span><span class="leader"></span><span class="amount">1 €</span></div>
+      <button class="btn" type="button" onclick="requestGraniPayment('finansy')">Узнать потенциал</button>
+      <div class="err" id="fErr" role="status"></div>
+    </div>
+    <div id="fResult"><div class="example-note">Введи дату рождения и нажми кнопку — расчёт появится здесь.</div></div>
+  </section>
+
+  <!-- ============ САМЫЙ ТЯЖКИЙ ГРЕХ ПРОШЛОЙ ЖИЗНИ (ОПВ) ============ -->
+  <section id="view-opv" hidden>
+    <button class="backlink" type="button" onclick="goHub()">← Все грани</button>
+    <header class="hero" style="margin-bottom:26px;">
+      <span class="eyebrow">Грань четвёртая · аркан ОПВ</span>
+      <h1>Какой твой самый тяжкий грех прошлой жизни?</h1>
+      <p>Ошибка прошлого воплощения (ОПВ) — кармический узел, с которого начинается обучение Судьбы. Считается по аркану дня и месяца рождения.</p>
+    </header>
+    <div class="card">
+      <h2 class="section-title">Дата рождения</h2>
+      <div class="date-row">
+        <div><label for="oDay">День</label><input id="oDay" type="number" min="1" max="31" inputmode="numeric" placeholder="дд"></div>
+        <div><label for="oMonth">Месяц</label><input id="oMonth" type="number" min="1" max="12" inputmode="numeric" placeholder="мм"></div>
+        <div><label for="oYear">Год</label><input id="oYear" type="number" min="1900" max="2100" inputmode="numeric" placeholder="гггг"></div>
+      </div>
+      <p class="body-txt" style="margin-top:12px;font-size:13.5px;">Грех прошлой жизни считается по аркану дня и месяца — год в самой формуле не участвует, он нужен только чтобы проверить дату и позже связать грань с остальными расчётами.</p>
+      <div class="mail">
+        <label for="oMail">Электронная почта</label>
+        <input id="oMail" type="email" inputmode="email" autocomplete="email" placeholder="ivan@example.com">
+        <p class="note">На неё придёт ссылка на расчёт после оплаты. Почта нужна только для этого.</p>
+      </div>
+      <div class="pricerow"><span>Стоимость расчёта</span><span class="leader"></span><span class="amount">1 €</span></div>
+      <button class="btn" type="button" onclick="requestGraniPayment('opv')">Узнать свой грех</button>
+      <div class="err" id="oErr" role="status"></div>
+    </div>
+    <div id="oResult"><div class="example-note">Введи дату рождения и нажми кнопку — расчёт появится здесь.</div></div>
+  </section>
+
+  <!-- ============ СОЖАЛЕНИЕ ПРОШЛОЙ Ж��ЗНИ (СЖ) ============ -->
+  <section id="view-sozhalenie" hidden>
+    <button class="backlink" type="button" onclick="goHub()">← Все грани</button>
+    <header class="hero" style="margin-bottom:26px;">
+      <span class="eyebrow">Грань пятая · аркан СЖ</span>
+      <h1>Какое твоё самое большое сожаление прошлой жизни?</h1>
+      <p>Сожаление прошлой жизни — то, о чём Душа сильнее всего жалела за мгновения до ухода. Этот эмоциональный узел тянет назад и мешает выполнять программу нынешнего воплощения.</p>
+    </header>
+    <div class="card">
+      <h2 class="section-title">Дата рождения</h2>
+      <div class="date-row">
+        <div><label for="sDay">День</label><input id="sDay" type="number" min="1" max="31" inputmode="numeric" placeholder="дд"></div>
+        <div><label for="sMonth">Месяц</label><input id="sMonth" type="number" min="1" max="12" inputmode="numeric" placeholder="мм"></div>
+        <div><label for="sYear">Год</label><input id="sYear" type="number" min="1900" max="2100" inputmode="numeric" placeholder="гггг"></div>
+      </div>
+      <div class="mail">
+        <label for="sMail">Электронная почта</label>
+        <input id="sMail" type="email" inputmode="email" autocomplete="email" placeholder="ivan@example.com">
+        <p class="note">На неё придёт ссылка на расчёт после оплаты. Почта нужна только для этого.</p>
+      </div>
+      <div class="pricerow"><span>Стоимость расчёта</span><span class="leader"></span><span class="amount">1 €</span></div>
+      <button class="btn" type="button" onclick="requestGraniPayment('sozhalenie')">Узнать своё сожаление</button>
+      <div class="err" id="sErr" role="status"></div>
+    </div>
+    <div id="sResult"><div class="example-note">Введи дату рождения и нажми кнопку — расчёт появится здесь.</div></div>
+  </section>
+
+  <!-- ============ ФИНАНСОВЫЕ ПОТОКИ (единицы в китайской дате) ============ -->
+  <section id="view-potoki" hidden>
+    <button class="backlink" type="button" onclick="goHub()">← Все грани</button>
+    <header class="hero" style="margin-bottom:26px;">
+      <span class="eyebrow">Грань шестая · мантический квадрат Ло-Шу</span>
+      <h1>Сколько у тебя открытых финансовых потоков?</h1>
+      <p>Дату рождения переводим в китайское летоисчисление и считаем в ней единицы. Единица — дворец Денег, стихия Вода: сколько их, столько стабильных источников дохода открыто.</p>
+    </header>
+    <div class="card">
+      <h2 class="section-title">Дата рождения</h2>
+      <div class="date-row">
+        <div><label for="cDay">День</label><input id="cDay" type="number" min="1" max="31" inputmode="numeric" placeholder="дд"></div>
+        <div><label for="cMonth">Месяц</label><input id="cMonth" type="number" min="1" max="12" inputmode="numeric" placeholder="мм"></div>
+        <div><label for="cYear">Год</label><input id="cYear" type="number" min="1930" max="2030" inputmode="numeric" placeholder="гггг"></div>
+      </div>
+      <div class="mail">
+        <label for="cMail">Электронная почта</label>
+        <input id="cMail" type="email" inputmode="email" autocomplete="email" placeholder="ivan@example.com">
+        <p class="note">На неё придёт ссылка на расчёт после оплаты. Почта нужна только для этого.</p>
+      </div>
+      <div class="pricerow"><span>Стоимость расчёта</span><span class="leader"></span><span class="amount">1 €</span></div>
+      <button class="btn" type="button" onclick="requestGraniPayment('potoki')">Узнать свои потоки</button>
+      <div class="err" id="cErr" role="status"></div>
+    </div>
+    <div id="cResult"><div class="example-note">Введи дату рождения и нажми кнопку — расчёт появится здесь.</div></div>
+  </section>
+
+
+
+
+</div>
+<script id="flow-db" type="application/json">
+{
+"0":{"name":"Поток нестабилен","lead":"В прошлой жизни финансовый поток был нерегулярным — вы зарабатывали от случая к случаю.","text":"Энергии для постоянно растущего дохода сейчас нет: поток нестабилен и может давать сбои. В течение жизни не раз можно столкнуться с ситуацией, когда вам откажут в оплате труда или услуг. От крупных потерь денег вы не застрахованы.","advice":"Лучше всего работать в сфере частного предпринимательства — только эта область принесёт желаемый доход. Если работаете по найму, выбирайте оплату по процентной ставке или по объёму выполненных работ, а не фиксированный оклад."},
+"1":{"name":"Один стабильный поток","lead":"В прошлой жизни у вас был один стабильный источник дохода, которым вы обеспечивали себя и близких.","text":"Рассчитывать в этой жизни стоит тоже на один постоянный источник: любые дополнительные виды деятельности могут приносить убытки и нерегулярную прибыль. На вас лежит материальная ответственность за благосостояние близких людей, но открыто вам не всё в полном объёме.","advice":"Не ищите вторую сферу — вместо неё расширяйте и углубляйте квалификацию в своей. Главный навык при одном потоке — умение распределять ресурсы."},
+"2":{"name":"Два стабильных потока","lead":"Два стабильных финансовых потока делают человека практически неуязвимым.","text":"Вы способны не только грамотно распределить деньги, но и продумать наперёд перспективы преумножения капитала. В прошлом у вас было две незави��имые друг от друга профессиональные ветви — поэтому вы легко работаете в нескольких направлениях одновременно.","advice":"Вторая сфера деятельности вам действительно открыта: её можно разворачивать, не опасаясь, что она утянет первую."},
+"3":{"name":"Три стабильных потока","lead":"Три стабильных потока: благополучия удастся добиться в любой области.","text":"Вы застрахованы от крупного краха. Но люди с таким количеством единиц, как правило, очень зависимы от желания зарабатывать большие деньги, подвержены рискованным сделкам, отчего решаются на крупный бизнес или крупные кредиты.","advice":"Не стоит дразнить удачу — всё необходимо тщательно взвешивать. Ваш риск не в отсутствии денег, а в переоценке собственной неуязвимости."},
+"4":{"name":"Финансовая удача","lead":"Четыре единицы и больше: не только способность легко зарабатывать в разных областях, но и сопутствующая финансовая удача.","text":"Такие люди могут выиграть в лотерею или стать победителем в иных розыгрышах. Однако, как правило, их жизнь замкнута на желании денег, что мешает сосредоточиться на других, нематериальных сторонах жизни.","advice":"Если с детства воспитывать ответственное отношение к деньгам, чувство жадности удаётся подавить — тогда интерес смещается на другое: знания, комфорт или славу."}
+}
+</script>
+<script id="sj-db" type="application/json">
+{
+"1":{"title":"Слова, которые не были сказаны","essence":"Вы не говорили людям правду и обманывали самого себя. Единица — это речь, мысль, переданная информация: сожаление о том, сколько можно было сделать или предотвратить, если бы мысль стала словом.","list":["не сказали слов любви и благодарности тем, кто их ждал","не передали важного послания — возможно, спасения или предупреждения об опасности","промолчали там, где обязаны были высказаться и защитить себя","солгали, исказили информацию, поспешили с выводами","наговорили грубостей тому, кто достоин любви и уважения","оговорили человека, несправедливо осудили, унизили при друзьях","не сдержали данного слова и запятнали свою честь","использовали шантаж или компромат"],"now":"Придирчивы к словам и предельно откровенны. Многим кажетесь слишком прямолинейным, потому что не утаиваете чувств и знаете цену словам. И при этом постоянно ощущаете, что изложили мысль неполно, что вас поняли превратно или вообще не услышали.","release":"Эти опасения мнимы: обилие слов не передаёт суть надёжнее. Обстоятельства, которые заставили вас тогда промолчать или солгать, остались в прошлой жизни — сегодня можно говорить, не доплачивая по старому счёту."},
+"2":{"title":"Мама, которой не хватило","essence":"Всю прошлую жизнь вам остро не хватало простого человеческого общения с мамой — вы так и не смогли насладиться материнской любовью.","list":["мама погибла при родах","была слишком занята, и её тепла и внимания не хватало","отношения сложились конфликтными и резкими","мама тяжело болела или ушла внезапно","отношения были прекрасными, но формальными — хотелось большего","она уделяла больше внимания супругу или другим детям, и вы постоянно боролись за её расположение","вы уехали далеко и надолго и тосковали по ней"],"now":"Даже при идеальных отношениях с мамой не приходит чувство полноты и радости. Появляется тревога за неё, желание не упустить ни секунды рядом — а близкие, дети и внуки, в это время недополучают вашего тепла и переживают ровно то, что переживали вы.","release":"Рядом с вами сейчас другая личность, готовая дать любовь и поддержку. Растворите обиды прошлой мамы и не перекладывайте нерешённые вопросы на плечи нынешней — конфликт с ней ранит вас сильнее всего."},
+"3":{"title":"Ребёнок, с которым не наговорился","essence":"Вы сожалели, что не имели близкой чувственной связи со своими детьми. Тема детства и собственных детей осталась болезненной.","list":["по тем или иным причинам не могли иметь детей, но очень хотели","кто-то отобрал ребёнка и лишил вас общения","ребёнок погиб в молодом возрасте","конфликт привёл к непримиримому разрыву"],"now":"Любой конфликт с ребёнком переживается как трагедия, тогда как для других родителей это рядовой эпизод. Дети чувствуют этот подсознательный страх и охотно прибегают к эмоциональному шантажу. Часть носителей знака, наоборот, детей не хочет — боятся, что не дотянут до какого-то священного уровня родительства или что их не полюбят.","release":"Не выносите тему отцовства и материнства в разговоры с окружением, не просите советов, не держите на ней фокус. Дайте разуму поверить: вашим детям в этом воплощении ничего не угрожает."},
+"4":{"title":"Мастер в чужой тени","essence":"Вы были ма��тером, но не смогли раскрыться: подчинялись человеку, который вашего таланта не стоил. Тогда ценили статус и звание, а не опыт.","list":["слава доставалась тому, у кого был статус, а вы оставались в тени","вы не могли даже заступиться за себя","боялись рассказать миру о своём вклад�� в науку, промышленность или творчество"],"now":"Раздражает любое подч��нение, своё дело не доверяете никому. Пропадает желание учиться в универс��тете — скучно сидеть за партой, когда ремеслом вы и так владеете мастерски.","release":"Мир изменился: происхождение больше ничего не решает, и любой может выстроить дело и занять высокое положение. Не бойтесь потерять идеи или время, обучаясь у других, — пользуйтесь наработанным талантом и оставляйте после себя учеников."},
+"5":{"title":"Отец, которого не было рядом","essence":"Вы не смогли полноценно и искренне общаться с отцом. А сто лет назад отец был покровителем Рода, наставником и защитником — именно он передавал секреты ремесла.","list":["не знали отца с самого детства","отец погиб, когда вы были ещё слишком молоды","всю жизнь вам не хватало его плеча","наставника вы искали в друзьях и близких мужчинах"],"now":"Сердце заполняет либо обида и чувство утраты, либо, наоборот, безграничная привязанность. Но рядом с вами Душа совершенно другого человека, а не того отца, о котором вы мечтали.","release":"Отпустите эти чувства и позвольте себе быть свободнее — долг перед тем отцом закрыт вместе с той жизнью."},
+"6":{"title":"Любовь, на которую не было права","essence":"Вы не имели права быть рядом с тем, кого любили по-настоящему. Решение чаще всего навязали обстоятельства и воля других людей.","list":["не могли жениться или выйти замуж за того, кого выбрало сердце","выбор был сделан за вас","не справились с робостью и упустили свой шанс","тот, кто занимал всё ваше внимание, оказался недоступен","реже — обида и ненависть к супругу или утрата любимого человека"],"now":"Требовательны, капризны, недоверчивы и мнительны. Боитесь не только потерять партнёра, но и пережить ревность и предательство. Даже при идеальных отношениях счастья и благодарности не чувствуете — подсознание напоминает о боли прошлой жизни.","release":"Нельзя насладиться бархатом тёплой воды, однажды побывав в ледяной. Отпустите переживания и поверьте: сейчас вы способны выбирать и защищать своё право на взаимные чувства."},
+"7":{"title":"Несвобода","essence":"Вы были связаны обязательствами, которые не давали сдвинуться с места. Это не было тюрьмой — но ваше место жительства было вынужденным, и всё сожаление связано с желанием быть где-то ещё.","list":["служба в армии или при религиозном учреждении","жизнь в отдалённом краю практически в одиночестве, без права на передвижение","экспедиция или путешествие, из которого невозможно было выбраться","обязательства и запреты, мешавшие почувствовать себя свободным"],"now":"Панически боитесь рамок, бежите от договоров и соглашений, которые хоть на минуту ограничат вашу независимость. Можете внезапно собрать вещи и уехать с билетом в один конец, никого не предупредив. Знак даёт безответственность к тем, кто на вас рассчитывает.","release":"Сожаление не из тяжёлых, но помните: сейчас вашу свободу никто не ограничивает и всегда можно договориться. Туризм, логистика и работа с командировками только распалят эту жажду — не бегите от проблем, научитесь их решать."},
+"8":{"title":"Несправедливость, которую не доказали","essence":"Вы ушли с чувством, что правда так и не стала явной, а справедливость осталась неосуществлённой мечтой. Часто — наказание за то, чего вы не совершали.","list":["осуждение за преступление, которого не было","невозможность доказать свою правоту","обидчик остался безнаказанным, а вы — без защиты"],"now":"Нет уважения к закону и правоохранительным органам: государство для вас лишь административный ресурс. Конфликты разрешаете по-своему, жёстко и мстительно. Многие идут в полицию, политику, правозащиту, охотно входят в эпицентр чужого конфликта, чтобы примирить стороны — вам небезразлична чужая боль.","release":"Ваша сила в том, что вы интуитивно знаете, как всё устроено и как это исправить. Но не позволяйте страху снова оказаться под давлением решать за вас — иначе он разрушит вашу веру в благополучное будущее."},
+"9":{"title":"Одиночество сироты","essence":"В прошлом воплощении вы чаще всего остались сиротой и всю жизнь в одиночку боролись за себя. Урок был в том, чтобы научиться жить самостоятельно, отпустив горечь.","list":["родители погибли при вашем рождении или вскоре после","отказались от вас или отдали на попеч��ние в учреждение","вы потерялись во время прогулки или необдуманно сбежали","вас похитили","родителям было совершенно не до вас — они забывали о вашем существовании","родители были жестоки и грубы, и вы их не приняли"],"now":"Ранимы и чувствительны, часто остаётесь без поддержки родных — подсознательно сами отталкиваете близких, потому что боите��ь снова оказаться одни. Тянетесь к тем, кто не сможет вас отвергнуть: к слабы��, зависимым, детям, пожилым. Заранее покупаете место и пишете завещание — хочется быть уверенным, что в этот раз всё сделают правильно и будет кому прийти проститься.","release":"Простите тех родителей за одиночество и страх, не жалейте о том, чего у вас никогда не было, и не тратьте ещё одну жизнь на поиски верного спутника. А близким такого человека: встречайте его — дома, в аэропорту, раньше времени. Для него это по-настоящему важно."},
+"10":{"title":"Страх бедности","essence":"Вам не хватило капитала на счастливую жизнь. Далеко не все носители знака были бедны — многие потеряли состояние и оказались в долговой ловушке.","list":["огромные долги, из которых не было выхода","перспективы богатства закрылись внезапно — из-за ошибки, риска или излишней принципиальности","вы лишились дохода, проявив неблагодарность к тем, кто открывал вам доступ к деньгам","зависимость от азартных игр"],"now":"В погоне за доходом легко переступают закон и мораль, лишь бы почувствовать себя финансово независимыми. Страсть к кредитам, азарту и наследству. Недовольны покупками — ощущают их как утрату денег, не замечая, что вещь и есть их эквивалент. Даже очень богатые носители знака по-прежнему чувствуют себя необеспеченными.","release":"Это не жадность и не корысть, а паника перед бедностью, пришедшая из прошлой жизни. Переборите отчаяние остаться без дохода — вместе с ним уйдёт и сожаление о том, чего вы себе не можете позволить."},
+"11":{"title":"Беззащитность перед насилием","essence":"Носители знака стали жертвой насилия и не смогли ни пережить, ни простить обидчика. Сожаление здесь — о том, что оказались беззащитны и не сумели уберечь себя. Это один из немногих знаков, от которого нельзя избавиться быстро.","list":["нападение или физическая расправа","подавление личности, издевательства","долгая боль, с которой вы остались один на один"],"now":"Пугливы и настороженны, стремление защитить себя выражено очень сильно: повышенный тонус, тяга к боевым искусствам, мгновенная реакция силой — но всегда в защите, а не в нападении. Такие дети пугаются резкого взмаха руки или давящего разговора. Легко расплачутся, если кто-то за них вступится, — и пойдут за этим человеком в огонь и в воду. С агрессивным партнёром жить не смогут: всё время будут в режиме самообороны.","release":"Спорт даёт этой потребности законный выход и успокаивает. Рядом с вами больше нет тех обидчиков, и вокруг достаточно людей, готовых отразить любую попытку вас унизить. Экспрессию, граничащую со страхом боли, стоит в себе гасить."},
+"12":{"title":"Служение без права голоса","essence":"Вы служили тому, кого не уважали и всем сердцем ненавидели, и не имели права сопротивляться. Для хозяина вы были пустым местом, хотя он охотно пользовался вами.","list":["низкое сословное положение","рабство или плен","зависимость из-за увечья или болезни","вас унизили и заставили служить чужим интересам, не замечая ни таланта, ни личности"],"now":"Любая, даже самая безобидная просьба вызывает почти физическое отторжение — кажется, что вы снова в ловушке. Не позволяете себя унижать; со стороны это читается как «корона» и завышенная самооценка, но причина другая: панический страх попасть под чужое влияние. Роль исполнителя выбираете редко — исключение лишь мудрый начальник, дающий свободу действий.","release":"Не бойтесь вырабатывать свою точку зрения и не бойтесь отказывать: важнее не попасть под власть сожаления, чем показаться резким. А тем, кто рядом: обращайтесь к такому человеку только через просьбу совета — пусть решение помочь он примет сам."},
+"13":{"title":"Клятва отомстить","essence":"Вас лишил жизни хорошо знакомый вам человек — и трагизм не в самой смерти, а в том, чьи глаза вы увидели последними. В последние секунды вы поклялись отомстить, и Карма эту клятву скрепила.","list":["смерть от рук близкого или хорошо знакомого человека","клятва обязательно пересечься с ним и поступить так же","по решению Кармы вы рождаетесь в Роду своего обидчика — теперь вас связывают кровные узы","у кого-то из кровных родственников (не супруга) стоит 13-й аркан: он даёт жестокость и раздражительность и словно провоцируе�� вас"],"now":"Такие люди нередко рождаются на грани жизни и смерти или часто травмируются в детстве. Подвержены аффекту и вспыльчивости, склонны к саморазрушению, некоторые буквально играют со смертью — неоправданный риск в спорте и туризме.","release":"Поддадитесь порыву мести — лиш��тесь права на благополучную жизнь; устоите — попадёте под рикошет Судьбы. Так Карма учит не мстить. Выход один: простить палача и простить себя за эти мысли — иначе вы будете воплощаться в его Роду снова и снова."},
+"14":{"title":"Род, который не подставил плечо","essence":"Родители были богаты или владели ремеслом, но помогать именно вам не захотели. Всего приходилось добиваться самому — и вы сожалели, что не смогли передать потомкам связи, статус, финансы, имущество и внимание Рода.","list":["вас лишили наследства, на которое вы имели право","Род не дал вам пользоваться накопленным веками мастерством","причина могла быть любой — от самодурства до обиды на вас","ваши дети остались без базы, а вы рискуете снова родиться без неё"],"now":"Стараетесь за одно воплощение успеть намного больше других: приходится быть вдвое лучше, чтобы получить хотя бы половину того, чего вас лишили. Предельно самостоятельны, от любой помощи отказываетесь, родителей сторонитесь и стесняетесь попросить руки в трудную минуту — боитесь понадеяться и снова проиграть. Рано пишете з��вещание и всерьёз заняты наращиванием капитала.","release":"Гонка уже не требу��тся: база есть, и заложили ��ё вы сами несколько поколений назад. Не стесняйтесь идти по стопам родителей и пользоваться их связями — их успехи и есть ваши достижения в прошлом воплощении. Научитесь тратить и жить в своё удовольствие, оставляя деньги потомкам."},
+"15":{"title":"Стыд, ставший порчей","essence":"Знак говорит не о чужой порче, а о самопорицании. Человек корит себя за поступок, которого стыдится, — и это чувство работает против него, как настоящая порча.","list":["вы сказали или не сказали что-то, и это привело к тяжёлым последствиям","поступок, за который вам было стыдно, вы так себе и не простили","чувство вины переросло в самоосуждение"],"now":"Постоянное чувство вины непонятно за что. Не понимая источника, человек списывает всё на порчу и идёт к гадалкам, знахаркам и магам — снять он хочет не порчу, а вину.","release":"Помогает только переосмысление и разрешение себе жить дальше: тогда поступок становится опытом и превращается в принцип. И помните закон Судьбы — при перерождении Судьба обнуляется, так что даже если стыд перерос в реальную порчу, в секунду вашего рождения она отступила."},
+"16":{"title":"Дом, которого лишили","essence":"Сожаление о крыше над головой. Жалеть о том, чего никогда не было, вы бы не стали, — значит, дом был и его не стало, либо его так и не удалось построить.","list":["родители или супруг выгнали вас из дома","вы остались без крова из-за конфликта или чужой жадности","вели кочевую жизнь и однажды устали от неё, мечтая о постоянстве","дом отняли пожар, катастрофа или произвол других людей — и вы не смогли его защитить","вы не оставили потомкам никакого имущества и боялись их бездомности"],"now":"Не хотите жить в чужой квартире: важно своё жильё, каким бы оно ни было — даже комната в ветхом доме даёт спокойствие, но не радость. Многие уходят в недвижимость, строительство, архитектуру и дизайн: кажется, что, построив десятки домов, заглушишь боль. В возрасте — особая щепетильность к наследству, отсюда и конфликты в семье: держатся за имущество не из жадности, а из страха ошибиться с выбором.","release":"Оцените ситуацию трезво: дом у вас есть. Пора расслабиться и перестать ждать подвоха от банков, юристов, соседей и родственников."},
+"17":{"title":"Талант, отданный чужому имени","essence":"Вы были невероятно талантливы, но всю работу выполняли за известного человека, и слава доставалась не автору. Однажды вы не смогли отказаться от лёгких быстрых денег и попали в ловушку, из которой не выбрались.","list":["вы прислуживали известному человеку и делали работу за него","не смогли защитить свои произведения, когда кто-то на них польстился","добровольное забвение и испорченная репутация мучили вас до конца","вы не передали потомкам своё наследие"],"now":"Вы так же робки, как и тогда: боитесь открыть миру свои таланты, потому что кажется, что рискуете снова их потерять. Копите работы в письменном столе и не подпускаете к ним даже родственников, не рассказываете о прорывных идеях, предпочитая остаться в тени.","release":"Расскажите окружению, какими инструментами и талантами вы владеете. Это не тщеславие: произведение — как ребёнок, и оно вправе знать своего создателя. Сейчас у вас есть все шансы получить заслуженное признание."},
+"18":{"title":"Съеденный бытом","essence":"Хвалиться в прошлой жизни было нечем, кроме работы по дому: многодетная семья, больные родители или дети, тяжёлые материальные условия. День начинался трудом и им же заканчивался, а мечтали вы о сне и отдыхе. Знак смело можно назвать Золушкой — и совершенно неважно, что носителем мог быть мужчина.","list":["слишком много обязанностей и хлопот, не оставлявших времени на себя","ни взглянуть на мир, ни прочитать книгу, ни пообщаться с друзьями","чувство бесполезно и пусто прожитой жизни"],"now":"Стойкая аллергия на домашнее хозяйство: сократить усилия, переложить на других, сделать всё быстро, лишь бы не тратить драгоценную энергию. Кажется, что вы к быту не приспособлены, — это не так. Любите стиль, моду, красоту, а не содержание. Не можете сидеть дома: подсознание воспринимает квартиру как камеру. Кто-то не хочет детей, считая их обузой, кто-то не готов снова просидеть жизнь у постели больного.","release":"Причина сожаления не в тяжёлой судьбе, а в страхе что-либо изменить — и в глубине Души человек винит себя за отсутствие характера. Выработайте золотую середину: не отрекайтесь от быта, но оставляйте внимание и себе."},
+"19":{"title":"Потерянный статус","essence":"Вы лишились заслуг, званий и положения в обществе из-за доверчивости и самоуверенности. Вы летали настолько выс��ко, что не могли предположить, что кто-то рискнёт пойти против вас, — и потому были неосмотрительны.","list":["вас обвели вокруг пальца и обыграли, хотя удар легко было отразить","вы потеряли пост из-за родственника или коллеги, спасая его от расправы","вас подставили или изгнали из круга по политическим или коммерческим соображениям","вы были кристально честны, но противники оказались хитрее","вы сожалели, что передаёте наработки десятилетий тому, кто их не оценит"],"now":"Своего не упускаете, твёрдо знаете, чего хотите, и не боитесь за это бороться. Со стороны кажется, что идёте по головам, — на деле вы пытаетесь вернуть своё, только борьба идёт не за те должности и не в то время. Жажда регалий, статуса, высоких оценок, признания и власти.","release":"Вы утратили суть: важна не должность и не диплом, а знания, опыт и мастерство. «Тише едешь — дальше будешь» — вот верный тон диалога с Судьбой, чтобы не проиграть и эту жизнь."},
+"20":{"title":"Беда, навлечённая на Род","essence":"Своими действиями или бездействием вы сломали жизнь Роду и накликали беду на несколько поколений вперёд. Знак не кармический — предательства Рода здесь нет, намерения были благими, но последствия оказались тяжёлыми.","list":["пострадали и родители, и потомки","Род лишился ремёсел, имений, дохода, статуса","потомки, выбитые из благополучного ритма, до сих пор не могут найти себя"],"now":"Чувство вины перед Родом притягивает беды в дом близких — кажется, что на ваше окружение навели порчу. Род вас, как правило, не любит: считают белой вороной или недостойным, таких детей рано просят покинуть родовое гнездо. При этом вы чувствуете ответственность за каждого и всеми силами пытаетесь помочь и уберечь.","release":"Само ваше рождение говорит о прощении: Род не дал бы разрешения Душе войти в тело. Значит, можно отпустить ситуацию и перестать бояться кары и расплаты."},
+"21":{"title":"Самый лёгкий груз","essence":"Самый мягкий из всех знаков: в целом вы остались довольны прошлой жизнью. Сожалений всего несколько, и они мелкие — что-то не попробовали, где-то не побывали. «Увидеть Париж и умереть».","list":["не наелись конфет, не спели песню, не прочитали книгу","не увидели моря, не поговорили с наставником","осталось любопытство, а не рана — суровых потрясений и трагедий в вашем прошлом нет"],"now":"Очень энергичны: не тратите время зря и другим не даёте расслабиться. Хочется путешествовать, изучать, пробовать, испытывать. Знаете цену времени и часто говорите: «я живу на чистовик», «мне нечего стыдиться», «мне не о чем сожалеть». Отсутствие прошлых потрясений и делает вас неуязвимым.","release":"Единственный риск — постесняться жить раскованно и вдохновенно, а потом пожалеть об упущенном. Кто мешает исполнить заветную мечту? Сотворить чудо и принести праздник не так уж сложно."},
+"22":{"title":"Впустую прожитая жизнь","essence":"Самый печальный знак — полная противоположность 21-му: категорическое разочарование в прошлом воплощении. Время потрачено, ничего полезного не создано, новый опыт не наработан. Иногда за этим стоит другое: дело всей жизни, которое вы так и не довели до к��нца.","list":["вы ничему не научились и ничего не создали","в отличие от 18-го аркана, вы не были ничем заняты","или всю жизнь работали над одним делом, но силы покинули вас в шаге от рез��льтата","вы гнались за сильными чувствами и проиграли"],"now":"Панически боите��ь впустую потратить о��ведённое время, отчего жадно хватаетесь за всё подряд. Всё даётся с трудом: опыта и мастерства нет — много хлопот, а результат почти нулевой. Некоторые сдаются и уходят с головой в слабости, повторяя ту же ошибку.","release":"Сконцентрируйтесь на одном деле и не распыляйтесь: бейте в одну точку, не сходите с выбранного пути и не теряйте веру в себя. Отдельно поработайте с заниженной самооценкой — она тоже пришла из прошлого воплощения, где вы были собой недовольны."}
+}
+</script>
+<script id="opv-db" type="application/json">
+{
+"1":{"sin":"Предательство брата или сестры","error":"В прошлом воплощении вы предали своего брата или сестру.","back":"Вы можете столкнуться с изменой, конфликтами и предательством брата или сестры в этом воплощении. Обижаться и вступать в разногласия с этим человеком нельзя — это ещё больше усугубит положение. Если брата или сестры нет, программа может выбрать любого человека значительно моложе вас, а форма предательства будет выбрана самая болезненная для вас. Сюда же относятся проблемы с оформлением документов, отказы на ровном месте в регистрации чего-либо, мошенничество и подделка фактов и подписей.","fix":"Помириться с братом или сестрой, помог��ть и оберегать его или её."},
+"2":{"sin":"Предательство мамы","error":"Предательство мамы, конфликтное и грубое отношение к ней.","back":"Конфликты с мамой под воздействием этого аркана практически неизбежны. Вы можете испытывать беспокойство и раздражение из-за того, какую форму общения и взаимодействия она избирает по отношению к вам. Но ругаться нельзя — наоборот, желательно примиряться и извиняться, что бы она ни сделала. Тяжёлое состояние здоровья любой близкой женщины, в том числе дочери, тоже относят к обратному эффекту Кармы.","fix":"Не вступать в конфликты с мамой, стать для неё опорой, попросить прощения."},
+"3":{"sin":"Отказ от ребёнка","error":"В прошлом вы либо категорически отказались иметь детей, либо оставили их без внимания и заботы — то есть не справились с задачей родительской опеки.","back":"Сейчас тема детей будет для вас очень сложной. Возможны физиологические или психологические затруднения с деторождением и зачатием. Любые конфликты, разногласия и предательство детей необходимо прощать. Те, кто и в этой жизни не хочет иметь ребёнка или кому возраст ещё не позволяет, столкнутся с иным проявлением аркана: проекты не удаётся довести до логического завершения — они останавливаются в самый последний момент.","fix":"Загладить вину перед ребёнком, стать ему настоящим отцом или мамой."},
+"4":{"sin":"Халатность в профессии","error":"В прошлом воплощении вы некорректно выполняли свои профессиональные обязанности, и халатность могла стать причиной трагедии. Иногда знак указывает на безделье и тунеядство.","back":"Вам будет непросто доказать свой профессионализм. Оценки в школе занижают, учителя могут выступать против вас на родительских собраниях. Коллеги-студенты и коллеги по работе охотно подставят и подсидят. Нужно подготовиться к тому, что карьерный путь будет не таким уж простым, а бизнес — нестабильным по причине партнёров и халатности исполнителей.","fix":"Станьте профессионалом и не живите за чужой счёт."},
+"5":{"sin":"Предательство отца","error":"Предательство отца или его воспитательной линии в Роду.","back":"Конфликты с отцом, взаимные обиды и предательства с его стороны могут стать для вас нормой — так реагирует обратка Кармы на ваш поступок в прошлом воплощении. Вас могут предавать мужчины и в личной жизни, и в карьере, и в бизнесе. Начальники не станут вам помогать, скорее наоборот: они опасаются вас, считают конкурентом. Будьте ��нимательны и не слишком откровенны с ними.","fix":"Замолите свои грехи перед отцом, добейтесь его прощения."},
+"6":{"sin":"Измена супругу","error":"Измены и предательства супружеского партнёра.","back":"Готовьтесь к изменам вашего близкого человека, а также к непослушанию, конфликтам и предательствам — это норма действия знака. Чем больше вы подозреваете партнёра, тем выше риск его измены. Простите ему все попытки сделать вам больно: в прошлой жизни вы поступали точно так же. Знак не даёт возможности выстроить счастливые и гармоничные отношения — всё наладится после того, как вы проявите щедрость и мудрость. Возможны срывы сделок по причине неизвестного вам ��онфликта.","fix":"Постарайтесь примириться с супругом или супругой, расположите к себе так, чтобы ваша измена сделала его сильнее и счастливее."},
+"7":{"sin":"Разрушение чужой судьбы","error":"Вы мешали другим людям получить то, чего они достойны, вмешивались в судьбы и разрушали их.","back":"Вам стоит быть очень аккуратным за рулём и уделить больше внимания ногам: часто Карма подкрадывается именно с этой стороны, пытаясь восстановить справедливость. Нередко она вмешивается совершенно неожиданно — и тогда не пытайтесь исправить ситуацию, нужно просто пройти мимо.","fix":"Отдайте человеку то, что вы у него отняли, позвольте двигаться вперёд."},
+"8":{"sin":"Умышленное нарушение закона","error":"Вы грубо нарушили закон, причём поступок был умышленным. Вы твёрдо знали: то, что вы совершаете, может стоить вам свободы и жизни, но планировали и исполнили лично.","back":"Таких людей часто родители лишают наследства. Им нужно морально быть готовыми к проигрышу: неудачи в суде и правоохранительных органах, несправедливое осуждение, невозможность доказать свою правоту. Существует риск не только попасть в правовую ловушку, но и стать жертвой мошенничества и обмана. Знак даёт подставы, которые весьма сложно доказать. Не стоит затевать крупные покупки — рискуете всё потерять.","fix":"Сознайтесь в своих проступках и загладьте вину перед потерпевшими."},
+"9":{"sin":"Брошенные в беде близкие","error":"Вы бросили в беде и болезни близких людей, не позаботились о родственниках, не похоронили их.","back":"Вам придётся пройти урок одиночества. Это не так уж страшно, но сложно, поскольку обижаться на людей нельзя. Вас могут оставить без поддержки и даже ударить в спину самые близкие люди. Это, пожалуй, самое мягкое проявление знака — он способен принести в дом болезни и утраты. Вас словно отстраняют от тех, кто вам дорог, самыми разными способами.","fix":"Будьте всегда рядом с родственниками, никогда не отказывайте в помощи."},
+"10":{"sin":"Финансовые преступления","error":"Финансовые преступления: кражи, разбои, мошенничество, растрата, разорение.","back":"Держите ваши доходы покрепче в своих руках: аркан обладает силой лишить вас не только дохода, но и всех накопленных сбережений. Он любит деньги и с удовольствием тем или иным способом их у вас заберёт — тем более что его задача не столько обокрасть, сколько втянуть в долговую яму. Остерегайтесь сомнительных сделок и крупных кредитов, не влезайте в финансовые обязательства, оберегайте вклады и заработанные деньги.","fix":"Расплатитесь по всем долгам."},
+"11":{"sin":"Причинение вреда людям","error":"Причинение физического или морального вреда другим людям.","back":"Знак в этой позиции может дать врачебные ошибки, неудачные диагнозы, ненужные операции, ��овреждения ф��зического тела, нападения, травмы. Он всегда бьёт по самому важному для человека — по телу. Однако с очень осмотрительным человеком аркан способен зайти с другого фланга и лишить карьеры благодаря искусной работе тайных врагов.","fix":"Оплатите лечение, позаботьтесь о здоровье того, кому причинили вред."},
+"12":{"sin":"Унижение достоинства","error":"Унижение чувств и достоинства других людей, доведение их до отчаяния, моральное издевательство и грубость.","back":"В этой позиции аркан отвечает за здоровье. Не потому, что сам подавляет физиологию, а потому, что травмирует внутренний мир — это психосоматика в чистом виде. Вы унижали — значит, теперь унижают вас; вы подавляли — значит, ограничивают вас. Карма выбирает здоровье как способ выбить вас из колеи. В этом периоде особенно полезно разобрать свои страхи: определив причину подавленного состояния и устранив её, вы решаете и саму проблему.","fix":"Окажите психологическую и физическую поддержку тому, кого унижали."},
+"13":{"sin":"Отнятая жизнь","error":"Умышленное преднамеренное причинение смерти человека.","back":"Знак даёт высокую степень опасности. Карма может ударить по вашему здоровью, принеся не только болезни, но и катастрофы. Всё же настолько радикально она поступает редко, поэтому чаще бьёт по карьере и бизнесу, лишает социальных благ, даёт резкие и крайне мучительные перемены в жизни. Рекомендуется быть предельно внимательным: лучше стать слишком осмотрительным, чем допускать аварии и операции. Аркан очень сильный и будет крепко держать вас в своих руках — но обижаться на своего «кармического палача» нельзя.","fix":"Обеспечивайте и заботьтесь о семье пострадавшего."},
+"14":{"sin":"Лишение Рода ремесла","error":"Лишение Рода и человека ремёсел, особенных секретов мастерства и сакральных знаний. Сейч��с это называется намеренным разорением бизнеса.","back":"Медленное разорение: деньги уходят не быстро, поэтому нарушение финансовых ритмов замечаешь не сразу. Отстранение от семейного бизн��са, потеря работ�� в связи с закулисными играми соперников. Вокруг вас множество недо��олвок и тайных врагов — аркан не позволяет увидеть уже развивающуюся проблему, кто-то замышляет против вас стратегию. Знак нередко даёт проблемы в бизнесе и карьере из-за приостановки клиентского потока или спада интереса к вам как к сотруднику. Не забывайте проходить диагностику, лучше всего у въедливого врача: аркан любит прятать истинную проблему.","fix":"Помогите восстановить утраченное ремесло или передайте своё."},
+"15":{"sin":"Жестокость и чёрная магия","error":"Использование оккультизма, чёрной магии или криминала, сексуального и иного насилия с применением жестокости и издевательства по отношению к людям.","back":"Знак очень агрессивный, но редко выступает в качестве серьёзного инструмента в руках Кармы. Он катализирует то, что есть: доводит конфликт до апогея, ускоряет течение болезни, вмешивается в бизнес или карьеру, вставляя очень крупные палки в колёса. Однако его основная задача — вывести вас на эмоции, сильно разозлить, растревожить, испугать, призвать к мести и насилию с вашей стороны. Помните: обратка не даёт повода к обидам, она возвращает долг из прошлого воплощения.","fix":"Используйте свои связи и силу, чтобы вернуть человеку его блага."},
+"16":{"sin":"Лишение человека дома","error":"Вы лишили человека его дома и тем самым не позволили ему выстроить карьеру, семейную и благополучную жизнь.","back":"Один из самых неприятных арканов. Чаще всего он отбирает имущество или ухудшает жилищные условия — это гораздо легче, чем утрата близкого родственника или тяжёлое вмешательство в здоровье. Также аркан способен разрушить карьеру, бизнес, семейную жизнь. Он вообще обладает силой превратить вашу жизнь в рутину.","fix":"Вы должны решить жилищный вопрос того, кто пострадал от ваших действий."},
+"17":{"sin":"Присвоение чужого таланта","error":"Вы предали или каким-либо иным образом польстились на творческий и интеллектуальный труд талантливого человека. Это остановило его в развитии, не позволив передать человечеству важную информацию.","back":"Падение с высоты — в прямом или переносном смысле — может стать причиной ваших страданий. Вам не дадут развивать проект или идею, не позволят получить должность или награды, которые вы заслужили. Вас не оценят, не поддержат и не предложат помощи; самореализовываться придётся под гул недовольных людей. При этом ваши идеи могут украсть, заслуги присвоить другим лицам, а труд исковеркать и придать ему противоположный смысл. Не стоит быть слишком откровенным, особенно с друзьями: знак нередко даёт предательство именно близких друзей.","fix":"Дайте возможность талантливому человеку стать известным автором."},
+"18":{"sin":"Обман доверявших","error":"Вы водили за нос, обманывали и играли с теми, кто вам безгранично верил.","back":"Не рассчитывайте, что вам будут говорить правду. Ложь — единственный инструмент, которым будут пользоваться не только оппоненты, но и близкие люди. Аркан оказывает воздействие также на ваш комфорт и уют в доме: напряжённой в любой момент может стать не только бытовая сторона, но и атмосфера в семье. Возможно, вам придётся прощать измены, предательство деловых партнёров и друзей. Вы можете оказаться в эпицентре наговора, осуждения, сплетен, интриг. К тому же знак даёт конфликты со всеми членами вашей семьи — простите им любые проступки против вас.","fix":"Заслужите доверие близких людей, попросите прощения за ложь и манипуляции."},
+"19":{"sin":"Злоупотребление положением","error":"Вы использовали своё положение в обществе и оказанное вам доверие в личной корыстной цели. Манипулировали людьми, чтобы всегда оставаться неприступным.","back":"Этот аркан очень любит действовать через власть, государственные органы, а также начальников и старших по званию и положению в обществе. Вам куда надёжнее опираться на стажёров, чем на тех, кто обладает статусом. Вам не позволят добиться высокой должности, а если и пустят на неё — остерегайтесь подстав. Аркан сильно бьёт по репутации и лишает человека перспектив в будущем.","fix":"Откажитесь от незаслуженно приобретённого вами и отдайте тому, кто был лишён чего-то благодаря применению вами статуса и власти."},
+"20":{"sin":"Предательство Рода","error":"Предательство Рода. Этот список очень велик: он затрагивает не только идеологические, культурные, националь��ые и религиозные, но и расовые вопросы.","back":"Будьте готовы к ударам от родственников. Это не только плохие вести от них, но и предательства. Любой член Рода обладает правом ранить вас, но вы должны помнить, что обижаться и конфликтовать вы не имеете права.","fix":"Примиритесь с Родом, станьте для них воплощением милосердия."},
+"21":{"sin":"Предательство Родины","error":"Предательство Родины. Здесь перечисление тоже займёт слишком много времени: каждый знает, чем может причинить вред всей стране.","back":"Вам стоит связать свою жизнь с Родиной, так как за границей вас ждут разочарования и трагедии. Вы слишком подвержены вирусным заболеваниям, а также заражению паразитами. Очень редкие болезни, нестандартные решения судей не в вашу пользу, неожиданные препятствия там, где их никогда не было. Ничто не способно предугадать замысел Кармы в этом аркане, так как действовать она будет так, как никогда ни с кем не поступала. Опасайтесь сделок с иностранцами.","fix":"Сделайте что-то полезное для Родины, верните ей славу и уважение среди иностранцев."},
+"22":{"sin":"Смерть потомков Рода","error":"Умышленное причинение смерти потомкам Рода, в том числе аборты.","back":"Вас поставят в кольцо проблем. Всё будет наваливаться разом, но, несмотря на это, вы легко справитесь, если не будете терять веру в победу. Аркан даёт совокупность проявлений любого ранее описанного знака. Предугадать, что именно и в каком объёме Карма использует как инструмент, весьма непросто, поэтому лучше принять для себя одно правило: ни на что и никогда не обижаться.","fix":"Этот грех невозможно исправить, но нужно начать предупреждать молодых родителей, чтобы они не допускали подобных ошибок."}
+}
+</script>
+<script id="prof-db" type="application/json">
+{"1":{"short":"Интеллектуальные профессии, умение продать речь, слово","full":"интеллектуальные профессии, общение, коммуникации, менеджеры, учителя в школе (чаще), организаторы, юристы, умелые мастера (парикмахеры, ювелиры, механики), торговля, туризм, компьютеры, работа где нужна быстрая реакция, оккультные науки","card":"Маг","meaning":"Маг всегда говорит о том, что тебе свойственно легко начинать что-то новое — время для этого обычно подходящее. Идеи, планы, стратегии, замыслы, мечты реализуются очень быстро, потому что у тебя обычно всё готово к тому, чтобы получить нужный результат. Быстрое оформление сделок, поддержка молодого поколения и стажёров. Удачные отношения с братьями и сёстрами. Романтические отношения, которые только зарождаются и ещё не известно, смогут ли стать долгосрочным союзом.","talent":"умение запоминать и удерживать огромные объёмы информации, а затем ясно и убедительно передавать её другим","social":"Важно делиться заложенными в тебе знаниями и потенциалом исключительно в устной форме, стать оратором, лектором. Твоя задача — устно передать накопленную твоей душой информацию. Также на тебе лежит бремя помощи братьям и сёстрам. Важно стать не только опорой, но учителем. В течение всей жизни нужно совершенствовать и развивать свои знания, нельзя бросать обучение на полпути или отказываться от него."},"2":{"short":"Медицина, экология, духовная сфера, помощь другим","full":"духовная сфера, помощь другим, няни, сиделки, психологи, педагогика, врачи, работа с женщинами, воспитатели, сельское хозяйство, диетологи, работа с животными и растениями, организация мероприятий.","card":"Верховная Жрица","meaning":"Эта карта в первую очередь говорит о здоровье человека. В прямом положении она говорит о выздоровлении и хорошем самочувствии. Также аркан связывает человека с природой, дарует ��му интуитивное чувствование пространства и времени. Помощь со стороны влиятельных женщин, укрепление отношений с родственниками и друзьями. Поиск духовного пути.","talent":"природная способность чувствовать и облегчать физическую и душевную боль других людей","social":"Нужно нести ответственность за окружающую среду, животных, детей, людей с инвалидностью. Опекать и оберегать тех, кто в этом особенно нуждается. Вставать на защиту всех женщин, особенно близких (жена, мама, дочь, сестра). Также не стоит забывать о развитии интуиции, сострадания, человечности, толерантности, доброты, заботы."},"3":{"short":"Все виды рукоделия, производство","full":"сфера красоты, мода, художники, швеи, портные, дизайн, выставки, кулинария, еда, рестораны, кафе, работа с женщинами, финансы, банки, служба знакомств, сфера недвижимости, работа с детьми, детский сад.","card":"Императрица","meaning":"Карта сообщает о наступлении богатого событиями периода, новых начинаниях, которые принесут хороший урожай, о высоком уровне энергии, не дающем человеку лениться или сидеть на месте. Любой вопрос, который мы спрашиваем у карты, при появлении Императрицы обретает динамику, развитие. Дело либо активно р��звивается, либо стабилизируется, а все негативные внешние влияния сходят на нет. Также арка�� дает возможности для беременности и успешных родов. Для бизнесменов толкуется как успешное рождение новой идеи и ее дальнейшая реализация.","talent":"умение трансформировать одно состояние в другое, находить скрытые превращения там, где другие видят только исходный материал","social":"Эта задача предполагает не просто стать родителем, но и передать знания, опыт, навыки, таланты и способности своим детям. Необходимо лично заниматься воспитанием и образованием своих детей. Также можно стать учителем или иметь последователей своих идей и талантов. Задача не просто передавать свои знания, а зарождать что-то кардинально новое."},"4":{"short":"Руководство, посты, политика, военные, бизнес","full":"руководящие посты, политика, военные, бизнес, хирурги, стоматологи, работа с металлом, полиция, спорт.","card":"Император","meaning":"Карта говорит о стабильной жизни. Часто предвещает успешный карьерный рост, процветающий бизнес, реализацию задуманного, победу в конкурентной борьбе. Крепкое здоровье, укрепление отношений в семье. Удачные сделки, долгосрочные контракты и завоевание внимания и уважения в обществе. Карта говорит о власти или высоком положении.","talent":"золотые ��уки: способность создавать качественные, долговечные вещи собственными руками","social":"Важно не просто стать профессионалом, а дать заработать другим от своих успехов. Важно стать примером для подражания, быть сильным, волевым и справедливым руководителем. Если выбрать Семью и не развиваться в профессиональном плане, к бытовым вопросам стоит относиться словно к работе — с ответственностью и усердием, но при этом всё время быть хотя бы трудоустроенным. Стоит избегать брака ради финансового благополучия — это негативное влияние этой миссии, Искушение. И всё же на первом плане должна стоять задача профессионального развития в выбранной области. Важно переработать отношение к карьере, власти, успеху. Нужно научиться брать на себя ответственность и уметь самостоятельно выполнять поставленную задачу."},"5":{"short":"Педагогика, наука, религия","full":"педагогика, чаще высшее образование, наука, религия, оккультные практики, помощь другим, врачи, консультанты, психологи, социальные организации, тренинги, советники, политика.","card":"Жрец","meaning":"Карта говорит о том, что тебе свойственно встречать на своём пути наставников и учителей, которые дают верный и очень мудрый совет. Тебе часто покровительствует руководство компании, оказывают поддержку и внимание влиятельные люди. Кто-то склонен вкладывать в тебя деньги или знания, по-отечески подбадривать и давать путёвку в жизнь.","talent":"дар быть проводником между практическим знанием и духовным, эзотерическим пониманием мира","social":"Необходимо заниматься научными или духовными исследованиями, расширять и углублять знания, получить хорошее образование. Нести в массы проверенную информацию, важно поддерживать мужчин из близкого круга, не допускать по отношению к ним обид. Важно стать духовным продолжателем традиций рода, нести нравственность, мораль, законность."},"6":{"short":"Изобразительное искусство, домашние ремёсла","full":"изо, выставки, дизайн, служба знакомств, дипломатия, искусство, консультационные услуги, парикмахеры, сфера красоты, посредники, юристы, домашний очаг.","card":"Влюблённые","meaning":"Эта карта предвещает развитие уже начатых отношений. Они легко могут перейти в более официальный и долгосрочный формат. Также знак символизирует брак и рождение детей, создание семейного бизнеса. Открытие филиалов или нового направления в компании. Творческая самореализация.","talent":"повышенная чувствительность к чужим мыслям и намерениям, часто без слов","social":"Важно стать носителем чувства истинной любви, чистоты, гармонии в отношениях. Стать эталоном в личных отношениях. Нужно сконцентрироваться на семье, стать опорой, поддержкой, отдушиной для членов семьи. Буквально служить интересам семьи."},"7":{"short":"Все транспортные, логистические профессии","full":"туризм, все, что связано с машинами, транспорт, перевозки, курьер, поставщик, военные, авиация, таможня, торговля, бизнес, бензин, газ, топливо, информационные технологии, гиды, экскурсоводы, менеджер, организатор.","card":"Колесница","meaning":"Успешный прогресс, развит��е, которое идет семимильными шагами, быстрые изменения, движение к своей цели. Решение проблем не откладывается на потом — человек начинает действовать прямо здесь и сейчас. Также аркан часто ассоциируется с активностью, силой, ловкостью — теми качествами, без которых управление транспортным средством невозможно. Если мы спрашиваем о событиях будущего, то Колесница говорит об активном развитии событий, успешном достижении цели, исполнении желания. Иногда аркан напрямую указывает на поездку, путешествие, смену обстановки, общение с человеком, находящимся на большом расстоянии от вопрошающего.","talent":"тяга к фундаментальным вопросам мироздания и способность видеть закономерности там, где другие видят хаос","social":"Важно активно включаться во все виды деятельности, которые предлагает жизнь. Важно своим примером обучать людей активному и прогрессивному образу жизни. Важно всегда быть в центре внимания. Развивать интеллект, сохранять тайны. Создавать новые проекты, виды деятельности, идеи, даже творческие направления."},"8":{"short":"Юридическая сфера, экономика, банки, финансы","full":"юридическая сфера, экономика, банки, финансы, налоговые, любая работа, где нужна точность, работа с бумагами, преподаватели, наука.","card":"Правосудие","meaning":"Карта говорит о том, что тебе свойственно оказываться в зоне конфликта, который может перерасти во что-то более неблагоприятное, чем спор. Есть риск судебных тяжб. В целом карта имеет положительное толкование и сулит успех в карьере и бизнесе, победу в любых спорах, в том числе в судебных разбирательствах. Долгосрочные сделки на удобных условиях. Но самое полезное толкование в том, что карта гарантирует торжество справедливости: ты получишь то, что потерял, в полном объёме, а соперники ответят за свои слова и поступки.","talent":"способность интуитивно «просто знать» что-то без логического объяснения, откуда пришло это знание","social":"Важно стоять на защите законности, справедливости, чести и достоинства. Нужно иметь свою точку зрения и всегда следовать внутренним нравственным ориентирам. Не допускать конфликт��в, оскорблений, безнравственности, нечестности в своём окружении. Нельзя спорить и конфликтовать. Важно научиться соблюдать баланс и внутреннюю гармонию."},"9":{"short":"Медицина, преподавание, оккультизм, религия, церковь","full":"медицина, преподавание, оккультизм, религия, церковь, горняки, геолог, ювелиры, научная деятельность, монахи, работа, требующая уединения и спокойствия, математики.","card":"Отшельник","meaning":"Этот аркан не говорит об активных действиях и указывает на то, что тебе часто некому будет помочь. Он даёт положительное толкование, только если ты делаешь что-то строго самостоятельно, не обращаясь к окружающим, поэтому индивидуальный или частный бизнес не страдает из-за влияния этого аркана, тогда как крупный рискует потерять клиентов. Часто означает ухудшение самочувствия, обострение хронических заболеваний, в некоторых случаях — риск тюремного заключения. Карта словно оставляет человека наедине со своими мыслями, чтобы он взглянул внутрь своего ума и сердца и сделал переоценку ценностей. В такие периоды многое может сорваться, потому что чаще всего эта карта даёт приостановку процессов для отдыха или медитации.","talent":"чувствительность к тонким, невидимым слоям реальности и способность улавливать сигналы оттуда","social":"Нужно духовно развиваться в соответствии с традициями своего рода, взаимодействовать с людьми старшего поколения, изучать древние культуры, историю своего рода, государства. Важно найти смысл жизни, учиться на чужих ошибках. Нужно, опираясь на собственные знания и опыт, в более зрелом возрасте помогать советом. Этот знак не имеет ничего общего с деньгами, поэтому помощь в финансовой области — бессмысленная жертва для высших сил: лучше научиться помогать людям советом и словом. Часть денег можно жертвовать в дома престарелых или просто помогать пожилым людям — так закрывается вопрос кармы. Также можно делать скидки в бизнесе, а ещё важно изучать любое направление эзотерики (например, астрология, хиромантия, суфизм, йога, антропософия) и вести самостоятельный образ жизни."},"10":{"short":"Финансы, банки, бизнес, развлекательные мероприятия","full":"финансы, банки, бизнес, развлекательные мероприятия, туризм, транспорт, иностранные языки, клубы, рестораны.","card":"Колесо Фортуны","meaning":"Традиционное значение карты Колесо Фортуны в Таро — это незапланированные перемены, которые на первый взгляд выглядят случайностями. Можно сказать, что это улыбка Судьбы, нечто, что происходит с человеком по воле рока. Это определенный поворотный момент, успех, везение, подарок Судьбы. Важно понимать, что события, которые приходят в жизнь под Коле��ом Фортуны, ��а самом деле мало зависят от усилий человека — они просто случаются, и невоз��ожно понять их истинную причину. Это словно указующий перст Судьбы, кармический поворот, остановить или предотвратить который невозможно. Подобные случайности мы часто называем либо счастливыми, либо роковыми. Карта предвещает успех в карьере и бизнесе, а также в финансовых вопросах.","talent":"умение чувствовать и менять энергетику места или ситуации, даже не касаясь её физически","social":"Важно выработать правильное отношение к деньгам. Не стоит гнаться за ними, поскольку они приходят только через благодарность высших сил за проявленную духовность. Нужно обеспечивать не только себя, но и своих близких, в первую очередь детей. Эта миссия связана с отработкой кармы прошлого воплощения, поэтому при нарушении космических законов первое, чего лишают в наказание, — это денег или способа их заработать."},"11":{"short":"Спорт, военная служба, ветеринария","full":"ветеринария, спорт, физическая работа, управление, юристы, военные, полиция, руководящие должности, актеры, политика.","card":"Сила","meaning":"Карта говорит о том, что в жизни время от времени наступает турбулентность, как при полёте на самолёте. Требуются мужество и самообладание, чтобы справиться с ситуацией. Острые конфликты, неуправляемые обстоятельства, тайные враги, отсутствие союзников и советчиков. Сложности в бизнесе и карьере, охлаждение в отношениях с партнёром. Внутреннее напряжение.","talent":"способность резко трансформировать себя или ситуацию силой воли, без прямого физического воздействия","social":"Задача — проработать экспрессивное проявление психической силы, которая была превышена в прошлой жизни. Нужно развивать в себе такие качества �� чувства, как отвага, смелость, доблесть и героизм. Важно бороться за св��и убежден��я, стать лидером. Важно научиться преодолевать свои страхи. Нельзя избегать проблем — их стоит решать по мере поступления. Нельзя прятаться за чужими спинами и перекладывать ответственность на других людей. В целом задача — защита, а не нападение или страх."},"12":{"short":"Психологи, психотерапевты","full":"психология, психотерапия, медицина, гипнологи, экстрасенсы, садовники, духовные профессии, религия, работа, требующая ухода и заботы о других.","card":"Повешенный","meaning":"Основное толкование старшего аркана Повешенный всегда будет связано с понятием «жертвенность». Значение жертвенности в Таро может быть различным, и это важно осознавать. Кстати, чаще всего человек ошибочно представляет себя ущемленным, так как часто знак говорит о депрессии, в которой мы не можем правильно оценивать ситуацию. Помимо жертвенности аркан также может говорить о состоянии «зависания», неопределённости, ограничения обстоятельствами, о необходимости взглянуть на ситуацию под непривычным углом. Часто человек под влиянием Повешенного чувствует себя наказанным за что-то, однако те события, что он переживает, и есть важный жизненный урок, из которого необходимо вынести определенный смысл, чтобы двигаться дальше. Также Висельник часто призывает нас двигаться дальше, учиться новому через отказ от старых представлений, означает преданность, самоотдачу и терпение.","talent":"умение помогать другим людям добираться до скрытых, забытых слоёв их собственной психики","social":"Эта задача напрямую связана с работой с людьми. Нужно научиться контролировать свои эмоции, налаживать отношения с людьми разных сословий, рас, вероисповеданий. Но самое главное — найти связь внутреннего мира и внешнего, научиться пользоваться интуицией, чтобы помогать людям разобраться в их проблемах."},"13":{"short":"Медицина, ритуальные услуги, техника, машины, работа с металлом, опасные профессии, юристы","full":"медицина, техника, машины, работа с металлом, опасные профессии, патологоанатомы, юристы, нотариусы, спорт, химия, лаборатория, оружие, военные.","card":"Смерть","meaning":"Традиционное значение 13-го аркана Таро, как это ни странно, связано в первую очередь не с физической смертью, как ошибочно думают многие, а скорее с процессом перерождения. Смерть — это не просто конец, но и одновременное начало чего-то нового, это трансформация в новую форму, перерождение. При выпадении этой карты обычно завершается какой-то важный этап жизни человека, происходит какое-то не��збежное событие, которое поначалу чаще всего воспринимается негативно. Это связано с тем, что человек привыкает быть хозяином своей жизни, но перед лицом смерти он становится слабым и беспомощным, поскольку она без спроса рушит все его планы. Всегда события аркана приходят к человеку ввиду его собственных ошибок. Человек выступает творцом своих несчастий. Карта не дает положительного толкования даже в позиции резких перемен, потому что требует больших усилий. Это всё равно что прокрутить ржавый металлический руль — возможно, но крайне сложно. Всегда аркан связан с переосмыслением своего положения и поведения как у человека, который перед смертью наконец-то подводит итоги. Никто так несправедлив к себе, как за секунду до смерти. Именно об этом говорит карта.","talent":"редкая, мощная способность влиять на крупные, стихийные процессы силой намерения","social":"Нужно научиться переменам в жизни. Служить людям через альтруизм, добросердечность, помогать бескорыстно. Всё время совершенствоваться, стремиться к новым целям."},"14":{"short":"Дипломаты, чиновники, учителя","full":"Дипломаты, чиновники, учителя, повар, часовщик, детский психолог, математика, наука, писатель, работа, которая не требует резкого переключения с одного на другое.","card":"Умеренность","meaning":"Приходя в раскладе, аркан всегда несет благоприятный, спокойный период, прояснение ситуации, смягчение разногласий, стабильность. Даже если в данный момент человека окружают какие-то трудности, Умеренность обещает, что они обязательно будут преодолены, если он проявит самоконтроль и терпение. Под этой картой совсем нет никакого напряжения, человек ощущает себя цельным, чувствует гармонию, легкость. Дела продвигаются весьма неторопливо, но непременно в нужную сторону. 14-й аркан обычно смягчает действие отрицательных карт, выпавших по соседству. Он гарантирует небольшой и стабильный карьерный рост. Переломный момент в лечении, когда человек стремится на поправку. Также часто предвещает небольшой, но долгожданный результат. Не дает больших по��арков, как правило, ни больше ни меньше, чем то, на что рассчитывает человек.","talent":"традиционное, переданное по цепочке практическое умение лечить травами, заговорами и природными средствами","social":"Эта миссия показывает необходимость вести гармоничный и умеренный образ жизни, стремясь к благам исключительно своей семьи. Богатство приходит только тогда, когда не желаешь его слишком сильно, когда учишься радоваться малому. Важно стать опорой и центром своей семьи, помогать её членам, содержать и оберегать. Стать примирителем, миротворцем, посредником."},"15":{"short":"Эзотерика всех видов; умение организовать любые процессы, включая крупные международные встречи","full":"Бизнес, финансы, психология, магия, оккультизм, политика, полиция, работа в жестких условиях, спорт, творчество.","card":"Дьявол","meaning":"Дьявол является катализатором всех негативных ситуаций. Это говорит о том, что даже положительные на первый взгляд сюжеты могут на ровном месте зайти в тупик. Так небольшой конфликт перерастет в острое сражение, где каждый будет биться до победного конца, не допуская примирения. В гаданиях на болезнь говорит об ускорении течения заболевания, экстремальной и опасной ситуации. В карьере или бизнесе предвещают крах, который кем-то специально был подстроен. Нередко связано с криминалом, подлогом и лжесвидетельством. Также знак говорит о том, что любые действия и победные стратегии не дадут результата. За процессом поражения следит сама Карма.","talent":"глубокое природное понимание скрытых, невидимых законов, управляющих судьбой и событиями","social":"Задача — бороться с любыми соблазнами, искушениями, и главное — самому не стать человеком, искушающим других на измену, предательство, мошенничество, не традиционность, плохие привычки. Важно понимать, что за плечами стоят не только светлые ангелы, но и тёмные. От того, как проживается эта жизнь, будет зависеть следующая. Нельзя вступать в конфликты, быть зачинщиком конфликта, изменять, применять физическую силу, злоупотреблять алкоголем, обращаться за помощью к чёрным магам — иначе тёмная сторона может завладеть тобой."},"16":{"short":"Всё, что связано со строительством, инженерия, проектирование, все виды дизайна","full":"Строительство, недвижимость, офисная техника, офисные служащие, рискованные профессии, работа с техникой и железом.","card":"Башня","meaning":"Этот аркан дает очень большой спектр негативных толкований, потому что всё, что человеку важно, чем и кем дорожит вопрошающий, входит в зону интересов Башни. Она часто символизирует утраты и конфликты, разводы, серьезные разногласия. Крах карьеры и бизнеса, планов и проектов. Разрушение здоровья нередко приводит к хроническим заболеваниям, выну��денным операциям. Пожалуй, это самый сильный разрушительный аркан. Как видно из названия раздела, это прямое положение карты, поэтому перевернутое будет давать противоположный контекст. Также аркан отвечает за разрушение новых стратегий и планов. Не упускает из внимания и имущество человека. Часто предвещает проблемы с соседями. Ломается бытовая техника, требуется ремонт, строительные компании берут деньги и сбегают. Могут подвести агенты, выступив в роли мошенников. Стоит беречь своё имущество.","talent":"дар воздействовать на реальность через звук, вибрацию и лёгкость — как в прямом, так и в переносном смысле","social":"Важно стать строителем в широком смысле слова. Нужно научиться уходить от того, что себя изжило. Нужно расчищать жизнь для нового, перспективного, актуального. Важно научиться открывать новые двери. Задача — разрушать стереотипы людей, выстраивать новую систему ценностей, готовить человечество к новым космическим законам. Это роль проводника человечества в новый духовный мир, где нет материальных ценностей."},"17":{"short":"Все виды творческих профессий","full":"астрология, творчество, писатели, работа со словом, авиация, наука, новые разработки, генная инженерия, кино, телевидение.","card":"Звезда","meaning":"Значение аркана Таро Звезда всегда будет связано с исполнением того, о чем человек мечтал. Появление этой карты в раскладе — это знак того, что он на правильном пути и ему нужно просто довериться своим ощущениям. Это исполнение надежд, планов, достижение желаемого, открытие прекрасных возможностей. Это оптимизм и вера в то, что всё обязательно получится. Также аркан часто связывают с возможностью реализовать свои таланты, добиться признания в определенном кругу. Звезда призывает нас не бояться мечтать, поскольку все ожидания смогут исполниться — пусть не ��рямо сейчас, но в не столь отдаленном будущем. Карьерный рост, повышение по карьерной лестнице, премия. В личной жизни говорит о романтических отношениях, свиданиях и путешествиях.","talent":"богатое, разностороннее творческое воображение, легко воплощаемое в любой форме искусства","social":"Нужно работать над развитием своих талантов, артистизма, над самовыражением, креативностью, чувством прекрасного. Важно привнести в мир свои творческие произведения, хотя бы в виде красивого дизайна собственного дома. Нужно налаживать и поддерживать дружеские контакты, понимать и разбираться в чужих и своих чувствах, уметь любоваться красотой человека, природы, слова."},"18":{"short":"Медицина (гинеколог, уролог, диетолог), женские профессии, питание, рестораны, кафе, гостиницы","full":"медицина, чисто женские профессии, ветеринар, питание, рестораны, кафе, работа с водой, на воде, детские сады, воспитатели, гинекологи, писатели, профессии, где нужна хорошая фантазия, диетологи, актеры, вообще творчество, работа с цветами, природой, биология.","card":"Луна","meaning":"Традиционно 18-й аркан связывали с чем-то скрытым и опасным. Можно сказать, что его приход оповещает человека о каких-то неприятных эмоциях, которые чаще всего оказываются связаны либо с ложью близких людей, либо с самообманом. Под Луной часто проходят выбирающиеся наружу подсознательные страхи, ощущение тревоги, ревность, какие-то неявные, скрытые препятствия — одним словом, ситуации этого аркана очень туманные, расплывчатые и порой весьма пугающие. Это словно столкновение с тенью явлений: если днем всё видится ярким и понятным, то ночью даже знакомые предметы обретают пугающие очертания. Когда этот аркан проявляется, не время действовать, поскольку реальность на тот момент находится вне контроля. Велик риск угодить в ловушку. Часто 18-й аркан также оповещает нас о тайных врагах, завистниках, недоброжелателях и просто о наступлении темной полосы в жизни.","talent":"особая, живая связь с ушедшими поколениями своей семьи, ощущение их поддержки и присутствия","social":"Важно работать над развитием своей интуиции и своих творческих способностей. Как можно чаще пользоваться воображением, фантазией, чувством стиля. Много времени уделять домашнему хозяйству, комфорту, благополучию семейных отношений. Важно создавать тёплую атмосферу в любой обстановке, уметь профессионально готовить, самостоятельно подбирать себе одежду, вовремя оказывать поддержку близким людям."},"19":{"short":"В��сокие должности, сфера власти, все государственные должности","full":"творчестве, актеры, реклама, сфера развлечений, чисто мужские профессии.","card":"Солнце","meaning":"Традиционное значение 19-го аркана Таро — это всё хорошее, что только может случиться с человеком. Это общее понятие, включающее в себя чувство тепла, света, безопасности, позитивный взгляд на ситуацию и успешное разрешение всех проблем. Но всё же более яркое толкование связано с карьерным ростом, продвижением по лестнице статуса. Власть и контроль над ситуацией, укрепление положения, усиление влияния. Поддержка государства.","talent":"природная способность говорить так, чтобы люди слушали и меняли своё мнение","social":"Важно стать мудрым, надёжным, справедливым предводителем. Научиться открыто и ярко проявлять свои чувства и эмоции, нести людям благие вести и радость. Важно работать с людьми, на всеобщее благо. Согревать теплотой своих чувств, помогать мудростью."},"20":{"short":"Музыка, юристы, философия, медицина, реклама","full":"музыке, родовые ремесла, юристы, философия, медицина, реклама, точные науки, политика, работа с массами.","card":"Суд","meaning":"Итак, в большинстве случаев аркан Страшного Суда будет сообщать о том, что жизнь кардинально меняется. Ангельская труба громко возвещает о приходе этих изменений. Мертвецы, восставшие из могил, символизируют собой освобождение от того, что сковывало, мешало, не давало жить полноценной жизнью. Поэтому в первую очередь значение Высшего Суда Таро будет следующее: кардинальное изменение в лучшую сторону. Как именно оно проявится, зависит от тематики расклада и соседних карт. Существуют и другие смысловые оттенки. Поскольку мертвые когда-то были живыми, карта может описывать возвращение человека к тому образу жизни, что имел место в далеком прошлом. Часто аркан также трактуется как расплата за грехи, совершенные в прошлом, при этом прошлым может считаться и предыдущее воплощение — таким образом, отражается закон Кармы.","talent":"врождённое понимание того, как устроен мир на глубинном, философском уровне","social":"Эта задача — про проработку семейных отношений, важно исключить ошибки в своём роду. Сохранить и передать правильную систему ценностей, возродить семейные ремёсла и таланты. Восстановить память о роде, поддерживать семейные традиции. Важно стать центром семьи — чтобы в доме собирались родственники. Важно следить за могилами предков. По сути, это судьба, отданная на отработку Кармы рода."},"21":{"short":"Международное сообщество, заграница, иностранцы, иностранные языки, туризм, компьютер","full":"Работа, связанная с заграницей, иностранные языки, туризм, компьютеры, Интернет, технологии, работа с массами, публичные профессии, большие компании, космонавтика, авиация.","card":"Мир","meaning":"Аркан отвечает за безграничные возможности, подарки, исполнение желаний. Те же, кто мечтает жить за границей, смогут под влиянием этого аркана насладиться путешествием и благами иностранного сообщества. Также карта говорит о завершении долго пути, каким бы он ни был, итог обязательно будет положительным и успешным. Но, как правило, человек, достигший своей цели, задумывается о начале нового пути, поэтому карта символизирует не просто итог, но и одновременное продолжение. Карта Мир дает признание, благополучие, успех, победу, обновление и неординарные подарки, которые заслужил человек.","talent":"способность сознания выходить за пределы физического тела и исследовать иные пласты реальности во сне или медитации","social":"Важно выработать в себе такие качества, как толерантность, мягкость, открытость ко всему новому и необычному. Бороться с консервативностью, застоем. Важно много путешествовать по миру, общаться с людьми разных культур, быть всегда на виду, в центре внимания, стремиться объединять культуры, вкусы, инновации разных стран. Задача — стать буквально «гражданином мира», переехать в другую страну или работать с иностранцами."},"22":{"short":"Путешествия, туризм, работа с детьми, любая креативная профессия без жёстких рамок","full":"туризме, работе с детьми, путешествия, любая креативная профессия, где нет жестких рамок и границ, изобретатели, актеры, цирк, сочинители, писатели, развлекательные мероприятия, экстрасенсы.","card":"Шут","meaning":"Классическое значение карты Шут — это начало чего-то нового в жизни. Но всегда в этом аркане присутствует элемент какой-то неожиданности, свежести ощущений, спонтанности. Также карта говорит о том, что событие придёт не одно, поскольку Шут всегда является предвестником многогранности и многообразия. Так, известие о повышении вполне может прийти на фоне новости об одобренном кредите, а курьер — принести подарок от твоего молодого человека: поездку за границу. Конечно, это утрированный пример, но главное — понять, что Шут очень щедр на события и всегда радует лёгкими и не всегда ��аслуженными под��рками.","talent":"особая, почти интуитивная связь с живой природой и способность по��имать её без слов","social":"Задача — отдать долг детям: лучше всего избрать профессию, связанную с детьми, так проще будет исправить карму. К тому же важно быть открытым, дружелюбным, по-детски наивным человеком, надёжным другом, опорой для своих близких. Гасить в себе беспокойство, агрессию, обиду, злость, другие взрослые эмоции."}}</script>
+<script>
+/* ---------------- живые сцены карточек (чистый SVG, без библиотек) ---------------- */
+function sceneArcana(){
+  let ticks = '';
+  for(let i = 0; i < 22; i++){
+    const a = (i / 22) * Math.PI * 2 - Math.PI/2;
+    const r1 = 40, r2 = i % 2 ? 45 : 48;
+    ticks += `<line x1="${(110 + r1*Math.cos(a)).toFixed(1)}" y1="${(66 + r1*Math.sin(a)).toFixed(1)}"
+      x2="${(110 + r2*Math.cos(a)).toFixed(1)}" y2="${(66 + r2*Math.sin(a)).toFixed(1)}"
+      stroke="#b8863b" stroke-width="${i % 2 ? 0.8 : 1.4}" opacity="${i % 2 ? 0.45 : 0.8}"/>`;
+  }
+  return `<svg viewBox="0 0 220 132" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    <g class="spin-slow">${ticks}</g>
+    <circle cx="110" cy="66" r="34" fill="none" stroke="#b8863b" stroke-width="1" opacity="0.55"/>
+    <g class="spin-back">
+      <circle cx="110" cy="66" r="52" fill="none" stroke="#b8863b" stroke-width="0.7" opacity="0.3" stroke-dasharray="3 7"/>
+      <circle cx="162" cy="66" r="3.4" fill="#d9a94f"/>
+    </g>
+    <circle cx="110" cy="66" r="26" fill="#161022" opacity="0.85"/>
+    <circle class="breathe" cx="110" cy="66" r="26" fill="none" stroke="#d9a94f" stroke-width="1" opacity="0.55"/>
+    <text class="arcnum" x="110" y="74" text-anchor="middle" font-size="24">ПР</text>
+  </svg>`;
+}
+
+function sceneLife(){
+  const pts = '14,96 44,72 74,88 104,44 134,64 164,30 200,52';
+  return `<svg viewBox="0 0 220 132" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    <line x1="8" y1="66" x2="212" y2="66" stroke="#b8863b" stroke-width="0.8" opacity="0.35" stroke-dasharray="4 6"/>
+    <polyline points="${pts}" fill="none" stroke="#6e2334" stroke-width="6" opacity="0.35" stroke-linecap="round" stroke-linejoin="round"/>
+    <polyline class="draw" points="${pts}" fill="none" stroke="#d9a94f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle class="pulse" cx="104" cy="44" r="3" fill="#ede3cf" style="animation-delay:.2s"/>
+    <circle class="pulse" cx="164" cy="30" r="3" fill="#ede3cf" style="animation-delay:1.1s"/>
+    <circle class="pulse" cx="44"  cy="72" r="3" fill="#c9bda3" style="animation-delay:1.9s"/>
+  </svg>`;
+}
+
+function sceneWealth(){
+  let coins = '';
+  const seed = [[52,0],[92,1.7],[132,3.2],[172,4.6],[72,2.5],[152,5.6]];
+  for(const [x, d] of seed){
+    coins += `<g class="rise" style="animation-delay:${d}s">
+      <circle cx="${x}" cy="112" r="6.5" fill="none" stroke="#d9a94f" stroke-width="1.3" opacity="0.9"/>
+      <circle cx="${x}" cy="112" r="2.4" fill="#d9a94f" opacity="0.55"/>
+    </g>`;
+  }
+  return `<svg viewBox="0 0 220 132" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    <defs><linearGradient id="wg" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#6e2334" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#d9a94f" stop-opacity="0.95"/>
+    </linearGradient></defs>
+    <line x1="16" y1="72" x2="204" y2="72" stroke="#b8863b" stroke-width="0.8" opacity="0.28" stroke-dasharray="4 6"/>
+    <path d="M16,104 L60,92 L104,96 L148,62 L204,34 L204,124 L16,124 Z" fill="#d9a94f" opacity="0.06"/>
+    <path d="M16,104 L60,92 L104,96 L148,62 L204,34" fill="none" stroke="url(#wg)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    ${coins}
+    <circle class="breathe" cx="204" cy="34" r="5" fill="#d9a94f" opacity="0.85"/>
+    <circle cx="204" cy="34" r="11" fill="#d9a94f" opacity="0.10"/>
+  </svg>`;
+}
+
+function sceneKarma(){
+  const knot = 'M36,62 C36,24 96,24 110,62 C124,100 184,100 184,62 C184,24 124,24 110,62 C96,100 36,100 36,62 Z';
+  return `<svg viewBox="0 0 220 132" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    <g class="spin-back">
+      <circle cx="110" cy="62" r="56" fill="none" stroke="#b8863b" stroke-width="0.7" opacity="0.28" stroke-dasharray="2 9"/>
+      <circle cx="166" cy="62" r="3.2" fill="#c9a6e0"/>
+    </g>
+    <path d="${knot}" fill="none" stroke="#6e2334" stroke-width="6" opacity="0.34" stroke-linecap="round" stroke-linejoin="round"/>
+    <path class="draw" d="${knot}" fill="none" stroke="#d9a94f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle class="pulse" cx="40" cy="62" r="3" fill="#ede3cf" style="animation-delay:.3s"/>
+    <circle class="pulse" cx="180" cy="62" r="3" fill="#c9bda3" style="animation-delay:1.6s"/>
+    <circle class="breathe" cx="110" cy="62" r="7" fill="none" stroke="#d9a94f" stroke-width="1.2" opacity="0.8"/>
+    <circle cx="110" cy="62" r="2.4" fill="#d9a94f"/>
+    <text x="110" y="122" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="10"
+      letter-spacing="3" fill="#b8863b" opacity="0.85">ОПВ</text>
+  </svg>`;
+}
+
+function sceneRegret(){
+  let pts = [];
+  for(let i = 0; i <= 150; i++){
+    const t = i / 150, ang = t * Math.PI * 5.2 - Math.PI/2, r = 8 + (1 - t) * 46;
+    pts.push(`${(110 + r*Math.cos(ang)).toFixed(1)},${(64 + r*Math.sin(ang)*0.72).toFixed(1)}`);
+  }
+  let dust = '';
+  const sp = [[30,30,0.5],[194,34,1.4],[26,100,2.3],[196,98,3.1],[62,20,1.9]];
+  for(const [x, y, d] of sp){
+    dust += `<circle class="twinkle" cx="${x}" cy="${y}" r="1.3" fill="#c9bda3" style="animation-delay:${d}s"/>`;
+  }
+  return `<svg viewBox="0 0 220 132" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    ${dust}
+    <polyline points="${pts.join(' ')}" fill="none" stroke="#4a3a63" stroke-width="5" opacity="0.4" stroke-linecap="round"/>
+    <polyline class="draw" points="${pts.join(' ')}" fill="none" stroke="#d9a94f" stroke-width="1.5" opacity="0.95" stroke-linecap="round"/>
+    <circle class="pulse" cx="110" cy="10" r="3" fill="#ede3cf" style="animation-delay:.4s"/>
+    <circle class="breathe" cx="110" cy="64" r="8" fill="none" stroke="#6e2334" stroke-width="1.6" opacity="0.9"/>
+    <circle cx="110" cy="64" r="2.6" fill="#d9a94f"/>
+  </svg>`;
+}
+
+function sceneFlow(){
+  const grid = [[4,9,2],[3,5,7],[8,1,6]];
+  let cells = '';
+  for(let r = 0; r < 3; r++){
+    for(let c = 0; c < 3; c++){
+      const x = 74 + c * 36, y = 30 + r * 34, money = grid[r][c] === 1;
+      cells += `<rect x="${x}" y="${y}" width="32" height="30" fill="${money ? '#d9a94f' : 'none'}"
+        fill-opacity="${money ? 0.16 : 0}" stroke="${money ? '#d9a94f' : '#b8863b'}"
+        stroke-width="${money ? 1.3 : 0.7}" opacity="${money ? 1 : 0.4}"/>
+        <text x="${x+16}" y="${y+20}" text-anchor="middle" font-family="Space Grotesk, sans-serif"
+        font-size="${money ? 15 : 12}" fill="${money ? '#fff3d6' : '#b8863b'}" opacity="${money ? 1 : 0.6}">${grid[r][c]}</text>`;
+    }
+  }
+  let ripples = '';
+  for(let i = 0; i < 3; i++){
+    ripples += `<circle class="breathe" cx="126" cy="113" r="${13 + i * 9}" fill="none" stroke="#d9a94f"
+      stroke-width="0.9" opacity="${0.4 - i * 0.11}" style="animation-delay:${i * 1.1}s"/>`;
+  }
+  let drops = '';
+  for(const [x, d] of [[38,0.3],[54,2.1],[190,1.2],[176,3.0]]){
+    drops += `<g class="rise" style="animation-delay:${d}s"><circle cx="${x}" cy="112" r="2.6" fill="#d9a94f" opacity="0.8"/></g>`;
+  }
+  return `<svg viewBox="0 0 220 132" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    ${ripples}${drops}${cells}
+  </svg>`;
+}
+
+function scenePair(){
+  let stars = '';
+  const sp = [[26,26,0.4],[188,34,1.3],[42,102,2.1],[178,100,2.8],[110,18,1.7],[70,44,3.2],[150,88,0.9]];
+  for(const [x, y, d] of sp){
+    stars += `<circle class="twinkle" cx="${x}" cy="${y}" r="1.2" fill="#ede3cf" style="animation-delay:${d}s"/>`;
+  }
+  return `<svg viewBox="0 0 220 132" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+    ${stars}
+    <ellipse cx="110" cy="66" rx="66" ry="26" fill="none" stroke="#b8863b" stroke-width="0.8" opacity="0.35"/>
+    <ellipse cx="110" cy="66" rx="40" ry="46" fill="none" stroke="#4a3a63" stroke-width="0.9" opacity="0.6"/>
+    <circle class="breathe" cx="110" cy="66" r="9" fill="#d9a94f" opacity="0.55"/>
+    <g class="orbit"><circle cx="176" cy="66" r="5" fill="#ede3cf"/><circle cx="176" cy="66" r="10" fill="#ede3cf" opacity="0.12"/></g>
+    <g class="orbit slow"><circle cx="110" cy="20" r="4" fill="#c9a6e0"/><circle cx="110" cy="20" r="9" fill="#c9a6e0" opacity="0.14"/></g>
+  </svg>`;
+}
+
+const SCENES = {professiya: sceneArcana, lichnaya: sceneLife, finansy: sceneWealth, opv: sceneKarma, sozhalenie: sceneRegret, potoki: sceneFlow, para: scenePair};
+const PROF = JSON.parse(document.getElementById('prof-db').textContent);
+const OPV = JSON.parse(document.getElementById('opv-db').textContent);
+const SJ = JSON.parse(document.getElementById('sj-db').textContent);
+const FLOW = JSON.parse(document.getElementById('flow-db').textContent);
+
+const FACETS = [
+  {id:'professiya', name:'Какая твоя идеальная профессия?', desc:'Аркан ПР по дню, месяцу и году рождения покажет сферу, в которой ты быстрее всего встанешь на ноги.', tag:'Узнать профессию', ready:true},
+  {id:'lichnaya',   name:'Что показывает твой график личной жизни?', desc:'Периоды подъёма и кризиса в отношениях — от рождения до 70 лет.', tag:'Построить мой график', ready:true},
+  {id:'finansy',    name:'Какой у тебя потенциал богатства?', desc:'Уровень достатка, заложенный в твоей дате рождения, и как денежный поток меняется по годам.', tag:'Узнать потенциал', ready:true},
+  {id:'opv',        name:'Какой твой самый тяжкий грех прошлой жизни?', desc:'Ошибка прошлого воплощения по аркану дня и месяца — и обратка, которой Карма о ней напомнит.', tag:'Узнать свой грех', ready:true},
+  {id:'sozhalenie', name:'Какое твоё самое большое сожаление прошлой жизни?', desc:'Аркан СЖ покажет, о чём Душа жалела перед уходом и как это чувство управляет тобой сейчас.', tag:'Узнать своё сожаление', ready:true},
+  {id:'potoki',    name:'Сколько у тебя открытых финансовых потоков?', desc:'Дата рождения в китайском летоисчислении покажет, сколько стабильных источников дохода тебе открыто.', tag:'Узнать свои потоки', ready:true},
+  {id:'para',       name:'Каким будет год для вашей пары?', desc:'Планета года для двоих: развитие, идиллия, конфликт или кризис.', tag:'Скоро', ready:false},
+];
+
+function renderHub(){
+  document.getElementById('facetGrid').innerHTML = FACETS.map(f => {
+    const scene = (SCENES[f.id] || (() => ''))();
+    const inner = `<span class="scene">${scene}</span>
+      <span class="facet-body">
+        <span class="name">${f.name}</span>
+        <span class="desc">${f.desc}</span>
+        <span class="tag">
+          <span class="tagtext">${f.tag}${f.ready ? '<span class="arrow">→</span>' : ''}</span>
+          <span class="price">1 €</span>
+        </span>
+      </span>`;
+    return f.ready
+      ? `<button class="facet" type="button" onclick="go('${f.id}')">${inner}</button>`
+      : `<button class="facet" type="button" disabled aria-disabled="true">${inner}</button>`;
+  }).join('');
+}
+
+/* ---------------- router ---------------- */
+const VIEWS = ['hub','professiya','lichnaya','finansy','opv','sozhalenie','potoki'];
+function show(view){
+  VIEWS.forEach(v => { const el = document.getElementById('view-' + v); if(el) el.hidden = (v !== view); });
+  window.scrollTo(0,0);
+}
+function go(id){ location.hash = '#/' + id; }
+function goHub(){ location.hash = ''; }
+function route(){
+  const id = (location.hash || '').replace(/^#\/?/, '');
+  show(VIEWS.includes(id) && id !== 'hub' ? id : 'hub');
+}
+window.addEventListener('hashchange', route);
+
+/* ---------------- общее ---------------- */
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+function cap(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+function digitSum(n){ return String(n).split('').reduce((a,c) => a + (+c || 0), 0); }
+function toArcanum(n){ let v = n; while(v > 22) v -= 22; return v === 0 ? 22 : v; }
+
+function readMail(pre, errId){
+  const el = document.getElementById(pre + 'Mail');
+  const v = el.value.trim();
+  const err = document.getElementById(errId);
+  if(v === ''){ err.textContent = 'Укажи электронную почту — на неё придёт ссылка на расчёт.'; return null; }
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)){ err.textContent = 'Проверь адрес почты — похоже, в нём опечатка.'; return null; }
+  err.textContent = '';
+  return v;
+}
+function deliveryNote(mail){
+  return `<div class="delivery">
+    <span class="lbl">Ссылка на расчёт</span>
+    <span class="addr">${esc(mail)}</span>
+    <span class="sub">Отправка писем включится вместе с приёмом оплаты — пока р��счёт показан прямо на странице.</span>
+  </div>`;
+}
+function readDate(pre, errId){
+  const err = document.getElementById(errId);
+  const raw = ['Day','Month','Year'].map(k => document.getElementById(pre + k).value.trim());
+  if(raw.some(v => v === '')){ err.textContent = 'Заполни день, месяц и год рождения.'; return null; }
+  const [day, month, year] = raw.map(v => parseInt(v, 10));
+  if(!(day >= 1 && day <= 31)){ err.textContent = 'День рождения — число от 1 до 31.'; return null; }
+  if(!(month >= 1 && month <= 12)){ err.textContent = 'Месяц — число от 1 до 12.'; return null; }
+  if(!(year >= 1900 && year <= 2100)){ err.textContent = 'Год — четыре цифры, от 1900 до 2100.'; return null; }
+  const maxDay = new Date(year, month, 0).getDate();
+  if(day > maxDay){ err.textContent = `В этом месяце ${maxDay} дней — проверь день рождения.`; return null; }
+  err.textContent = '';
+  return {day, month, year};
+}
+function ageNow(d){
+  const t = new Date();
+  let a = t.getFullYear() - d.year;
+  const had = (t.getMonth() + 1 > d.month) || (t.getMonth() + 1 === d.month && t.getDate() >= d.day);
+  if(!had) a--;
+  return a;
+}
+/* ряд из 7 цифр: если произведение короче — дописываем нули справа */
+function sevenDigits(product){
+  let s = String(product).replace(/\D/g, '');
+  while(s.length < 7) s += '0';
+  return s.slice(0, 7).split('').map(Number);
+}
+/* точки графика: по вертикали балл, по горизонтали возраст + балл */
+function buildPoints(digits){
+  const pts = [{age:0, level:0, x:0}];
+  for(let i = 0; i < 7; i++){
+    const age = (i + 1) * 10;
+    pts.push({age, level:digits[i], x:age + digits[i]});
+  }
+  return pts;
+}
+
+/* ---------------- отрисовка графика ---------------- */
+function chartSVG(pts, avg, curAge, id){
+  const W = 720, H = 282, L = 40, R = 24, T = 22, B = 56;
+  const maxX = Math.max(80, Math.ceil(pts[pts.length-1].x / 10) * 10);
+  const sx = v => L + (v / maxX) * (W - L - R);
+  const sy = v => T + (1 - v / 9) * (H - T - B);
+
+  let grid = '';
+  for(let v = 0; v <= 9; v += 3){
+    grid += `<line class="grid" x1="${L}" y1="${sy(v).toFixed(1)}" x2="${W-R}" y2="${sy(v).toFixed(1)}"/>
+      <text class="tick" x="${L-9}" y="${(sy(v)+4).toFixed(1)}" text-anchor="end">${v}</text>`;
+  }
+  let xticks = '';
+  for(let a = 0; a <= maxX; a += 10){
+    xticks += `<text class="tick" x="${sx(a).toFixed(1)}" y="${H-B+20}" text-anchor="middle">${a}</text>`;
+  }
+
+  const path = pts.map((p,i) => `${i ? 'L' : 'M'}${sx(p.x).toFixed(1)},${sy(p.level).toFixed(1)}`).join(' ');
+  const area = path + ` L${sx(pts[pts.length-1].x).toFixed(1)},${sy(0).toFixed(1)} L${sx(0).toFixed(1)},${sy(0).toFixed(1)} Z`;
+
+  let nodes = '', labels = '', hits = '';
+  pts.forEach((p, i) => {
+    const up = i > 0 && p.level > pts[i-1].level;
+    nodes += `<circle class="node${up ? ' up' : ''}" cx="${sx(p.x).toFixed(1)}" cy="${sy(p.level).toFixed(1)}" r="4.5"/>`;
+    const isPeak = i > 0 && i < pts.length-1 && p.level > pts[i-1].level && p.level >= pts[i+1].level;
+    if(isPeak || i === pts.length-1){
+      labels += `<text class="dlabel" x="${sx(p.x).toFixed(1)}" y="${(sy(p.level)-11).toFixed(1)}" text-anchor="middle">${p.x} лет</text>`;
+    }
+    hits += `<circle class="hit" cx="${sx(p.x).toFixed(1)}" cy="${sy(p.level).toFixed(1)}" r="20"
+       data-x="${sx(p.x).toFixed(1)}" data-age="${p.x}" data-level="${p.level}"/>`;
+  });
+
+  let now = '';
+  if(curAge >= 0 && curAge <= maxX){
+    now = `<line class="nowline" x1="${sx(curAge).toFixed(1)}" y1="${T}" x2="${sx(curAge).toFixed(1)}" y2="${H-B}"/>
+      <text class="nowtag" x="${sx(curAge).toFixed(1)}" y="${H-B+38}" text-anchor="middle">сейчас · ${curAge}</text>`;
+  }
+
+  return `<div class="chart-wrap" id="${id}">
+    <svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="График по возрастам от 0 до ${maxX} лет">
+      ${grid}
+      <line class="axis" x1="${L}" y1="${H-B}" x2="${W-R}" y2="${H-B}"/>
+      <line class="axis" x1="${L}" y1="${T}" x2="${L}" y2="${H-B}"/>
+      <path class="lifearea" d="${area}"/>
+      <line class="avg" x1="${L}" y1="${sy(avg).toFixed(1)}" x2="${W-R}" y2="${sy(avg).toFixed(1)}"/>
+      <path class="lifeline" d="${path}"/>
+      ${now}${nodes}${labels}${xticks}
+      <line class="cross" x1="0" y1="${T}" x2="0" y2="${H-B}"/>
+      ${hits}
+    </svg>
+    <div class="tip"></div>
+  </div>`;
+}
+
+function wireChart(id, unit){
+  const wrap = document.getElementById(id);
+  if(!wrap) return;
+  const tip = wrap.querySelector('.tip');
+  const cross = wrap.querySelector('.cross');
+  wrap.querySelectorAll('.hit').forEach(h => {
+    const enter = () => {
+      const r = wrap.getBoundingClientRect();
+      const b = h.getBoundingClientRect();
+      tip.innerHTML = `<b>${h.dataset.age}</b> лет · уровень <b>${h.dataset.level}</b>`;
+      tip.classList.add('on');
+      const left = Math.min(Math.max(b.left - r.left + b.width/2 - tip.offsetWidth/2, 4), r.width - tip.offsetWidth - 4);
+      tip.style.left = left + 'px';
+      tip.style.top = Math.max(b.top - r.top - tip.offsetHeight - 4, 2) + 'px';
+      cross.setAttribute('x1', h.dataset.x); cross.setAttribute('x2', h.dataset.x);
+      cross.classList.add('on');
+    };
+    const leave = () => { tip.classList.remove('on'); cross.classList.remove('on'); };
+    h.addEventListener('mouseenter', enter);
+    h.addEventListener('mouseleave', leave);
+    h.addEventListener('touchstart', enter, {passive:true});
+  });
+}
+
+/* ---------------- периоды ---------------- */
+function periods(pts, curAge, texts){
+  let html = '', ups = 0;
+  for(let i = 1; i < pts.length; i++){
+    const a = pts[i-1], b = pts[i];
+    const dir = b.level > a.level ? 'up' : (b.level < a.level ? 'down' : 'flat');
+    if(dir === 'up') ups++;
+    const cur = curAge >= a.x && curAge < b.x;
+    html += `<div class="period ${dir}${cur ? ' current' : ''}">
+      <span class="yrs">${a.x}–${b.x}</span>
+      <span class="txt">${texts[dir]}${cur ? ' <b style="color:#c9a6e0;">— ты здесь сейчас</b>' : ''}</span>
+    </div>`;
+  }
+  return {html, ups};
+}
+/* ============ ИДЕАЛЬНАЯ ПРОФЕССИЯ ============ */
+function computeProf(day, month, year){
+  const dt = day > 22 ? day - 22 : day;
+  const mt = month;
+  const yearSum = digitSum(year);
+  const gt = toArcanum(yearSum);
+  const raw = 6*dt + 6*mt + 5*gt;
+  const pr = toArcanum(raw);
+  return {dt, mt, gt, yearSum, raw, pr, subtractions: Math.round((raw - pr) / 22)};
+}
+function calcProf(){
+  const box = document.getElementById('pResult');
+  const d = readDate('p', 'pErr');
+  if(!d){ box.innerHTML = ''; return; }
+  const mail = readMail('p', 'pErr');
+  if(!mail){ box.innerHTML = ''; return; }
+  const r = computeProf(d.day, d.month, d.year);
+  const a = PROF[r.pr];
+  box.innerHTML = `
+    <div class="card">
+      <div class="crest">
+        <div class="ring"><span class="num">${r.pr}</span></div>
+        <div class="who">
+          <div class="kicker">Аркан профессии</div>
+          <div class="cardname">${esc(a.card)}</div>
+          <p class="lead">${esc(a.short)}</p>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Где искать себя</h2>
+      <p class="headline">${cap(esc(a.full))}</p>
+      <p class="body-txt" style="margin-top:16px;">Если направить себя в это русло, встать на ноги получается заметно быстрее. Это не запрет на всё остальное — человек вправе выбрать другое, но здесь сопротивление среды минимальное.</p>
+    </div>
+    ${a.talent ? `<div class="card"><h2 class="section-title">Природный талант аркана</h2><p class="headline">${cap(esc(a.talent))}</p></div>` : ''}
+    ${a.social ? `<div class="card"><h2 class="section-title">Социальная задача аркана</h2><p class="body-txt">${esc(a.social)}</p></div>` : ''}
+    <div class="card">
+      <h2 class="section-title">Как это посчитано</h2>
+      <p class="formula">ПР = 6·Дт + 6·Мт + 5·Гт → свести к 22</p>
+      <div class="steps">
+        <div class="step"><span class="k">Дт — аркан дня${d.day > 22 ? ` (${d.day} − 22)` : ''}</span><span class="v">${r.dt}</span></div>
+        <div class="step"><span class="k">Мт — месяц рождения</span><span class="v">${r.mt}</span></div>
+        <div class="step"><span class="k">Гт — аркан года (${String(d.year).split('').join('+')} = ${r.yearSum}${r.yearSum > 22 ? ' − 22' : ''})</span><span class="v">${r.gt}</span></div>
+        <div class="step"><span class="k">6·${r.dt} + 6·${r.mt} + 5·${r.gt}</span><span class="v">${r.raw}</span></div>
+        <div class="step total"><span class="k">Свернуть: ${r.raw}${' − 22'.repeat(r.subtractions)}</span><span class="v">${r.pr}</span></div>
+      </div>
+      ${a.meaning ? `<details><summary>Об аркане «${esc(a.card)}»</summary><p>${esc(a.meaning)}</p></details>` : ''}
+    </div>
+    ${deliveryNote(mail)}
+    <p class="foot">Источник: мини-урок Академии «Как рассчитать идеальную профессию».</p>`;
+}
+
+/* ============ ГРАФИК ЛИЧНОЙ ЖИЗНИ ============ */
+const LIFE_TEXT = {
+  up:'Линия идёт вверх — открытый период: можно улучшить имеющиеся отношения или встретить нового человека. Высшие силы в этом помогают.',
+  down:'Линия идёт вниз — затруднения и разочарования в личной жизни, сомнения в необходимости семьи. Решения об отношениях лучше не принимать резко.',
+  flat:'Линия ровная — без перемен: отношения замирают в том состоянии, в котором были.',
+};
+function lifeBand(sum){
+  if(sum < 26) return {name:'Ниже нормы', text:'Личная жизнь для тебя не главное. Важнее свобода, собственная личность и своё мировоззрение; тянет к путешествиям и разъездам.'};
+  if(sum <= 28) return {name:'Норма', text:'Семейная жизнь — скорее стереотип, чем потребность. Тебе достаточно комфортно и в семейных отношениях, и в одиночестве.'};
+  return {name:'Выше нормы', text:'Семейная жизнь тебе прямо показана — без неё ты не можешь.'};
+}
+function calcLife(){
+  const box = document.getElementById('lResult');
+  const d = readDate('l', 'lErr');
+  if(!d){ box.innerHTML = ''; return; }
+  const mail = readMail('l', 'lErr');
+  if(!mail){ box.innerHTML = ''; return; }
+  const product = d.day * d.month * d.year;
+  const digits = sevenDigits(product);
+  const sum = digits.reduce((a,b) => a+b, 0);
+  const band = lifeBand(sum);
+  const pts = buildPoints(digits);
+  const avg = digits.reduce((a,b) => a+b, 0) / 7;
+  const cur = ageNow(d);
+  const per = periods(pts, cur, LIFE_TEXT);
+
+  box.innerHTML = `
+    <div class="card">
+      <h2 class="section-title">Значимость личной жизни</h2>
+      <div class="energy">
+        <span class="big">${sum}</span>
+        <span class="band">
+          <span class="bandname">${band.name}</span>
+          <span class="norm">Норма 26 · 27 · 28</span>
+        </span>
+      </div>
+      <p class="body-txt" style="margin-top:16px;">${band.text}</p>
+      <div class="rowdigits" style="margin-top:18px;">${digits.map(x => `<i>${x}</i>`).join('')}</div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">График по годам</h2>
+      ${chartSVG(pts, avg, cur, 'lifeChart')}
+      <div class="legendrow">
+        <span><i class="swatch"></i> уровень личной жизни</span>
+        <span><i class="swatch dash"></i> средняя линия — твой уровень комфорта</span>
+        <span><i class="swatch now"></i> сейчас</span>
+      </div>
+      <p class="body-txt" style="margin-top:16px;">Линия поднимается <b style="color:#8fc79b;">${per.ups}</b> ${per.ups === 1 ? 'раз' : (per.ups < 5 ? 'раза' : 'раз')} — столько раз в жизни есть возможность либо улучшить имеющиеся отношения, либо встретить новую любовь.</p>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Что происходит по периодам</h2>
+      <div class="periods">${per.html}</div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Как это посчитано</h2>
+      <p class="formula">Д × М × Г → ряд из 7 цифр → возраст + балл</p>
+      <div class="steps">
+        <div class="step"><span class="k">${d.day} × ${d.month} × ${d.year}</span><span class="v">${product}</span></div>
+        <div class="step"><span class="k">Ряд из 7 цифр (недостающие — нули)</span><span class="v">${digits.join(' ')}</span></div>
+        <div class="step total"><span class="k">Сумма ряда — значимость личной жизни</span><span class="v">${sum}</span></div>
+      </div>
+      <p class="body-txt" style="margin-top:14px;">По вертикали откладываются баллы от 0 до 9, по горизонтали — возраст 0, 10, 20 … 70. Каждая точка ставится в «возраст + балл»: ${pts.slice(1).map(p => `${p.age}+${p.level}=${p.x}`).join(', ')}.</p>
+    </div>
+    ${deliveryNote(mail)}
+    <p class="foot">Источник: мини-урок Академии «Как рассчитать удачный период для построения лирических отношений».</p>`;
+  wireChart('lifeChart');
+}
+
+/* ============ ПОТЕНЦИАЛ БОГАТСТВА ============ */
+const MONEY_TEXT = {
+  up:'Линия растёт — финансовый поток открывается. Доход прибавляется, можно менять работу без потерь, а выше средней линии — брать кредит на улучшение жилья.',
+  down:'Линия падает — поток закрывается. Штрафы, судебные издержки, брак продукции; накопить в этот период не получается.',
+  flat:'Линия ровная — уровень финансов не меняется. Часто это госслужба или предприятие, где всё расписано на годы вперёд.',
+};
+function moneyBand(sum){
+  if(sum <= 25) return {name:'Ниже нормы', text:'Ты не застрахован от крупных финансовых потерь. Рисковать нельзя, в тратах нужна осмотрительность.'};
+  if(sum <= 28) return {name:'Норма', text:'Ты пришёл в эту жизнь, чтобы находиться на среднем уровне достатка.'};
+  return {name:'Выше нормы', text:'Ты пришёл с потенциалом неплохо зарабатывать: в прошлом воплощении наработан большой опыт и финансовые потоки. Но используешь ли ты этот потенциал — зависит только от тебя. Если зарабатываешь плохо, значит просто не реализуешь заложенное.'};
+}
+function calcMoney(){
+  const box = document.getElementById('fResult');
+  const d = readDate('f', 'fErr');
+  if(!d){ box.innerHTML = ''; return; }
+  const mail = readMail('f', 'fErr');
+  if(!mail){ box.innerHTML = ''; return; }
+  const tail = parseInt(String(d.month) + String(d.year), 10);
+  const product = d.day * tail;
+  const digits = sevenDigits(product);
+  const sum = String(product).split('').reduce((a,c) => a + (+c || 0), 0);
+  const band = moneyBand(sum);
+  const pts = buildPoints(digits);
+  const avg = digits.reduce((a,b) => a+b, 0) / 7;
+  const cur = ageNow(d);
+  const per = periods(pts, cur, MONEY_TEXT);
+
+  box.innerHTML = `
+    <div class="card">
+      <h2 class="section-title">Потенциал богатства</h2>
+      <div class="energy">
+        <span class="big">${sum}</span>
+        <span class="band">
+          <span class="bandname">${band.name}</span>
+          <span class="norm">Норма 26 · 27 · 28 · ниже 25 — риск потерь</span>
+        </span>
+      </div>
+      <p class="body-txt" style="margin-top:16px;">${band.text}</p>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Финансовый поток по годам</h2>
+      ${chartSVG(pts, avg, cur, 'moneyChart')}
+      <div class="legendrow">
+        <span><i class="swatch"></i> уровень финансового потока</span>
+        <span><i class="swatch dash"></i> средняя линия — уровень комфорта</span>
+        <span><i class="swatch now"></i> сейчас</span>
+      </div>
+      <p class="body-txt" style="margin-top:16px;">Пока линия лежит ниже средней, уровень заработка не устраивает. Выше средней — всё устраивает, доход можно наращивать. Растущая линия выше комфорта — самое благоприятное время для крупных решений.</p>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Что происходит по периодам</h2>
+      <div class="periods">${per.html}</div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Как это посчитано</h2>
+      <p class="formula">Д × (ММГГГГ слитно) → сумма цифр → ряд из 7 цифр</p>
+      <div class="steps">
+        <div class="step"><span class="k">Месяц и год слитно</span><span class="v">${tail}</span></div>
+        <div class="step"><span class="k">${d.day} × ${tail}</span><span class="v">${product}</span></div>
+        <div class="step"><span class="k">Сумма цифр: ${String(product).split('').join('+')}</span><span class="v">${sum}</span></div>
+        <div class="step total"><span class="k">Ряд для графика (дополнен нулями до 7)</span><span class="v">${digits.join(' ')}</span></div>
+      </div>
+      <p class="body-txt" style="margin-top:14px;">Точки ставятся так же, как в графике личной жизни: ${pts.slice(1).map(p => `${p.age}+${p.level}=${p.x}`).join(', ')}.</p>
+    </div>
+    ${deliveryNote(mail)}
+    <p class="foot">Источник: мини-урок Академии «Потенциал богатства. График финансового потока».</p>`;
+  wireChart('moneyChart');
+}
+
+/* ============ САМЫЙ ТЯЖКИЙ ГРЕХ ПРОШЛОЙ ЖИЗНИ (ОПВ) ============ */
+function computeOpv(day, month){
+  const dt = day > 22 ? day - 22 : day;
+  const mt = month;
+  const diff = Math.abs(dt - mt);
+  return {dt, mt, diff, opv: diff === 0 ? 22 : diff};
+}
+function calcOpv(){
+  const box = document.getElementById('oResult');
+  const d = readDate('o', 'oErr');
+  if(!d){ box.innerHTML = ''; return; }
+  const mail = readMail('o', 'oErr');
+  if(!mail){ box.innerHTML = ''; return; }
+  const day = d.day, month = d.month;
+  const r = computeOpv(day, month);
+  const a = OPV[r.opv];
+  box.innerHTML = `
+    <div class="card">
+      <div class="crest">
+        <div class="ring"><span class="num">${r.opv}</span></div>
+        <div class="who">
+          <div class="kicker">Самый тяжкий грех прошлой жизни · аркан ОПВ</div>
+          <div class="cardname">${esc(a.sin)}</div>
+          <p class="lead">Ошибка, которую душа отрабатывает в этом воплощении.</p>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Что было в прошлой жизни</h2>
+      <p class="headline">${esc(a.error)}</p>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Обратка — как Карма напомнит</h2>
+      <p class="body-txt">${esc(a.back)}</p>
+      <p class="body-txt" style="margin-top:14px;">Обратка за��ускается только тогда, когда человек повторяет ту же ошибку в этой жизни. Если, читая аркан, вы чувствуете, что он активен, — ошибку нужно исправить, пока это возможно.</p>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Как погасить волну</h2>
+      <p class="headline">${esc(a.fix)}</p>
+      <p class="body-txt" style="margin-top:14px;">Самый действенный приём — исправить ошибку самому, вернув волну к исходной позиции. Второй способ, если первый по каким-то причинам невозможен, — полность�� признать свою вину в глубине души. Первый вариант работает сильнее.</p>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Как это посчитано</h2>
+      <p class="formula">ОПВ = |Дт − Мт|, при нуле → 22</p>
+      <div class="steps">
+        <div class="step"><span class="k">Дт — аркан дня${day > 22 ? ` (${day} − 22)` : ''}</span><span class="v">${r.dt}</span></div>
+        <div class="step"><span class="k">Мт — месяц рождения</span><span class="v">${r.mt}</span></div>
+        <div class="step"><span class="k">Разница по модулю: |${r.dt} − ${r.mt}|</span><span class="v">${r.diff}</span></div>
+        <div class="step total"><span class="k">Кармический узел${r.diff === 0 ? ' (0 читается как 22)' : ''}</span><span class="v">${r.opv}</span></div>
+      </div>
+      <p class="body-txt" style="margin-top:14px;">В формуле участвуют только день и месяц: год рождения на кармический узел не влияет. День с 23 по 31 приводится к аркану вычитанием 22, месяц берётся как есть.</p>
+    </div>
+    ${deliveryNote(mail)}
+    <p class="foot">Источник: Айрэн По и Джули По, «Карма в дате рождения», гл. II — «Ошибка прошлого воплощения»; таблица кармических узлов и статья Академии «Как рассчитать свой самый тяжкий грех прошлой жизни».<br><em>Материал эзотерический и не заменяет медицинскую, юридическую или психологическую консультацию.</em></p>`;
+}
+
+/* ============ СОЖАЛЕНИЕ ПРОШЛОЙ ЖИЗНИ (СЖ) ============ */
+const MONTHS_GEN = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+const DIM = [31,29,31,30,31,30,31,31,30,31,30,31];
+
+function computeSj(day, month){
+  const dt = day > 22 ? day - 22 : day;
+  const opv = toArcanum(Math.abs(dt - month));
+  const raw = opv + dt;
+  return {dt, mt: month, opv, raw, sj: toArcanum(raw)};
+}
+/* сколько дат в году дают этот же аркан */
+function sjDates(code){
+  const out = [];
+  for(let m = 1; m <= 12; m++){
+    for(let d = 1; d <= DIM[m-1]; d++){
+      if(computeSj(d, m).sj === code) out.push({d, m});
+    }
+  }
+  return out;
+}
+function calcSj(){
+  const box = document.getElementById('sResult');
+  const d = readDate('s', 'sErr');
+  if(!d){ box.innerHTML = ''; return; }
+  const mail = readMail('s', 'sErr');
+  if(!mail){ box.innerHTML = ''; return; }
+  const r = computeSj(d.day, d.month);
+  const a = SJ[r.sj];
+  const all = sjDates(r.sj);
+  const total = DIM.reduce((x, y) => x + y, 0);
+  const share = (all.length / total * 100);
+  const parity = all.every(p => p.m % 2 === 0) ? 'только в чётные месяцы'
+               : all.every(p => p.m % 2 === 1) ? 'только в нечётные месяцы' : 'в любом месяце';
+  const rare = all.length <= 20 ? 'редкий знак' : all.length >= 30 ? 'один из самых частых' : 'знак средней частоты';
+
+  let strip = '';
+  for(let i = 1; i <= DIM[d.month-1]; i++){
+    const v = computeSj(i, d.month).sj;
+    const cls = i === d.day ? ' me' : (v === r.sj ? ' same' : '');
+    strip += `<div class="daycell${cls}"><span class="d">${i}</span><span class="a">${v}</span></div>`;
+  }
+  box.innerHTML = `
+    <div class="card">
+      <div class="crest">
+        <div class="ring"><span class="num">${r.sj}</span></div>
+        <div class="who">
+          <div class="kicker">Сожаление прошлой жизни · аркан СЖ</div>
+          <div class="cardname">${esc(a.title)}</div>
+          <p class="lead">${esc(a.essence)}</p>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Что именно случилось тогда</h2>
+      <ul class="sjlist">${a.list.map(x => `<li>${esc(cap(x))}</li>`).join('')}</ul>
+      <p class="body-txt" style="margin-top:16px;">Сценариев всегда несколько — прочти медленно и почувствуй, какой из них откликается. Аркан задаёт тему, а не единственный сюжет.</p>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Как это управляет тобой сейчас</h2>
+      <p class="body-txt">${esc(a.now)}</p>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Как отпустить</h2>
+      <p class="body-txt">${esc(a.release)}</p>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Насколько это редкий знак</h2>
+      <div class="energy">
+        <div class="big">${all.length}</div>
+        <div class="band">
+          <div class="bandname">${rare}</div>
+          <div class="norm">${all.length} из ${total} возможных дат рождения · ${share.toFixed(1)}% · выпадает ${parity}</div>
+        </div>
+      </div>
+      ${all.length <= 14 ? `<div class="datelist">${all.map(p => `<i class="${p.d === d.day && p.m === d.month ? 'me' : ''}">${p.d} ${MONTHS_GEN[p.m-1]}</i>`).join('')}</div>` : ''}
+      <p class="body-txt" style="margin-top:16px;">Чётные арканы выпадают только на чётные месяцы, нечётные — на нечётные: это следствие самой формулы, а не совпадение.</p>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Твой месяц целиком</h2>
+      <div class="daystrip">${strip}</div>
+      <p class="body-txt" style="margin-top:16px;">Каждый день ${MONTHS_GEN[d.month-1]} и его аркан сожаления. Золотом — твоя дата, подсветкой — дни с тем же сожалением, что у тебя.</p>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Как это посчитано</h2>
+      <p class="formula">СЖ = ОПВ + Дт → свести к 22, где ОПВ = |Дт − Мт|</p>
+      <div class="steps">
+        <div class="step"><span class="k">Дт — аркан дня${d.day > 22 ? ` (${d.day} − 22)` : ''}</span><span class="v">${r.dt}</span></div>
+        <div class="step"><span class="k">Мт — месяц рождения</span><span class="v">${r.mt}</span></div>
+        <div class="step"><span class="k">ОПВ — ошибка прошлого воплощения: |${r.dt} − ${r.mt}|</span><span class="v">${r.opv}</span></div>
+        <div class="step"><span class="k">ОПВ + Дт = ${r.opv} + ${r.dt}</span><span class="v">${r.raw}</span></div>
+        <div class="step total"><span class="k">Свести к 22${r.raw > 22 ? `: ${r.raw} − 22` : ''}</span><span class="v">${r.sj}</span></div>
+      </div>
+      <p class="body-txt" style="margin-top:14px;">Год рождения в формуле не участвует. Сожаление вытекает из ошибки прошлого воплощения — это две стороны одной пары: <a href="#/opv" style="color:var(--brass-bright);">твой самый тяжкий грех прошлой жизни</a> у тебя ${r.opv}.</p>
+    </div>
+    ${deliveryNote(mail)}
+    <p class="foot">Источник: Айрэн По и Джули По, «Карма в дате рождения», гл. I, § 2 «Сожаления» (с. 72–104) и «Таблица 1. Сожалений прошлой жизни»; статья Академии «Что такое сожаления прошлой жизни и как их рассчитать».<br><em>Материал эзотерический и не заменяет медицинскую, юридическую или психологическую консультацию.</em></p>`;
+}
+
+/* ============ ФИНАНСОВЫЕ ПОТОКИ ============ */
+/* Мантический календарь Айрэн и Джули По, 1930–2030.
+   На год: [месяц и день китайского Нового года, битовая маска 30-дневных месяцев, вставной месяц, число месяцев] */
+const CAL_START=1930,CAL=[[1,30,3366,6,13],[2,17,1323,0,12],[2,6,2647,0,12],[1,26,4790,5,13],[2,14,2906,0,12],[2,4,1748,0,12],[1,24,3785,3,13],[2,11,1865,0,12],[1,31,5779,7,13],[2,19,2707,0,12],[2,8,1323,0,12],[1,27,2651,6,13],[2,15,2733,0,12],[2,5,1386,0,12],[1,25,6997,4,13],[2,13,2980,0,12],[2,2,2889,0,12],[1,22,6803,2,13],[2,10,2709,0,12],[1,29,5421,7,13],[2,17,1334,0,12],[2,6,2733,0,12],[1,27,5546,5,13],[2,14,1458,0,12],[2,3,3493,0,12],[1,24,7498,3,13],[2,12,3402,0,12],[1,31,2709,8,13],[2,18,2711,0,12],[2,8,1366,0,12],[1,28,2741,6,13],[2,15,2773,0,12],[2,5,1746,0,12],[1,25,3749,4,13],[2,13,3749,0,12],[2,2,1610,0,12],[1,21,3223,3,13],[2,9,2715,0,12],[1,30,5466,7,13],[2,17,1386,0,12],[2,6,2921,0,12],[1,27,5970,5,13],[2,15,2898,0,12],[2,3,2853,0,12],[1,23,5707,4,13],[2,11,2635,0,12],[1,31,5291,8,13],[2,18,685,0,12],[2,7,1389,0,12],[1,28,2921,6,13],[2,16,3497,0,12],[2,5,3474,0,12],[1,25,7461,4,13],[2,13,3365,0,12],[2,2,6733,10,13],[2,20,2646,0,12],[2,9,694,0,12],[1,29,1461,6,13],[2,17,1749,0,12],[2,6,3753,0,12],[1,27,7826,5,13],[2,15,3730,0,12],[2,4,3366,0,12],[1,23,2646,3,13],[2,10,2647,0,12],[1,31,5334,8,13],[2,19,858,0,12],[2,7,1749,0,12],[1,28,5833,5,13],[2,16,1865,0,12],[2,5,1683,0,12],[1,24,5419,4,13],[2,12,1323,0,12],[2,1,2651,0,12],[1,22,5466,2,13],[2,9,1386,0,12],[1,29,6997,7,13],[2,18,2980,0,12],[2,7,2889,0,12],[1,26,6803,5,13],[2,14,2709,0,12],[2,3,1325,0,12],[1,23,2733,4,13],[2,10,2741,0,12],[1,31,5546,9,13],[2,19,1490,0,12],[2,8,3493,0,12],[1,28,7498,6,13],[2,16,3402,0,12],[2,5,3221,0,12],[1,25,5422,4,13],[2,12,1366,0,12],[2,1,2741,0,12],[1,22,5554,2,13],[2,10,1746,0,12],[1,29,3749,6,13],[2,17,1829,0,12],[2,6,1611,0,12],[1,26,3223,5,13],[2,13,3243,0,12],[2,3,1370,0,12]];
+
+function toChinese(day, month, year){
+  const t = Date.UTC(year, month - 1, day);
+  for(let i = CAL.length - 1; i >= 0; i--){
+    const c = CAL[i], gy = CAL_START + i, cny = Date.UTC(gy, c[0] - 1, c[1]);
+    if(t < cny) continue;
+    let off = Math.round((t - cny) / 86400000);
+    for(let k = 0; k < c[4]; k++){
+      const len = (c[2] >> k & 1) ? 30 : 29;
+      if(off < len){
+        let num = k + 1, leap = false;
+        if(c[3]){ if(k + 1 === c[3] + 1){ num = c[3]; leap = true; } else if(k + 1 > c[3] + 1) num = k; }
+        return {day: off + 1, month: num, leap, year: gy + 2698};
+      }
+      off -= len;
+    }
+    return null;
+  }
+  return null;
+}
+const pad2 = n => String(n).padStart(2, '0');
+const chDigits = c => pad2(c.day) + pad2(c.month) + c.year;
+const countOnes = c => chDigits(c).split('').filter(x => x === '1').length;
+
+/* доля дат календаря с тем же числом единиц — считается один раз */
+let FLOW_DIST = null;
+function flowDist(){
+  if(FLOW_DIST) return FLOW_DIST;
+  const cnt = {};
+  let total = 0;
+  for(let y = 1930; y <= 2030; y++){
+    const leapY = (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+    const dim = [31, leapY ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    for(let m = 1; m <= 12; m++){
+      for(let d = 1; d <= dim[m-1]; d++){
+        const c = toChinese(d, m, y);
+        if(!c) continue;
+        const k = Math.min(countOnes(c), 4);
+        cnt[k] = (cnt[k] || 0) + 1; total++;
+      }
+    }
+  }
+  FLOW_DIST = {cnt, total};
+  return FLOW_DIST;
+}
+
+const PALACES = [[4,'Карьера'],[9,'Сила'],[2,'Разум'],[3,'Здоровье'],[5,'Воля'],[7,'Талант'],[8,'Общество'],[1,'Деньги'],[6,'Семья']];
+
+function calcFlow(){
+  const box = document.getElementById('cResult');
+  const err = document.getElementById('cErr');
+  const raw = ['cDay','cMonth','cYear'].map(id => document.getElementById(id).value.trim());
+  if(raw.some(v => v === '')){ err.textContent = 'Заполни день, месяц и год рождения.'; box.innerHTML = ''; return; }
+  const [day, month, year] = raw.map(v => parseInt(v, 10));
+  if(!(day >= 1 && day <= 31)){ err.textContent = 'День рождения — число от 1 до 31.'; box.innerHTML = ''; return; }
+  if(!(month >= 1 && month <= 12)){ err.textContent = 'Месяц — число от 1 до 12.'; box.innerHTML = ''; return; }
+  if(!(year >= 1930 && year <= 2030)){ err.textContent = 'Мантический календарь Академии охватывает 1930–2030 годы — для этого расчёта нужна дата из этого промежутка.'; box.innerHTML = ''; return; }
+  const maxDay = new Date(year, month, 0).getDate();
+  if(day > maxDay){ err.textContent = `В этом месяце ${maxDay} дней — проверь день рождения.`; box.innerHTML = ''; return; }
+  const ch = toChinese(day, month, year);
+  if(!ch){ err.textContent = 'Эта дата выходит за границы мантического календаря (с 30 января 1930 года).'; box.innerHTML = ''; return; }
+  err.textContent = '';
+  const mail = readMail('c', 'cErr');
+  if(!mail){ box.innerHTML = ''; return; }
+
+  const digits = chDigits(ch);
+  const ones = countOnes(ch);
+  const level = Math.min(ones, 4);
+  const a = FLOW[level];
+  const dist = flowDist();
+  const share = dist.cnt[level] / dist.total * 100;
+
+  let tiles = '';
+  digits.split('').forEach((d, i) => {
+    tiles += `<div class="dig${d === '1' ? ' one' : ''}">${d}</div>`;
+    if(i === 1 || i === 3) tiles += '<div class="sep">·</div>';
+  });
+
+  const counts = {};
+  for(const d of digits) counts[d] = (counts[d] || 0) + 1;
+  let square = '';
+  for(const [n, label] of PALACES){
+    const k = counts[String(n)] || 0;
+    const cls = (n === 1 ? ' money' : '') + (k ? ' filled' : '');
+    square += `<div class="palace${cls}"><span class="pn">${k ? String(n).repeat(k) : '��'}</span>
+      <span class="pl">${label}</span><span class="pc">${k}</span></div>`;
+  }
+  box.innerHTML = `
+    <div class="card">
+      <div class="crest">
+        <div class="ring"><span class="num">${ones}</span></div>
+        <div class="who">
+          <div class="kicker">Открытых финансовых потоков</div>
+          <div class="cardname">${esc(a.name)}</div>
+          <p class="lead">${esc(a.lead)}</p>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Твоя дата в китайском летоисчислении</h2>
+      <div class="chdate">
+        <span class="big">${pad2(ch.day)}.${pad2(ch.month)}.${ch.year}</span>
+        <span class="cap">${ch.leap ? 'вставной ' + ch.month + '-й месяц · ' : ''}${day}.${month}.${year} по григорианскому</span>
+      </div>
+      <div class="digits">${tiles}</div>
+      <p class="body-txt" style="margin-top:16px;">Восемь цифр — это и есть карта подсознания. Золотом отмечены единицы: их ${ones === 0 ? 'здесь нет' : ones}. ${ones === 0 ? 'Дворец Денег пуст.' : 'Столько стабильных финансовых потоков тебе открыто.'}</p>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Что это значит</h2>
+      <p class="body-txt">${esc(a.text)}</p>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Что с этим делать</h2>
+      <p class="headline">${esc(a.advice)}</p>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Насколько это частый расклад</h2>
+      <div class="energy">
+        <div class="big">${share.toFixed(1)}%</div>
+        <div class="band">
+          <div class="bandname">${level === 0 ? 'треть всех дат' : level === 1 ? 'самый частый расклад' : level === 2 ? 'каждый пятый' : level === 3 ? 'редкий расклад' : 'очень редкий расклад'}</div>
+          <div class="norm">${dist.cnt[level].toLocaleString('ru')} из ${dist.total.toLocaleString('ru')} дат календаря 1930–2030</div>
+        </div>
+      </div>
+      <p class="body-txt" style="margin-top:16px;">Четыре единицы и больше выпадают всего на 1,2% дат, а шесть единиц за весь столетний календарь встречаются ровно один раз — 13 декабря 2013 года, это 11.11.4711.</p>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Мантический квадрат Ло-Шу</h2>
+      <div class="loshu">${square}</div>
+      <p class="body-txt" style="margin-top:16px;">Цифры твоей китайской даты раскладываются по девяти дворцам. Единица — дворец Денег, стихия Вода, триграмма Кань: именно он отвечает за финансовые потоки, изобилие и умение обеспечить семью. Нули в квадрат не попадают. Остальные восемь дворцов — темы отдельных расчётов.</p>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Что усиливает поток</h2>
+      <p class="body-txt">Чтобы потоки стали стабильнее, книга советует обратиться к силе стихии Воды — недаром говорят: деньги — вода. Дома или в офисе стоит поставить небольшой циркулирующий фонтан и бросить в него несколько монет. Если ваш город стоит на реке или у моря, чаще приходите на берег и бросайте монеты в воду.${level === 4 ? ' Носителям четырёх единиц и больше книга отдел��но советует относиться к воде с осторожностью.' : ''}</p>
+    </div>
+    <div class="card">
+      <h2 class="section-title">Как это посчитано</h2>
+      <p class="formula">Количество единиц в дате рождения по китайскому летоисчислению</p>
+      <div class="steps">
+        <div class="step"><span class="k">Дата по григорианскому календарю</span><span class="v">${pad2(day)}.${pad2(month)}.${year}</span></div>
+        <div class="step"><span class="k">Она же в мантическом календаре${ch.leap ? ' (вставной месяц)' : ''}</span><span class="v">${pad2(ch.day)}.${pad2(ch.month)}.${ch.year}</span></div>
+        <div class="step"><span class="k">Восемь цифр даты</span><span class="v">${digits.split('').join(' ')}</span></div>
+        <div class="step total"><span class="k">Сколько среди них единиц</span><span class="v">${ones}</span></div>
+      </div>
+      <p class="body-txt" style="margin-top:14px;">Китайский год = григорианский + 2698, отсчёт года начинается не 1 января, а от китайского Нового года. Перевод дат берётся из «Мантического календаря» Айрэн и Джули По и сверен с ним по всем таблицам с 1930 по 2030 год.</p>
+    </div>
+    ${deliveryNote(mail)}
+    <p class="foot">Источник: Айрэн По и Джули По, «Векторная нумерология», гл. 2 «Мантический квадрат Ло-Шу», значение единицы; «Мантический календарь»; статья Академии «Сколько у вас открытых финансовых потоков?».<br><em>Материал эзотерический и не является финансовой рекомендацией.</em></p>`;
+}
+
+function requestGraniPayment(facet){
+  const view = document.querySelector('#view-' + facet);
+  const mail = view && view.querySelector('input[type="email"]');
+  const email = mail ? mail.value.trim() : '';
+  if(!email){
+    const err = view && view.querySelector('.err');
+    if(err) err.textContent = 'Укажи электронную почту перед оплатой.';
+    if(mail) mail.focus();
+    return;
+  }
+  window.parent.postMessage({type:'grani-payment', facet, email}, window.location.origin);
+}
+
+/* Enter в поле даты запускает расчёт этой грани */
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Enter') return;
+  const inp = e.target;
+  if(!inp || inp.tagName !== 'INPUT') return;
+  const view = inp.closest('section');
+  const btn = view && view.querySelector('.btn');
+  if(btn){ e.preventDefault(); btn.click(); }
+});
+
+renderHub();
+route();
+</script>
+</body>
+</html>
