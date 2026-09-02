@@ -49,7 +49,9 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
 
   useEffect(() => {
     if (preview) return
-    const sessionId = new URLSearchParams(window.location.search).get("session_id")
+    const params = new URLSearchParams(window.location.search)
+    const sessionId = params.get("session_id")
+    if (params.get("grani_payment") !== "success") return
     if (!sessionId) return
     fetch(`/api/grani/session?session_id=${encodeURIComponent(sessionId)}`)
       .then((response) => response.ok ? response.json() : null)
