@@ -130,15 +130,6 @@ export function HeroSection() {
           </span>
         </h1>
         
-        {/* Elegant subheadline - more breathing room and better contrast */}
-        <p 
-          className={`text-base sm:text-lg md:text-xl text-muted-foreground/80 max-w-xl mx-auto mb-8 sm:mb-12 md:mb-14 leading-relaxed font-light transition-all duration-1000 delay-300 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-          }`}
-        >
-          {t("subtitle")}
-        </p>
-
         {/* Simplified trust - just text with better contrast */}
         <div 
           className={`flex flex-col items-center justify-center gap-y-2 px-2 mb-10 sm:mb-16 text-xs tracking-widest uppercase text-muted-foreground/70 transition-all duration-1000 delay-400 ${
