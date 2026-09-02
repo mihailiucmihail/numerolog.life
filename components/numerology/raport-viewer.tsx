@@ -22,7 +22,7 @@ interface RaportViewerProps {
   reportType?: 'cristal' | 'grani'
 }
 
-export default function RaportViewer({ formData }: RaportViewerProps) {
+export default function RaportViewer({ formData, reportType = 'cristal' }: RaportViewerProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [height, setHeight] = useState(800)
 
