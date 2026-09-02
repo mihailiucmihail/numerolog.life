@@ -67,20 +67,6 @@ export function FeaturesSection() {
       <div className="absolute inset-0 cosmic-gradient opacity-20" />
       
       <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
-        {/* Editorial section header */}
-        <div className="text-center mb-10 sm:mb-12">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <Star className="h-3.5 w-3.5 text-primary" />
-            <span className="text-xs tracking-widest uppercase text-muted-foreground">{t("badge")}</span>
-          </div>
-          <h2 aria-label={`${t("titlePlain")} ${t("titleAccent")}`} className="font-serif text-4xl sm:text-5xl md:text-6xl font-light mb-6">
-            <span>{t("titlePlain")}</span>{" "}<span className="text-gradient">{t("titleAccent")}</span>
-          </h2>
-          <p className="text-muted-foreground/80 text-lg max-w-xl mx-auto font-light leading-relaxed">
-            {t("subtitle")}
-          </p>
-        </div>
-
         {/* Elegant feature grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {features.map((feature, index) => (
