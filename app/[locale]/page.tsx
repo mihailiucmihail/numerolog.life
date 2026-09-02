@@ -23,7 +23,8 @@ export default function HomePage() {
           <iframe
             src="/grani-live.html"
             title="Raportul Cristalul Destinului"
-            className="h-[2200px] w-full border-0 sm:h-[2800px] lg:h-[3400px]"
+            className="h-[9000px] w-full border-0"
+            scrolling="no"
             loading="lazy"
           />
         </div>
