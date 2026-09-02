@@ -61,14 +61,10 @@ export async function startGraniCheckout(
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
   const session = await getStripe().checkout.sessions.create({
     mode: 'payment',
-    locale: locale === "ru" ? "ru" : "auto",
     line_items: [{
       price_data: {
         currency: product.currency,
-        product_data: {
-          name: locale === "ru" ? `Грани — индивидуальный отчёт — ${facet === "professiya" ? "профессия" : facet}` : `${product.name} — ${facet}`,
-          description: locale === "ru" ? "Персональный расчёт по системе «Грани Судьбы»." : product.description,
-        },
+        product_data: { name: `${product.name} — ${facet}`, description: product.description },
         unit_amount: product.priceInCents,
       },
       quantity: 1,
