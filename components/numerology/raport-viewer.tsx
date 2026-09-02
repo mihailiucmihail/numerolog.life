@@ -37,7 +37,7 @@ export default function RaportViewer({ formData, reportType = 'cristal' }: Rapor
     year: String(formData.year),
     ...(formData.gender ? { gender: formData.gender } : {}),
     ...(formData.nameAlphabetKey ? { alpha: formData.nameAlphabetKey } : {}),
-    ...(reportType === 'grani' ? { report: '1', email: formData.email || '' } : {}),
+    ...(reportType === 'grani' ? { report: '1', email: formData.email || '', facet: formData.facet || 'professiya' } : {}),
   })
   const iframeSrc = reportType === 'grani'
     ? `/grani-live.html?${params.toString()}#/${formData.facet || 'professiya'}`
