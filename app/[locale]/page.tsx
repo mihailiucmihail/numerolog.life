@@ -9,6 +9,7 @@ import { StarField } from "@/components/star-field"
 import { NewsletterSection } from "@/components/newsletter/newsletter-section"
 import { NewsletterPopup } from "@/components/newsletter/newsletter-popup"
 import { ReportPreviewSection } from "@/components/report-preview-section"
+import { GraniPaymentFrame } from "@/components/grani-payment-frame"
 
 export default function HomePage() {
   return (
@@ -18,6 +19,11 @@ export default function HomePage() {
       <HeroSection />
       <FeaturesSection />
       <ReportPreviewSection />
+      <section id="grani" className="relative z-10 px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-7xl overflow-hidden">
+          <GraniPaymentFrame locale="ru" preview />
+        </div>
+      </section>
       <HowItWorksSection />
       <NewsletterSection />
       <FAQSection />
