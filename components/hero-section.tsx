@@ -168,6 +168,7 @@ export function HeroSection() {
                 <span>{t("ctaPrimary")}</span>
               </Link>
             </Button>
+            <p className="text-xs text-primary/80">Персональный разбор · 19 €</p>
           </div>
         </div>
 
