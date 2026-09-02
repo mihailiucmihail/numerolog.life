@@ -64,7 +64,6 @@ export function ReportPreviewSection() {
               {S.cta} <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
             </Link>
           </Button>
-          <p className="mt-3 text-xs text-muted-foreground/60">{S.price}</p>
         </div>
       </div>
     </section>
