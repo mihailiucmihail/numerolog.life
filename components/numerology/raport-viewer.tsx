@@ -87,8 +87,11 @@ export default function RaportViewer({ formData, reportType = 'cristal' }: Rapor
           border: 'none',
           display: 'block',
           overflow: 'hidden',
+          background: 'transparent',
+          colorScheme: 'normal',
         }}
         title={reportType === 'grani' ? 'Грани Судьбы — Отчёт' : 'Cristalul Destinului — Raport'}
+        allowTransparency
         scrolling="no"
       />
     </div>
