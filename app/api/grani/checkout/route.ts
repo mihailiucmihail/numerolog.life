@@ -7,7 +7,8 @@ export async function POST(request: Request) {
     const email = typeof body.email === "string" ? body.email : ""
     const facet = typeof body.facet === "string" ? body.facet : "grani"
     const locale = typeof body.locale === "string" ? body.locale : "ru"
-    const url = await startGraniCheckout(email, facet, locale)
+    const formData = body.formData && typeof body.formData === "object" ? body.formData : undefined
+    const url = await startGraniCheckout(email, facet, locale, formData)
     return NextResponse.json({ url })
   } catch (error) {
     const message = error instanceof Error ? error.message : "Plata nu a putut fi inițiată."

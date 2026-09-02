@@ -33,7 +33,7 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
         const response = await fetch("/api/grani/checkout", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: event.data.email, facet: event.data.facet || initialFacet || "grani", locale }),
+          body: JSON.stringify({ email: event.data.email, facet: event.data.facet || initialFacet || "grani", locale, formData: event.data.formData }),
         })
         const result = await response.json()
         if (!response.ok || !result.url) throw new Error(result.error || "Plata nu a putut fi inițiată.")
@@ -46,6 +46,16 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
     window.addEventListener("message", onMessage)
     return () => window.removeEventListener("message", onMessage)
   }, [])
+
+  useEffect(() => {
+    if (preview) return
+    const sessionId = new URLSearchParams(window.location.search).get("session_id")
+    if (!sessionId) return
+    fetch(`/api/grani/session?session_id=${encodeURIComponent(sessionId)}`)
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => { if (data?.formData && iframeRef.current?.contentWindow) iframeRef.current.contentWindow.postMessage({ type: "grani-report-data", facet: data.facet, formData: data.formData }, window.location.origin) })
+      .catch(() => undefined)
+  }, [preview])
 
   const frameSrc = preview
     ? "/grani-live.html?mode=preview"

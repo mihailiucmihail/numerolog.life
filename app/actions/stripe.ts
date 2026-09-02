@@ -51,6 +51,7 @@ export async function startGraniCheckout(
   email: string,
   facet: string,
   locale: string = 'ro',
+  formData?: { day: number; month: number; year: number },
 ): Promise<string> {
   const product = getProduct('grani-professiya')
   if (!product) throw new Error('Produsul Grani nu a fost găsit.')
@@ -70,8 +71,8 @@ export async function startGraniCheckout(
       quantity: 1,
     }],
     customer_email: normalizedEmail,
-    metadata: { productId: product.id, facet },
-    success_url: `${baseUrl}/${locale}/grani?grani_payment=success&facet=${encodeURIComponent(facet)}`,
+    metadata: { productId: product.id, facet, ...(formData ? { formData: JSON.stringify(formData) } : {}) },
+    success_url: `${baseUrl}/${locale}/grani/${encodeURIComponent(facet)}?grani_payment=success&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/${locale}?grani_payment=cancelled`,
   })
   if (!session.url) throw new Error('Nu s-a putut genera URL-ul de plată.')
