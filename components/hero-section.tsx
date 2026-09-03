@@ -106,7 +106,7 @@ export function HeroSection() {
       <div className="max-w-5xl mx-auto px-6 sm:px-8 lg:px-12 py-2 sm:py-4 md:py-6 text-center relative z-10">
         {/* Cinematic headline with serif font */}
         <h1 
-          className={`mb-6 sm:mb-10 transition-all duration-1000 delay-150 ${
+          className={`mb-6 sm:mb-10 transition-[opacity,transform] duration-1000 delay-150 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
@@ -122,7 +122,7 @@ export function HeroSection() {
         </h1>
 
         <p
-          className={`text-base sm:text-lg md:text-xl text-muted-foreground/80 max-w-xl mx-auto mb-8 sm:mb-12 leading-relaxed font-light transition-all duration-1000 delay-300 ${
+          className={`text-base sm:text-lg md:text-xl text-muted-foreground/80 max-w-xl mx-auto mb-8 sm:mb-12 leading-relaxed font-light transition-[opacity,transform] duration-1000 delay-300 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
@@ -131,7 +131,7 @@ export function HeroSection() {
         
         {/* Simplified trust - just text with better contrast */}
         <div 
-          className={`flex flex-col items-center justify-center gap-y-2 px-2 mb-10 sm:mb-16 text-xs tracking-widest uppercase text-muted-foreground/70 transition-all duration-1000 delay-400 ${
+          className={`flex flex-col items-center justify-center gap-y-2 px-2 mb-10 sm:mb-16 text-xs tracking-widest uppercase text-muted-foreground/70 transition-[opacity,transform] duration-1000 delay-400 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
@@ -142,7 +142,7 @@ export function HeroSection() {
         
         {/* Single CTA - Instant Report */}
         <div 
-          className={`flex justify-center transition-all duration-1000 delay-500 ${
+          className={`flex justify-center transition-[opacity,transform] duration-1000 delay-500 ${
             isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
