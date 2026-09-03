@@ -1,7 +1,7 @@
 import createMiddleware from 'next-intl/middleware'
 import { NextRequest, NextResponse } from 'next/server'
 import { routing } from './i18n/routing'
-import { CURRENCY_COOKIE, currencyFromCountry, parseCurrency, type Currency } from './lib/currency'
+import { CURRENCY_COOKIE, CURRENCY_HEADER, currencyFromCountry, parseCurrency, type Currency } from './lib/currency'
 
 const handleI18nRouting = createMiddleware(routing)
 
@@ -35,7 +35,13 @@ export default function proxy(request: NextRequest) {
 
   // Dacă URL-ul este deja în rusă, lasă next-intl să gestioneze ruta.
   if (LOCALE_REGEX.test(pathname)) {
-    return withCurrencyCookie(handleI18nRouting(request), request)
+    // Moneda merge și ca header de request, ca prima randare (înainte să existe cookie-ul)
+    // să afișeze deja prețurile corecte — fără flash EUR -> KZT.
+    const { currency } = resolveCurrency(request)
+    const headers = new Headers(request.headers)
+    headers.set(CURRENCY_HEADER, currency)
+    const forwarded = new NextRequest(request, { headers })
+    return withCurrencyCookie(handleI18nRouting(forwarded), request)
   }
 
   // Orice rută publică este redirecționată către versiunea rusă.

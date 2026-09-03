@@ -7,6 +7,8 @@ export type Currency = 'eur' | 'kzt'
 
 export const DEFAULT_CURRENCY: Currency = 'eur'
 export const CURRENCY_COOKIE = 'NEXT_CURRENCY'
+/** Header intern setat de proxy, ca prima randare să cunoască moneda înainte să existe cookie-ul. */
+export const CURRENCY_HEADER = 'x-currency'
 
 // Țară (ISO 3166-1 alpha-2, din header-ul Vercel x-vercel-ip-country) -> monedă
 const COUNTRY_CURRENCY: Record<string, Currency> = {
