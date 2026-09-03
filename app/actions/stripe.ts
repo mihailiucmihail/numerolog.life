@@ -45,9 +45,6 @@ export async function startNumerologieCheckout(
   }
 
   const productName = isRu ? 'Кристалл Судьбы' : product.name
-  const productDescription = isRu
-    ? 'Полный численный разбор — метод Айрен и Джули По, 22 Аркана, метациклы жизни, графики и Квадрат Пифагора.'
-    : product.description
 
   const stripe = getStripe()
   const session = await stripe.checkout.sessions.create({
@@ -55,9 +52,9 @@ export async function startNumerologieCheckout(
       {
         price_data: {
           currency: product.currency,
+          // Doar denumirea raportului — fără descriere, metodă sau autori pe pagina de plată.
           product_data: {
             name: appliedPromo ? `${productName} (−15 %)` : productName,
-            description: productDescription,
           },
           unit_amount: unitAmount,
         },
@@ -92,14 +89,14 @@ export async function startGraniCheckout(
   }
   const isRu = locale === 'ru'
   const productName = isRu ? 'Грани Судьбы — индивидуальный расчёт' : product.name
-  const productDescription = isRu ? 'Отдельный расчёт из «Кристалла Судьбы».' : product.description
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
   const session = await getStripe().checkout.sessions.create({
     mode: 'payment',
     line_items: [{
       price_data: {
         currency: product.currency,
-        product_data: { name: `${productName} — ${facet}`, description: productDescription },
+        // Doar denumirea — fără descriere pe pagina de plată.
+        product_data: { name: `${productName} — ${facet}` },
         unit_amount: getGraniPriceInCents(facet), // 1,99 € standard / 4,99 € cu grafic — decis pe server
       },
       quantity: 1,
