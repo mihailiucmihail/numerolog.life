@@ -80,7 +80,7 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
       .catch(() => undefined)
   }, [preview])
 
-  // Prețurile afișate în iframe urmează moneda vizitatorului (KZ -> tenge). HTML-ul doar
+  // Prețurile afișate în iframe urmează moneda vizitatorului (KZ -> tenge, MD -> lei). HTML-ul doar
   // înlocuiește textul; suma reală e recalculată pe server la checkout.
   const frameQuery = new URLSearchParams()
   if (preview) frameQuery.set("mode", "preview")

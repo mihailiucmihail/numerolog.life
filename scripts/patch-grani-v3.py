@@ -128,12 +128,13 @@ const FACET_PREFIX = {professiya:'p', lichnaya:'l', finansy:'f', opv:'o', sozhal
 /* Fațete cu grafic — 4,99 €; restul — 1,99 €. Prețul real e recalculat pe server (lib/products.ts). */
 const GRAPH_FACETS = new Set(['lichnaya', 'finansy', 'kariera', 'karma', 'sudba', 'volya', 'kachestvo']);
 
-/* Monedă locală (ex. tenge pentru Kazahstan): părintele trimite ?cur=kzt&ps=<preț standard>&pg=<preț grafic>.
+/* Monedă locală (tenge pentru Kazahstan, lei pentru Moldova): părintele trimite ?cur=kzt|mdl&ps=<preț standard>&pg=<preț grafic>.
    Aici doar înlocuim textul afișat; suma reală e decisă pe server (lib/currency.ts). */
 (function(){
   try{
     const q = new URLSearchParams(window.location.search);
-    if(q.get('cur') === 'kzt'){
+    const cur = q.get('cur');
+    if(cur && cur !== 'eur'){
       const ps = q.get('ps') || '', pg = q.get('pg') || '';
       if(ps && pg){
         const swap = () => {
