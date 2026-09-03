@@ -3,7 +3,20 @@
 import { getStripe } from "@/lib/stripe"
 import { getPlan, getProduct, getGraniPriceInCents } from "@/lib/products"
 import { createClient } from "@/lib/supabase/server"
-import { db } from "@/lib/db"
+import { validatePromoCodeServer, CRISTAL_PRICE_CENTS, normalizePromoCode } from "@/lib/promo"
+
+const PROMO_ERRORS = {
+  ro: {
+    format: 'Codul promoțional are un format invalid.',
+    not_found: 'Codul promoțional nu există.',
+    used: 'Acest cod promoțional a fost deja folosit.',
+  },
+  ru: {
+    format: 'Неверный формат промокода.',
+    not_found: 'Такой промокод не существует.',
+    used: 'Этот промокод уже был использован.',
+  },
+} as const
 
 export async function startNumerologieCheckout(
   email?: string,
@@ -15,12 +28,22 @@ export async function startNumerologieCheckout(
   if (!product) throw new Error('Produsul nu a fost găsit.')
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
-  const normalizedCode = discountCode?.trim().toUpperCase()
-  const eligible = normalizedCode
-    ? await db<{ email: string }[]>`SELECT email FROM newsletter_subscribers WHERE email = ${email?.toLowerCase().trim()} AND discount_code = ${normalizedCode} AND discount_activated_at IS NOT NULL LIMIT 1`
-    : []
-  const unitAmount = 1900 // 19 EUR
   const isRu = locale === 'ru'
+
+  // Prețul se decide EXCLUSIV pe server: 19 € sau, cu un cod valid și nefolosit, 19 € − 15 %.
+  let unitAmount = CRISTAL_PRICE_CENTS
+  let appliedPromo: string | null = null
+  if (normalizePromoCode(discountCode)) {
+    const promo = await validatePromoCodeServer(discountCode)
+    if (!promo.valid) {
+      const msgs = PROMO_ERRORS[isRu ? 'ru' : 'ro']
+      // Nu facturăm în tăcere prețul întreg — utilizatorul trebuie să afle că codul nu e valid.
+      throw new Error(promo.reason === 'empty' ? msgs.format : msgs[promo.reason])
+    }
+    unitAmount = promo.finalCents
+    appliedPromo = promo.code
+  }
+
   const productName = isRu ? 'Кристалл Судьбы' : product.name
   const productDescription = isRu
     ? 'Полный численный разбор — метод Айрен и Джули По, 22 Аркана, метациклы жизни, графики и Квадрат Пифагора.'
@@ -33,7 +56,7 @@ export async function startNumerologieCheckout(
         price_data: {
           currency: product.currency,
           product_data: {
-            name: productName,
+            name: appliedPromo ? `${productName} (−15 %)` : productName,
             description: productDescription,
           },
           unit_amount: unitAmount,
@@ -43,7 +66,10 @@ export async function startNumerologieCheckout(
     ],
     mode: 'payment',
     ...(email ? { customer_email: email } : {}),
-    metadata: formData ? { formData: JSON.stringify(formData) } : undefined,
+    metadata: {
+      ...(formData ? { formData: JSON.stringify(formData) } : {}),
+      ...(appliedPromo ? { promoCode: appliedPromo } : {}),
+    },
     success_url: `${baseUrl}/${locale}/numerologie?payment=success&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/${locale}/numerologie?payment=cancelled`,
   })
@@ -95,6 +121,7 @@ export async function getNumerologieSessionStatus(sessionId: string) {
     paymentStatus: session.payment_status,
     customerEmail: session.customer_details?.email ?? null,
     formData: session.metadata?.formData ?? null,
+    promoCode: session.metadata?.promoCode ?? null,
   }
 }
 

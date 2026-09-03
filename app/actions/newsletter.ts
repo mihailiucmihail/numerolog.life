@@ -3,8 +3,7 @@
 import crypto from 'crypto'
 import { db } from '@/lib/db'
 import { Resend } from 'resend'
-
-const DISCOUNT_CODE = process.env.NEWSLETTER_DISCOUNT_CODE || 'CRISTAL15'
+import { getOrCreatePromoCodeForEmail, PROMO_PERCENT, CRISTAL_PRICE_CENTS, applyPercentDiscount, formatEur } from '@/lib/promo'
 
 interface SubscribeInput {
   email: string
@@ -61,32 +60,35 @@ export async function subscribeToNewsletter(input: SubscribeInput): Promise<Subs
 
     const token = crypto.randomBytes(32).toString('hex')
 
+    // Un cod unic, de unică folosință, legat de acest email (același cod la re-abonare).
+    const discountCode = await getOrCreatePromoCodeForEmail(email, PROMO_PERCENT)
+
     // Upsert: reactiveaza abonatii existenti, pastreaza tokenul existent daca exista
     const rows = await db<{ unsubscribe_token: string }[]>`
       INSERT INTO newsletter_subscribers (email, first_name, last_name, locale, discount_code, subscribed, unsubscribe_token, marketing_consent, marketing_consent_at, source, discount_percent, discount_activated_at)
-      VALUES (${email}, ${firstName}, ${lastName}, ${locale}, ${DISCOUNT_CODE}, TRUE, ${token}, ${marketingConsent}, ${marketingConsent ? new Date() : null}, ${source}, 15, now())
+      VALUES (${email}, ${firstName}, ${lastName}, ${locale}, ${discountCode}, TRUE, ${token}, ${marketingConsent}, ${marketingConsent ? new Date() : null}, ${source}, ${PROMO_PERCENT}, now())
       ON CONFLICT (email) DO UPDATE SET
         first_name = COALESCE(EXCLUDED.first_name, newsletter_subscribers.first_name),
         last_name = COALESCE(EXCLUDED.last_name, newsletter_subscribers.last_name),
         locale = EXCLUDED.locale,
         subscribed = TRUE,
         unsubscribed_at = NULL,
-        discount_code = COALESCE(newsletter_subscribers.discount_code, EXCLUDED.discount_code)
+        discount_code = EXCLUDED.discount_code
       RETURNING unsubscribe_token
     `
 
     const unsubToken = rows[0]?.unsubscribe_token || token
 
-    await sendDiscountEmail(email, firstName, locale, unsubToken)
+    await sendDiscountEmail(email, firstName, locale, unsubToken, discountCode)
 
-    return { ok: true, discountCode: DISCOUNT_CODE }
+    return { ok: true, discountCode }
   } catch (err) {
     console.log('[v0] subscribeToNewsletter error:', err)
     return { ok: false, error: 'server_error' }
   }
 }
 
-async function sendDiscountEmail(email: string, firstName: string | null, locale: 'ro' | 'ru', unsubToken: string) {
+async function sendDiscountEmail(email: string, firstName: string | null, locale: 'ro' | 'ru', unsubToken: string, discountCode: string) {
   try {
     const resendKey = process.env.RESEND_API_KEY
     if (!resendKey) return
@@ -94,12 +96,18 @@ async function sendDiscountEmail(email: string, firstName: string | null, locale
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
     const unsubUrl = `${baseUrl}/${locale}/unsubscribe?token=${unsubToken}`
     const unsubApiUrl = `${baseUrl}/api/unsubscribe?token=${unsubToken}&locale=${locale}`
-    const orderUrl = `${baseUrl}/${locale}`
+    // Link direct către formular, cu codul precompletat.
+    const orderUrl = `${baseUrl}/${locale}/numerologie?discount=${encodeURIComponent(discountCode)}`
     const fromDomain = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
     const t = copy[locale]
     const name = firstName ? `, ${firstName}` : ''
+    const finalPrice = formatEur(applyPercentDiscount(CRISTAL_PRICE_CENTS, PROMO_PERCENT))
+    const basePrice = formatEur(CRISTAL_PRICE_CENTS)
+    const priceLine = locale === 'ru'
+      ? `Цена со скидкой: <strong style="color:#D4AF37;">${finalPrice}</strong> вместо ${basePrice}. Код действует один раз.`
+      : `Preț cu reducere: <strong style="color:#D4AF37;">${finalPrice}</strong> în loc de ${basePrice}. Codul este valabil o singură dată.`
 
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: `Numerolog.life <${fromDomain}>`,
       to: email,
       subject: t.subject,
@@ -125,10 +133,11 @@ async function sendDiscountEmail(email: string, firstName: string | null, locale
                     <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
                       <tr><td align="center" style="background:rgba(212,175,55,0.08);border:1px dashed rgba(212,175,55,0.4);border-radius:8px;padding:24px;">
                         <p style="margin:0 0 8px;color:rgba(237,227,207,0.5);font-size:11px;letter-spacing:2px;text-transform:uppercase;">${t.codeLabel}</p>
-                        <p style="margin:0;color:#D4AF37;font-size:30px;font-weight:700;letter-spacing:4px;">${DISCOUNT_CODE}</p>
+                        <p style="margin:0;color:#D4AF37;font-size:26px;font-weight:700;letter-spacing:3px;">${discountCode}</p>
                       </td></tr>
                     </table>
-                    <p style="color:rgba(237,227,207,0.7);font-size:14px;line-height:1.7;margin:0 0 28px;text-align:center;">${t.apply}</p>
+                    <p style="color:rgba(237,227,207,0.7);font-size:14px;line-height:1.7;margin:0 0 12px;text-align:center;">${t.apply}</p>
+                    <p style="color:rgba(237,227,207,0.7);font-size:14px;line-height:1.7;margin:0 0 28px;text-align:center;">${priceLine}</p>
                     <table width="100%" cellpadding="0" cellspacing="0">
                       <tr><td align="center">
                         <a href="${orderUrl}" style="display:inline-block;background:linear-gradient(135deg,#D4AF37,#B8922E);color:#0A0A14;font-size:15px;font-weight:600;letter-spacing:1px;text-decoration:none;padding:16px 40px;border-radius:6px;">${t.cta}</a>
@@ -150,8 +159,9 @@ async function sendDiscountEmail(email: string, firstName: string | null, locale
         </html>
       `,
     })
+    if (error) console.error('[v0] sendDiscountEmail Resend error:', error.message)
   } catch (err) {
-    console.log('[v0] sendDiscountEmail error:', err)
+    console.error('[v0] sendDiscountEmail error:', err)
   }
 }
 

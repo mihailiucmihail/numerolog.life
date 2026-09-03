@@ -666,6 +666,11 @@ select option{color:#1a1420;background:#fff;}
         <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="">
       </div>
       <div class="full">
+        <label>Промокод <span style="opacity:.5;text-transform:none;letter-spacing:0;">(необязательно — скидка 15 %, действует один раз)</span></label>
+        <input id="promoCode" type="text" placeholder="CRISTAL15-XXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" value="" style="text-transform:uppercase;letter-spacing:.08em;">
+        <div id="promoMsg" style="display:none;margin-top:8px;font-size:13px;line-height:1.5;"></div>
+      </div>
+      <div class="full">
         <label>Пол <span style="opacity:.5;text-transform:none;letter-spacing:0;">(для Китайской школы нумерологии)</span></label>
         <select id="gender" style="width:100%;padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:6px;color:var(--parchment);font-family:inherit;font-size:15px;">
           <option value="m">Мужской</option>
@@ -6035,18 +6040,69 @@ function startPdfExport(){
       }
       err.style.display = 'none';
       if(window.__paymentUnlocked){ calculate(); return; }
+      const promoEl = document.getElementById('promoCode');
+      const discountCode = promoEl ? promoEl.value.trim().toUpperCase().replace(/\s+/g, '') : '';
       const data = {
         last: document.getElementById('lastName').value.trim(),
         first: document.getElementById('firstName').value.trim(),
         middle: document.getElementById('middleName').value.trim(),
         day, month, year, email,
         gender: document.getElementById('gender').value,
-        nameAlphabetKey: typeof getNameAlphabetKey === 'function' ? getNameAlphabetKey() : undefined
+        nameAlphabetKey: typeof getNameAlphabetKey === 'function' ? getNameAlphabetKey() : undefined,
+        discountCode: discountCode || undefined
       };
       window.parent.postMessage({ type: 'requestPayment', data }, '*');
       const btn = document.getElementById('mainCalcBtn');
       if(btn){ btn.disabled = true; btn.textContent = 'Обработка...'; }
     }
+
+    // Промокод: валидация на сервере через родительское окно (без побочных эффектов).
+    (function(){
+      const promoEl = document.getElementById('promoCode');
+      const promoMsg = document.getElementById('promoMsg');
+      if(!promoEl || !promoMsg) return;
+      let timer = null;
+      function showPromo(text, ok){
+        promoMsg.textContent = text;
+        promoMsg.style.color = ok ? 'var(--brass-bright, #D4AF37)' : '#e07a7a';
+        promoMsg.style.display = text ? 'block' : 'none';
+      }
+      function askValidate(){
+        const code = promoEl.value.trim().toUpperCase().replace(/\s+/g, '');
+        if(!code){ showPromo('', true); return; }
+        window.parent.postMessage({ type: 'validatePromo', code }, '*');
+      }
+      promoEl.addEventListener('input', function(){
+        promoEl.value = promoEl.value.toUpperCase();
+        clearTimeout(timer);
+        timer = setTimeout(askValidate, 450);
+      });
+      promoEl.addEventListener('blur', askValidate);
+      window.addEventListener('message', function(event){
+        if(!event.data) return;
+        if(event.data.type === 'promoResult'){
+          const r = event.data.result || {};
+          if(r.valid){
+            showPromo('Промокод принят: −' + r.percent + ' % → ' + r.finalPrice + ' вместо ' + r.basePrice + '.', true);
+          } else {
+            const reasons = {
+              format: 'Неверный формат промокода.',
+              not_found: 'Такой промокод не существует.',
+              used: 'Этот промокод уже был использован.'
+            };
+            showPromo(reasons[r.reason] || 'Промокод недействителен.', false);
+          }
+        }
+        if(event.data.type === 'prefillPromo' && event.data.code){
+          promoEl.value = String(event.data.code).toUpperCase();
+          askValidate();
+        }
+        if(event.data.type === 'paymentError'){
+          const err = document.getElementById('errMsg');
+          if(err && event.data.message){ err.textContent = event.data.message; err.style.display = 'block'; }
+        }
+      });
+    })();
 
     window.addEventListener('message', function(event){
       if(!event.data) return;

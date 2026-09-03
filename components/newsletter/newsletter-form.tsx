@@ -51,8 +51,9 @@ export function NewsletterForm({ onSuccess, compact = false }: NewsletterFormPro
           <Check className="size-6 text-primary" aria-hidden="true" />
         </div>
         <h3 className="font-serif text-2xl font-light">Скидка 15% активирована</h3>
-        <p className="mt-2 text-sm text-muted-foreground">Твоя цена — <strong className="text-foreground">12,74 €</strong></p>
+        <p className="mt-2 text-sm text-muted-foreground">Твоя цена — <strong className="text-foreground">16,15 €</strong> вместо 19,00 €</p>
         <p className="mt-3 select-all font-mono text-lg tracking-[0.18em] text-primary">{code}</p>
+        <p className="mt-2 text-xs text-muted-foreground/70">Код отправлен на почту и действует один раз.</p>
         <Link href={`/${locale}/numerologie?discount=${encodeURIComponent(code)}`} className="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground">
           <span>{t("successCta")}</span><ArrowRight className="size-4" aria-hidden="true" />
         </Link>
