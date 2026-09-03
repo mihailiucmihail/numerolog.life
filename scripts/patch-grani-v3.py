@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SRC = ROOT / 'public/grani-versions/grani-live-v3-upload.html'
+SRC = ROOT / 'public/grani-versions/grani-live-v5-upload.html'
 DST = ROOT / 'public/grani-live.html'
 s = SRC.read_text(encoding='utf-8')
 assert s.count('\ufffd') == 0, 'mojibake in upload'
@@ -60,7 +60,9 @@ rep("""    <div class="facets" id="facetGrid"></div>
 
 # 4. Butoanele -> plata Stripe (niciodata calc direct)
 for fn, facet in [('calcProf','professiya'),('calcLife','lichnaya'),('calcMoney','finansy'),
-                  ('calcOpv','opv'),('calcSj','sozhalenie'),('calcFlow','potoki')]:
+                  ('calcOpv','opv'),('calcSj','sozhalenie'),('calcFlow','potoki'),
+                  ('calcCareer','kariera'),('calcKarma','karma'),('calcDestiny','sudba'),
+                  ('calcWill','volya'),('calcQol','kachestvo')]:
     rep(f'onclick="{fn}()"', f'onclick="requestPayment(\'{facet}\')"')
 
 # 5. Paginare hub (4 + 4) doar in mode=preview
@@ -98,17 +100,18 @@ rep("function go(id){ location.hash = '#/' + id; }",
 }""")
 
 # 7. Blocul de integrare la final: plata, raport salvat, inaltime iframe
-rep("""fillAlpha();
-paintAlpha();
+rep("""    ${crystalBlock()}`;
+}
 
 renderHub();
 route();
 </script>""",
-"""fillAlpha();
-paintAlpha();
+"""    ${crystalBlock()}`;
+}
 
 /* ==== Integrare cu site-ul (Stripe + raport permanent + iframe) ==== */
-const FACET_PREFIX = {professiya:'p', lichnaya:'l', finansy:'f', opv:'o', sozhalenie:'s', potoki:'c'};
+const FACET_PREFIX = {professiya:'p', lichnaya:'l', finansy:'f', opv:'o', sozhalenie:'s', potoki:'c',
+                      kariera:'kr', karma:'km', sudba:'ds', volya:'wl', kachestvo:'ql'};
 
 /* Кнопка расчёта: сначала оплата через Stripe, результат приходит по ссылке */
 function requestPayment(facet){
@@ -125,13 +128,17 @@ function requestPayment(facet){
     if(err) err.textContent = 'Введи корректный адрес электронной почты.';
     return;
   }
+  data.first = read('Name');
   if(facet === 'professiya'){
-    data.first = read('Name');
     data.last = read('Surname');
     if(data.last && !GENDER) autoGender();
     if(data.last && !ALPHA) autoAlpha();
     if(GENDER) data.gender = GENDER;
     if(ALPHA) data.alpha = ALPHA;
+  } else if(typeof GENDERS !== 'undefined'){
+    /* Restul fațetelor: gen per prefix (setGenderP / autoGenderP) */
+    if(data.first && !GENDER_TOUCHED_P[prefix]) autoGenderP(prefix);
+    if(GENDERS[prefix]) data.gender = GENDERS[prefix];
   }
   if(err) err.textContent = '';
   if(window.parent !== window){
@@ -145,14 +152,17 @@ function initSavedReport(){
   if(query.get('report') !== '1') return;
   const facet = (query.get('facet') || (location.hash || '').replace(/^#\\/?/, '') || 'professiya').toLowerCase();
   const prefix = FACET_PREFIX[facet] || 'p';
-  const fields = {Day:query.get('day'), Month:query.get('month'), Year:query.get('year'), Mail:query.get('email')};
-  if(facet === 'professiya'){ fields.Name = query.get('first'); fields.Surname = query.get('last'); }
+  const fields = {Day:query.get('day'), Month:query.get('month'), Year:query.get('year'), Mail:query.get('email'), Name:query.get('first')};
+  if(facet === 'professiya') fields.Surname = query.get('last');
   Object.entries(fields).forEach(([name, value]) => { const input=document.getElementById(prefix + name); if(input && value) input.value=value; });
+  const g = query.get('gender');
   if(facet === 'professiya'){
-    const g = query.get('gender'); if(g === 'ж' || g === 'м') setGender(g);
+    if(g === 'ж' || g === 'м') setGender(g);
     const a = query.get('alpha'); if(a && ALPHABETS[a]) setAlpha(a);
     if(!GENDER) autoGender();
     if(!ALPHA) autoAlpha();
+  } else if(typeof GENDERS !== 'undefined'){
+    if(g === 'ж' || g === 'м') setGenderP(prefix, g); else autoGenderP(prefix);
   }
   const section=document.getElementById('view-' + facet);
   const form=section && section.querySelector(':scope > .card');
@@ -160,7 +170,8 @@ function initSavedReport(){
   const back=section && section.querySelector(':scope > .backlink');
   if(back) back.hidden=true;
   route();
-  const calculators={professiya:calcProf, lichnaya:calcLife, finansy:calcMoney, opv:calcOpv, sozhalenie:calcSj, potoki:calcFlow};
+  const calculators={professiya:calcProf, lichnaya:calcLife, finansy:calcMoney, opv:calcOpv, sozhalenie:calcSj, potoki:calcFlow,
+                     kariera:calcCareer, karma:calcKarma, sudba:calcDestiny, volya:calcWill, kachestvo:calcQol};
   if(calculators[facet]) calculators[facet]();
 }
 
