@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap">
 <style>
 :root{
+  color-scheme: dark only;
   --ink:#161022;
   --ink-2:#1c1529;
   --parchment:#ede3cf;
@@ -23,10 +24,12 @@
 }
 *{box-sizing:border-box;}
 html{-webkit-text-size-adjust:100%;}
-html{background:transparent;}
 body{
   margin:0;
-  background:transparent;
+  background:
+    radial-gradient(ellipse at 18% -12%, rgba(110,35,52,0.34), transparent 55%),
+    radial-gradient(ellipse at 92% 8%, rgba(74,58,99,0.34), transparent 50%),
+    var(--ink);
   color:var(--parchment);
   font-family:var(--sans);
   font-size:clamp(15px,0.5vw + 14px,16.5px);
@@ -58,16 +61,6 @@ body{
 
 /* ---------- facet grid ---------- */
 .facets{display:grid;grid-template-columns:1fr;gap:16px;}
-.more-wrap{display:flex;justify-content:center;margin-top:28px;}
-.more{
-  display:inline-flex;align-items:center;gap:10px;
-  background:transparent;color:var(--brass-bright);
-  border:1px solid var(--brass);border-radius:2px;
-  padding:13px 30px;font-family:var(--sans);font-size:14px;letter-spacing:.06em;text-transform:uppercase;
-  cursor:pointer;transition:background .3s ease,color .3s ease,box-shadow .3s ease;
-}
-.more:hover{background:var(--brass);color:#1a1220;box-shadow:0 0 28px rgba(212,175,55,0.25);}
-.more-count{font-size:12px;opacity:.7;letter-spacing:.02em;text-transform:none;}
 @media (min-width:620px){.facets{grid-template-columns:1fr 1fr;}}
 .facet{
   display:flex;flex-direction:column;gap:9px;
@@ -532,10 +525,6 @@ details p{color:var(--parchment-dim);margin:12px 0 0;}
 
     <div class="facets" id="facetGrid"></div>
 
-    <div class="more-wrap" id="moreWrap" hidden>
-      <button class="more" type="button" id="moreBtn" onclick="showMoreFacets()">Показать ещё<span class="more-count" id="moreCount"></span></button>
-    </div>
-
     <p class="foot"><em>Каждая грань — отдельный расчёт.</em><br>Полный разбор по всем инструментам сразу — в «Кристалле Судьбы».</p>
   </section>
 
@@ -587,7 +576,7 @@ details p{color:var(--parchment-dim);margin:12px 0 0;}
         <p class="note">На неё придёт ссылка на расчёт после оплаты. Почта нужна только для этого.</p>
       </div>
       <div class="pricerow"><span>Стоимость расчёта</span><span class="leader"></span><span class="amount">1 €</span></div>
-      <button class="btn" type="button" onclick="requestPayment('professiya')">Узнать профессию</button>
+      <button class="btn" type="button" onclick="calcProf()">Узнать профессию</button>
       <div class="err" id="pErr" role="status"></div>
     </div>
     <div id="pResult"><div class="example-note">Введи дату рождения и нажми кнопку — расчёт появится здесь.</div></div>
@@ -626,7 +615,7 @@ details p{color:var(--parchment-dim);margin:12px 0 0;}
         <p class="note">На неё придёт ссылка на расчёт после оплаты. Почта нужна только для этого.</p>
       </div>
       <div class="pricerow"><span>Стоимость расчёта</span><span class="leader"></span><span class="amount">1 €</span></div>
-      <button class="btn" type="button" onclick="requestPayment('lichnaya')">Построить мой график</button>
+      <button class="btn" type="button" onclick="calcLife()">Построить мой график</button>
       <div class="err" id="lErr" role="status"></div>
     </div>
     <div id="lResult"><div class="example-note">Введи дату рождения и нажми кнопку — расчёт появится здесь.</div></div>
@@ -665,7 +654,7 @@ details p{color:var(--parchment-dim);margin:12px 0 0;}
         <p class="note">На неё придёт ссылка на расчёт после оплаты. Почта нужна только для этого.</p>
       </div>
       <div class="pricerow"><span>Стоимость расчёта</span><span class="leader"></span><span class="amount">1 €</span></div>
-      <button class="btn" type="button" onclick="requestPayment('finansy')">Узнать потенциал</button>
+      <button class="btn" type="button" onclick="calcMoney()">Узнать потенциал</button>
       <div class="err" id="fErr" role="status"></div>
     </div>
     <div id="fResult"><div class="example-note">Введи дату рождения и нажми кнопку — расчёт появится здесь.</div></div>
@@ -705,7 +694,7 @@ details p{color:var(--parchment-dim);margin:12px 0 0;}
         <p class="note">На неё придёт ссылка на расчёт после оплаты. Почта нужна только для этого.</p>
       </div>
       <div class="pricerow"><span>Стоимость расчёта</span><span class="leader"></span><span class="amount">1 €</span></div>
-      <button class="btn" type="button" onclick="requestPayment('opv')">Узнать свой грех</button>
+      <button class="btn" type="button" onclick="calcOpv()">Узнать свой грех</button>
       <div class="err" id="oErr" role="status"></div>
     </div>
     <div id="oResult"><div class="example-note">Введи дату рождения и нажми кнопку — расчёт появится здесь.</div></div>
@@ -744,7 +733,7 @@ details p{color:var(--parchment-dim);margin:12px 0 0;}
         <p class="note">На неё придёт ссылка на расчёт после оплаты. Почта нужна только для этого.</p>
       </div>
       <div class="pricerow"><span>Стоимость расчёта</span><span class="leader"></span><span class="amount">1 €</span></div>
-      <button class="btn" type="button" onclick="requestPayment('sozhalenie')">Узнать своё сожаление</button>
+      <button class="btn" type="button" onclick="calcSj()">Узнать своё сожаление</button>
       <div class="err" id="sErr" role="status"></div>
     </div>
     <div id="sResult"><div class="example-note">Введи дату рождения и нажми кнопку — расчёт появится здесь.</div></div>
@@ -783,7 +772,7 @@ details p{color:var(--parchment-dim);margin:12px 0 0;}
         <p class="note">На неё придёт ссылка на расчёт после оплаты. Почта нужна только для этого.</p>
       </div>
       <div class="pricerow"><span>Стоимость расчёта</span><span class="leader"></span><span class="amount">1 €</span></div>
-      <button class="btn" type="button" onclick="requestPayment('potoki')">Узнать свои потоки</button>
+      <button class="btn" type="button" onclick="calcFlow()">Узнать свои потоки</button>
       <div class="err" id="cErr" role="status"></div>
     </div>
     <div id="cResult"><div class="example-note">Введи дату рождения и нажми кнопку — расчёт появится здесь.</div></div>
@@ -822,7 +811,7 @@ details p{color:var(--parchment-dim);margin:12px 0 0;}
         <p class="note">На неё придёт ссылка на отчёт после оплаты. Почта нужна только для этого.</p>
       </div>
       <div class="pricerow"><span>Стоимость расчёта</span><span class="leader"></span><span class="amount">1 €</span></div>
-      <button class="btn" type="button" onclick="requestPayment('kariera')">Построить график карьеры</button>
+      <button class="btn" type="button" onclick="calcCareer()">Построить график карьеры</button>
       <div class="err" id="krErr" role="status"></div>
     </div>
     <div id="krResult"><div class="example-note">Введи дату рождения и нажми кнопку — расчёт появится здесь.</div></div>
@@ -861,7 +850,7 @@ details p{color:var(--parchment-dim);margin:12px 0 0;}
         <p class="note">На неё придёт ссылка на отчёт после оплаты. Почта нужна только для этого.</p>
       </div>
       <div class="pricerow"><span>Стоимость расчёта</span><span class="leader"></span><span class="amount">1 €</span></div>
-      <button class="btn" type="button" onclick="requestPayment('karma')">Построить график кармы</button>
+      <button class="btn" type="button" onclick="calcKarma()">Построить график кармы</button>
       <div class="err" id="kmErr" role="status"></div>
     </div>
     <div id="kmResult"><div class="example-note">Введи дату рождения и нажми кнопку — расчёт появится здесь.</div></div>
@@ -900,7 +889,7 @@ details p{color:var(--parchment-dim);margin:12px 0 0;}
         <p class="note">На неё придёт ссылка на отчёт после оплаты. Почта нужна только для этого.</p>
       </div>
       <div class="pricerow"><span>Стоимость расчёта</span><span class="leader"></span><span class="amount">1 €</span></div>
-      <button class="btn" type="button" onclick="requestPayment('sudba')">Построить график судьбы</button>
+      <button class="btn" type="button" onclick="calcDestiny()">Построить график судьбы</button>
       <div class="err" id="dsErr" role="status"></div>
     </div>
     <div id="dsResult"><div class="example-note">Введи дату рождения и нажми кнопку — расчёт появится здесь.</div></div>
@@ -939,7 +928,7 @@ details p{color:var(--parchment-dim);margin:12px 0 0;}
         <p class="note">На неё придёт ссылка на отчёт после оплаты. Почта нужна только для этого.</p>
       </div>
       <div class="pricerow"><span>Стоимость расчёта</span><span class="leader"></span><span class="amount">1 €</span></div>
-      <button class="btn" type="button" onclick="requestPayment('volya')">Сравнить волю и судьбу</button>
+      <button class="btn" type="button" onclick="calcWill()">Сравнить волю и судьбу</button>
       <div class="err" id="wlErr" role="status"></div>
     </div>
     <div id="wlResult"><div class="example-note">Введи дату рождения и нажми кнопку — расчёт появится здесь.</div></div>
@@ -978,7 +967,7 @@ details p{color:var(--parchment-dim);margin:12px 0 0;}
         <p class="note">На неё придёт ссылка на отчёт после оплаты. Почта нужна только для этого.</p>
       </div>
       <div class="pricerow"><span>Стоимость расчёта</span><span class="leader"></span><span class="amount">1 €</span></div>
-      <button class="btn" type="button" onclick="requestPayment('kachestvo')">Построить график по годам</button>
+      <button class="btn" type="button" onclick="calcQol()">Построить график по годам</button>
       <div class="err" id="qlErr" role="status"></div>
     </div>
     <div id="qlResult"><div class="example-note">Введи дату рождения и нажми кнопку — расчёт появится здесь.</div></div>
@@ -1202,26 +1191,8 @@ const FACETS = [
   {id:'para',       name:'Каким будет год для вашей пары?', desc:'Планета года для двоих: развитие, идиллия, конфликт или кризис.', tag:'Скоро', ready:false},
 ];
 
-/* Pe pagina principală (mode=preview): 4 carduri + „Показать ещё” câte 4, până se termină */
-const PAGE_SIZE = 4;
-const IS_PREVIEW = new URLSearchParams(window.location.search).get('mode') === 'preview';
-let visibleFacets = IS_PREVIEW ? PAGE_SIZE : FACETS.length;
-
-function showMoreFacets(){
-  visibleFacets = Math.min(visibleFacets + PAGE_SIZE, FACETS.length);
-  renderHub();
-  if(typeof reportFrameHeight === 'function') setTimeout(reportFrameHeight, 60);
-}
-
 function renderHub(){
-  const wrap = document.getElementById('moreWrap');
-  const remaining = FACETS.length - visibleFacets;
-  if(wrap){
-    wrap.hidden = remaining <= 0;
-    const count = document.getElementById('moreCount');
-    if(count) count.textContent = remaining > 0 ? `(${Math.min(remaining, PAGE_SIZE)})` : '';
-  }
-  document.getElementById('facetGrid').innerHTML = FACETS.slice(0, visibleFacets).map(f => {
+  document.getElementById('facetGrid').innerHTML = FACETS.map(f => {
     const scene = (SCENES[f.id] || (() => ''))();
     const inner = `<span class="scene">${scene}</span>
       <span class="facet-body">
@@ -1244,13 +1215,7 @@ function show(view){
   VIEWS.forEach(v => { const el = document.getElementById('view-' + v); if(el) el.hidden = (v !== view); });
   window.scrollTo(0,0);
 }
-function go(id){
-  if(window.parent !== window){
-    window.parent.postMessage({type:'grani-navigate', facet:id}, window.location.origin);
-    return;
-  }
-  location.hash = '#/' + id;
-}
+function go(id){ location.hash = '#/' + id; }
 function goHub(){ location.hash = ''; }
 function route(){
   const id = (location.hash || '').replace(/^#\/?/, '');
@@ -2836,102 +2801,8 @@ function renderQol(d, mail, who){
     ${crystalBlock()}`;
 }
 
-/* ==== Integrare cu site-ul (Stripe + raport permanent + iframe) ==== */
-const FACET_PREFIX = {professiya:'p', lichnaya:'l', finansy:'f', opv:'o', sozhalenie:'s', potoki:'c',
-                      kariera:'kr', karma:'km', sudba:'ds', volya:'wl', kachestvo:'ql'};
-
-/* Кнопка расчёта: сначала оплата через Stripe, результат приходит по ссылке */
-function requestPayment(facet){
-  const prefix = FACET_PREFIX[facet] || 'p';
-  const read = id => (document.getElementById(prefix + id)?.value || '').trim();
-  const err = document.getElementById(prefix + 'Err');
-  const data = { day: read('Day'), month: read('Month'), year: read('Year'), email: read('Mail'), facet };
-  const d = +data.day, m = +data.month, y = +data.year;
-  if(!(d >= 1 && d <= 31) || !(m >= 1 && m <= 12) || !(y >= 1900 && y <= 2100)){
-    if(err) err.textContent = 'Проверь дату рождения: день, месяц и год.';
-    return;
-  }
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)){
-    if(err) err.textContent = 'Введи корректный адрес электронной почты.';
-    return;
-  }
-  data.first = read('Name');
-  if(facet === 'professiya'){
-    data.last = read('Surname');
-    if(data.last && !GENDER) autoGender();
-    if(data.last && !ALPHA) autoAlpha();
-    if(GENDER) data.gender = GENDER;
-    if(ALPHA) data.alpha = ALPHA;
-  } else if(typeof GENDERS !== 'undefined'){
-    /* Restul fațetelor: gen per prefix (setGenderP / autoGenderP) */
-    if(data.first && !GENDER_TOUCHED_P[prefix]) autoGenderP(prefix);
-    if(GENDERS[prefix]) data.gender = GENDERS[prefix];
-  }
-  if(err) err.textContent = '';
-  if(window.parent !== window){
-    window.parent.postMessage({ type:'grani-payment', facet, email:data.email, formData:data }, window.location.origin);
-  }
-}
-
-/* Raport permanent: /grani/raport/[token] deschide iframe-ul cu ?report=1&facet=&day=&... */
-function initSavedReport(){
-  const query = new URLSearchParams(window.location.search);
-  if(query.get('report') !== '1') return;
-  const facet = (query.get('facet') || (location.hash || '').replace(/^#\/?/, '') || 'professiya').toLowerCase();
-  const prefix = FACET_PREFIX[facet] || 'p';
-  const fields = {Day:query.get('day'), Month:query.get('month'), Year:query.get('year'), Mail:query.get('email'), Name:query.get('first')};
-  if(facet === 'professiya') fields.Surname = query.get('last');
-  Object.entries(fields).forEach(([name, value]) => { const input=document.getElementById(prefix + name); if(input && value) input.value=value; });
-  const g = query.get('gender');
-  if(facet === 'professiya'){
-    if(g === 'ж' || g === 'м') setGender(g);
-    const a = query.get('alpha'); if(a && ALPHABETS[a]) setAlpha(a);
-    if(!GENDER) autoGender();
-    if(!ALPHA) autoAlpha();
-  } else if(typeof GENDERS !== 'undefined'){
-    if(g === 'ж' || g === 'м') setGenderP(prefix, g); else autoGenderP(prefix);
-  }
-  const section=document.getElementById('view-' + facet);
-  const form=section && section.querySelector(':scope > .card');
-  if(form) form.hidden=true;
-  const back=section && section.querySelector(':scope > .backlink');
-  if(back) back.hidden=true;
-  route();
-  const calculators={professiya:calcProf, lichnaya:calcLife, finansy:calcMoney, opv:calcOpv, sozhalenie:calcSj, potoki:calcFlow,
-                     kariera:calcCareer, karma:calcKarma, sudba:calcDestiny, volya:calcWill, kachestvo:calcQol};
-  if(calculators[facet]) calculators[facet]();
-}
-
-/* Sincronizare înălțime cu iframe-ul părinte */
-let lastReportedHeight = 0;
-function reportFrameHeight(){
-  if(window.parent === window) return;
-  /* Măsurăm conținutul real, nu viewportul - evită bucla cu min-height:100vh */
-  let bottom = 0;
-  for(const el of document.body.children){
-    if(el.hidden || el.tagName === 'SCRIPT') continue;
-    const r = el.getBoundingClientRect();
-    if(r.height > 0) bottom = Math.max(bottom, r.bottom + window.scrollY);
-  }
-  const h = Math.ceil(bottom + 40);
-  if(h > 0 && Math.abs(h - lastReportedHeight) > 2){
-    lastReportedHeight = h;
-    /* RaportViewer ascultă 'resize', GraniPaymentFrame ascultă 'grani-resize' */
-    window.parent.postMessage({ type:'resize', height:h }, window.location.origin);
-    window.parent.postMessage({ type:'grani-resize', height:h }, window.location.origin);
-  }
-}
-if(window.parent !== window){
-  document.body.style.minHeight = '0';
-  if('ResizeObserver' in window){ new ResizeObserver(reportFrameHeight).observe(document.body); }
-  window.addEventListener('load', reportFrameHeight);
-  window.addEventListener('hashchange', () => setTimeout(reportFrameHeight, 50));
-  setInterval(reportFrameHeight, 1500);
-}
-
 renderHub();
 route();
-if(new URLSearchParams(window.location.search).get('report') === '1') setTimeout(() => { initSavedReport(); reportFrameHeight(); }, 0);
 </script>
 </body>
 </html>
