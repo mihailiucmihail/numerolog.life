@@ -90,15 +90,6 @@ export function Footer() {
                   contact@numerolog.life
                 </a>
               </li>
-              <li>
-                <a
-                  href="mailto:support@numerolog.life"
-                  className="inline-flex items-center gap-2 text-muted-foreground/60 transition-colors hover:text-foreground"
-                >
-                  <Mail className="h-3.5 w-3.5 shrink-0 text-primary/60" aria-hidden="true" />
-                  support@numerolog.life
-                </a>
-              </li>
             </ul>
           </div>
         </div>
