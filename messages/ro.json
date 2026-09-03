@@ -209,11 +209,17 @@
     "q6": "Ce include analiza completă?",
     "a6": "Primești o interpretare structurată a celor 22 de Arcane, harta numelui, metaciclu, cronologia etapelor, straturile karmice, graficul vieții, tranzitele planetare și recomandări personalizate — totul pentru 19,00 €, cu plată unică.",
     "q7": "Cum pot contacta suportul?",
-    "a7": "Poți contacta echipa noastră de suport prin email la suport@numerolog.life sau prin chat-ul din aplicație (disponibil 24/7). Răspundem de obicei în maxim 24 de ore.",
+    "a7": "Poți contacta echipa noastră la contact@numerolog.life sau support@numerolog.life. Răspundem de obicei în maxim 24 de ore.",
     "q8": "Este o predicție sigură?",
     "a8": "Nu. Raportul este un instrument de reflecție și autocunoaștere, nu o promisiune despre viitor și nu înlocuiește sfaturile profesioniștilor.",
-    "disclaimerTitle": "Disclaimer Important",
-    "disclaimerText": "Numerolog este un instrument de reflecție și autocunoaștere. Raportul nu oferă certitudini și nu înlocuiește sfaturile medicale, juridice sau financiare ale profesioniștilor."
+    "q9": "Este un șablon sau o analiză individuală?",
+    "a9": "Este o analiză individuală. Toate calculele și interpretările sunt generate pe baza numelui și datei tale de naștere.",
+    "q10": "Ce sunt rapoartele Grani (Fațetele Destinului)?",
+    "a10": "Sunt rapoarte numerologice individuale — carieră, karmă, destin, voință, calitatea anilor și altele — fiecare cu propriul grafic și interpretare. Se achiziționează separat, plata se face în siguranță prin Stripe, iar raportul rămâne disponibil permanent pe un link trimis pe email.",
+    "disclaimerTitle": "Disclaimer important",
+    "disclaimerText": "NUMEROLOG.life este un instrument de reflecție și autocunoaștere. Interpretările numerologice nu sunt concluzii științifice și nu înlocuiesc consultanța medicală, psihologică, juridică, financiară sau alte servicii profesionale.",
+    "stillHaveQuestions": "Nu ai găsit răspunsul?",
+    "contactCta": "Scrie-ne un mesaj"
   },
   "footer": {
     "tagline": "Numerologie personalizată pentru autocunoaștere. Descoperă-ți Cristalul Destinului.",
@@ -229,8 +235,15 @@
     "terms": "Termeni și Condiții",
     "privacy": "Confidențialitate",
     "cookies": "Cookies",
-    "rights": "© 2026 Numerolog. Toate drepturile rezervate.",
-    "madeWith": "Făcut cu dragoste în România"
+    "rights": "© 2026 NUMEROLOG.life. Toate drepturile rezervate.",
+    "madeWith": "Făcut cu dragoste în România",
+    "instagramRole": "Fondatoarea proiectului NUMEROLOG",
+    "instagramFollow": "Urmărește pe Instagram",
+    "regComLabel": "Nr. Reg. Com.",
+    "addressLabel": "Sediu social",
+    "verifyRegistry": "Verifică la Registrul Comerțului",
+    "writeUs": "Scrie-ne",
+    "registeredNote": "Companie înregistrată în România"
   },
   "numerologie": {
     "title": "Cristalul Destinului",
