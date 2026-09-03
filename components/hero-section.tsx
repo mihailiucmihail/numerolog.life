@@ -65,17 +65,6 @@ export function HeroSection() {
       {/* ═══════════════════════════════════════════════════════════════════════
           All background overlays removed - StarField provides the cosmic background
       ═══════════════════════════════════════════════════════════════════════ */}
-      
-      {/* Premium activity badge */}
-      <div className="relative z-10 flex justify-center mb-5 sm:mb-6">
-        <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full backdrop-blur-sm" style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(242,212,114,0.08) 100%)', border: '1px solid rgba(212,175,55,0.2)' }}>
-          <span className="relative flex h-1.5 w-1.5">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-60 animate-ping" />
-            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
-          </span>
-          <span className="text-xs font-semibold text-foreground/80 tracking-tight">{mounted ? counter.toLocaleString(locale === 'ru' ? 'ru-RU' : 'ro-RO') : '50.000'} {t("reports")}</span>
-        </div>
-      </div>
 
       {/* Zodiac wheel - subtle circular pattern */}
       <div 
