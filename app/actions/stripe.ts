@@ -20,6 +20,11 @@ export async function startNumerologieCheckout(
     ? await db<{ email: string }[]>`SELECT email FROM newsletter_subscribers WHERE email = ${email?.toLowerCase().trim()} AND discount_code = ${normalizedCode} AND discount_activated_at IS NOT NULL LIMIT 1`
     : []
   const unitAmount = 1900 // 19 EUR
+  const isRu = locale === 'ru'
+  const productName = isRu ? 'Кристалл Судьбы' : product.name
+  const productDescription = isRu
+    ? 'Полный численный разбор — метод Айрен и Джули По, 22 Аркана, метациклы жизни, графики и Квадрат Пифагора.'
+    : product.description
 
   const stripe = getStripe()
   const session = await stripe.checkout.sessions.create({
@@ -28,8 +33,8 @@ export async function startNumerologieCheckout(
         price_data: {
           currency: product.currency,
           product_data: {
-            name: product.name,
-            description: product.description,
+            name: productName,
+            description: productDescription,
           },
           unit_amount: unitAmount,
         },
@@ -57,15 +62,18 @@ export async function startGraniCheckout(
   if (!product) throw new Error('Produsul Grani nu a fost găsit.')
   const normalizedEmail = email.trim().toLowerCase()
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(normalizedEmail)) {
-    throw new Error('Introdu o adresă de email validă.')
+    throw new Error(locale === 'ru' ? 'Введите корректный адрес электронной почты.' : 'Introdu o adresă de email validă.')
   }
+  const isRu = locale === 'ru'
+  const productName = isRu ? 'Грани Судьбы — индивидуальный расчёт' : product.name
+  const productDescription = isRu ? 'Отдельный расчёт из «Кристалла Судьбы».' : product.description
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
   const session = await getStripe().checkout.sessions.create({
     mode: 'payment',
     line_items: [{
       price_data: {
         currency: product.currency,
-        product_data: { name: `${product.name} — ${facet}`, description: product.description },
+        product_data: { name: `${productName} — ${facet}`, description: productDescription },
         unit_amount: product.priceInCents,
       },
       quantity: 1,
