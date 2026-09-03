@@ -25,12 +25,17 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
     const resizeFrame = (event: MessageEvent) => {
       if (event.origin !== window.location.origin || event.data?.type !== "grani-resize") return
       const height = Number(event.data.height)
-      if (Number.isFinite(height) && height > 0) {
+      // Ignorăm valorile suspect de mici (hub-ul cu 4 carduri are mereu > 900px):
+      // o măsurătoare făcută înainte de randarea cardurilor ar trunchia secțiunea.
+      if (Number.isFinite(height) && height >= 600) {
         const frame = iframeRef.current
         if (frame) frame.style.height = `${Math.ceil(height)}px`
       }
     }
     window.addEventListener("message", resizeFrame)
+    // Iframe-ul poate trimite înălțimea înainte ca acest listener să existe (înainte de hidratare).
+    // Cerem explicit înălțimea acum, ca să nu rămână fallback-ul înalt și un spațiu gol.
+    iframeRef.current?.contentWindow?.postMessage({ type: "grani-request-height" }, window.location.origin)
     return () => window.removeEventListener("message", resizeFrame)
   }, [])
 
@@ -83,7 +88,22 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
     <div className="relative">
       {loading && <div className="absolute inset-0 z-10 grid place-items-center bg-background/80 text-sm text-foreground">{T.loading}</div>}
       {error && <p role="alert" className="mb-3 text-center text-sm text-destructive">{error}</p>}
-      <iframe ref={iframeRef} src={frameSrc} title={T.frameTitle} className="h-[2200px] w-full border-0 bg-transparent" style={{ colorScheme: "normal" }} allowTransparency scrolling="no" onLoad={() => { if (iframeRef.current && iframeRef.current.clientHeight < 500) iframeRef.current.style.height = "2200px" }} />
+      <iframe
+        ref={iframeRef}
+        src={frameSrc}
+        title={T.frameTitle}
+        className="h-[1400px] w-full border-0 bg-transparent"
+        style={{ colorScheme: "normal" }}
+        allowTransparency
+        scrolling="no"
+        onLoad={() => {
+          const frame = iframeRef.current
+          if (!frame) return
+          if (frame.clientHeight < 500) frame.style.height = "1400px"
+          // După încărcare, cerem înălțimea reală (listener-ul e deja montat în acest moment)
+          frame.contentWindow?.postMessage({ type: "grani-request-height" }, window.location.origin)
+        }}
+      />
     </div>
   )
 }

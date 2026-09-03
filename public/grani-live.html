@@ -2904,8 +2904,12 @@ function initSavedReport(){
 
 /* Sincronizare înălțime cu iframe-ul părinte */
 let lastReportedHeight = 0;
-function reportFrameHeight(){
+function reportFrameHeight(force){
   if(window.parent === window) return;
+  /* Nu raportăm până nu există conținut randat (hub cu carduri sau o vedere de fațetă activă);
+     o măsurătoare prematură ar trunchia iframe-ul din pagina părinte. */
+  const grid = document.getElementById('facetGrid');
+  if(grid && grid.offsetParent !== null && grid.children.length === 0) return;
   /* Măsurăm conținutul real, nu viewportul - evită bucla cu min-height:100vh */
   let bottom = 0;
   for(const el of document.body.children){
@@ -2914,7 +2918,9 @@ function reportFrameHeight(){
     if(r.height > 0) bottom = Math.max(bottom, r.bottom + window.scrollY);
   }
   const h = Math.ceil(bottom + 40);
-  if(h > 0 && Math.abs(h - lastReportedHeight) > 2){
+  /* force=true retrimite chiar dacă înălțimea nu s-a schimbat: prima trimitere poate
+     ajunge înainte ca părintele (React) să fi atașat listener-ul și s-ar pierde. */
+  if(h > 0 && (force === true || Math.abs(h - lastReportedHeight) > 2)){
     lastReportedHeight = h;
     /* RaportViewer ascultă 'resize', GraniPaymentFrame ascultă 'grani-resize' */
     window.parent.postMessage({ type:'resize', height:h }, window.location.origin);
@@ -2923,10 +2929,13 @@ function reportFrameHeight(){
 }
 if(window.parent !== window){
   document.body.style.minHeight = '0';
-  if('ResizeObserver' in window){ new ResizeObserver(reportFrameHeight).observe(document.body); }
-  window.addEventListener('load', reportFrameHeight);
-  window.addEventListener('hashchange', () => setTimeout(reportFrameHeight, 50));
-  setInterval(reportFrameHeight, 1500);
+  if('ResizeObserver' in window){ new ResizeObserver(() => reportFrameHeight()).observe(document.body); }
+  window.addEventListener('load', () => reportFrameHeight(true));
+  window.addEventListener('hashchange', () => setTimeout(() => reportFrameHeight(true), 50));
+  /* Părintele cere explicit înălțimea după ce și-a montat listener-ul */
+  window.addEventListener('message', (e) => { if(e.origin === window.location.origin && e.data && e.data.type === 'grani-request-height') reportFrameHeight(true); });
+  /* Heartbeat forțat: garantează sincronizarea chiar dacă mesajele inițiale s-au pierdut */
+  setInterval(() => reportFrameHeight(true), 1500);
 }
 
 renderHub();
