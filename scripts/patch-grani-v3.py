@@ -46,17 +46,17 @@ rep(".facets{display:grid;grid-template-columns:1fr;gap:16px;}\n",
 .more-count{font-size:12px;opacity:.7;letter-spacing:.02em;text-transform:none;}
 """)
 
-# 3. Markup buton
+# 3. Markup buton și eliminarea textului promoțional Grani
 rep("""    <div class="facets" id="facetGrid"></div>
 
-    <p class="foot"><em>Каждая грань — отдельный расчёт.</em>""",
+    <p class="foot"><em>Каждая грань — отдельный расчёт.</em><br>Полный разбор по всем инструментам сразу — в «Кристалле Судьбы».</p>
+  </section>""",
 """    <div class="facets" id="facetGrid"></div>
 
     <div class="more-wrap" id="moreWrap" hidden>
       <button class="more" type="button" id="moreBtn" onclick="showMoreFacets()">Показать ещё<span class="more-count" id="moreCount"></span></button>
     </div>
-
-    <p class="foot"><em>Каждая грань — отдельный расчёт.</em>""")
+  </section>""")
 
 # 4. Butoanele -> plata Stripe (niciodata calc direct)
 for fn, facet in [('calcProf','professiya'),('calcLife','lichnaya'),('calcMoney','finansy'),
