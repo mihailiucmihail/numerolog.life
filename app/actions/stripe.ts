@@ -1,7 +1,7 @@
 "use server"
 
 import { getStripe } from "@/lib/stripe"
-import { getPlan, getProduct, getGraniPriceInCents } from "@/lib/products"
+import { getPlan, getProduct } from "@/lib/products"
 import { createClient } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
 
@@ -67,8 +67,6 @@ export async function startGraniCheckout(
   const isRu = locale === 'ru'
   const productName = isRu ? 'Грани Судьбы — индивидуальный расчёт' : product.name
   const productDescription = isRu ? 'Отдельный расчёт из «Кристалла Судьбы».' : product.description
-  // Pretul se recalculeaza mereu pe server din id-ul fatetei — nu se accepta pret trimis de client.
-  const unitAmount = getGraniPriceInCents(facet)
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
   const session = await getStripe().checkout.sessions.create({
     mode: 'payment',
@@ -76,7 +74,7 @@ export async function startGraniCheckout(
       price_data: {
         currency: product.currency,
         product_data: { name: `${productName} — ${facet}`, description: productDescription },
-        unit_amount: unitAmount,
+        unit_amount: product.priceInCents,
       },
       quantity: 1,
     }],
