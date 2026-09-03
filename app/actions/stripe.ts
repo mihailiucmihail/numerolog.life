@@ -1,7 +1,7 @@
 "use server"
 
 import { getStripe } from "@/lib/stripe"
-import { getPlan, getProduct } from "@/lib/products"
+import { getPlan, getProduct, getGraniPriceInCents } from "@/lib/products"
 import { createClient } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
 
@@ -74,7 +74,7 @@ export async function startGraniCheckout(
       price_data: {
         currency: product.currency,
         product_data: { name: `${productName} — ${facet}`, description: productDescription },
-        unit_amount: product.priceInCents,
+        unit_amount: getGraniPriceInCents(facet), // 1,99 € standard / 4,99 € cu grafic — decis pe server
       },
       quantity: 1,
     }],

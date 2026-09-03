@@ -65,6 +65,15 @@ for fn, facet in [('calcProf','professiya'),('calcLife','lichnaya'),('calcMoney'
                   ('calcWill','volya'),('calcQol','kachestvo')]:
     rep(f'onclick="{fn}()"', f'onclick="requestPayment(\'{facet}\')"')
 
+# 4b. Preturi per fateta: standard 1,99 EUR, cu grafic 4,99 EUR (sursa: lib/products.ts)
+GRAPH_FACETS = ['lichnaya', 'finansy', 'kariera', 'karma', 'sudba', 'volya', 'kachestvo']
+STANDARD_FACETS = ['professiya', 'opv', 'sozhalenie', 'potoki']
+PRICE_ROW = '<div class="pricerow"><span>Стоимость расчёта</span><span class="leader"></span><span class="amount">1 €</span></div>\n      <button class="btn" type="button" onclick="requestPayment(\'{facet}\')">'
+for facet in GRAPH_FACETS + STANDARD_FACETS:
+    price = '4,99 €' if facet in GRAPH_FACETS else '1,99 €'
+    old = PRICE_ROW.format(facet=facet)
+    rep(old, old.replace('>1 €<', f'>{price}<'))
+
 # 5. Paginare hub (4 + 4) doar in mode=preview
 rep("""function renderHub(){
   document.getElementById('facetGrid').innerHTML = FACETS.map(f => {""",
@@ -89,6 +98,10 @@ function renderHub(){
   }
   document.getElementById('facetGrid').innerHTML = FACETS.slice(0, visibleFacets).map(f => {""")
 
+# 5b. Pretul din cardurile hub (randate din JS): 4,99 € pentru fatetele cu grafic, altfel 1,99 €
+rep("""<span class="price">1 €</span>""",
+    """<span class="price">${GRAPH_FACETS.has(f.id) ? '4,99 €' : '1,99 €'}</span>""")
+
 # 6. Navigare card -> pagina separata React
 rep("function go(id){ location.hash = '#/' + id; }",
 """function go(id){
@@ -112,6 +125,8 @@ route();
 /* ==== Integrare cu site-ul (Stripe + raport permanent + iframe) ==== */
 const FACET_PREFIX = {professiya:'p', lichnaya:'l', finansy:'f', opv:'o', sozhalenie:'s', potoki:'c',
                       kariera:'kr', karma:'km', sudba:'ds', volya:'wl', kachestvo:'ql'};
+/* Fațete cu grafic — 4,99 €; restul — 1,99 €. Prețul real e recalculat pe server (lib/products.ts). */
+const GRAPH_FACETS = new Set(['lichnaya', 'finansy', 'kariera', 'karma', 'sudba', 'volya', 'kachestvo']);
 
 /* Кнопка расчёта: сначала оплата через Stripe, результат приходит по ссылке */
 function requestPayment(facet){
