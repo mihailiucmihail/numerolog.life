@@ -5103,7 +5103,7 @@ function calculate(){
   const notesBox = document.getElementById('pythNotes');
   if(notesBox){
     if(r.gridNotes && r.gridNotes.length){
-      notesBox.innerHTML = '<div class="hint" style="margin:0 0 10px;text-align:left;">Сравнение Карта Рождения ↔ Карта Имени (метод Айрэн По / Джули По) — где цифры отличаются:</div>' +
+      notesBox.innerHTML = '<div class="hint" style="margin:0 0 10px;text-align:left;">Сравнение Карта Рождения ↔ Карта Имени — где цифры отличаются:</div>' +
         r.gridNotes.map(n=>{
           const txt = DB.gridComparison[String(n.digit)][n.scenario];
           const label = n.scenario==='birth_more' ? `${channels[n.digit]} (${n.digit}): больше в Карта Рождения` : `${channels[n.digit]} (${n.digit}): больше в Карта Имени`;

@@ -46,6 +46,18 @@ rep(".facets{display:grid;grid-template-columns:1fr;gap:16px;}\n",
 .more-count{font-size:12px;opacity:.7;letter-spacing:.02em;text-transform:none;}
 """)
 
+# 2b. Fără mențiuni de sursă / disclaimer în rapoarte: elimină toate paragrafele
+#     `<p class="foot">Источник: ...</p>` din template-urile fațetelor (regulă permanentă).
+_src_re = re.compile(r'\n?<p class="foot">Источник:.*?</p>', re.S)
+_n_src = len(_src_re.findall(s))
+assert _n_src >= 1, 'nu am găsit paragrafe „Источник” de eliminat'
+s = _src_re.sub('', s)
+assert 'Источник:' not in s, 'au rămas mențiuni „Источник:” după curățare'
+# Text vizibil în fațeta „Потоки” care numea autorii calendarului — păstrăm doar explicația.
+rep(" Перевод дат берётся из «Мантического календаря» Айрэн и Джули По и сверен с ним по всем таблицам с 1930 по 2030 год.</p>",
+    " Перевод дат сверен по таблицам с 1930 по 2030 год.</p>")
+assert 'Айрэн По и Джули По' not in s and 'Айрэн и Джули По' not in s.split('<script')[0], 'autori vizibili rămași în markup'
+
 # 3. Markup buton și eliminarea textului promoțional Grani
 rep("""    <div class="facets" id="facetGrid"></div>
 
