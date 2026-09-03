@@ -2,10 +2,24 @@
 
 import { useEffect, useRef, useState } from "react"
 
+const I18N = {
+  ro: {
+    frameTitle: "Rapoartele Grani ale Destinului",
+    loading: "Se pregătește plata…",
+    paymentError: "Plata nu a putut fi inițiată.",
+  },
+  ru: {
+    frameTitle: "Грани Судьбы",
+    loading: "Готовим оплату…",
+    paymentError: "Не удалось начать оплату.",
+  },
+} as const
+
 export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false }: { initialFacet?: string; locale?: string; preview?: boolean }) {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const T = I18N[locale as keyof typeof I18N] ?? I18N.ru
 
   useEffect(() => {
     const resizeFrame = (event: MessageEvent) => {
@@ -36,10 +50,10 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
           body: JSON.stringify({ email: event.data.email, facet: event.data.facet || initialFacet || "grani", locale, formData: event.data.formData }),
         })
         const result = await response.json()
-        if (!response.ok || !result.url) throw new Error(result.error || "Plata nu a putut fi inițiată.")
+        if (!response.ok || !result.url) throw new Error(result.error || T.paymentError)
         window.location.href = result.url
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Plata nu a putut fi inițiată.")
+        setError(err instanceof Error ? err.message : T.paymentError)
         setLoading(false)
       }
     }
@@ -67,9 +81,9 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
 
   return (
     <div className="relative">
-      {loading && <div className="absolute inset-0 z-10 grid place-items-center bg-background/80 text-sm text-foreground">Se pregătește plata…</div>}
+      {loading && <div className="absolute inset-0 z-10 grid place-items-center bg-background/80 text-sm text-foreground">{T.loading}</div>}
       {error && <p role="alert" className="mb-3 text-center text-sm text-destructive">{error}</p>}
-      <iframe ref={iframeRef} src={frameSrc} title="Raportul Grani" className="h-[2200px] w-full border-0 bg-transparent" style={{ colorScheme: "normal" }} allowTransparency scrolling="no" onLoad={() => { if (iframeRef.current && iframeRef.current.clientHeight < 500) iframeRef.current.style.height = "2200px" }} />
+      <iframe ref={iframeRef} src={frameSrc} title={T.frameTitle} className="h-[2200px] w-full border-0 bg-transparent" style={{ colorScheme: "normal" }} allowTransparency scrolling="no" onLoad={() => { if (iframeRef.current && iframeRef.current.clientHeight < 500) iframeRef.current.style.height = "2200px" }} />
     </div>
   )
 }

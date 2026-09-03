@@ -2,7 +2,7 @@ import { Navbar } from "@/components/navbar"
 export const dynamic = 'force-dynamic'
 import { Footer } from "@/components/footer"
 import { StarField } from "@/components/star-field"
-import { Mail, MessageSquare, Clock } from "lucide-react"
+import { Mail, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export const metadata = {
@@ -27,17 +27,11 @@ export default function ContactPage() {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-6 mb-16">
+          <div className="grid sm:grid-cols-2 gap-6 mb-16 max-w-xl mx-auto">
             <div className="glass-card p-6 rounded-2xl text-center">
               <Mail className="h-8 w-8 text-primary mx-auto mb-4" />
               <h3 className="font-serif font-medium mb-2">Email</h3>
               <p className="text-muted-foreground/80 text-sm">contact@numerolog.life</p>
-            </div>
-            
-            <div className="glass-card p-6 rounded-2xl text-center">
-              <MessageSquare className="h-8 w-8 text-primary mx-auto mb-4" />
-              <h3 className="font-serif font-medium mb-2">Suport</h3>
-              <p className="text-muted-foreground/80 text-sm">suport@numerolog.life</p>
             </div>
             
             <div className="glass-card p-6 rounded-2xl text-center">
