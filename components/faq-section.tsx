@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Sparkles, ShieldAlert, ArrowUpRight } from "lucide-react"
+import { Sparkles, ArrowUpRight } from "lucide-react"
 import { useTranslations } from "next-intl"
 import Link from "next/link"
 
@@ -72,14 +72,7 @@ export function FAQSection() {
           </span>
         </Link>
 
-        {/* Disclaimer */}
-        <div className="mt-6 flex items-start gap-3 rounded-2xl border border-primary/10 bg-background/30 px-6 py-5">
-          <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5 text-muted-foreground/60" aria-hidden="true" />
-          <p className="text-xs leading-relaxed text-muted-foreground/60">
-            <span className="font-medium text-muted-foreground/80">{t("disclaimerTitle")}.</span>{" "}
-            {t("disclaimerText")}
-          </p>
-        </div>
+
       </div>
     </section>
   )
