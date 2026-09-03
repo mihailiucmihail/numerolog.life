@@ -18,13 +18,23 @@ export const PRODUCTS: Product[] = [
     id: 'grani-professiya',
     name: 'Grani — raport individual',
     description: 'Un calcul personal din raportul Grani al Destinului.',
-    priceInCents: 100, // 1 EUR
+    priceInCents: 199, // 1.99 EUR (implicit; vezi getGraniPriceInCents)
     currency: 'eur',
   },
 ]
 
 export function getProduct(id: string): Product | undefined {
   return PRODUCTS.find((p) => p.id === id)
+}
+
+// Prețuri Grani per fațetă. Sursa unică de adevăr — serverul recalculează mereu
+// prețul din id-ul fațetei; clientul nu trimite niciodată prețul.
+export const GRANI_STANDARD_PRICE_CENTS = 199 // 1.99 EUR — fațete text (fără grafic)
+export const GRANI_GRAPH_PRICE_CENTS = 499 // 4.99 EUR — fațete cu grafic
+export const GRANI_GRAPH_FACETS = new Set(['lichnaya', 'finansy', 'kariera', 'karma', 'sudba', 'volya', 'kachestvo'])
+
+export function getGraniPriceInCents(facet: string): number {
+  return GRANI_GRAPH_FACETS.has(facet) ? GRANI_GRAPH_PRICE_CENTS : GRANI_STANDARD_PRICE_CENTS
 }
 
 export interface Plan {
