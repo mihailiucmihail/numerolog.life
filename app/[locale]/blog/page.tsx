@@ -1,90 +1,70 @@
-import { Navbar } from "@/components/navbar"
-export const dynamic = 'force-dynamic'
-import { Footer } from "@/components/footer"
-import { StarField } from "@/components/star-field"
-import { Calendar, ArrowRight } from "lucide-react"
+import { ArrowRight, BookOpen, CalendarDays } from "lucide-react"
 import Link from "next/link"
+import { getTranslations } from "next-intl/server"
+import { Footer } from "@/components/footer"
+import { Navbar } from "@/components/navbar"
+import { StarField } from "@/components/star-field"
+import { blogPosts } from "@/lib/blog"
 
-export const metadata = {
-  title: "Blog | AstroAI",
-  description: "Articole despre astrologie, numerologie și spiritualitate",
+export const dynamic = "force-dynamic"
+
+export async function generateMetadata() {
+  const t = await getTranslations("blog")
+  return {
+    title: `${t("title")} | AstroAI`,
+    description: t("description"),
+  }
 }
 
-const blogPosts = [
-  {
-    title: "Introducere în Harta Natală",
-    excerpt: "Descoperă ce reprezintă harta natală și cum poate dezvălui aspecte importante despre personalitatea ta.",
-    date: "15 Ianuarie 2024",
-    category: "Astrologie",
-  },
-  {
-    title: "Numerele Destinului Tău",
-    excerpt: "Află semnificația numerelor din viața ta și cum numerologia poate oferi claritate asupra drumului tău.",
-    date: "10 Ianuarie 2024",
-    category: "Numerologie",
-  },
-  {
-    title: "Compatibilitatea Zodiacală",
-    excerpt: "Cum influențează semnele zodiacale relațiile dintre parteneri și ce combinații funcționează cel mai bine.",
-    date: "5 Ianuarie 2024",
-    category: "Relații",
-  },
-]
+export default async function BlogPage() {
+  const t = await getTranslations("blog")
 
-export default function BlogPage() {
   return (
-    <main className="min-h-screen bg-background relative">
+    <main className="relative min-h-screen overflow-hidden bg-background">
       <StarField />
       <Navbar />
-      
-      <div className="pt-32 pb-20 px-6 sm:px-8 lg:px-12 relative z-10">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <h1 className="text-4xl sm:text-5xl font-serif font-medium text-gradient mb-6">
-              Blog Astrologic
+      <section className="relative z-10 px-6 pb-24 pt-32 sm:px-8 lg:px-12">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-16 max-w-3xl">
+            <div className="mb-6 inline-flex items-center gap-2 text-xs uppercase tracking-[0.28em] text-primary">
+              <BookOpen className="h-4 w-4" aria-hidden="true" />
+              {t("eyebrow")}
+            </div>
+            <h1 className="text-balance font-serif text-5xl font-medium leading-tight text-gradient sm:text-7xl">
+              {t("title")}
             </h1>
-            <p className="text-lg text-muted-foreground/80 max-w-2xl mx-auto">
-              Explorează lumea astrologiei și numerologiei prin articolele noastre.
+            <p className="mt-6 max-w-2xl text-pretty text-lg leading-8 text-muted-foreground/80">
+              {t("description")}
             </p>
           </div>
-          
-          <div className="space-y-6">
-            {blogPosts.map((post, index) => (
-              <article 
-                key={index}
-                className="glass-card p-6 rounded-2xl hover:border-primary/30 transition-all cursor-pointer group"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="text-xs px-3 py-1 rounded-full bg-primary/10 text-primary">
-                    {post.category}
-                  </span>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground/60">
-                    <Calendar className="h-3 w-3" />
-                    {post.date}
+
+          {blogPosts.length > 0 ? (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {blogPosts.map((post) => (
+                <article key={post.slug} className="glass-card group flex flex-col p-7 transition-all hover:-translate-y-1 hover:border-primary/30">
+                  <div className="mb-8 flex items-center justify-between gap-3 text-xs text-muted-foreground/60">
+                    <span className="rounded-full bg-primary/10 px-3 py-1 text-primary">{post.category}</span>
+                    <span className="flex items-center gap-1.5"><CalendarDays className="h-3.5 w-3.5" aria-hidden="true" />{post.date}</span>
                   </div>
-                </div>
-                <h2 className="text-xl font-serif font-medium mb-2 group-hover:text-primary transition-colors">
-                  {post.title}
-                </h2>
-                <p className="text-muted-foreground/70 mb-4">
-                  {post.excerpt}
-                </p>
-                <div className="flex items-center gap-1 text-sm text-primary group-hover:gap-2 transition-all">
-                  <span>Citește mai mult</span>
-                  <ArrowRight className="h-4 w-4" />
-                </div>
-              </article>
-            ))}
-          </div>
-          
-          <div className="text-center mt-12">
-            <p className="text-muted-foreground/60 text-sm">
-              Mai multe articole vor fi adăugate în curând.
-            </p>
-          </div>
+                  <h2 className="font-serif text-2xl font-medium text-foreground transition-colors group-hover:text-primary">{post.title}</h2>
+                  <p className="mt-4 flex-1 leading-7 text-muted-foreground/75">{post.excerpt}</p>
+                  <Link href={`/blog/${post.slug}`} className="mt-8 inline-flex items-center gap-2 text-sm text-primary transition-all group-hover:gap-3">
+                    {t("readMore")} <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </Link>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="glass-card flex min-h-72 flex-col items-center justify-center px-6 py-16 text-center">
+              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full border border-primary/25 bg-primary/10 text-primary">
+                <BookOpen className="h-6 w-6" aria-hidden="true" />
+              </div>
+              <h2 className="font-serif text-3xl font-medium text-foreground">{t("emptyTitle")}</h2>
+              <p className="mt-3 max-w-md leading-7 text-muted-foreground/75">{t("emptyDescription")}</p>
+            </div>
+          )}
         </div>
-      </div>
-      
+      </section>
       <Footer />
     </main>
   )

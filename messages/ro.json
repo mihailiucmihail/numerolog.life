@@ -221,6 +221,15 @@
     "stillHaveQuestions": "Nu ai găsit răspunsul?",
     "contactCta": "Scrie-ne un mesaj"
   },
+  "blog": {
+    "eyebrow": "Jurnalul AstroAI",
+    "title": "Cunoaștere care îți deschide drumul",
+    "description": "Articole despre numerologie, astrologie și ritmul interior al vieții.",
+    "readMore": "Citește articolul",
+    "backToBlog": "Înapoi la blog",
+    "emptyTitle": "Articolele sunt pe drum",
+    "emptyDescription": "Pregătim primele materiale despre numere, stele și semne care te ajută să te înțelegi mai bine. Revino în curând."
+  },
   "footer": {
     "tagline": "Numerologie personalizată pentru autocunoaștere. Descoperă-ți Cristalul Destinului.",
     "product": "Produs",
