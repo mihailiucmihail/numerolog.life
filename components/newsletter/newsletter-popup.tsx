@@ -4,12 +4,16 @@ import { useEffect, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
 import { X, Gift } from "lucide-react"
 import { NewsletterForm } from "./newsletter-form"
+import { useCurrency } from "@/components/providers/currency-provider"
 
 const SESSION_KEY = "nl_discount_popup_session_v3"
 const HIDE_KEY = "nl_discount_popup_hidden_until_v3"
 
 export function NewsletterPopup() {
   const t = useTranslations("newsletter")
+  const { prices, format, formatDiscounted } = useCurrency()
+  const basePrice = format(prices.cristal)
+  const discountedPrice = formatDiscounted(prices.cristal, 15)
   const [open, setOpen] = useState(false)
   const triggered = useRef(false)
 
@@ -46,7 +50,7 @@ export function NewsletterPopup() {
     <div role="dialog" aria-modal="true" aria-labelledby="nl-popup-title" className="fixed inset-0 z-[60] flex items-center justify-center bg-transparent p-4" onClick={dismiss}>
       <div className="glass-warm relative w-full max-w-md overflow-y-auto rounded-2xl border border-primary/25 bg-background/95 p-6 shadow-2xl shadow-black/40 backdrop-blur-xl sm:p-8" onClick={(e) => e.stopPropagation()}>
         <button type="button" onClick={dismiss} aria-label={t("popupClose")} className="absolute right-3 top-3 flex size-11 items-center justify-center rounded-full text-muted-foreground/70 hover:bg-card/60 hover:text-foreground"><X className="size-5" aria-hidden="true" /></button>
-        <div className="text-center"><div className="mx-auto mb-4 inline-flex items-center gap-2 rounded-full glass-warm px-4 py-1.5"><Gift className="size-3.5 text-primary" aria-hidden="true" /><span className="text-xs uppercase tracking-widest text-muted-foreground">СПЕЦИАЛЬНОЕ ПРЕДЛОЖЕНИЕ</span></div><h2 id="nl-popup-title" className="font-serif text-2xl font-light">Получи скидку 15% за подписку</h2><p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">Оставь email и получи персональный анализ за <strong className="text-foreground">16,15 €</strong> вместо <s>19,00 €</s>.</p><div className="mt-4 flex items-center justify-center gap-3"><s className="text-sm text-muted-foreground/60">19,00 €</s><strong className="font-serif text-3xl font-light text-primary">16,15 €</strong><span className="rounded-full border border-primary/30 px-2 py-1 text-xs text-primary">−15%</span></div></div>
+        <div className="text-center"><div className="mx-auto mb-4 inline-flex items-center gap-2 rounded-full glass-warm px-4 py-1.5"><Gift className="size-3.5 text-primary" aria-hidden="true" /><span className="text-xs uppercase tracking-widest text-muted-foreground">СПЕЦИАЛЬНОЕ ПРЕДЛОЖЕНИЕ</span></div><h2 id="nl-popup-title" className="font-serif text-2xl font-light">Получи скидку 15% за подписку</h2><p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">Оставь email и получи персональный анализ за <strong className="text-foreground">{discountedPrice}</strong> вместо <s>{basePrice}</s>.</p><div className="mt-4 flex items-center justify-center gap-3"><s className="text-sm text-muted-foreground/60">{basePrice}</s><strong className="font-serif text-3xl font-light text-primary">{discountedPrice}</strong><span className="rounded-full border border-primary/30 px-2 py-1 text-xs text-primary">−15%</span></div></div>
         <div className="mt-6"><NewsletterForm compact onSuccess={() => setOpen(true)} /></div>
       </div>
     </div>

@@ -6,10 +6,12 @@ import { Sparkles } from "lucide-react"
 import { NumerologSymbol } from "@/components/numerolog-symbol"
 import { useEffect, useState, useRef } from "react"
 import { useTranslations, useLocale } from "next-intl"
+import { useCurrency } from "@/components/providers/currency-provider"
 
 export function HeroSection() {
   const t = useTranslations("hero")
   const locale = useLocale()
+  const { prices, format } = useCurrency()
   const [isVisible, setIsVisible] = useState(true)
   const [mounted, setMounted] = useState(false)
   const [counter, setCounter] = useState(50000)
@@ -156,7 +158,7 @@ export function HeroSection() {
                 <span>{t("ctaPrimary")}</span>
               </Link>
             </Button>
-            <p className="text-xs text-primary/80">Персональный разбор · 19 €</p>
+            <p className="text-xs text-primary/80">Персональный разбор · {format(prices.cristal)}</p>
           </div>
         </div>
 

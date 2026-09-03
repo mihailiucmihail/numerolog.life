@@ -185,8 +185,8 @@
     "feature6": "Carieră, relații și autorealizare",
     "feature7": "Interpretări, recomandări și sinteză personalizată",
     "feature8": "Raport complet în format ușor de consultat",
-    "cta": "Primește analiza mea — 19,00 €",
-    "ctaNote": "Primești acces după plata securizată · 19,00 €",
+    "cta": "Primește analiza mea — {price}",
+    "ctaNote": "Primești acces după plata securizată · {price}",
     "trustSecure": "Plată securizată",
     "trustInstant": "Livrare instant",
     "trustGuarantee": "Garanție 30 zile"

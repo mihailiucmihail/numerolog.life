@@ -2840,6 +2840,28 @@ const FACET_PREFIX = {professiya:'p', lichnaya:'l', finansy:'f', opv:'o', sozhal
 /* Fațete cu grafic — 4,99 €; restul — 1,99 €. Prețul real e recalculat pe server (lib/products.ts). */
 const GRAPH_FACETS = new Set(['lichnaya', 'finansy', 'kariera', 'karma', 'sudba', 'volya', 'kachestvo']);
 
+/* Monedă locală (ex. tenge pentru Kazahstan): părintele trimite ?cur=kzt&ps=<preț standard>&pg=<preț grafic>.
+   Aici doar înlocuim textul afișat; suma reală e decisă pe server (lib/currency.ts). */
+(function(){
+  try{
+    const q = new URLSearchParams(window.location.search);
+    if(q.get('cur') === 'kzt'){
+      const ps = q.get('ps') || '', pg = q.get('pg') || '';
+      if(ps && pg){
+        const swap = () => {
+          document.querySelectorAll('.pricerow .amount, .price').forEach(el => {
+            const t = (el.textContent || '').trim().replace(/\u00a0/g, ' ');
+            if(t === '1,99 €') el.textContent = ps;
+            else if(t === '4,99 €') el.textContent = pg;
+          });
+        };
+        swap();
+        new MutationObserver(swap).observe(document.documentElement, { childList: true, subtree: true });
+      }
+    }
+  }catch(e){}
+})();
+
 /* Кнопка расчёта: сначала оплата через Stripe, результат приходит по ссылке */
 function requestPayment(facet){
   const prefix = FACET_PREFIX[facet] || 'p';

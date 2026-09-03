@@ -1,18 +1,41 @@
 import createMiddleware from 'next-intl/middleware'
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { routing } from './i18n/routing'
+import { CURRENCY_COOKIE, currencyFromCountry, parseCurrency, type Currency } from './lib/currency'
 
 const handleI18nRouting = createMiddleware(routing)
 
 // Experiența publică este exclusiv în limba rusă.
 const LOCALE_REGEX = /^\/ru(\/|$)/
 
+const CURRENCY_COOKIE_MAX_AGE = 60 * 60 * 24 * 30 // 30 de zile
+
+/**
+ * Moneda vizitatorului: ?currency=kzt|eur (override explicit) > cookie existent > geolocație (KZ -> KZT) > EUR.
+ * Returnează moneda și dacă trebuie (re)scris cookie-ul.
+ */
+function resolveCurrency(request: NextRequest): { currency: Currency; persist: boolean } {
+  const fromQuery = parseCurrency(request.nextUrl.searchParams.get('currency'))
+  if (fromQuery) return { currency: fromQuery, persist: true }
+  const fromCookie = parseCurrency(request.cookies.get(CURRENCY_COOKIE)?.value)
+  if (fromCookie) return { currency: fromCookie, persist: false }
+  return { currency: currencyFromCountry(request.headers.get('x-vercel-ip-country')), persist: true }
+}
+
+function withCurrencyCookie(response: NextResponse | Response, request: NextRequest): NextResponse | Response {
+  const { currency, persist } = resolveCurrency(request)
+  if (!persist) return response
+  const res = response instanceof NextResponse ? response : new NextResponse(response.body, response)
+  res.cookies.set(CURRENCY_COOKIE, currency, { path: '/', maxAge: CURRENCY_COOKIE_MAX_AGE, sameSite: 'lax' })
+  return res
+}
+
 export default function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
   // Dacă URL-ul este deja în rusă, lasă next-intl să gestioneze ruta.
   if (LOCALE_REGEX.test(pathname)) {
-    return handleI18nRouting(request)
+    return withCurrencyCookie(handleI18nRouting(request), request)
   }
 
   // Orice rută publică este redirecționată către versiunea rusă.
@@ -22,7 +45,7 @@ export default function proxy(request: NextRequest) {
   } else {
     url.pathname = `/ru${pathname}`
   }
-  return Response.redirect(url)
+  return withCurrencyCookie(NextResponse.redirect(url), request)
 }
 
 export const config = {

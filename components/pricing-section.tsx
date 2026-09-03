@@ -6,9 +6,12 @@ import { Check, Sparkles, Star, Shield, Zap } from "lucide-react"
 import { NumerologSymbol } from "@/components/numerolog-symbol"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { useCurrency } from "@/components/providers/currency-provider"
 
 export function PricingSection() {
   const t = useTranslations("pricing")
+  const { prices, format } = useCurrency()
+  const price = format(prices.cristal)
   const features = [
     t("feature1"),
     t("feature2"),
@@ -85,12 +88,12 @@ export function PricingSection() {
             >
               <Link href="/numerologie">
                 <NumerologSymbol size="sm" className="mr-1" />
-                {t("cta")}
+                {t("cta", { price })}
               </Link>
             </Button>
 
             <p className="text-center text-xs text-muted-foreground/50 mt-5">
-              {t("ctaNote")}
+              {t("ctaNote", { price })}
             </p>
           </CardContent>
         </Card>

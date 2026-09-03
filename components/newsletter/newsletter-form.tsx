@@ -6,6 +6,7 @@ import { useTranslations, useLocale } from "next-intl"
 import { ArrowRight, Check, Loader2 } from "lucide-react"
 import { NumerologSymbol } from "@/components/numerolog-symbol"
 import { subscribeToNewsletter } from "@/app/actions/newsletter"
+import { useCurrency } from "@/components/providers/currency-provider"
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -17,6 +18,7 @@ interface NewsletterFormProps {
 export function NewsletterForm({ onSuccess, compact = false }: NewsletterFormProps) {
   const t = useTranslations("newsletter")
   const locale = useLocale()
+  const { prices, format, formatDiscounted } = useCurrency()
   const [email, setEmail] = useState("")
   const [marketingConsent, setMarketingConsent] = useState(false)
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
@@ -51,7 +53,7 @@ export function NewsletterForm({ onSuccess, compact = false }: NewsletterFormPro
           <Check className="size-6 text-primary" aria-hidden="true" />
         </div>
         <h3 className="font-serif text-2xl font-light">Скидка 15% активирована</h3>
-        <p className="mt-2 text-sm text-muted-foreground">Твоя цена — <strong className="text-foreground">16,15 €</strong> вместо 19,00 €</p>
+        <p className="mt-2 text-sm text-muted-foreground">Твоя цена — <strong className="text-foreground">{formatDiscounted(prices.cristal, 15)}</strong> вместо {format(prices.cristal)}</p>
         <p className="mt-3 select-all font-mono text-lg tracking-[0.18em] text-primary">{code}</p>
         <p className="mt-2 text-xs text-muted-foreground/70">Код отправлен на почту и действует один раз.</p>
         <Link href={`/${locale}/numerologie?discount=${encodeURIComponent(code)}`} className="mt-5 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground">

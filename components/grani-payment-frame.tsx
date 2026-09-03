@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { useCurrency } from "@/components/providers/currency-provider"
 
 const I18N = {
   ro: {
@@ -20,6 +21,7 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const T = I18N[locale as keyof typeof I18N] ?? I18N.ru
+  const { currency, prices, format } = useCurrency()
 
   useEffect(() => {
     const resizeFrame = (event: MessageEvent) => {
@@ -78,11 +80,17 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
       .catch(() => undefined)
   }, [preview])
 
-  const frameSrc = preview
-    ? "/grani-live.html?mode=preview"
-    : initialFacet
-      ? `/grani-live.html#/${encodeURIComponent(initialFacet)}`
-      : "/grani-live.html"
+  // Prețurile afișate în iframe urmează moneda vizitatorului (KZ -> tenge). HTML-ul doar
+  // înlocuiește textul; suma reală e recalculată pe server la checkout.
+  const frameQuery = new URLSearchParams()
+  if (preview) frameQuery.set("mode", "preview")
+  if (currency !== "eur") {
+    frameQuery.set("cur", currency)
+    frameQuery.set("ps", format(prices.graniStandard))
+    frameQuery.set("pg", format(prices.graniGraph))
+  }
+  const qs = frameQuery.toString()
+  const frameSrc = `/grani-live.html${qs ? `?${qs}` : ""}${!preview && initialFacet ? `#/${encodeURIComponent(initialFacet)}` : ""}`
 
   return (
     <div className="relative">
