@@ -119,7 +119,7 @@ export function CristalLoading({ eyebrow, title, phrases, durationMs = 7000, rea
                 animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                 exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
                 transition={{ duration: 0.45, ease: 'easeOut' }}
-                className="absolute text-sm leading-relaxed text-muted-foreground text-pretty"
+                className="absolute text-sm leading-relaxed text-foreground/80 text-pretty"
               >
                 {phrases[index]}
               </motion.p>
