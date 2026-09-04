@@ -7,7 +7,6 @@ import { checkPromoCode } from '@/app/actions/promo'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Loader2 } from 'lucide-react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
-import { useCurrency } from '@/components/providers/currency-provider'
 
 interface FormData {
   last: string
@@ -33,18 +32,6 @@ export default function CalculatorWrapper() {
   const locale = pathname?.split('/')[1] || 'ro'
   const didUnlock = useRef(false)
   const discountCode = searchParams.get('discount') || undefined
-  const { currency, prices, format } = useCurrency()
-
-  const trackEvent = useCallback((event: string, params: Record<string, string | number> = {}) => {
-    const payload = { event, ...params }
-    window.dispatchEvent(new CustomEvent('numerolog:analytics', { detail: payload }))
-    const gtag = (window as Window & { gtag?: (...args: unknown[]) => void }).gtag
-    if (gtag) gtag('event', event, params)
-    else {
-      const dataLayer = (window as Window & { dataLayer?: unknown[] }).dataLayer
-      dataLayer?.push({ event, ...params })
-    }
-  }, [])
 
   // Dupa return de la Stripe, verificam plata, salvam raportul si trimitem email
   useEffect(() => {
@@ -58,7 +45,6 @@ export default function CalculatorWrapper() {
 
     getNumerologieSessionStatus(sessionId).then(async ({ paymentStatus, formData: metadataFormData }) => {
       if (paymentStatus === 'paid') {
-        trackEvent('purchase', { product: 'cristalul_destinului', currency, value: prices.cristal / 100, transaction_id: sessionId })
         // Stripe metadata este fallback-ul sigur dacă browserul a pierdut localStorage.
         if (!raw && !metadataFormData) return
         const formData: FormData = raw
@@ -117,11 +103,7 @@ export default function CalculatorWrapper() {
       if (event.data?.type === 'resize' && typeof event.data.height === 'number') {
         setHeight(event.data.height + 40)
       }
-      if (event.data?.type === 'cristalFunnelEvent' && typeof event.data.event === 'string') {
-        trackEvent(event.data.event, { product: 'cristalul_destinului', currency })
-      }
       if (event.data?.type === 'requestPayment' && event.data.data) {
-        trackEvent('begin_checkout', { product: 'cristalul_destinului', currency, value: prices.cristal / 100 })
         handleRequestPayment(event.data.data)
       }
       if (event.data?.type === 'validatePromo' && typeof event.data.code === 'string') {
@@ -140,7 +122,6 @@ export default function CalculatorWrapper() {
         iframe?.contentWindow?.postMessage({ type: 'requestHeight' }, '*')
         // Precompletăm codul venit din emailul/popup-ul de reducere.
         if (discountCode) iframe?.contentWindow?.postMessage({ type: 'prefillPromo', code: discountCode }, '*')
-        iframe?.contentWindow?.postMessage({ type: 'funnelPrice', price: format(prices.cristal) }, '*')
       } catch {}
     }
     iframe?.addEventListener('load', onLoad)
@@ -149,7 +130,7 @@ export default function CalculatorWrapper() {
       window.removeEventListener('message', handleMessage)
       iframe?.removeEventListener('load', onLoad)
     }
-  }, [handleRequestPayment, discountCode, format, prices.cristal, trackEvent, currency])
+  }, [handleRequestPayment, discountCode])
 
   return (
     <>
