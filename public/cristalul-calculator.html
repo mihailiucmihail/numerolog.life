@@ -6263,6 +6263,11 @@ function startPdfExport(){
        Două straturi cu backdrop-filter, fiecare cu margine „topită” prin mask-image → efect de ceaţă care se îngroaşă. */
     .cd-part{position:relative;user-select:none;-webkit-user-select:none;}
     .cd-part > *:not(.section-title):not(.cd-unlock){pointer-events:none;}
+    /* Tab-urile graficelor (Карьера / Личная жизнь / …) rămân interactive şi în preview,
+       deasupra straturilor de blur — utilizatorul poate comuta graficele înainte de plată. */
+    .cd-preview .cd-part .chart-tabs,
+    .cd-preview .cd-part .chart-tabs *{pointer-events:auto !important;}
+    .cd-preview .cd-part .chart-tabs{position:relative;z-index:5;}
     /* Telefon: marginile minime, raportul cât mai lat. */
     @media (max-width:560px){
       body{padding:12px 4px 48px !important;}
