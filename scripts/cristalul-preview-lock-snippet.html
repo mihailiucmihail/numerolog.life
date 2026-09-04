@@ -13,14 +13,27 @@
     .cd-lock *{pointer-events:none !important;}
     .cd-preview .cd-lock summary::after{content:"" !important;}
     .cd-preview details.cd-lock[open] .body{max-height:120px;overflow:hidden;}
-    /* Card cu chenar dublu: primele 20 % lizibile, restul 80 % — blur MODERAT (ca versiunea anterioară). */
+    /* Card cu chenar dublu: primele 30 % lizibile; restul 70 % — blur care creşte TREPTAT (fără linie bruscă).
+       Două straturi cu backdrop-filter, fiecare cu margine „topită” prin mask-image → efect de ceaţă care se îngroaşă. */
     .cd-part{position:relative;user-select:none;-webkit-user-select:none;}
     .cd-part > *:not(.section-title):not(.cd-lock-badge){pointer-events:none;}
+    .cd-part::before,.cd-part::after{
+      content:"";position:absolute;left:0;right:0;bottom:0;z-index:2;pointer-events:none;
+    }
+    /* Strat 1 — ceaţă uşoară, începe la 30 % şi se instalează pe următoarele ~22 % din card. */
+    .cd-part::before{
+      top:var(--cd-cut,30%);
+      backdrop-filter:blur(4px) saturate(.9);-webkit-backdrop-filter:blur(4px) saturate(.9);
+      -webkit-mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 22%, rgba(0,0,0,1) 100%);
+              mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 22%, rgba(0,0,0,1) 100%);
+    }
+    /* Strat 2 — blur moderat, începe mai jos (≈ 42 %) şi se îngroaşă lent până la capătul cardului. */
     .cd-part::after{
-      content:"";position:absolute;left:0;right:0;bottom:0;top:var(--cd-cut,20%);z-index:2;
-      pointer-events:none;
+      top:calc(var(--cd-cut,30%) + 12%);
       backdrop-filter:blur(7px) saturate(.85);-webkit-backdrop-filter:blur(7px) saturate(.85);
-      background:linear-gradient(180deg, rgba(22,16,34,0) 0%, rgba(22,16,34,.32) 12%, rgba(22,16,34,.42) 100%);
+      background:linear-gradient(180deg, rgba(22,16,34,0) 0%, rgba(22,16,34,.1) 45%, rgba(22,16,34,.2) 100%);
+      -webkit-mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 100%);
+              mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 100%);
     }
     /* Graficele ies DEASUPRA stratului moderat: trecutul rămâne clar, viitorul are propria mască puternică. */
     .cd-preview .cd-part .chart-stage,
@@ -56,7 +69,7 @@
     .cd-preview .chart-tooltip{display:none !important;}
 </style>
 <script>
-    // ==== Preview blocat: raportul real; fiecare card 20 % vizibil / 80 % blur moderat, grafice: viitor blurat puternic ====
+    // ==== Preview blocat: raportul real; fiecare card 30 % vizibil / 70 % blur gradual moderat, grafice: viitor blurat puternic ====
     function __cdAfterNow(items, isNow){
       // Toate elementele DUPĂ cel „curent” (sau după ultimul „trecut”) devin blurate = viitor.
       let ni = -1;
@@ -114,9 +127,9 @@
         const title = ((card.querySelector('.section-title') || {}).textContent || '');
         // 1) Rezultatul gratuit: „День Рождения” — complet vizibil.
         if(/День Рождения/.test(title)) return;
-        // 2) FIECARE card cu chenar dublu: primele 20 % lizibile, restul 80 % blur moderat.
+        // 2) FIECARE card cu chenar dublu: primele 30 % lizibile, restul 70 % blur gradual (moderat).
         card.classList.add('cd-part');
-        card.style.setProperty('--cd-cut', '20%');
+        card.style.setProperty('--cd-cut', '30%');
         __cdBadge(card);
         // 3) Graficele (deasupra stratului moderat): trecutul clar, viitorul blurat PUTERNIC.
         card.querySelectorAll('.chart-stage').forEach(__cdMaskFuture);
