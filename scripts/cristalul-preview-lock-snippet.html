@@ -226,6 +226,8 @@
       if(typeof calculate === 'function') calculate();
       const ok = !!(window.__cdLastResult && document.getElementById('results'));
       if(!ok) return; // calculate() a afişat deja eroarea de validare în formular
+      // Validarea a trecut → aplicaţia arată ecranul „Cristalul se formează” peste raport (≈7 s).
+      window.parent.postMessage({ type: 'previewStarted' }, '*');
       document.body.classList.add('cd-preview');
       __cdApplyPreviewLock();
       window.scrollTo(0, 0);

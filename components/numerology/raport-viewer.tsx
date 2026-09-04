@@ -1,8 +1,11 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { motion } from 'framer-motion'
+import { useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Mail } from 'lucide-react'
+import { CristalLoading } from '@/components/numerology/cristal-loading'
 
 interface FormData {
   last: string
@@ -21,13 +24,31 @@ interface FormData {
 interface RaportViewerProps {
   formData: FormData
   reportType?: 'cristal' | 'grani'
+  /** Arată ecranul „Deschidem Cristalul” (≈7 s) înainte de raport — folosit imediat după plată. */
+  reveal?: boolean
 }
 
-export default function RaportViewer({ formData, reportType = 'cristal' }: RaportViewerProps) {
+const REVEAL_KEY = 'cd:revealed'
+
+export default function RaportViewer({ formData, reportType = 'cristal', reveal = false }: RaportViewerProps) {
+  const t = useTranslations('funnel')
+  const searchParams = useSearchParams()
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [height, setHeight] = useState(800)
+  const [rendered, setRendered] = useState(false)
 
-  // Construim URL-ul iframe cu datele in query params (auto-completare fiabila)
+  // Ecranul de deschidere: o singură dată per raport (după plată sau `?reveal=1`), nu la fiecare revenire.
+  const [opening, setOpening] = useState(() => {
+    if (reportType !== 'cristal') return false
+    if (!(reveal || searchParams.get('reveal') === '1')) return false
+    try {
+      return sessionStorage.getItem(`${REVEAL_KEY}:${formData.first}${formData.day}${formData.year}`) !== '1'
+    } catch {
+      return true
+    }
+  })
+
+  // Construim URL-ul iframe cu datele în query params (auto-completare fiabilă)
   const params = new URLSearchParams({
     auto: '1',
     last: formData.last || '',
@@ -51,11 +72,20 @@ export default function RaportViewer({ formData, reportType = 'cristal' }: Rapor
       }
       if (event.data?.type === 'reportRendered' && typeof event.data.height === 'number') {
         setHeight(event.data.height + 40)
+        setRendered(true)
       }
     }
     window.addEventListener('message', handleMessage)
     return () => window.removeEventListener('message', handleMessage)
   }, [])
+
+  const handleOpened = () => {
+    setOpening(false)
+    try {
+      sessionStorage.setItem(`${REVEAL_KEY}:${formData.first}${formData.day}${formData.year}`, '1')
+    } catch {}
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   const numeFull = [formData.first, formData.last].filter(Boolean).join(' ')
 
@@ -74,8 +104,7 @@ export default function RaportViewer({ formData, reportType = 'cristal' }: Rapor
       >
         <Mail size={16} style={{ color: '#D4AF37', flexShrink: 0 }} />
         <p className="text-sm" style={{ color: 'rgba(237,227,207,0.7)' }}>
-          Raportul{numeFull ? ` pentru ${numeFull}` : ''} — acces permanent, fara plata suplimentara.
-          Un link a fost trimis si la adresa ta de email.
+          {t('raportBanner', { name: numeFull ? ` — ${numeFull}` : '' })}
         </p>
       </motion.div>
 
@@ -94,6 +123,21 @@ export default function RaportViewer({ formData, reportType = 'cristal' }: Rapor
         title={reportType === 'grani' ? 'Грани Судьбы — Отчёт' : 'Cristalul Destinului — Raport'}
         scrolling="no"
       />
+
+      {/* După plată: cristalul animat ≈7 s, apoi raportul complet este dezvăluit. */}
+      <AnimatePresence>
+        {opening && (
+          <CristalLoading
+            key="opening"
+            eyebrow={t('loadingEyebrow')}
+            title={t('loadingPaidTitle')}
+            phrases={t.raw('loadingPaidPhrases') as string[]}
+            durationMs={7000}
+            ready={rendered}
+            onDone={handleOpened}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }

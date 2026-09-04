@@ -360,7 +360,26 @@
     "paidText": "Îți deschidem Cristalul…",
     "cancelledNotice": "Plata nu a fost finalizată. Calculul tău este salvat — poți continua oricând.",
     "paywallEmailConfirm": "Linkul raportului vine pe",
-    "paywallEmailChange": "Modifică"
+    "paywallEmailChange": "Modifică",
+    "loadingEyebrow": "Cristalul Destinului",
+    "loadingPreviewTitle": "Cristalul tău se formează",
+    "loadingPreviewPhrases": [
+      "Citim numele și data nașterii…",
+      "Traducem numerele în cele 22 de Arcane…",
+      "Construim fațetele Cristalului — una după alta…",
+      "Calculăm metaciclurile și ciclurile anuale…",
+      "Desenăm graficele personale ale drumului vieții…",
+      "Cristalul este aproape gata…"
+    ],
+    "loadingPaidTitle": "Deschidem Cristalul tău al Destinului",
+    "loadingPaidPhrases": [
+      "Plata a fost confirmată. Deschidem raportul complet…",
+      "Ridicăm blurul de pe fiecare fațetă a Cristalului…",
+      "Dezvăluim perioadele viitoare pe grafice…",
+      "Salvăm raportul — linkul permanent pleacă spre emailul tău…",
+      "Cristalul Destinului este deschis complet"
+    ],
+    "raportBanner": "Raportul tău{name} — acces permanent, fără plată suplimentară. Un link a fost trimis și pe emailul tău."
   },
   "language": "Limba"
 }

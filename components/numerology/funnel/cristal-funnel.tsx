@@ -4,13 +4,13 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Loader2 } from 'lucide-react'
 import { startNumerologieCheckout, getNumerologieSessionStatus } from '@/app/actions/stripe'
 import { saveRaportAndSendEmail } from '@/app/actions/raport'
 import { checkPromoCode } from '@/app/actions/promo'
 import { useCurrency } from '@/components/providers/currency-provider'
 import { trackFunnel, trackPurchase } from '@/lib/funnel-analytics'
 import { FunnelPaywall } from './funnel-paywall'
+import { CristalLoading } from '@/components/numerology/cristal-loading'
 import { CHECKOUT_STORAGE_KEY, FUNNEL_STORAGE_KEY, type FunnelForm as FormValues } from './types'
 
 const PAYWALL_ID = 'funnel-paywall'
@@ -79,6 +79,8 @@ export default function CristalFunnel() {
   // Emailul introdus în formularul calculatorului (obligatoriu acolo) — la plată doar îl confirmăm.
   const [formEmail, setFormEmail] = useState('')
   const [previewReady, setPreviewReady] = useState(false)
+  // Ecranul „Cristalul se formează” (≈7 s) între formular și raportul blurat.
+  const [forming, setForming] = useState(false)
   const [checkoutBusy, setCheckoutBusy] = useState(false)
   const [checkoutError, setCheckoutError] = useState('')
   const [paidOverlay, setPaidOverlay] = useState(false)
@@ -105,6 +107,11 @@ export default function CristalFunnel() {
         setFrameHeight(Math.max(600, d.height + 24))
       }
 
+      if (d.type === 'previewStarted') {
+        setForming(true)
+        window.scrollTo({ top: 0 })
+      }
+
       if (d.type === 'previewRendered') {
         const p = d.data as PreviewData | undefined
         if (p && p.first && p.last && p.day && p.month && p.year) {
@@ -128,14 +135,12 @@ export default function CristalFunnel() {
         }
         setPreviewReady(true)
         trackFunnel('free_result_viewed', { mode: 'blurred_report' })
-        // Aducem raportul la început (iframe-ul nu poate derula pagina părinte).
-        window.requestAnimationFrame(() => {
-          iframeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        })
+        // Derularea la raport se face când dispare ecranul de formare (vezi onDone).
       }
 
       if (d.type === 'previewFailed') {
         setPreviewReady(false)
+        setForming(false)
       }
 
       // Butonul „Смотреть полный разбор” de pe cardurile blurate → derulăm la plată.
@@ -199,7 +204,8 @@ export default function CristalFunnel() {
         setPaidOverlay(true)
         try {
           const { token } = await saveRaportAndSendEmail(sessionId, formData, locale)
-          router.replace(`/${locale}/numerologie/cristalul-raport/${token}`)
+          // `reveal=1` → pagina raportului continuă animația cristalului (≈7 s) înainte de a-l dezvălui.
+          router.replace(`/${locale}/numerologie/cristalul-raport/${token}?reveal=1`)
         } catch {
           setPaidOverlay(false)
           router.replace(`/${locale}/numerologie`)
@@ -261,6 +267,14 @@ export default function CristalFunnel() {
   useEffect(() => {
     handleCheckoutRef.current = handleCheckout
   }, [handleCheckout])
+
+  // Ecranul de formare s-a încheiat → dezvăluim raportul blurat de la început.
+  const handleFormingDone = useCallback(() => {
+    setForming(false)
+    window.requestAnimationFrame(() => {
+      iframeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }, [])
 
   const resetToForm = () => {
     setPreviewReady(false)
@@ -340,31 +354,25 @@ export default function CristalFunnel() {
         )}
       </AnimatePresence>
 
-      {/* Overlay după confirmarea plății — același stil ca fluxul existent. */}
+      {/* „Cristalul se formează” — ≈7 s după formular; raportul blurat se randează dedesubt și e dezvăluit la final. */}
+      <AnimatePresence>
+        {forming && (
+          <CristalLoading
+            key="forming"
+            eyebrow={t('loadingEyebrow')}
+            title={t('loadingPreviewTitle')}
+            phrases={t.raw('loadingPreviewPhrases') as string[]}
+            durationMs={7000}
+            ready={previewReady}
+            onDone={handleFormingDone}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* După confirmarea plății: același cristal, până la redirecționarea spre raportul permanent. */}
       <AnimatePresence>
         {paidOverlay && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-md"
-            role="status"
-            aria-live="polite"
-          >
-            <div className="flex flex-col items-center gap-6 px-8 text-center">
-              <div className="premium-logo-pulse flex items-center justify-center" aria-hidden="true">
-                <div className="relative flex size-20 rotate-45 items-center justify-center border border-primary/70 bg-primary/10 shadow-[0_0_45px_rgba(212,175,55,0.3)]">
-                  <div className="size-12 border border-primary/50 bg-primary/10" />
-                </div>
-              </div>
-              <div>
-                <p className="mb-2 font-mono text-xs uppercase tracking-widest text-primary/60">Cristalul Destinului</p>
-                <h2 className="mb-2 font-serif text-2xl text-foreground">{t('paidTitle')}</h2>
-                <p className="text-sm text-muted-foreground">{t('paidText')}</p>
-              </div>
-              <Loader2 className="size-5 animate-spin text-primary/70" aria-hidden="true" />
-            </div>
-          </motion.div>
+          <CristalLoading key="paid" eyebrow={t('loadingEyebrow')} title={t('loadingPaidTitle')} phrases={t.raw('loadingPaidPhrases') as string[]} />
         )}
       </AnimatePresence>
     </div>
