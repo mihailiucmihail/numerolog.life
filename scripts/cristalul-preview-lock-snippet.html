@@ -3,6 +3,7 @@
     .cd-preview .hero,
     .cd-preview #inputFormCard,
     .cd-preview #pdfDownloadCard{display:none !important;}
+    /* Blur PUTERNIC — folosit doar pe grafice (viitorul în bare/rânduri/linii). */
     .cd-lock{
       filter:blur(11px) saturate(.7);
       opacity:.5;
@@ -12,16 +13,24 @@
     .cd-lock *{pointer-events:none !important;}
     .cd-preview .cd-lock summary::after{content:"" !important;}
     .cd-preview details.cd-lock[open] .body{max-height:120px;overflow:hidden;}
-    /* Bloc parțial: primele ~20 % rămân lizibile, restul este acoperit de un strat opac + blur. */
+    /* Card cu chenar dublu: primele 20 % lizibile, restul 80 % — blur MODERAT (ca versiunea anterioară). */
     .cd-part{position:relative;user-select:none;-webkit-user-select:none;}
     .cd-part > *:not(.section-title):not(.cd-lock-badge){pointer-events:none;}
     .cd-part::after{
       content:"";position:absolute;left:0;right:0;bottom:0;top:var(--cd-cut,20%);z-index:2;
       pointer-events:none;
-      backdrop-filter:blur(14px) saturate(.7);-webkit-backdrop-filter:blur(14px) saturate(.7);
-      background:linear-gradient(180deg, rgba(22,16,34,0) 0%, rgba(22,16,34,.82) 14%, rgba(22,16,34,.94) 100%);
+      backdrop-filter:blur(7px) saturate(.85);-webkit-backdrop-filter:blur(7px) saturate(.85);
+      background:linear-gradient(180deg, rgba(22,16,34,0) 0%, rgba(22,16,34,.32) 12%, rgba(22,16,34,.42) 100%);
     }
-    .cd-part.cd-part-el::after{border-radius:inherit;}
+    /* Graficele ies DEASUPRA stratului moderat: trecutul rămâne clar, viitorul are propria mască puternică. */
+    .cd-preview .cd-part .chart-stage,
+    .cd-preview .cd-part #yearlyCycleChart,
+    .cd-preview .cd-part #qualityOfLifeChart,
+    .cd-preview .cd-part #transitSchedule,
+    .cd-preview .cd-part .meta-timeline,
+    .cd-preview .cd-part .mandala-chart-svg{position:relative;z-index:3;}
+    /* În grafice, „viitorul” = blur puternic (suprascrie stratul moderat). */
+    .cd-preview .cd-part .cd-lock{filter:blur(11px) saturate(.7);opacity:.35;}
     .cd-lock-badge{
       position:absolute;right:0;top:0;z-index:3;
       display:inline-flex;align-items:center;gap:6px;
@@ -43,11 +52,11 @@
       font:600 9.5px/1.3 var(--sans, Inter, sans-serif);letter-spacing:.14em;text-transform:uppercase;
       color:var(--brass-bright,#d9a94f);
     }
-    .cd-preview .mandala-future-line{filter:blur(3px);opacity:.3 !important;}
+    .cd-preview .mandala-future-line{filter:blur(7px);opacity:.12 !important;}
     .cd-preview .chart-tooltip{display:none !important;}
 </style>
 <script>
-    // ==== Preview blocat: raportul real, cu ~70 % din conținut blurat și viitorul mascat ====
+    // ==== Preview blocat: raportul real; fiecare card 20 % vizibil / 80 % blur moderat, grafice: viitor blurat puternic ====
     function __cdAfterNow(items, isNow){
       // Toate elementele DUPĂ cel „curent” (sau după ultimul „trecut”) devin blurate = viitor.
       let ni = -1;
@@ -103,31 +112,21 @@
       cards.forEach(function(card){
         if(card.id === 'pdfDownloadCard' || card.id === 'personalDataSummary') return;
         const title = ((card.querySelector('.section-title') || {}).textContent || '');
-        // Bloc întreg: doar primele ~20 % lizibile (titlu + începutul conținutului), restul acoperit.
-        const partCard = function(){ card.classList.add('cd-part'); card.style.setProperty('--cd-cut', '20%'); };
-        // Element de text: primele ~20 % lizibile.
-        const partEl = function(el){ el.classList.add('cd-part', 'cd-part-el'); el.style.setProperty('--cd-cut', '20%'); };
         // 1) Rezultatul gratuit: „День Рождения” — complet vizibil.
         if(/День Рождения/.test(title)) return;
-        // 2) Carduri cu timp (grafice, cicluri, tranzite): trecutul vizibil, viitorul mascat opac,
-        //    textele interpretative — 20 % vizibile.
-        const timeCard = card.querySelector('.chart-stage, .yc-bar, .transit-row, .tl-row, .age-chip, .meta-timeline, .mandala-chart-svg');
-        if(timeCard){
-          card.querySelectorAll('.detail, .chart-interpret, .chart-interpret-main').forEach(partEl);
-          card.querySelectorAll('.chart-stage').forEach(__cdMaskFuture);
-          card.querySelectorAll('#yearlyCycleChart, #qualityOfLifeChart').forEach(function(box){
-            const wraps = Array.from(box.querySelectorAll('.yc-bar-wrap'));
-            __cdAfterNow(wraps, function(w){ return !!w.querySelector('.yc-bar.now'); });
-          });
-          __cdAfterNow(Array.from(card.querySelectorAll('.transit-row')), function(r){ return r.classList.contains('active'); });
-          __cdAfterNow(Array.from(card.querySelectorAll('.tl-row')), function(r){ return r.classList.contains('active'); });
-          __cdAfterNow(Array.from(card.querySelectorAll('.age-chip')), function(r){ return r.classList.contains('now'); });
-          __cdBadge(card);
-          return;
-        }
-        // 3) Toate celelalte blocuri (nume, numere-cheie, interpretări): 20 % vizibil, restul acoperit.
-        partCard();
+        // 2) FIECARE card cu chenar dublu: primele 20 % lizibile, restul 80 % blur moderat.
+        card.classList.add('cd-part');
+        card.style.setProperty('--cd-cut', '20%');
         __cdBadge(card);
+        // 3) Graficele (deasupra stratului moderat): trecutul clar, viitorul blurat PUTERNIC.
+        card.querySelectorAll('.chart-stage').forEach(__cdMaskFuture);
+        card.querySelectorAll('#yearlyCycleChart, #qualityOfLifeChart').forEach(function(box){
+          const wraps = Array.from(box.querySelectorAll('.yc-bar-wrap'));
+          __cdAfterNow(wraps, function(w){ return !!w.querySelector('.yc-bar.now'); });
+        });
+        __cdAfterNow(Array.from(card.querySelectorAll('.transit-row')), function(r){ return r.classList.contains('active'); });
+        __cdAfterNow(Array.from(card.querySelectorAll('.tl-row')), function(r){ return r.classList.contains('active'); });
+        __cdAfterNow(Array.from(card.querySelectorAll('.age-chip')), function(r){ return r.classList.contains('now'); });
       });
 
       // Graficele Destinului se re-randează la schimbarea tab-ului — re-aplicăm masca viitorului.
