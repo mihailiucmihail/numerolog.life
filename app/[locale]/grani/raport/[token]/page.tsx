@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getRaportByToken } from '@/app/actions/raport'
@@ -25,7 +26,9 @@ export default async function GraniRaportPage({
       <StarField />
       <Navbar />
       <div className="relative z-10 pb-8 pt-20">
-        <RaportViewer formData={formData} reportType="grani" />
+        <Suspense fallback={null}>
+          <RaportViewer formData={formData} reportType="grani" />
+        </Suspense>
       </div>
       <Footer />
     </main>

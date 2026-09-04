@@ -26,14 +26,18 @@
   --ui: var(--sans);
 }
 *{box-sizing:border-box;}
-:root{color-scheme:light;}
-html,body{margin:0;padding:0;background-color:transparent !important;background:transparent !important;color:var(--parchment);font-family:var(--sans);-webkit-text-size-adjust:100%;
+html,body{margin:0;padding:0;background-color:#161022;background:var(--ink);color:var(--parchment);font-family:var(--sans);-webkit-text-size-adjust:100%;
   -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;
   font-size:clamp(15px,0.5vw + 14px,16.5px);line-height:1.65;letter-spacing:-0.005em;font-weight:400;}
 body{
-  background:transparent;
-  min-height:0;
-  padding: 0 6px 80px;
+  background:
+    radial-gradient(ellipse at 20% -10%, rgba(110,35,52,0.35), transparent 55%),
+    radial-gradient(ellipse at 90% 10%, rgba(74,58,99,0.35), transparent 50%),
+    var(--ink);
+  background-size: 160% 160%, 160% 160%, 100% 100%;
+  animation: bgDrift 26s ease-in-out infinite alternate;
+  min-height:100vh;
+  padding: 32px 18px 80px;
   position:relative;
 }
 @keyframes bgDrift{
@@ -41,7 +45,7 @@ body{
   50%{ background-position: 35% 5%, 70% 25%, 0 0; }
   100%{ background-position: 10% 0%, 100% 0%, 0 0; }
 }
-.bg-anim{display:none !important;}
+.bg-anim{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0;background-color:#161022;}
 .bg-star{
   position:absolute;border-radius:50%;background:var(--parchment);
   animation:starTwinkle ease-in-out infinite;
@@ -63,10 +67,10 @@ body{
   90%{ opacity:0.5; }
   100%{ transform:translateY(-110vh) translateX(var(--drift,20px)); opacity:0; }
 }
-.wrap{width:100%;max-width:none;margin:0;position:relative;z-index:1;}
-.hero{text-align:center;margin-bottom:36px;position:relative;padding-top:56px;}
+.wrap{max-width:920px;margin:0 auto;position:relative;z-index:1;}
+.hero{text-align:center;margin-bottom:36px;position:relative;}
 .hero .hero-glow{
-  position:absolute;top:8px;left:50%;transform:translateX(-50%);
+  position:absolute;top:-40px;left:50%;transform:translateX(-50%);
   width:280px;height:280px;pointer-events:none;z-index:0;
   background:radial-gradient(circle, rgba(217,169,79,0.22) 0%, rgba(217,169,79,0.08) 40%, transparent 70%);
   filter:blur(4px);
@@ -112,8 +116,6 @@ body{
 }
 .hero p{position:relative;z-index:1;color:var(--parchment-dim);font-size:clamp(15px,1.1vw,17px);max-width:560px;margin:0 auto;line-height:1.65;letter-spacing:-0.003em;font-weight:400;}
 .hero p .hero-highlight{color:var(--brass-bright);font-weight:600;}
-.hero p + p{margin-top:10px;}
-.hero p.hero-question{margin-top:16px;font-size:clamp(16px,1.2vw,18px);}
 .hero{opacity:0;transform:translateY(-10px);animation:heroRise 1s cubic-bezier(.16,.84,.44,1) .15s forwards;}
 @keyframes heroRise{to{opacity:1;transform:translateY(0);}}
 @keyframes heroShimmer{0%{background-position:0% 50%;}100%{background-position:220% 50%;}}
@@ -125,8 +127,8 @@ body{
 }
 
 .card{
-  background-color:transparent;
-  background:transparent;
+  background-color:#1c1529;
+  background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), #1c1529;
   border:1px solid var(--line);
   border-radius:2px;
   padding:26px 28px;
@@ -152,14 +154,6 @@ body{
 }
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;}
 .form-grid .full{grid-column:1/-1;}
-.genderpick{display:flex;gap:10px;}
-.genderpick button{
-  flex:1;background:rgba(0,0,0,0.25);border:1px solid var(--line);color:var(--parchment-dim);
-  padding:11px 12px;font-family:inherit;font-size:14px;letter-spacing:.04em;
-  cursor:pointer;border-radius:6px;transition:border-color .2s ease,background .2s ease,color .2s ease;
-}
-.genderpick button:hover{border-color:rgba(217,169,79,0.6);color:var(--parchment);}
-.genderpick button.on{border-color:var(--brass-bright);background:rgba(217,169,79,0.16);color:#fff3d6;}
 label{
   display:block;font-family:var(--sans);font-size:10.5px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--brass-bright);margin-bottom:7px;
@@ -179,12 +173,10 @@ input::placeholder{color:rgba(237,227,207,0.3);}
   color:#1a1220;border:none;padding:14px;font-family:var(--sans);
   letter-spacing:.16em;text-transform:uppercase;font-size:12.5px;font-weight:600;
   cursor:pointer;border-radius:1px;
-  transition:filter .2s ease, transform .14s cubic-bezier(0.34,1.56,0.64,1), box-shadow .2s ease;
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
-  box-shadow:0 6px 18px rgba(217,169,79,0.18);
-  }
-.btn:hover{filter:brightness(1.08);box-shadow:0 8px 24px rgba(217,169,79,0.28);}
-.btn:active{transform:scale(0.96) translateY(1px);filter:brightness(0.94);box-shadow:0 2px 8px rgba(217,169,79,0.15), inset 0 2px 6px rgba(26,18,32,0.25);transition-duration:.07s;}
+  transition:filter .15s ease, transform .1s ease;
+}
+.btn:hover{filter:brightness(1.08);}
+.btn:active{transform:translateY(1px);}
 .hint{font-size:15.5px;color:var(--parchment-dim);margin-top:10px;line-height:1.6;}
 .hint[style="margin:14px 0 10px;text-align:left;"]{font-size:15px;font-weight:600;color:var(--brass-bright);letter-spacing:.01em;line-height:1.4;}
 
@@ -279,10 +271,8 @@ input::placeholder{color:rgba(237,227,207,0.3);}
   background:transparent;border:1px solid var(--line);color:var(--parchment-dim);
   font-family:var(--sans);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
   padding:9px 14px;cursor:pointer;transition:all .2s ease;border-radius:1px;
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
 }
 .chart-tab:hover{border-color:var(--brass-bright);color:var(--parchment);}
-.chart-tab:active{transform:scale(0.94);transition-duration:.07s;}
 .chart-tab.active{background:var(--brass);border-color:var(--brass);color:#1a1220;font-weight:600;}
 
 .chart-stage{position:relative;width:100%;}
@@ -614,12 +604,10 @@ select option{color:#1a1420;background:#fff;}
 
   <div class="hero">
     <div class="hero-glow" aria-hidden="true"></div>
-    <div class="hero-crystal" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 22 12 12 22 2 12Z"/><path d="M12 7 17 12 12 17 7 12Z" fill="currentColor" fill-opacity=".55"/></svg></div>
+    <div class="hero-crystal" aria-hidden="true">◈</div>
     <div class="eyebrow">Персональный разбор</div>
-    <h1><span class="hero-lead">Открой свой</span><span class="hero-caps">Кристалл Судьбы</span></h1>
-    <p>Введи свои данные и узнай, что Кристалл Судьбы расскажет именно о тебе — о твоём характере, отношениях, деньгах, предназначении и важных периодах жизни.</p>
-    <p>А персональные графики покажут, какой путь ты уже прошёл и где находишься сейчас.</p>
-    <p class="hero-question"><span class="hero-highlight">Готов узнать себя с неожиданной стороны?</span></p>
+    <h1><span class="hero-lead">Твой</span><span class="hero-caps">Кристалл Судьбы</span></h1>
+    <p>Твоё имя и дата рождения хранят ответы о характере, судьбе и жизненном пути — <span class="hero-highlight">узнай, что скрыто именно в тебе</span>.</p>
   </div>
 
   <div class="card" id="inputFormCard">
@@ -674,37 +662,14 @@ select option{color:#1a1420;background:#fff;}
         </div>
       </div>
       <div class="full">
-        <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(на него придёт постоянная ссылка на твой разбор)</span></label>
-        <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="" required>
-      </div>
-      <div class="full" id="promoField" hidden style="display:none;">
-        <label>Промокод <span style="opacity:.5;text-transform:none;letter-spacing:0;">(необязательно — скидка 15 %, действует один раз)</span></label>
-        <input id="promoCode" type="text" placeholder="CRISTAL15-XXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" value="" style="text-transform:uppercase;letter-spacing:.08em;">
-        <div id="promoMsg" style="display:none;margin-top:8px;font-size:13px;line-height:1.5;"></div>
-      </div>
-      <div class="full">
-        <label>Пол</label>
-        <div class="genderpick" id="pGender">
-          <button type="button" data-g="f" onclick="setGender('f')">Женщина</button>
-          <button type="button" data-g="m" onclick="setGender('m')">Мужчина</button>
-        </div>
-        <p class="note" id="pGenderNote" style="opacity:.5;text-transform:none;letter-spacing:0;font-size:13px;margin:6px 0 0;">Определим по имени — если ошибёмся, поправь одним касанием.</p>
-        <select id="gender" style="display:none;">
+        <label>Пол <span style="opacity:.5;text-transform:none;letter-spacing:0;">(для Китайской школы нумерологии)</span></label>
+        <select id="gender" style="width:100%;padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:6px;color:var(--parchment);font-family:inherit;font-size:15px;">
           <option value="m">Мужской</option>
           <option value="f" selected>Женский</option>
         </select>
       </div>
     </div>
-    <button id="mainCalcBtn" class="btn" onclick="cdMainAction()">Рассчитать мой Кристалл Судьбы →</button>
-    <script>
-      document.addEventListener('DOMContentLoaded', function(){
-        paintGender();
-        for(const id of ['firstName','lastName']){
-          const el = document.getElementById(id);
-          if(el) el.addEventListener('input', autoGender);
-        }
-      });
-    </script>
+    <button class="btn" onclick="calculate()">Рассчитать Кристалл</button>
     <div class="err" id="errMsg"></div>
     <div class="hint">Выбери алфавит, соответствующий языку имени — Карта Имени и связанные с ней расчёты используют значения букв именно этого алфавита. Классическое правило: базовым считается имя именно так, как оно записано в свидетельстве о рождении, на языке того документа — это основной, «корневой» расчёт. Если имя позже официально менялось (новые документы, смена гражданства, замужество), эту более позднюю форму можно посчитать отдельно как дополнительный слой — но она не заменяет базовый расчёт по свидетельству о рождении.</div>
   </div>
@@ -1506,57 +1471,6 @@ function lastNotZero(n){
   const s = String(n);
   for(let i=s.length-1;i>=0;i--){ if(s[i]!=='0') return parseInt(s[i],10); }
   return 0;
-}
-// Автоопределение пола по имени И фамилии — портировано из "Грани" (тот же дизайн кнопок,
-// та же логика уверенности). Фамилия — более сильный сигнал (окончания -ов/-ова и т.п.),
-// имя — по гласному окончанию + список исключений. При полной неопределённости — женский
-// (в среднем ошибка реже: женщины заказывают разбор чаще).
-const GENDER_MALE_A = ['никита','илья','данила','данило','савва','лука','фома','кузьма','гаврила','мина','сила',
-  'luca','andrea','nicola','elia','matia','kolya','ilya','nikita','sasha'];
-const GENDER_FEM_SUR = ['ова','ева','ёва','ина','ына','ская','цкая','ная','яя','ая'];
-const GENDER_MALE_SUR = ['ов','ев','ёв','ин','ын','ский','цкий','ой','ый','ий'];
-function guessGenderClean(s){ return String(s || '').trim().toLowerCase(); }
-function guessGender(name, surname){
-  const n = guessGenderClean(name), s = guessGenderClean(surname);
-  let score = 0, strong = false;
-  for(const e of GENDER_FEM_SUR) if(s.endsWith(e)){ score += 2; strong = true; break; }
-  if(!strong) for(const e of GENDER_MALE_SUR) if(s.endsWith(e)){ score -= 2; strong = true; break; }
-  if(n.length >= 2){
-    if(GENDER_MALE_A.includes(n)) score -= 2;
-    else if(/[аяaăа]$/i.test(n)) score += 2; // женское окончание — и кириллица, и латиница
-    else score -= 1;
-  }
-  return {gender: score >= 0 ? 'f' : 'm', confident: strong && Math.abs(score) >= 2};
-}
-let GENDER_TOUCHED = false;
-function paintGender(){
-  const box = document.getElementById('pGender');
-  if(!box) return;
-  const cur = document.getElementById('gender').value;
-  for(const b of box.querySelectorAll('button')) b.classList.toggle('on', b.dataset.g === cur);
-}
-function setGender(g){
-  document.getElementById('gender').value = g;
-  GENDER_TOUCHED = true; paintGender();
-  const n = document.getElementById('pGenderNote'); if(n) n.textContent = 'Выбрано вручную.';
-}
-function autoGender(){
-  if(GENDER_TOUCHED) return;
-  const name = document.getElementById('firstName').value;
-  const sur = document.getElementById('lastName').value;
-  if(!name && !sur) return;
-  const g = guessGender(name, sur);
-  document.getElementById('gender').value = g.gender; paintGender();
-  const n = document.getElementById('pGenderNote');
-  if(n) n.textContent = g.confident ? 'Определили по имени и фамилии.'
-                                     : 'Определили по имени — проверь, пожалуйста.';
-}
-function readMail(){
-  const el = document.getElementById('emailAddr');
-  const v = el ? el.value.trim() : '';
-  if(v === '') return {ok:false, msg:'Укажи email — на него придёт постоянная ссылка на твой разбор.'};
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return {ok:false, msg:'Проверь адрес почты — похоже, в нём опечатка.'};
-  return {ok:true, value:v};
 }
 function letterToNumber(letter, alphabet){
   let up = letter.toUpperCase();
@@ -4017,16 +3931,6 @@ function calculate(){
     err.style.display='block';
     return;
   }
-  const mailCheck = window.__cdSkipMail ? {ok:true, value:''} : readMail();
-  if(!mailCheck.ok){
-    err.textContent = mailCheck.msg;
-    err.style.display='block';
-    return;
-  }
-  // Почта провалидирована. Пока просто сохраняем локально (в браузере посетителя) —
-  // для реального сбора лидов сюда нужно подключить свой webhook / Google Sheet / CRM
-  // (например: fetch('https://твой-эндпоинт', {method:'POST', body: JSON.stringify({email: mailCheck.value})})).
-  try{ if(mailCheck.value) localStorage.setItem('crystal_last_email', mailCheck.value); }catch(e){}
   const last = document.getElementById('lastName').value.trim();
   const first = document.getElementById('firstName').value.trim();
   const middle = document.getElementById('middleName').value.trim();
@@ -4057,7 +3961,6 @@ function calculate(){
   }
 
   const r = computeAll(last, first, middle, day, month, year, nameAlphabetKey);
-  window.__cdLastResult = r;
 
   // Скрыть форму ввода и показать красивую сводку введённых данных
   const inputFormCard = document.getElementById('inputFormCard');
@@ -5195,7 +5098,7 @@ function calculate(){
   const notesBox = document.getElementById('pythNotes');
   if(notesBox){
     if(r.gridNotes && r.gridNotes.length){
-      notesBox.innerHTML = '<div class="hint" style="margin:0 0 10px;text-align:left;">Сравнение Карта Рождения ↔ Карта Имени — где цифры отличаются:</div>' +
+      notesBox.innerHTML = '<div class="hint" style="margin:0 0 10px;text-align:left;">Сравнение Карта Рождения ↔ Карта Имени (метод Айрэн По / Джули По) — где цифры отличаются:</div>' +
         r.gridNotes.map(n=>{
           const txt = DB.gridComparison[String(n.digit)][n.scenario];
           const label = n.scenario==='birth_more' ? `${channels[n.digit]} (${n.digit}): больше в Карта Рождения` : `${channels[n.digit]} (${n.digit}): больше в Карта Имени`;
@@ -6074,480 +5977,5 @@ function startPdfExport(){
 </script>
 
 </div>
-<script>
-    // ==== Bridge integrare aplicație principală: resize, plată Stripe, raport permanent ====
-    // Înălțimea CONȚINUTULUI, nu a documentului: body are min-height:100vh, iar în iframe 100vh =
-    // înălțimea iframe-ului → scrollHeight ar crește la infinit (buclă resize). Măsurăm .wrap.
-    function __cdContentHeight(){
-      const wrap = document.querySelector('.wrap') || document.body;
-      const rect = wrap.getBoundingClientRect();
-      const bottom = rect.bottom + window.scrollY;
-      const pad = parseFloat(getComputedStyle(document.body).paddingBottom) || 0;
-      return Math.ceil(bottom + pad + 8);
-    }
-    function __cdSendHeight(){
-      window.parent.postMessage({ type: 'resize', height: __cdContentHeight() }, '*');
-    }
-
-    // Modul raport: completează automat datele din link și afișează direct raportul.
-    (function(){
-      const params = new URLSearchParams(window.location.search);
-      if(params.get('auto') !== '1') return;
-      window.__cdSkipMail = true; // emailul a fost deja colectat la plată
-      const values = {
-        lastName: params.get('last') || '',
-        firstName: params.get('first') || '',
-        middleName: params.get('middle') || '',
-        day: params.get('day') || '',
-        month: params.get('month') || '',
-        year: params.get('year') || '',
-      };
-      window.addEventListener('DOMContentLoaded', function(){
-        Object.entries(values).forEach(([id, value]) => {
-          const field = document.getElementById(id);
-          if(field) field.value = value;
-        });
-        const gender = params.get('gender');
-        if(gender && document.getElementById('gender')) document.getElementById('gender').value = gender;
-        const alpha = params.get('alpha');
-        if(alpha && document.getElementById('nameAlphabetSelect')) document.getElementById('nameAlphabetSelect').value = alpha;
-        window.__paymentUnlocked = true;
-        const hero = document.querySelector('.hero');
-        if(hero) hero.style.display = 'none';
-        const inputCard = document.getElementById('inputFormCard');
-        if(inputCard) inputCard.style.display = 'none';
-        if(typeof calculate === 'function') calculate();
-        setTimeout(function(){
-          window.parent.postMessage({ type: 'reportRendered', height: __cdContentHeight() }, '*');
-        }, 250);
-      });
-    })();
-
-    // Bridge pentru checkout-ul Stripe și raportul permanent din aplicația principală.
-    function requestPayment(){
-      const err = document.getElementById('errMsg');
-      const email = (document.getElementById('emailAddr') && document.getElementById('emailAddr').value.trim()) || '';
-      const day = Number(document.getElementById('day').value);
-      const month = Number(document.getElementById('month').value);
-      const year = Number(document.getElementById('year').value);
-      if(!day || !month || !year || day < 1 || day > 31 || month < 1 || month > 12 || year < 1900){
-        err.textContent = 'Введи корректную дату рождения (день, месяц, год).';
-        err.style.display = 'block';
-        return;
-      }
-      if(document.getElementById('emailAddr') && (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))){
-        err.textContent = 'Введи корректный email, чтобы получить отчёт.';
-        err.style.display = 'block';
-        return;
-      }
-      err.style.display = 'none';
-      if(window.__paymentUnlocked){ calculate(); return; }
-      const promoEl = document.getElementById('promoCode');
-      const discountCode = promoEl ? promoEl.value.trim().toUpperCase().replace(/\s+/g, '') : '';
-      const data = {
-        last: document.getElementById('lastName').value.trim(),
-        first: document.getElementById('firstName').value.trim(),
-        middle: document.getElementById('middleName').value.trim(),
-        day, month, year, email,
-        gender: document.getElementById('gender').value,
-        nameAlphabetKey: typeof getNameAlphabetKey === 'function' ? getNameAlphabetKey() : undefined,
-        discountCode: discountCode || undefined
-      };
-      window.parent.postMessage({ type: 'requestPayment', data }, '*');
-      const btn = document.getElementById('mainCalcBtn');
-      if(btn){ btn.disabled = true; btn.textContent = 'Обработка...'; }
-    }
-
-    // Промокод: валидация на сервере через родительское окно (без побочных эффектов).
-    (function(){
-      const promoEl = document.getElementById('promoCode');
-      const promoMsg = document.getElementById('promoMsg');
-      if(!promoEl || !promoMsg) return;
-      let timer = null;
-      function showPromo(text, ok){
-        promoMsg.textContent = text;
-        promoMsg.style.color = ok ? 'var(--brass-bright, #D4AF37)' : '#e07a7a';
-        promoMsg.style.display = text ? 'block' : 'none';
-      }
-      function askValidate(){
-        const code = promoEl.value.trim().toUpperCase().replace(/\s+/g, '');
-        if(!code){ showPromo('', true); return; }
-        window.parent.postMessage({ type: 'validatePromo', code }, '*');
-      }
-      promoEl.addEventListener('input', function(){
-        promoEl.value = promoEl.value.toUpperCase();
-        clearTimeout(timer);
-        timer = setTimeout(askValidate, 450);
-      });
-      promoEl.addEventListener('blur', askValidate);
-      window.addEventListener('message', function(event){
-        if(!event.data) return;
-        if(event.data.type === 'promoResult'){
-          const r = event.data.result || {};
-          if(r.valid){
-            showPromo('Промокод принят: −' + r.percent + ' % → ' + r.finalPrice + ' вместо ' + r.basePrice + '.', true);
-          } else {
-            const reasons = {
-              format: 'Неверный формат промокода.',
-              not_found: 'Такой промокод не существует.',
-              used: 'Этот промокод уже был использован.'
-            };
-            showPromo(reasons[r.reason] || 'Промокод недействителен.', false);
-          }
-        }
-        if(event.data.type === 'prefillPromo' && event.data.code){
-          promoEl.value = String(event.data.code).toUpperCase();
-          askValidate();
-        }
-        if(event.data.type === 'paymentError'){
-          const err = document.getElementById('errMsg');
-          if(err && event.data.message){ err.textContent = event.data.message; err.style.display = 'block'; }
-        }
-      });
-    })();
-
-    window.addEventListener('message', function(event){
-      if(!event.data) return;
-      if(event.data.type === 'paymentSuccess'){
-        window.__paymentUnlocked = true;
-        window.__cdSkipMail = true;
-        const data = event.data.formData || {};
-        ['lastName','firstName','middleName','day','month','year'].forEach((id) => {
-          if(document.getElementById(id) && data[id] != null) document.getElementById(id).value = data[id];
-        });
-        if(document.getElementById('emailAddr') && data.email != null) document.getElementById('emailAddr').value = data.email;
-        if(data.gender) document.getElementById('gender').value = data.gender;
-        if(data.nameAlphabetKey && document.getElementById('nameAlphabetSelect')) document.getElementById('nameAlphabetSelect').value = data.nameAlphabetKey;
-        if(event.data.hideForm){
-          const hero = document.querySelector('.hero');
-          if(hero) hero.style.display = 'none';
-          const inputCard = document.getElementById('inputFormCard');
-          if(inputCard) inputCard.style.display = 'none';
-        }
-        calculate();
-        const btn = document.getElementById('mainCalcBtn');
-        if(btn){ btn.disabled = false; btn.textContent = 'Рассчитать Кристалл'; }
-      }
-      if(event.data.type === 'paymentCancelled'){
-        const btn = document.getElementById('mainCalcBtn');
-        if(btn){ btn.disabled = false; btn.textContent = 'Рассчитать Кристалл'; }
-      }
-      if(event.data.type === 'requestHeight'){
-        __cdSendHeight();
-      }
-    });
-
-    // Trimite înălțimea la load și la orice schimbare de conținut/dimensiune.
-    window.addEventListener('load', function(){
-      __cdSendHeight();
-      setTimeout(__cdSendHeight, 400);
-      if(typeof ResizeObserver !== 'undefined'){
-        const ro = new ResizeObserver(function(){ __cdSendHeight(); });
-        ro.observe(document.body);
-      }
-    });
-    window.addEventListener('resize', __cdSendHeight);
-  </script>
-<style>
-    /* ==== Mod preview (raport gratuit, parțial blurat) — activ doar cu ?preview=1 ==== */
-    .cd-preview .hero,
-    .cd-preview #inputFormCard,
-    .cd-preview #pdfDownloadCard{display:none !important;}
-    /* În timpul ecranului „Cristalul se formează” conţinutul iframe-ului este invizibil (raportul se calculează
-       în fundal); când aplicaţia trimite `previewReveal`, apare cu un fade lin. */
-    body.cd-forming > *{opacity:0 !important;transition:none !important;}
-    body > *{transition:opacity .7s ease;}
-    /* Blur PUTERNIC — folosit doar pe grafice (viitorul în bare/rânduri/linii). */
-    .cd-lock{
-      filter:blur(11px) saturate(.7);
-      opacity:.5;
-      user-select:none;-webkit-user-select:none;
-      pointer-events:none;
-    }
-    .cd-lock *{pointer-events:none !important;}
-    .cd-preview .cd-lock summary::after{content:"" !important;}
-    .cd-preview details.cd-lock[open] .body{max-height:120px;overflow:hidden;}
-    /* Card cu chenar dublu: primele 30 % lizibile; restul 70 % — blur care creşte TREPTAT (fără linie bruscă).
-       Două straturi cu backdrop-filter, fiecare cu margine „topită” prin mask-image → efect de ceaţă care se îngroaşă. */
-    .cd-part{position:relative;user-select:none;-webkit-user-select:none;}
-    .cd-part > *:not(.section-title):not(.cd-unlock){pointer-events:none;}
-    /* Tab-urile graficelor (Карьера / Личная жизнь / …) rămân interactive şi în preview,
-       deasupra straturilor de blur — utilizatorul poate comuta graficele înainte de plată. */
-    .cd-preview .cd-part .chart-tabs,
-    .cd-preview .cd-part .chart-tabs *{pointer-events:auto !important;}
-    .cd-preview .cd-part .chart-tabs{position:relative;z-index:5;}
-    /* Telefon: marginile minime, raportul cât mai lat. */
-    @media (max-width:560px){
-      body{padding:12px 4px 48px !important;}
-      .card{padding:14px 10px !important;margin-bottom:12px !important;}
-      .cd-unlock-text{font-size:12.5px;}
-    }
-    .cd-part::before,.cd-part::after{
-      content:"";position:absolute;left:0;right:0;bottom:0;z-index:2;pointer-events:none;
-    }
-    /* Strat 1 — ceaţă uşoară, începe la 30 % şi se instalează pe următoarele ~22 % din card. */
-    .cd-part::before{
-      top:var(--cd-cut,30%);
-      backdrop-filter:blur(4px) saturate(.9);-webkit-backdrop-filter:blur(4px) saturate(.9);
-      -webkit-mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 22%, rgba(0,0,0,1) 100%);
-              mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 22%, rgba(0,0,0,1) 100%);
-    }
-    /* Strat 2 — blur moderat, începe mai jos (≈ 42 %) şi se îngroaşă lent până la capătul cardului. */
-    .cd-part::after{
-      top:calc(var(--cd-cut,30%) + 12%);
-      backdrop-filter:blur(7px) saturate(.85);-webkit-backdrop-filter:blur(7px) saturate(.85);
-      background:linear-gradient(180deg, rgba(22,16,34,0) 0%, rgba(22,16,34,.1) 45%, rgba(22,16,34,.2) 100%);
-      -webkit-mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 100%);
-              mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 100%);
-    }
-    /* Graficele ies DEASUPRA stratului moderat: trecutul rămâne clar, viitorul are propria mască puternică. */
-    .cd-preview .cd-part .chart-stage,
-    .cd-preview .cd-part #yearlyCycleChart,
-    .cd-preview .cd-part #qualityOfLifeChart,
-    .cd-preview .cd-part #transitSchedule,
-    .cd-preview .cd-part .meta-timeline,
-    .cd-preview .cd-part .mandala-chart-svg{position:relative;z-index:3;}
-    /* În grafice, „viitorul” = blur puternic (suprascrie stratul moderat). */
-    .cd-preview .cd-part .cd-lock{filter:blur(11px) saturate(.7);opacity:.35;}
-    /* CTA pe zona blurată (în locul badge-ului din colţ): text + buton către plată. */
-    .cd-unlock{
-      position:absolute;left:0;right:0;z-index:4;
-      top:calc(var(--cd-cut,30%) + (100% - var(--cd-cut,30%)) / 2);
-      transform:translateY(-50%);
-      display:flex;flex-direction:column;align-items:center;gap:10px;
-      padding:0 16px;text-align:center;pointer-events:none;
-    }
-    .cd-unlock-text{
-      font:500 13px/1.5 var(--sans, Inter, sans-serif);letter-spacing:.02em;
-      color:#f1e6cf;text-shadow:0 1px 14px rgba(22,16,34,.95), 0 0 2px rgba(22,16,34,.9);
-      max-width:360px;
-    }
-    .cd-unlock-btn{
-      pointer-events:auto;cursor:pointer;
-      display:inline-flex;align-items:center;gap:8px;
-      font:600 11px/1 var(--sans, Inter, sans-serif);letter-spacing:.16em;text-transform:uppercase;
-      color:#1a1220;background:linear-gradient(180deg,var(--brass-bright,#d9a94f),var(--brass,#b8863b));
-      border:0;border-radius:2px;padding:12px 18px;
-      box-shadow:0 8px 28px rgba(217,169,79,.28);
-      transition:transform .15s ease, box-shadow .15s ease;
-    }
-    .cd-unlock-btn:hover{transform:translateY(-1px);box-shadow:0 12px 34px rgba(217,169,79,.4);}
-    .cd-unlock-btn::after{content:"→";font-size:13px;}
-    /* Carduri scunde: doar butonul, ancorat în partea de jos a zonei blurate (nu peste textul vizibil). */
-    .cd-unlock.cd-unlock-compact .cd-unlock-text{display:none;}
-    .cd-unlock.cd-unlock-compact{top:auto;bottom:14px;transform:none;}
-    .cd-preview .card{position:relative;}
-    .cd-future-mask{
-      position:absolute;top:0;bottom:0;right:0;z-index:2;pointer-events:none;
-      backdrop-filter:blur(18px) saturate(.6);-webkit-backdrop-filter:blur(18px) saturate(.6);
-      background:linear-gradient(90deg, rgba(22,16,34,.9), rgba(22,16,34,.97) 18%, rgba(22,16,34,.97));
-      border-left:1px dashed rgba(217,169,79,.85);
-    }
-    .cd-future-mask::after{
-      content:"будущее — в полном разборе";
-      position:absolute;top:10px;left:10px;right:10px;
-      font:600 9.5px/1.3 var(--sans, Inter, sans-serif);letter-spacing:.14em;text-transform:uppercase;
-      color:var(--brass-bright,#d9a94f);
-    }
-    .cd-preview .mandala-future-line{filter:blur(7px);opacity:.12 !important;}
-    .cd-preview .chart-tooltip{display:none !important;}
-</style>
-<script>
-    // ==== Preview blocat: raportul real; fiecare card 30 % vizibil / 70 % blur gradual moderat, grafice: viitor blurat puternic ====
-    function __cdAfterNow(items, isNow){
-      // Toate elementele DUPĂ cel „curent” (sau după ultimul „trecut”) devin blurate = viitor.
-      let ni = -1;
-      items.forEach(function(el, i){ if(isNow(el)) ni = i; });
-      if(ni < 0) return;
-      items.forEach(function(el, i){ if(i > ni) el.classList.add('cd-lock'); });
-    }
-    function __cdMaskFuture(stage){
-      if(!stage) return;
-      const svg = stage.querySelector('svg');
-      if(!svg) return;
-      let mask = stage.querySelector(':scope > .cd-future-mask');
-      const now = svg.querySelector('#nowLine, .now-line');
-      const vb = (svg.getAttribute('viewBox') || '0 0 640 320').split(/\s+/).map(Number);
-      const width = vb[2] || 640;
-      if(!now){
-        // Fără marker „acum” (vârstă în afara graficului): blurăm tot graficul.
-        if(mask) mask.remove();
-        svg.classList.add('cd-lock');
-        return;
-      }
-      svg.classList.remove('cd-lock');
-      const x = parseFloat(now.getAttribute('x1') || '0');
-      const pct = Math.max(8, Math.min(96, (x / width) * 100));
-      // Eticheta „Возраст N” rămâne complet vizibilă: o aliniem la STÂNGA liniei „acum”.
-      const lbg = svg.querySelector('#nowLabelBg'), ltx = svg.querySelector('#nowLabelText');
-      if(lbg && ltx){
-        const lw = parseFloat(lbg.getAttribute('width') || '74');
-        const nx = Math.max(4, x - lw - 6);
-        lbg.setAttribute('x', nx.toFixed(1));
-        ltx.setAttribute('x', (nx + lw / 2).toFixed(1));
-      }
-      if(!mask){
-        mask = document.createElement('div');
-        mask.className = 'cd-future-mask';
-        stage.appendChild(mask);
-      }
-      mask.style.left = pct.toFixed(2) + '%';
-      mask.style.width = 'auto';
-    }
-    // Texte de marketing (rotite pe carduri, ca să nu fie repetitiv).
-    const __CD_UNLOCK_TEXTS = [
-      'Этот раздел уже рассчитан для тебя. Открой его — и узнай, что он говорит именно о твоей судьбе.',
-      'Самое важное — здесь, под размытием. Полный разбор открывается сразу после оплаты.',
-      'Твои числа уже говорят. Осталось только прочитать, что именно.',
-      'Здесь скрыт ответ, ради которого ты пришёл. Открой полный разбор — он твой навсегда.'
-    ];
-    function __cdRequestUnlock(){
-      try{ window.parent.postMessage({ type: 'unlockRequested' }, '*'); }catch(e){}
-    }
-    function __cdBadge(card){
-      if(card.querySelector(':scope > .cd-unlock')) return;
-      const idx = document.querySelectorAll('.cd-unlock').length;
-      const wrap = document.createElement('div');
-      wrap.className = 'cd-unlock' + (card.offsetHeight < 260 ? ' cd-unlock-compact' : '');
-      const t = document.createElement('p');
-      t.className = 'cd-unlock-text';
-      t.textContent = __CD_UNLOCK_TEXTS[idx % __CD_UNLOCK_TEXTS.length];
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'cd-unlock-btn';
-      b.textContent = 'Смотреть полный разбор';
-      b.addEventListener('click', __cdRequestUnlock);
-      wrap.appendChild(t); wrap.appendChild(b);
-      card.appendChild(wrap);
-    }
-    function __cdApplyPreviewLock(){
-      document.body.classList.add('cd-preview');
-      const results = document.getElementById('results');
-      if(!results) return;
-      const cards = Array.from(results.querySelectorAll(':scope > .card'));
-      cards.forEach(function(card){
-        if(card.id === 'pdfDownloadCard' || card.id === 'personalDataSummary') return;
-        const title = ((card.querySelector('.section-title') || {}).textContent || '');
-        // 1) Rezultatul gratuit: „День Рождения” — complet vizibil.
-        if(/День Рождения/.test(title)) return;
-        // 2) FIECARE card cu chenar dublu: primele 30 % lizibile, restul 70 % blur gradual (moderat).
-        card.classList.add('cd-part');
-        card.style.setProperty('--cd-cut', '30%');
-        __cdBadge(card);
-        // 3) Graficele (deasupra stratului moderat): trecutul clar, viitorul blurat PUTERNIC.
-        card.querySelectorAll('.chart-stage').forEach(__cdMaskFuture);
-        card.querySelectorAll('#yearlyCycleChart, #qualityOfLifeChart').forEach(function(box){
-          const wraps = Array.from(box.querySelectorAll('.yc-bar-wrap'));
-          __cdAfterNow(wraps, function(w){ return !!w.querySelector('.yc-bar.now'); });
-        });
-        __cdAfterNow(Array.from(card.querySelectorAll('.transit-row')), function(r){ return r.classList.contains('active'); });
-        __cdAfterNow(Array.from(card.querySelectorAll('.tl-row')), function(r){ return r.classList.contains('active'); });
-        __cdAfterNow(Array.from(card.querySelectorAll('.age-chip')), function(r){ return r.classList.contains('now'); });
-      });
-
-      // Graficele Destinului se re-randează la schimbarea tab-ului — re-aplicăm masca viitorului.
-      const life = document.getElementById('lifeChartSvg');
-      if(life && typeof MutationObserver !== 'undefined' && !life.__cdObserved){
-        life.__cdObserved = true;
-        const mo = new MutationObserver(function(){
-          window.requestAnimationFrame(function(){ __cdMaskFuture(life.parentElement); });
-        });
-        mo.observe(life, { childList: true });
-      }
-    }
-
-    // Datele formularului — trimise aplicației pentru checkout (emailul este obligatoriu în formular;
-    // la plată este doar afişat pentru confirmare).
-    function __cdCollectForm(){
-      const g = function(id){ const el = document.getElementById(id); return el ? String(el.value || '').trim() : ''; };
-      return {
-        last: g('lastName'), first: g('firstName'), middle: g('middleName'),
-        day: Number(g('day')), month: Number(g('month')), year: Number(g('year')),
-        email: g('emailAddr'),
-        gender: g('gender'),
-        nameAlphabetKey: typeof getNameAlphabetKey === 'function' ? getNameAlphabetKey() : undefined,
-        discountCode: (g('promoCode') || '').toUpperCase().replace(/\s+/g, '') || undefined
-      };
-    }
-
-    // Butonul formularului ORIGINAL: calculează real în acelaşi fişier, apoi arată raportul întreg blurat.
-    function __cdPreviewCalculate(){
-      window.__cdSkipMail = false; // emailul este OBLIGATORIU: calculate() → readMail() îl validează
-      window.__cdPreviewMode = true;
-      window.__cdLastResult = null;
-      const err = document.getElementById('errMsg');
-      if(err) err.style.display = 'none';
-      // Ascundem raportul ÎNAINTE de calcul: aplicaţia pune ecranul „Cristalul se formează” peste pagină,
-      // iar conţinutul din iframe rămâne invizibil (opacity 0) până când ecranul dispare → nicio străpungere.
-      document.body.classList.add('cd-forming');
-      window.parent.postMessage({ type: 'previewStarted' }, '*');
-      if(typeof calculate === 'function') calculate();
-      const ok = !!(window.__cdLastResult && document.getElementById('results'));
-      if(!ok){
-        // Validarea a eşuat → revenim la formular vizibil şi anunţăm aplicaţia să închidă ecranul.
-        document.body.classList.remove('cd-forming');
-        window.parent.postMessage({ type: 'previewFailed' }, '*');
-        return;
-      }
-      document.body.classList.add('cd-preview');
-      __cdApplyPreviewLock();
-      window.scrollTo(0, 0);
-      const data = __cdCollectForm();
-      window.parent.postMessage({ type: 'previewRendered', data: data, height: __cdContentHeight() }, '*');
-      setTimeout(function(){
-        // Elementele animate (bare, puncte) apar cu întârziere — a doua trecere prinde tot.
-        __cdApplyPreviewLock();
-        window.parent.postMessage({ type: 'resize', height: __cdContentHeight() }, '*');
-      }, 900);
-    }
-    function cdMainAction(){
-      if(window.__paymentUnlocked){ if(typeof calculate === 'function') calculate(); return; }
-      __cdPreviewCalculate();
-    }
-    // Aplicaţia anunţă că ecranul de formare se închide → raportul apare lin.
-    window.addEventListener('message', function(ev){
-      if(ev.data && ev.data.type === 'previewReveal'){
-        document.body.classList.remove('cd-forming');
-      }
-    });
-
-    // Mod preview din link (ex. întoarcere de la Stripe): completează datele, calculează, apoi blochează.
-    (function(){
-      const params = new URLSearchParams(window.location.search);
-      if(params.get('preview') !== '1') return;
-      window.__cdSkipMail = true;
-      window.__cdPreviewMode = true;
-      window.addEventListener('DOMContentLoaded', function(){
-        const values = {
-          lastName: params.get('last') || '',
-          firstName: params.get('first') || '',
-          middleName: params.get('middle') || '',
-          day: params.get('day') || '',
-          month: params.get('month') || '',
-          year: params.get('year') || '',
-        };
-        Object.keys(values).forEach(function(id){
-          const field = document.getElementById(id);
-          if(field) field.value = values[id];
-        });
-        const gender = params.get('gender');
-        if(gender && document.getElementById('gender')){
-          document.getElementById('gender').value = gender;
-          if(typeof paintGender === 'function') try{ paintGender(); }catch(e){}
-        }
-        const alpha = params.get('alpha');
-        if(alpha && document.getElementById('nameAlphabetSelect')) document.getElementById('nameAlphabetSelect').value = alpha;
-        document.body.classList.add('cd-preview');
-        if(typeof calculate === 'function') calculate();
-        const ok = !!(window.__cdLastResult && document.getElementById('results'));
-        if(ok) __cdApplyPreviewLock();
-        setTimeout(function(){
-          // Elementele animate (bare, puncte) apar cu întârziere — a doua trecere prinde tot.
-          if(ok) __cdApplyPreviewLock();
-          window.parent.postMessage({ type: ok ? 'previewRendered' : 'previewFailed', data: ok ? __cdCollectForm() : null, height: __cdContentHeight() }, '*');
-        }, 900);
-      });
-    })();
-</script>
 </body>
 </html>

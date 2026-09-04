@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { StarField } from '@/components/star-field'
@@ -28,7 +29,10 @@ export default async function CristalulRaportPage({
       <StarField />
       <Navbar />
       <div className="relative z-10 pt-20 pb-8">
-        <RaportViewer formData={formData} />
+        {/* RaportViewer citește `?reveal=1` (useSearchParams) → necesită Suspense. */}
+        <Suspense fallback={null}>
+          <RaportViewer formData={formData} />
+        </Suspense>
       </div>
       <Footer />
     </main>

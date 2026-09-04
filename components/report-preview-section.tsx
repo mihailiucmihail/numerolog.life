@@ -4,26 +4,29 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ArrowRight, Lock, Star } from "lucide-react"
 import { useLocale, useTranslations } from "next-intl"
+import { useCurrency } from "@/components/providers/currency-provider"
 
 const SECTION_I18N = {
   ro: {
     lockTitle: "Răspunsul complet — în raportul tău",
     lockNote: "Calculele individuale arată numerele tale, perioadele, relațiile, resursele și punctele concrete de creștere.",
     cta: "Primesc analiza mea",
-    price: "19,00 € — o singură plată",
+    price: "{price} — o singură plată",
   },
   ru: {
     lockTitle: "Полный ответ — в твоём разборе",
     lockNote: "Индивидуальные расчёты покажут твои числа, периоды, отношения, ресурсы и конкретные точки роста.",
     cta: "Получить мой разбор",
-    price: "19,00 € — разовая оплата",
+    price: "{price} — разовая оплата",
   },
 } as const
 
 export function ReportPreviewSection() {
   const t = useTranslations("reportPreview")
   const locale = useLocale()
-  const S = SECTION_I18N[locale as keyof typeof SECTION_I18N] ?? SECTION_I18N.ru
+  const { prices, format } = useCurrency()
+  const base = SECTION_I18N[locale as keyof typeof SECTION_I18N] ?? SECTION_I18N.ru
+  const S = { ...base, price: base.price.replace('{price}', format(prices.cristal)) }
 
   return (
     <section className="relative overflow-hidden pt-4 pb-12 sm:pt-6 sm:pb-16">

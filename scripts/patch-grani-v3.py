@@ -46,17 +46,29 @@ rep(".facets{display:grid;grid-template-columns:1fr;gap:16px;}\n",
 .more-count{font-size:12px;opacity:.7;letter-spacing:.02em;text-transform:none;}
 """)
 
-# 3. Markup buton
+# 2b. Fără mențiuni de sursă / disclaimer în rapoarte: elimină toate paragrafele
+#     `<p class="foot">Источник: ...</p>` din template-urile fațetelor (regulă permanentă).
+_src_re = re.compile(r'\n?<p class="foot">Источник:.*?</p>', re.S)
+_n_src = len(_src_re.findall(s))
+assert _n_src >= 1, 'nu am găsit paragrafe „Источник” de eliminat'
+s = _src_re.sub('', s)
+assert 'Источник:' not in s, 'au rămas mențiuni „Источник:” după curățare'
+# Text vizibil în fațeta „Потоки” care numea autorii calendarului — păstrăm doar explicația.
+rep(" Перевод дат берётся из «Мантического календаря» Айрэн и Джули По и сверен с ним по всем таблицам с 1930 по 2030 год.</p>",
+    " Перевод дат сверен по таблицам с 1930 по 2030 год.</p>")
+assert 'Айрэн По и Джули По' not in s and 'Айрэн и Джули По' not in s.split('<script')[0], 'autori vizibili rămași în markup'
+
+# 3. Markup buton și eliminarea textului promoțional Grani
 rep("""    <div class="facets" id="facetGrid"></div>
 
-    <p class="foot"><em>Каждая грань — отдельный расчёт.</em>""",
+    <p class="foot"><em>Каждая грань — отдельный расчёт.</em><br>Полный разбор по всем инструментам сразу — в «Кристалле Судьбы».</p>
+  </section>""",
 """    <div class="facets" id="facetGrid"></div>
 
     <div class="more-wrap" id="moreWrap" hidden>
       <button class="more" type="button" id="moreBtn" onclick="showMoreFacets()">Показать ещё<span class="more-count" id="moreCount"></span></button>
     </div>
-
-    <p class="foot"><em>Каждая грань — отдельный расчёт.</em>""")
+  </section>""")
 
 # 4. Butoanele -> plata Stripe (niciodata calc direct)
 for fn, facet in [('calcProf','professiya'),('calcLife','lichnaya'),('calcMoney','finansy'),
@@ -128,6 +140,29 @@ const FACET_PREFIX = {professiya:'p', lichnaya:'l', finansy:'f', opv:'o', sozhal
 /* Fațete cu grafic — 4,99 €; restul — 1,99 €. Prețul real e recalculat pe server (lib/products.ts). */
 const GRAPH_FACETS = new Set(['lichnaya', 'finansy', 'kariera', 'karma', 'sudba', 'volya', 'kachestvo']);
 
+/* Monedă locală (tenge pentru Kazahstan, lei pentru Moldova): părintele trimite ?cur=kzt|mdl&ps=<preț standard>&pg=<preț grafic>.
+   Aici doar înlocuim textul afișat; suma reală e decisă pe server (lib/currency.ts). */
+(function(){
+  try{
+    const q = new URLSearchParams(window.location.search);
+    const cur = q.get('cur');
+    if(cur && cur !== 'eur'){
+      const ps = q.get('ps') || '', pg = q.get('pg') || '';
+      if(ps && pg){
+        const swap = () => {
+          document.querySelectorAll('.pricerow .amount, .price').forEach(el => {
+            const t = (el.textContent || '').trim().replace(/\\u00a0/g, ' ');
+            if(t === '1,99 €') el.textContent = ps;
+            else if(t === '4,99 €') el.textContent = pg;
+          });
+        };
+        swap();
+        new MutationObserver(swap).observe(document.documentElement, { childList: true, subtree: true });
+      }
+    }
+  }catch(e){}
+})();
+
 /* Кнопка расчёта: сначала оплата через Stripe, результат приходит по ссылке */
 function requestPayment(facet){
   const prefix = FACET_PREFIX[facet] || 'p';
@@ -192,8 +227,12 @@ function initSavedReport(){
 
 /* Sincronizare înălțime cu iframe-ul părinte */
 let lastReportedHeight = 0;
-function reportFrameHeight(){
+function reportFrameHeight(force){
   if(window.parent === window) return;
+  /* Nu raportăm până nu există conținut randat (hub cu carduri sau o vedere de fațetă activă);
+     o măsurătoare prematură ar trunchia iframe-ul din pagina părinte. */
+  const grid = document.getElementById('facetGrid');
+  if(grid && grid.offsetParent !== null && grid.children.length === 0) return;
   /* Măsurăm conținutul real, nu viewportul - evită bucla cu min-height:100vh */
   let bottom = 0;
   for(const el of document.body.children){
@@ -202,7 +241,9 @@ function reportFrameHeight(){
     if(r.height > 0) bottom = Math.max(bottom, r.bottom + window.scrollY);
   }
   const h = Math.ceil(bottom + 40);
-  if(h > 0 && Math.abs(h - lastReportedHeight) > 2){
+  /* force=true retrimite chiar dacă înălțimea nu s-a schimbat: prima trimitere poate
+     ajunge înainte ca părintele (React) să fi atașat listener-ul și s-ar pierde. */
+  if(h > 0 && (force === true || Math.abs(h - lastReportedHeight) > 2)){
     lastReportedHeight = h;
     /* RaportViewer ascultă 'resize', GraniPaymentFrame ascultă 'grani-resize' */
     window.parent.postMessage({ type:'resize', height:h }, window.location.origin);
@@ -211,10 +252,13 @@ function reportFrameHeight(){
 }
 if(window.parent !== window){
   document.body.style.minHeight = '0';
-  if('ResizeObserver' in window){ new ResizeObserver(reportFrameHeight).observe(document.body); }
-  window.addEventListener('load', reportFrameHeight);
-  window.addEventListener('hashchange', () => setTimeout(reportFrameHeight, 50));
-  setInterval(reportFrameHeight, 1500);
+  if('ResizeObserver' in window){ new ResizeObserver(() => reportFrameHeight()).observe(document.body); }
+  window.addEventListener('load', () => reportFrameHeight(true));
+  window.addEventListener('hashchange', () => setTimeout(() => reportFrameHeight(true), 50));
+  /* Părintele cere explicit înălțimea după ce și-a montat listener-ul */
+  window.addEventListener('message', (e) => { if(e.origin === window.location.origin && e.data && e.data.type === 'grani-request-height') reportFrameHeight(true); });
+  /* Heartbeat forțat: garantează sincronizarea chiar dacă mesajele inițiale s-au pierdut */
+  setInterval(() => reportFrameHeight(true), 1500);
 }
 
 renderHub();

@@ -10,6 +10,7 @@ import { NewsletterSection } from "@/components/newsletter/newsletter-section"
 import { NewsletterPopup } from "@/components/newsletter/newsletter-popup"
 import { ReportPreviewSection } from "@/components/report-preview-section"
 import { GraniPaymentFrame } from "@/components/grani-payment-frame"
+import { PROMO_ENABLED } from "@/lib/promo-flags"
 
 export default function HomePage() {
   return (
@@ -25,10 +26,11 @@ export default function HomePage() {
         </div>
       </section>
       <HowItWorksSection />
-      <NewsletterSection />
+      {/* Secțiunea și popup-ul newsletter promit −15 % → ascunse cât timp promoțiile sunt oprite. */}
+      {PROMO_ENABLED && <NewsletterSection />}
       <FAQSection />
       <Footer />
-      <NewsletterPopup />
+      {PROMO_ENABLED && <NewsletterPopup />}
     </main>
   )
 }

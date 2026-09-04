@@ -3,6 +3,8 @@
 import crypto from 'crypto'
 import { db } from '@/lib/db'
 import { Resend } from 'resend'
+import { getStripe } from '@/lib/stripe'
+import { consumePromoCode } from '@/lib/promo'
 
 interface FormData {
   last: string
@@ -37,6 +39,20 @@ export async function saveRaportAndSendEmail(
     VALUES (${token}, ${email}, ${sessionId}, ${db.json(formData as any)})
     ON CONFLICT (token) DO NOTHING
   `
+
+  // Codul promoțional (dacă a fost aplicat) devine folosit doar după ce Stripe confirmă plata.
+  // Citim metadata direct de la Stripe — clientul nu poate falsifica codul sau statusul.
+  if (reportType === 'cristal') {
+    try {
+      const session = await getStripe().checkout.sessions.retrieve(sessionId)
+      const promoCode = session.metadata?.promoCode
+      if (promoCode && session.payment_status === 'paid') {
+        await consumePromoCode(promoCode, sessionId, session.customer_details?.email ?? email)
+      }
+    } catch (err) {
+      console.error('[v0] consumePromoCode error:', err)
+    }
+  }
 
   // Trimite email
   try {

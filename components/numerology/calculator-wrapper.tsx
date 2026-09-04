@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { startNumerologieCheckout, getNumerologieSessionStatus } from '@/app/actions/stripe'
 import { saveRaportAndSendEmail } from '@/app/actions/raport'
+import { checkPromoCode } from '@/app/actions/promo'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Loader2 } from 'lucide-react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
@@ -17,6 +18,7 @@ interface FormData {
   email: string
   gender?: string
   nameAlphabetKey?: string
+  discountCode?: string
 }
 
 export default function CalculatorWrapper() {
@@ -79,15 +81,20 @@ export default function CalculatorWrapper() {
   }, [])
 
   const handleRequestPayment = useCallback(async (formData: FormData) => {
+    // Codul tastat în formular are prioritate față de cel din URL (?discount=).
+    const { discountCode: typedCode, ...reportData } = formData
+    const codeToApply = typedCode || discountCode
     try {
       // localStorage persista cross-redirect (spre deosebire de sessionStorage care se pierde)
-      localStorage.setItem('cristalul_form_data', JSON.stringify(formData))
-      const checkoutUrl = await startNumerologieCheckout(formData.email, locale, formData, discountCode)
+      localStorage.setItem('cristalul_form_data', JSON.stringify(reportData))
+      const checkoutUrl = await startNumerologieCheckout(reportData.email, locale, reportData, codeToApply)
       window.location.href = checkoutUrl
-    } catch {
+    } catch (err) {
       setShowLoading(false)
       localStorage.removeItem('cristalul_form_data')
+      const message = err instanceof Error ? err.message : ''
       iframeRef.current?.contentWindow?.postMessage({ type: 'paymentCancelled' }, '*')
+      if (message) iframeRef.current?.contentWindow?.postMessage({ type: 'paymentError', message }, '*')
     }
   }, [locale, discountCode])
 
@@ -99,12 +106,23 @@ export default function CalculatorWrapper() {
       if (event.data?.type === 'requestPayment' && event.data.data) {
         handleRequestPayment(event.data.data)
       }
+      if (event.data?.type === 'validatePromo' && typeof event.data.code === 'string') {
+        checkPromoCode(event.data.code)
+          .then((result) => {
+            iframeRef.current?.contentWindow?.postMessage({ type: 'promoResult', result }, '*')
+          })
+          .catch(() => {})
+      }
     }
     window.addEventListener('message', handleMessage)
 
     const iframe = iframeRef.current
     const onLoad = () => {
-      try { iframe?.contentWindow?.postMessage({ type: 'requestHeight' }, '*') } catch {}
+      try {
+        iframe?.contentWindow?.postMessage({ type: 'requestHeight' }, '*')
+        // Precompletăm codul venit din emailul/popup-ul de reducere.
+        if (discountCode) iframe?.contentWindow?.postMessage({ type: 'prefillPromo', code: discountCode }, '*')
+      } catch {}
     }
     iframe?.addEventListener('load', onLoad)
 
@@ -112,7 +130,7 @@ export default function CalculatorWrapper() {
       window.removeEventListener('message', handleMessage)
       iframe?.removeEventListener('load', onLoad)
     }
-  }, [handleRequestPayment])
+  }, [handleRequestPayment, discountCode])
 
   return (
     <>
@@ -123,7 +141,6 @@ export default function CalculatorWrapper() {
           style={{ width: '100%', height, border: 'none', display: 'block', background: 'transparent', colorScheme: 'light' }}
           title="Cristalul Destinului Calculator"
           scrolling="no"
-          allowTransparency={true}
         />
       </div>
 

@@ -96,7 +96,6 @@ export function Footer() {
 
         <div className="mt-14 flex flex-col-reverse items-center gap-3 border-t border-primary/10 pt-8 sm:flex-row sm:justify-between">
           <p className="text-xs text-muted-foreground/50">{t("rights")}</p>
-          <p className="text-xs text-muted-foreground/40">{t("registeredNote")}</p>
         </div>
       </div>
     </footer>

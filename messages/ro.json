@@ -23,14 +23,14 @@
     "trustAI": "Calcul Precis",
     "trustTime": "60 Secunde",
     "trustPrivate": "100% Privat",
-    "ctaPrimary": "Primește analiza mea",
-    "ctaPrimaryNote": "Analiză personală • acces după plata securizată • 19,00 €",
+    "ctaPrimary": "Calculează Cristalul meu →",
+    "ctaPrimaryNote": "Primul rezultat — gratuit",
     "ctaSecondary": "Vezi ce primești",
     "ctaSecondaryNote": "22 Arcane • harta numelui • cicluri și recomandări",
     "reviews": "recenzii",
     "scroll": "Descoperă"
   },
-    "destiny": {
+  "destiny": {
     "badge": "Cristalul Destinului",
     "titleLine1": "Descoperă cine ești",
     "titleLine2": "cu adevărat",
@@ -131,7 +131,7 @@
     "ctaTitle": "Cristalul tău al Destinului — complet",
     "ctaDesc": "Primește analiza personalizată completă cu calcule individuale, cicluri de viață și grafice vizuale.",
     "ctaButton": "Primește analiza mea",
-    "ctaPrice": "19,00 € — plată unică"
+    "ctaPrice": "{price} — plată unică"
   },
   "testimonials": {
     "badge": "Testimoniale",
@@ -185,8 +185,8 @@
     "feature6": "Carieră, relații și autorealizare",
     "feature7": "Interpretări, recomandări și sinteză personalizată",
     "feature8": "Raport complet în format ușor de consultat",
-    "cta": "Primește analiza mea — 19,00 €",
-    "ctaNote": "Primești acces după plata securizată · 19,00 €",
+    "cta": "Primește analiza mea — {price}",
+    "ctaNote": "Primești acces după plata securizată · {price}",
     "trustSecure": "Plată securizată",
     "trustInstant": "Livrare instant",
     "trustGuarantee": "Garanție 30 zile"
@@ -207,7 +207,7 @@
     "q5": "Este sigură confidențialitatea datelor mele?",
     "a5": "Datele tale sunt protejate cu criptare de nivel bancar (AES-256). Nu partajăm niciodată informațiile tale cu terți și nu le folosim în alte scopuri decât generarea raportului tău. Poți solicita ștergerea completă a datelor oricând din setările contului.",
     "q6": "Ce include analiza completă?",
-    "a6": "Primești o interpretare structurată a celor 22 de Arcane, harta numelui, metaciclu, cronologia etapelor, straturile karmice, graficul vieții, tranzitele planetare și recomandări personalizate — totul pentru 19,00 €, cu plată unică.",
+    "a6": "Primești o interpretare structurată a celor 22 de Arcane, harta numelui, metaciclu, cronologia etapelor, straturile karmice, graficul vieții, tranzitele planetare și recomandări personalizate — totul pentru {price}, cu plată unică.",
     "q7": "Cum pot contacta suportul?",
     "a7": "Poți contacta echipa noastră la contact@numerolog.life. Răspundem de obicei în maxim 24 de ore.",
     "q8": "Este o predicție sigură?",
@@ -220,6 +220,15 @@
     "disclaimerText": "NUMEROLOG.life este un instrument de reflecție și autocunoaștere. Interpretările numerologice nu sunt concluzii științifice și nu înlocuiesc consultanța medicală, psihologică, juridică, financiară sau alte servicii profesionale.",
     "stillHaveQuestions": "Nu ai găsit răspunsul?",
     "contactCta": "Scrie-ne un mesaj"
+  },
+  "blog": {
+    "eyebrow": "Jurnalul AstroAI",
+    "title": "Cunoaștere care îți deschide drumul",
+    "description": "Articole despre numerologie, astrologie și ritmul interior al vieții.",
+    "readMore": "Citește articolul",
+    "backToBlog": "Înapoi la blog",
+    "emptyTitle": "Articolele sunt pe drum",
+    "emptyDescription": "Pregătim primele materiale despre numere, stele și semne care te ajută să te înțelegi mai bine. Revino în curând."
   },
   "footer": {
     "tagline": "Numerologie personalizată pentru autocunoaștere. Descoperă-ți Cristalul Destinului.",
@@ -242,8 +251,7 @@
     "regComLabel": "Nr. Reg. Com.",
     "addressLabel": "Sediu social",
     "verifyRegistry": "Verifică la Registrul Comerțului",
-    "writeUs": "Scrie-ne",
-    "registeredNote": "Companie înregistrată în România"
+    "writeUs": "Scrie-ne"
   },
   "numerologie": {
     "title": "Cristalul Destinului",
@@ -262,7 +270,7 @@
     "errorDate": "Introdu o dată de naștere validă (zi, lună, an).",
     "errorEmail": "Introdu o adresă de email validă pentru a primi raportul.",
     "report": "Raport complet — acces permanent, fără plată suplimentară",
-    "price": "19,00 €"
+    "price": "{price}"
   },
   "newsletter": {
     "badge": "Reducere -15%",
@@ -298,6 +306,80 @@
     "errorTitle": "Link invalid",
     "errorText": "Nu am găsit un abonament pentru acest link. Este posibil să fii deja dezabonat.",
     "home": "Spre pagina principală"
+  },
+  "funnel": {
+    "heroEyebrow": "Numerologie personalizată",
+    "heroTitle1": "Descoperă-ți",
+    "heroTitle2": "Cristalul Destinului",
+    "heroSubtitle": "Analiză personală după nume și data nașterii: cine ești, unde îți stă puterea și care perioade ale vieții devin decisive.",
+    "heroCta": "Calculează Cristalul meu →",
+    "heroNote": "Primul rezultat — gratuit",
+    "formTitle": "Să începem cu tine",
+    "formSubtitle": "Introdu datele — și deschidem prima parte a Cristalului tău.",
+    "firstName": "Prenume",
+    "lastName": "Nume de familie",
+    "middleName": "Patronimic",
+    "optional": "opțional",
+    "addMiddleName": "+ adaugă patronimicul",
+    "birthDate": "Data nașterii",
+    "day": "Zi",
+    "month": "Lună",
+    "year": "An",
+    "gender": "Gen",
+    "female": "Feminin",
+    "male": "Masculin",
+    "formCta": "Calculează →",
+    "formPrivacy": "Datele sunt folosite doar pentru calcul. Fără email și fără card.",
+    "errorName": "Introdu prenumele și numele de familie.",
+    "errorDate": "Introdu o dată de naștere validă (zi, lună, an).",
+    "errorGender": "Alege genul — influențează o parte din calcule.",
+    "errorAlphabet": "Verifică numele: folosește litere dintr-un singur alfabet (chirilic sau latin).",
+    "errorCalc": "Calculul nu a reușit. Încearcă din nou.",
+    "computing": "Îți calculăm Cristalul…",
+    "computingHint": "22 de Arcane · harta numelui · ciclurile vieții",
+    "previewEyebrow": "Raportul tău este calculat",
+    "previewTitle": "Cristalul Destinului pentru {name}",
+    "previewSubtitle": "Mai jos este raportul tău real. Ziua nașterii și prima Arcană a numelui sunt deschise; interpretările-cheie și viitorul din grafice sunt încețoșate până la deblocare.",
+    "previewLegend": "Trecutul este vizibil · viitorul și interpretările — în raportul complet",
+    "previewFrameTitle": "Cristalul Destinului — previzualizare",
+    "stickyTitle": "Deschide raportul complet",
+    "stickyCta": "Deblochează →",
+    "paywallTitle": "Deschide-ți Cristalul complet",
+    "paywallSubtitle": "Toate calculele, graficele și interpretările personale — într-un singur raport complet.",
+    "paywallEmail": "Email pentru linkul permanent al raportului",
+    "paywallEmailPlaceholder": "nume@email.com",
+    "paywallPromo": "Ai un cod promoțional?",
+    "paywallPromoPlaceholder": "CRISTAL15-XXXXXX",
+    "paywallCta": "Deschide întregul Cristal →",
+    "paywallNote": "Plată unică · acces complet la raportul tău",
+    "paywallProcessing": "Trecem la plată…",
+    "errorEmail": "Introdu un email valid — pe el primești linkul permanent al raportului.",
+    "errorCheckout": "Nu am putut deschide plata. Încearcă din nou.",
+    "editData": "Modifică datele",
+    "paidTitle": "Plata este confirmată",
+    "paidText": "Îți deschidem Cristalul…",
+    "cancelledNotice": "Plata nu a fost finalizată. Calculul tău este salvat — poți continua oricând.",
+    "paywallEmailConfirm": "Linkul raportului vine pe",
+    "paywallEmailChange": "Modifică",
+    "loadingEyebrow": "Cristalul Destinului",
+    "loadingPreviewTitle": "Cristalul tău se formează",
+    "loadingPreviewPhrases": [
+      "Citim numele și data nașterii…",
+      "Traducem numerele în cele 22 de Arcane…",
+      "Construim fațetele Cristalului — una după alta…",
+      "Calculăm metaciclurile și ciclurile anuale…",
+      "Desenăm graficele personale ale drumului vieții…",
+      "Cristalul este aproape gata…"
+    ],
+    "loadingPaidTitle": "Deschidem Cristalul tău al Destinului",
+    "loadingPaidPhrases": [
+      "Plata a fost confirmată. Deschidem raportul complet…",
+      "Ridicăm blurul de pe fiecare fațetă a Cristalului…",
+      "Dezvăluim perioadele viitoare pe grafice…",
+      "Salvăm raportul — linkul permanent pleacă spre emailul tău…",
+      "Cristalul Destinului este deschis complet"
+    ],
+    "raportBanner": "Raportul tău{name} — acces permanent, fără plată suplimentară. Un link a fost trimis și pe emailul tău."
   },
   "language": "Limba"
 }

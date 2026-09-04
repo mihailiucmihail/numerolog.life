@@ -1,9 +1,24 @@
 "use server"
 
 import { getStripe } from "@/lib/stripe"
-import { getPlan, getProduct, getGraniPriceInCents } from "@/lib/products"
+import { getPlan, getProduct, GRANI_GRAPH_FACETS } from "@/lib/products"
 import { createClient } from "@/lib/supabase/server"
-import { db } from "@/lib/db"
+import { validatePromoCodeServer, normalizePromoCode } from "@/lib/promo"
+import { getRequestCurrency } from "@/lib/currency-server"
+import { PRICES, getGraniPriceMinor } from "@/lib/currency"
+
+const PROMO_ERRORS = {
+  ro: {
+    format: 'Codul promoțional are un format invalid.',
+    not_found: 'Codul promoțional nu există.',
+    used: 'Acest cod promoțional a fost deja folosit.',
+  },
+  ru: {
+    format: 'Неверный формат промокода.',
+    not_found: 'Такой промокод не существует.',
+    used: 'Этот промокод уже был использован.',
+  },
+} as const
 
 export async function startNumerologieCheckout(
   email?: string,
@@ -15,26 +30,35 @@ export async function startNumerologieCheckout(
   if (!product) throw new Error('Produsul nu a fost găsit.')
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
-  const normalizedCode = discountCode?.trim().toUpperCase()
-  const eligible = normalizedCode
-    ? await db<{ email: string }[]>`SELECT email FROM newsletter_subscribers WHERE email = ${email?.toLowerCase().trim()} AND discount_code = ${normalizedCode} AND discount_activated_at IS NOT NULL LIMIT 1`
-    : []
-  const unitAmount = 1900 // 19 EUR
   const isRu = locale === 'ru'
+
+  // Moneda vizitatorului (KZ -> tenge, altfel euro) și prețul — decise EXCLUSIV pe server:
+  // prețul de listă sau, cu un cod valid și nefolosit, prețul de listă − 15 %.
+  const currency = await getRequestCurrency()
+  let unitAmount = PRICES[currency].cristal
+  let appliedPromo: string | null = null
+  if (normalizePromoCode(discountCode)) {
+    const promo = await validatePromoCodeServer(discountCode, currency)
+    if (!promo.valid) {
+      const msgs = PROMO_ERRORS[isRu ? 'ru' : 'ro']
+      // Nu facturăm în tăcere prețul întreg — utilizatorul trebuie să afle că codul nu e valid.
+      throw new Error(promo.reason === 'empty' ? msgs.format : msgs[promo.reason])
+    }
+    unitAmount = promo.finalMinor
+    appliedPromo = promo.code
+  }
+
   const productName = isRu ? 'Кристалл Судьбы' : product.name
-  const productDescription = isRu
-    ? 'Полный численный разбор — метод Айрен и Джули По, 22 Аркана, метациклы жизни, графики и Квадрат Пифагора.'
-    : product.description
 
   const stripe = getStripe()
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
         price_data: {
-          currency: product.currency,
+          currency,
+          // Doar denumirea raportului — fără descriere, metodă sau autori pe pagina de plată.
           product_data: {
-            name: productName,
-            description: productDescription,
+            name: appliedPromo ? `${productName} (−15 %)` : productName,
           },
           unit_amount: unitAmount,
         },
@@ -43,7 +67,11 @@ export async function startNumerologieCheckout(
     ],
     mode: 'payment',
     ...(email ? { customer_email: email } : {}),
-    metadata: formData ? { formData: JSON.stringify(formData) } : undefined,
+    metadata: {
+      currency,
+      ...(formData ? { formData: JSON.stringify(formData) } : {}),
+      ...(appliedPromo ? { promoCode: appliedPromo } : {}),
+    },
     success_url: `${baseUrl}/${locale}/numerologie?payment=success&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/${locale}/numerologie?payment=cancelled`,
   })
@@ -66,20 +94,22 @@ export async function startGraniCheckout(
   }
   const isRu = locale === 'ru'
   const productName = isRu ? 'Грани Судьбы — индивидуальный расчёт' : product.name
-  const productDescription = isRu ? 'Отдельный расчёт из «Кристалла Судьбы».' : product.description
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
+  // Moneda vizitatorului (KZ -> tenge, altfel euro); prețul per fațetă e decis pe server.
+  const currency = await getRequestCurrency()
   const session = await getStripe().checkout.sessions.create({
     mode: 'payment',
     line_items: [{
       price_data: {
-        currency: product.currency,
-        product_data: { name: `${productName} — ${facet}`, description: productDescription },
-        unit_amount: getGraniPriceInCents(facet), // 1,99 € standard / 4,99 € cu grafic — decis pe server
+        currency,
+        // Doar denumirea — fără descriere pe pagina de plată.
+        product_data: { name: `${productName} — ${facet}` },
+        unit_amount: getGraniPriceMinor(facet, currency, GRANI_GRAPH_FACETS), // standard / cu grafic — decis pe server
       },
       quantity: 1,
     }],
     customer_email: normalizedEmail,
-    metadata: { productId: product.id, reportType: "grani", facet, ...(formData ? { formData: JSON.stringify(formData) } : {}) },
+    metadata: { productId: product.id, reportType: "grani", facet, currency, ...(formData ? { formData: JSON.stringify(formData) } : {}) },
     success_url: `${baseUrl}/${locale}/grani/${encodeURIComponent(facet)}?grani_payment=success&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/${locale}?grani_payment=cancelled`,
   })
@@ -95,6 +125,7 @@ export async function getNumerologieSessionStatus(sessionId: string) {
     paymentStatus: session.payment_status,
     customerEmail: session.customer_details?.email ?? null,
     formData: session.metadata?.formData ?? null,
+    promoCode: session.metadata?.promoCode ?? null,
   }
 }
 

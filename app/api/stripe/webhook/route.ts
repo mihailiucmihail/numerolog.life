@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import type Stripe from "stripe"
 import { getStripe } from "@/lib/stripe"
 import { createAdminClient } from "@/lib/supabase/admin"
+import { consumePromoCode } from "@/lib/promo"
 
 // Stripe trimite payload-ul brut; dezactivam parsarea automata.
 export const runtime = "nodejs"
@@ -37,6 +38,17 @@ export async function POST(request: NextRequest) {
       // Plată reușită la finalizarea checkout-ului
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session
+
+        // Cod promoțional de unică folosință (Cristalul Destinului): marcat folosit la plata confirmată.
+        const promoCode = session.metadata?.promoCode
+        if (promoCode && session.payment_status === "paid") {
+          try {
+            await consumePromoCode(promoCode, session.id, session.customer_details?.email ?? null)
+          } catch (err) {
+            console.error("[v0] Eroare la consumarea codului promo:", err)
+          }
+        }
+
         const userId = session.metadata?.userId
         const planId = session.metadata?.planId
         const customerId = typeof session.customer === "string" ? session.customer : null

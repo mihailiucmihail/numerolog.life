@@ -9,16 +9,19 @@ import {
 import { Sparkles, ArrowUpRight } from "lucide-react"
 import { useTranslations } from "next-intl"
 import Link from "next/link"
+import { useCurrency } from "@/components/providers/currency-provider"
 
 export function FAQSection() {
   const t = useTranslations("faq")
+  const { prices, format } = useCurrency()
+  const price = format(prices.cristal)
   const faqs = [
     { question: t("q1"), answer: t("a1") },
     { question: t("q2"), answer: t("a2") },
     { question: t("q3"), answer: t("a3") },
     { question: t("q4"), answer: t("a4") },
     { question: t("q5"), answer: t("a5") },
-    { question: t("q6"), answer: t("a6") },
+    { question: t("q6"), answer: t("a6", { price }) },
     { question: t("q7"), answer: t("a7") },
     { question: t("q8"), answer: t("a8") },
     { question: t("q9"), answer: t("a9") },
