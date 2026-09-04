@@ -596,6 +596,25 @@ select option{color:#1a1420;background:#fff;}
   body{background:var(--bg,#1a1220) !important;}
 }
 #printChartsContainer{display:none;}
+
+/* Funnel: rezultat gratuit + deblocare raport completă */
+.checkout-field{display:none;}
+body.funnel-preview .checkout-field{display:block;}
+body.funnel-preview #inputFormCard .hint{display:none;}
+#funnelPremium{display:none;}
+body.funnel-preview #funnelPremium{display:block;}
+body.funnel-preview #results > .card:not(#personalDataSummary):not(:nth-child(2)):not(#nameCard){display:none;}
+body.funnel-preview #nameCard{display:block;}
+body.funnel-unlocked #funnelPremium{display:none!important;}
+body.funnel-unlocked #results > .card{display:block!important;}
+.funnel-offer{margin-top:20px;padding:22px 18px;border:1px solid var(--brass);background:linear-gradient(180deg,rgba(217,169,79,.12),rgba(110,35,52,.12));text-align:center;box-shadow:0 0 26px rgba(217,169,79,.08);}
+.funnel-offer h2{margin:0 0 8px;color:var(--parchment);font-family:var(--serif);font-size:clamp(22px,6vw,30px);font-weight:500;}
+.funnel-offer p{margin:0 auto 14px;max-width:540px;color:var(--parchment-dim);font-size:14px;line-height:1.6;}
+.funnel-offer .funnel-price{color:var(--brass-bright);font-family:var(--serif);font-size:25px;margin-bottom:14px;}
+.funnel-offer button{margin-top:0;max-width:420px;}
+.funnel-offer .funnel-note{margin-top:10px;margin-bottom:0;font-size:11px;color:var(--parchment-dim);opacity:.8;}
+@media (max-width:600px){.funnel-offer{padding:20px 14px}.funnel-offer p{font-size:13px}}
+
 </style>
 </head>
 <body>
@@ -625,7 +644,7 @@ select option{color:#1a1420;background:#fff;}
         <label>Отчество <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(необязательно, но рекомендуем — для более полного и точного разбора)</span></label>
         <input id="middleName" type="text" placeholder="ex: Петрович" autocomplete="off" value="">
       </div>
-      <div class="full">
+      <div class="full checkout-field">
         <label>Алфавит имени <span style="opacity:.5;text-transform:none;letter-spacing:0;">(язык/письменность, на которой записано имя)</span></label>
         <select id="nameAlphabetSelect" style="width:100%;padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:6px;color:var(--parchment);font-family:inherit;font-size:15px;">
           <option value="ru" selected>Русский</option>
@@ -661,16 +680,16 @@ select option{color:#1a1420;background:#fff;}
           <input id="year" type="number" min="1900" max="2100" placeholder="Год" value="">
         </div>
       </div>
-      <div class="full">
+      <div class="full checkout-field">
         <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(на него придёт постоянная ссылка на твой отчёт)</span></label>
         <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="">
       </div>
-      <div class="full">
+      <div class="full checkout-field">
         <label>Промокод <span style="opacity:.5;text-transform:none;letter-spacing:0;">(необязательно — скидка 15 %, действует один раз)</span></label>
         <input id="promoCode" type="text" placeholder="CRISTAL15-XXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" value="" style="text-transform:uppercase;letter-spacing:.08em;">
         <div id="promoMsg" style="display:none;margin-top:8px;font-size:13px;line-height:1.5;"></div>
       </div>
-      <div class="full">
+      <div class="full checkout-field">
         <label>Пол <span style="opacity:.5;text-transform:none;letter-spacing:0;">(для Китайской школы нумерологии)</span></label>
         <select id="gender" style="width:100%;padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:6px;color:var(--parchment);font-family:inherit;font-size:15px;">
           <option value="m">Мужской</option>
@@ -684,6 +703,14 @@ select option{color:#1a1420;background:#fff;}
   </div>
 
   <div id="results">
+
+    <div id="funnelPremium" class="funnel-offer" aria-live="polite">
+      <h2>Твой полный разбор уже готов</h2>
+      <p>Ты увидел(а) ключевые числа. Открой полный персональный отчёт: предназначение, кармические уроки, отношения, деньги, жизненные циклы, графики и подробные рекомендации.</p>
+      <div class="funnel-price" id="funnelPrice">19 €</div>
+      <button class="btn" type="button" onclick="requestPayment()">Получить полный разбор</button>
+      <p class="funnel-note">Постоянная ссылка на отчёт придёт на email после оплаты.</p>
+    </div>
 
     <div class="card" id="personalDataSummary" style="display:none;">
       <div style="text-align:center;">
@@ -6037,13 +6064,30 @@ function startPdfExport(){
         err.style.display = 'block';
         return;
       }
+      err.style.display = 'none';
+      if(window.__paymentUnlocked){ calculate(); return; }
+      if(!window.__funnelPreviewShown){
+        const firstName = (document.getElementById('firstName').value || '').trim();
+        const lastName = (document.getElementById('lastName').value || '').trim();
+        if(!firstName || !lastName){
+          err.textContent = 'Введи имя и фамилию, чтобы увидеть свой бесплатный результат.';
+          err.style.display = 'block';
+          return;
+        }
+        window.__funnelPreviewShown = true;
+        document.body.classList.add('funnel-preview');
+        calculate();
+        const previewBtn = document.getElementById('mainCalcBtn');
+        if(previewBtn){ previewBtn.textContent = 'Открыть полный разбор'; }
+        __cdSendHeight();
+        window.parent.postMessage({ type: 'cristalFunnelEvent', event: 'free_preview_viewed' }, '*');
+        return;
+      }
       if(document.getElementById('emailAddr') && (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))){
         err.textContent = 'Введи корректный email, чтобы получить отчёт.';
         err.style.display = 'block';
         return;
       }
-      err.style.display = 'none';
-      if(window.__paymentUnlocked){ calculate(); return; }
       const promoEl = document.getElementById('promoCode');
       const discountCode = promoEl ? promoEl.value.trim().toUpperCase().replace(/\s+/g, '') : '';
       const data = {
@@ -6084,6 +6128,10 @@ function startPdfExport(){
       promoEl.addEventListener('blur', askValidate);
       window.addEventListener('message', function(event){
         if(!event.data) return;
+        if(event.data.type === 'funnelPrice' && event.data.price){
+          const price = document.getElementById('funnelPrice');
+          if(price) price.textContent = String(event.data.price);
+        }
         if(event.data.type === 'promoResult'){
           const r = event.data.result || {};
           if(r.valid){
@@ -6112,6 +6160,9 @@ function startPdfExport(){
       if(!event.data) return;
       if(event.data.type === 'paymentSuccess'){
         window.__paymentUnlocked = true;
+        window.__funnelPreviewShown = true;
+        document.body.classList.remove('funnel-preview');
+        document.body.classList.add('funnel-unlocked');
         const data = event.data.formData || {};
         ['lastName','firstName','middleName','day','month','year'].forEach((id) => {
           if(document.getElementById(id) && data[id] != null) document.getElementById(id).value = data[id];
