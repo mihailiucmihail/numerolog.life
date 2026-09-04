@@ -76,6 +76,8 @@ export default function CristalFunnel() {
   const [frameSrc, setFrameSrc] = useState<string>(CALCULATOR_SRC)
   const [frameHeight, setFrameHeight] = useState(1200)
   const [form, setForm] = useState<FormValues | null>(null)
+  // Emailul introdus în formularul calculatorului (obligatoriu acolo) — la plată doar îl confirmăm.
+  const [formEmail, setFormEmail] = useState('')
   const [previewReady, setPreviewReady] = useState(false)
   const [checkoutBusy, setCheckoutBusy] = useState(false)
   const [checkoutError, setCheckoutError] = useState('')
@@ -117,8 +119,10 @@ export default function CristalFunnel() {
             nameAlphabetKey: p.nameAlphabetKey || 'ru',
           }
           setForm(values)
+          if (typeof p.email === 'string') setFormEmail(p.email.trim())
           try {
             sessionStorage.setItem(FUNNEL_STORAGE_KEY, JSON.stringify(values))
+            if (p.email) sessionStorage.setItem(`${FUNNEL_STORAGE_KEY}:email`, p.email.trim())
           } catch {}
           trackFunnel('birth_data_submitted', { has_middle: Boolean(values.middle), alphabet: values.nameAlphabetKey })
         }
@@ -160,6 +164,10 @@ export default function CristalFunnel() {
   useEffect(() => {
     const saved = readSaved()
     if (saved) setForm(saved)
+    try {
+      const savedEmail = sessionStorage.getItem(`${FUNNEL_STORAGE_KEY}:email`)
+      if (savedEmail) setFormEmail(savedEmail)
+    } catch {}
     if (searchParams.get('payment') === 'cancelled' && saved) {
       setCancelledNotice(true)
       setFrameSrc(`${buildPreviewSrc(saved)}&k=${Date.now()}`)
@@ -295,7 +303,7 @@ export default function CristalFunnel() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="mt-6 flex flex-col gap-10 sm:mt-8"
           >
-            <FunnelPaywall id={PAYWALL_ID} initialPromo={discountCode} busy={checkoutBusy} error={checkoutError} onCheckout={handleCheckout} />
+            <FunnelPaywall id={PAYWALL_ID} initialEmail={formEmail} initialPromo={discountCode} busy={checkoutBusy} error={checkoutError} onCheckout={handleCheckout} />
             <div className="text-center">
               <button type="button" onClick={resetToForm} className="text-xs text-muted-foreground/60 underline-offset-4 hover:text-foreground hover:underline">
                 {t('editData')}

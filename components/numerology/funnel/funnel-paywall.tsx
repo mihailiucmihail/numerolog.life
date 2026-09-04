@@ -6,11 +6,7 @@ import { Loader2 } from 'lucide-react'
 import { useCurrency } from '@/components/providers/currency-provider'
 import { checkPromoCode } from '@/app/actions/promo'
 import { trackFunnel } from '@/lib/funnel-analytics'
-
-// Promocodul este ASCUNS peste tot pe site (decizie de produs, sept. 2026). Backend-ul (lib/promo.ts,
-// startNumerologieCheckout) rămâne funcțional — pentru a-l reactiva, pune `true` aici și în
-// scripts/patch-cristalul-v2.py (câmpul #promoField din formular).
-const PROMO_ENABLED = false
+import { PROMO_ENABLED } from '@/lib/promo-flags'
 
 interface PaywallProps {
   id?: string

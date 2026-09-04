@@ -30,7 +30,7 @@
     "reviews": "recenzii",
     "scroll": "Descoperă"
   },
-    "destiny": {
+  "destiny": {
     "badge": "Cristalul Destinului",
     "titleLine1": "Descoperă cine ești",
     "titleLine2": "cu adevărat",
@@ -358,7 +358,9 @@
     "editData": "Modifică datele",
     "paidTitle": "Plata este confirmată",
     "paidText": "Îți deschidem Cristalul…",
-    "cancelledNotice": "Plata nu a fost finalizată. Calculul tău este salvat — poți continua oricând."
+    "cancelledNotice": "Plata nu a fost finalizată. Calculul tău este salvat — poți continua oricând.",
+    "paywallEmailConfirm": "Linkul raportului vine pe",
+    "paywallEmailChange": "Modifică"
   },
   "language": "Limba"
 }

@@ -33,7 +33,7 @@ html,body{margin:0;padding:0;background-color:transparent !important;background:
 body{
   background:transparent;
   min-height:0;
-  padding: 32px 6px 80px;
+  padding: 0 6px 80px;
   position:relative;
 }
 @keyframes bgDrift{
@@ -674,10 +674,10 @@ select option{color:#1a1420;background:#fff;}
         </div>
       </div>
       <div class="full">
-        <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(необязательно сейчас — понадобится при открытии полного разбора)</span></label>
-        <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="">
+        <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(на него придёт постоянная ссылка на твой разбор)</span></label>
+        <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="" required>
       </div>
-      <div class="full">
+      <div class="full" id="promoField" hidden style="display:none;">
         <label>Промокод <span style="opacity:.5;text-transform:none;letter-spacing:0;">(необязательно — скидка 15 %, действует один раз)</span></label>
         <input id="promoCode" type="text" placeholder="CRISTAL15-XXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" value="" style="text-transform:uppercase;letter-spacing:.08em;">
         <div id="promoMsg" style="display:none;margin-top:8px;font-size:13px;line-height:1.5;"></div>
@@ -1554,7 +1554,7 @@ function autoGender(){
 function readMail(){
   const el = document.getElementById('emailAddr');
   const v = el ? el.value.trim() : '';
-  if(v === '') return {ok:false, msg:'Укажи электронную почту — она нужна нам, чтобы присылать тебе новости и полезные разборы.'};
+  if(v === '') return {ok:false, msg:'Укажи email — на него придёт постоянная ссылка на твой разбор.'};
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return {ok:false, msg:'Проверь адрес почты — похоже, в нём опечатка.'};
   return {ok:true, value:v};
 }
@@ -6452,7 +6452,8 @@ function startPdfExport(){
       }
     }
 
-    // Datele formularului — trimise aplicației pentru checkout (emailul este colectat la plată).
+    // Datele formularului — trimise aplicației pentru checkout (emailul este obligatoriu în formular;
+    // la plată este doar afişat pentru confirmare).
     function __cdCollectForm(){
       const g = function(id){ const el = document.getElementById(id); return el ? String(el.value || '').trim() : ''; };
       return {
@@ -6467,7 +6468,7 @@ function startPdfExport(){
 
     // Butonul formularului ORIGINAL: calculează real în acelaşi fişier, apoi arată raportul întreg blurat.
     function __cdPreviewCalculate(){
-      window.__cdSkipMail = true;
+      window.__cdSkipMail = false; // emailul este OBLIGATORIU: calculate() → readMail() îl validează
       window.__cdPreviewMode = true;
       window.__cdLastResult = null;
       const err = document.getElementById('errMsg');
