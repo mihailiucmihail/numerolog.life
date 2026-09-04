@@ -168,11 +168,11 @@
       __cdApplyPreviewLock();
       window.scrollTo(0, 0);
       const data = __cdCollectForm();
-      window.parent.postMessage({ type: 'previewRendered', data: data, height: document.documentElement.scrollHeight }, '*');
+      window.parent.postMessage({ type: 'previewRendered', data: data, height: __cdContentHeight() }, '*');
       setTimeout(function(){
         // Elementele animate (bare, puncte) apar cu întârziere — a doua trecere prinde tot.
         __cdApplyPreviewLock();
-        window.parent.postMessage({ type: 'resize', height: document.documentElement.scrollHeight }, '*');
+        window.parent.postMessage({ type: 'resize', height: __cdContentHeight() }, '*');
       }, 900);
     }
     function cdMainAction(){
@@ -213,7 +213,7 @@
         setTimeout(function(){
           // Elementele animate (bare, puncte) apar cu întârziere — a doua trecere prinde tot.
           if(ok) __cdApplyPreviewLock();
-          window.parent.postMessage({ type: ok ? 'previewRendered' : 'previewFailed', data: ok ? __cdCollectForm() : null, height: document.documentElement.scrollHeight }, '*');
+          window.parent.postMessage({ type: ok ? 'previewRendered' : 'previewFailed', data: ok ? __cdCollectForm() : null, height: __cdContentHeight() }, '*');
         }, 900);
       });
     })();

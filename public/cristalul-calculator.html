@@ -32,7 +32,7 @@ html,body{margin:0;padding:0;background-color:transparent !important;background:
   font-size:clamp(15px,0.5vw + 14px,16.5px);line-height:1.65;letter-spacing:-0.005em;font-weight:400;}
 body{
   background:transparent;
-  min-height:100vh;
+  min-height:0;
   padding: 32px 6px 80px;
   position:relative;
 }
@@ -6072,8 +6072,17 @@ function startPdfExport(){
 </div>
 <script>
     // ==== Bridge integrare aplicație principală: resize, plată Stripe, raport permanent ====
+    // Înălțimea CONȚINUTULUI, nu a documentului: body are min-height:100vh, iar în iframe 100vh =
+    // înălțimea iframe-ului → scrollHeight ar crește la infinit (buclă resize). Măsurăm .wrap.
+    function __cdContentHeight(){
+      const wrap = document.querySelector('.wrap') || document.body;
+      const rect = wrap.getBoundingClientRect();
+      const bottom = rect.bottom + window.scrollY;
+      const pad = parseFloat(getComputedStyle(document.body).paddingBottom) || 0;
+      return Math.ceil(bottom + pad + 8);
+    }
     function __cdSendHeight(){
-      window.parent.postMessage({ type: 'resize', height: document.documentElement.scrollHeight }, '*');
+      window.parent.postMessage({ type: 'resize', height: __cdContentHeight() }, '*');
     }
 
     // Modul raport: completează automat datele din link și afișează direct raportul.
@@ -6105,7 +6114,7 @@ function startPdfExport(){
         if(inputCard) inputCard.style.display = 'none';
         if(typeof calculate === 'function') calculate();
         setTimeout(function(){
-          window.parent.postMessage({ type: 'reportRendered', height: document.documentElement.scrollHeight }, '*');
+          window.parent.postMessage({ type: 'reportRendered', height: __cdContentHeight() }, '*');
         }, 250);
       });
     })();
@@ -6405,11 +6414,11 @@ function startPdfExport(){
       __cdApplyPreviewLock();
       window.scrollTo(0, 0);
       const data = __cdCollectForm();
-      window.parent.postMessage({ type: 'previewRendered', data: data, height: document.documentElement.scrollHeight }, '*');
+      window.parent.postMessage({ type: 'previewRendered', data: data, height: __cdContentHeight() }, '*');
       setTimeout(function(){
         // Elementele animate (bare, puncte) apar cu întârziere — a doua trecere prinde tot.
         __cdApplyPreviewLock();
-        window.parent.postMessage({ type: 'resize', height: document.documentElement.scrollHeight }, '*');
+        window.parent.postMessage({ type: 'resize', height: __cdContentHeight() }, '*');
       }, 900);
     }
     function cdMainAction(){
@@ -6450,7 +6459,7 @@ function startPdfExport(){
         setTimeout(function(){
           // Elementele animate (bare, puncte) apar cu întârziere — a doua trecere prinde tot.
           if(ok) __cdApplyPreviewLock();
-          window.parent.postMessage({ type: ok ? 'previewRendered' : 'previewFailed', data: ok ? __cdCollectForm() : null, height: document.documentElement.scrollHeight }, '*');
+          window.parent.postMessage({ type: ok ? 'previewRendered' : 'previewFailed', data: ok ? __cdCollectForm() : null, height: __cdContentHeight() }, '*');
         }, 900);
       });
     })();

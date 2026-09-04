@@ -60,6 +60,9 @@ rep("""  background-color:#1c1529;
   background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), #1c1529;
 """, "  background-color:transparent;\n  background:transparent;\n")
 
+# 1b. body{min-height:100vh} în iframe = înălțimea iframe-ului → buclă infinită de resize. Eliminăm.
+rep("  min-height:100vh;\n  padding: 32px 6px 80px;", "  min-height:0;\n  padding: 32px 6px 80px;")
+
 # 2. Feedback tactil butoane ------------------------------------------------------------
 rep("""  transition:filter .15s ease, transform .1s ease;
 }
