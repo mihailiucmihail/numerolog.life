@@ -92,7 +92,6 @@ export default function RaportViewer({ formData, reportType = 'cristal' }: Rapor
           colorScheme: 'normal',
         }}
         title={reportType === 'grani' ? 'Грани Судьбы — Отчёт' : 'Cristalul Destinului — Raport'}
-        allowTransparency
         scrolling="no"
       />
     </div>

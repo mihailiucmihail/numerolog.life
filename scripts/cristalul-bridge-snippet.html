@@ -1,0 +1,163 @@
+<script>
+    // ==== Bridge integrare aplicație principală: resize, plată Stripe, raport permanent ====
+    function __cdSendHeight(){
+      window.parent.postMessage({ type: 'resize', height: document.documentElement.scrollHeight }, '*');
+    }
+
+    // Modul raport: completează automat datele din link și afișează direct raportul.
+    (function(){
+      const params = new URLSearchParams(window.location.search);
+      if(params.get('auto') !== '1') return;
+      const values = {
+        lastName: params.get('last') || '',
+        firstName: params.get('first') || '',
+        middleName: params.get('middle') || '',
+        day: params.get('day') || '',
+        month: params.get('month') || '',
+        year: params.get('year') || '',
+      };
+      window.addEventListener('DOMContentLoaded', function(){
+        Object.entries(values).forEach(([id, value]) => {
+          const field = document.getElementById(id);
+          if(field) field.value = value;
+        });
+        const gender = params.get('gender');
+        if(gender && document.getElementById('gender')) document.getElementById('gender').value = gender;
+        const alpha = params.get('alpha');
+        if(alpha && document.getElementById('nameAlphabetSelect')) document.getElementById('nameAlphabetSelect').value = alpha;
+        window.__paymentUnlocked = true;
+        const hero = document.querySelector('.hero');
+        if(hero) hero.style.display = 'none';
+        const inputCard = document.getElementById('inputFormCard');
+        if(inputCard) inputCard.style.display = 'none';
+        if(typeof calculate === 'function') calculate();
+        setTimeout(function(){
+          window.parent.postMessage({ type: 'reportRendered', height: document.documentElement.scrollHeight }, '*');
+        }, 250);
+      });
+    })();
+
+    // Bridge pentru checkout-ul Stripe și raportul permanent din aplicația principală.
+    function requestPayment(){
+      const err = document.getElementById('errMsg');
+      const email = (document.getElementById('emailAddr') && document.getElementById('emailAddr').value.trim()) || '';
+      const day = Number(document.getElementById('day').value);
+      const month = Number(document.getElementById('month').value);
+      const year = Number(document.getElementById('year').value);
+      if(!day || !month || !year || day < 1 || day > 31 || month < 1 || month > 12 || year < 1900){
+        err.textContent = 'Введи корректную дату рождения (день, месяц, год).';
+        err.style.display = 'block';
+        return;
+      }
+      if(document.getElementById('emailAddr') && (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))){
+        err.textContent = 'Введи корректный email, чтобы получить отчёт.';
+        err.style.display = 'block';
+        return;
+      }
+      err.style.display = 'none';
+      if(window.__paymentUnlocked){ calculate(); return; }
+      const promoEl = document.getElementById('promoCode');
+      const discountCode = promoEl ? promoEl.value.trim().toUpperCase().replace(/\s+/g, '') : '';
+      const data = {
+        last: document.getElementById('lastName').value.trim(),
+        first: document.getElementById('firstName').value.trim(),
+        middle: document.getElementById('middleName').value.trim(),
+        day, month, year, email,
+        gender: document.getElementById('gender').value,
+        nameAlphabetKey: typeof getNameAlphabetKey === 'function' ? getNameAlphabetKey() : undefined,
+        discountCode: discountCode || undefined
+      };
+      window.parent.postMessage({ type: 'requestPayment', data }, '*');
+      const btn = document.getElementById('mainCalcBtn');
+      if(btn){ btn.disabled = true; btn.textContent = 'Обработка...'; }
+    }
+
+    // Промокод: валидация на сервере через родительское окно (без побочных эффектов).
+    (function(){
+      const promoEl = document.getElementById('promoCode');
+      const promoMsg = document.getElementById('promoMsg');
+      if(!promoEl || !promoMsg) return;
+      let timer = null;
+      function showPromo(text, ok){
+        promoMsg.textContent = text;
+        promoMsg.style.color = ok ? 'var(--brass-bright, #D4AF37)' : '#e07a7a';
+        promoMsg.style.display = text ? 'block' : 'none';
+      }
+      function askValidate(){
+        const code = promoEl.value.trim().toUpperCase().replace(/\s+/g, '');
+        if(!code){ showPromo('', true); return; }
+        window.parent.postMessage({ type: 'validatePromo', code }, '*');
+      }
+      promoEl.addEventListener('input', function(){
+        promoEl.value = promoEl.value.toUpperCase();
+        clearTimeout(timer);
+        timer = setTimeout(askValidate, 450);
+      });
+      promoEl.addEventListener('blur', askValidate);
+      window.addEventListener('message', function(event){
+        if(!event.data) return;
+        if(event.data.type === 'promoResult'){
+          const r = event.data.result || {};
+          if(r.valid){
+            showPromo('Промокод принят: −' + r.percent + ' % → ' + r.finalPrice + ' вместо ' + r.basePrice + '.', true);
+          } else {
+            const reasons = {
+              format: 'Неверный формат промокода.',
+              not_found: 'Такой промокод не существует.',
+              used: 'Этот промокод уже был использован.'
+            };
+            showPromo(reasons[r.reason] || 'Промокод недействителен.', false);
+          }
+        }
+        if(event.data.type === 'prefillPromo' && event.data.code){
+          promoEl.value = String(event.data.code).toUpperCase();
+          askValidate();
+        }
+        if(event.data.type === 'paymentError'){
+          const err = document.getElementById('errMsg');
+          if(err && event.data.message){ err.textContent = event.data.message; err.style.display = 'block'; }
+        }
+      });
+    })();
+
+    window.addEventListener('message', function(event){
+      if(!event.data) return;
+      if(event.data.type === 'paymentSuccess'){
+        window.__paymentUnlocked = true;
+        const data = event.data.formData || {};
+        ['lastName','firstName','middleName','day','month','year'].forEach((id) => {
+          if(document.getElementById(id) && data[id] != null) document.getElementById(id).value = data[id];
+        });
+        if(document.getElementById('emailAddr') && data.email != null) document.getElementById('emailAddr').value = data.email;
+        if(data.gender) document.getElementById('gender').value = data.gender;
+        if(data.nameAlphabetKey && document.getElementById('nameAlphabetSelect')) document.getElementById('nameAlphabetSelect').value = data.nameAlphabetKey;
+        if(event.data.hideForm){
+          const hero = document.querySelector('.hero');
+          if(hero) hero.style.display = 'none';
+          const inputCard = document.getElementById('inputFormCard');
+          if(inputCard) inputCard.style.display = 'none';
+        }
+        calculate();
+        const btn = document.getElementById('mainCalcBtn');
+        if(btn){ btn.disabled = false; btn.textContent = 'Рассчитать Кристалл'; }
+      }
+      if(event.data.type === 'paymentCancelled'){
+        const btn = document.getElementById('mainCalcBtn');
+        if(btn){ btn.disabled = false; btn.textContent = 'Рассчитать Кристалл'; }
+      }
+      if(event.data.type === 'requestHeight'){
+        __cdSendHeight();
+      }
+    });
+
+    // Trimite înălțimea la load și la orice schimbare de conținut/dimensiune.
+    window.addEventListener('load', function(){
+      __cdSendHeight();
+      setTimeout(__cdSendHeight, 400);
+      if(typeof ResizeObserver !== 'undefined'){
+        const ro = new ResizeObserver(function(){ __cdSendHeight(); });
+        ro.observe(document.body);
+      }
+    });
+    window.addEventListener('resize', __cdSendHeight);
+  </script>

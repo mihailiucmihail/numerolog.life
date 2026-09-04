@@ -102,7 +102,6 @@ export function GraniPaymentFrame({ initialFacet, locale = "ru", preview = false
         title={T.frameTitle}
         className="h-[1400px] w-full border-0 bg-transparent"
         style={{ colorScheme: "normal" }}
-        allowTransparency
         scrolling="no"
         onLoad={() => {
           const frame = iframeRef.current

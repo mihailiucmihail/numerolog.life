@@ -141,7 +141,6 @@ export default function CalculatorWrapper() {
           style={{ width: '100%', height, border: 'none', display: 'block', background: 'transparent', colorScheme: 'light' }}
           title="Cristalul Destinului Calculator"
           scrolling="no"
-          allowTransparency={true}
         />
       </div>
 
