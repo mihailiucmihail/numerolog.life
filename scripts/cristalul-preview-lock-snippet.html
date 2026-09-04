@@ -202,7 +202,8 @@
       }
     }
 
-    // Datele formularului — trimise aplicației pentru checkout (emailul este colectat la plată).
+    // Datele formularului — trimise aplicației pentru checkout (emailul este obligatoriu în formular;
+    // la plată este doar afişat pentru confirmare).
     function __cdCollectForm(){
       const g = function(id){ const el = document.getElementById(id); return el ? String(el.value || '').trim() : ''; };
       return {
@@ -217,7 +218,7 @@
 
     // Butonul formularului ORIGINAL: calculează real în acelaşi fişier, apoi arată raportul întreg blurat.
     function __cdPreviewCalculate(){
-      window.__cdSkipMail = true;
+      window.__cdSkipMail = false; // emailul este OBLIGATORIU: calculate() → readMail() îl validează
       window.__cdPreviewMode = true;
       window.__cdLastResult = null;
       const err = document.getElementById('errMsg');

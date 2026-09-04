@@ -7,8 +7,15 @@ import { useCurrency } from '@/components/providers/currency-provider'
 import { checkPromoCode } from '@/app/actions/promo'
 import { trackFunnel } from '@/lib/funnel-analytics'
 
+// Promocodul este ASCUNS peste tot pe site (decizie de produs, sept. 2026). Backend-ul (lib/promo.ts,
+// startNumerologieCheckout) rămâne funcțional — pentru a-l reactiva, pune `true` aici și în
+// scripts/patch-cristalul-v2.py (câmpul #promoField din formular).
+const PROMO_ENABLED = false
+
 interface PaywallProps {
   id?: string
+  /** Emailul introdus deja în formularul calculatorului — îl afișăm pentru confirmare, nu-l mai cerem. */
+  initialEmail?: string
   initialPromo?: string
   busy: boolean
   error: string
@@ -18,15 +25,25 @@ interface PaywallProps {
 const inputCls =
   'w-full rounded-lg border border-border/70 bg-background/40 px-4 py-3 text-base text-foreground placeholder:text-muted-foreground/40 outline-none transition-colors focus:border-primary/70'
 
-export function FunnelPaywall({ id, initialPromo, busy, error, onCheckout }: PaywallProps) {
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+export function FunnelPaywall({ id, initialEmail = '', initialPromo, busy, error, onCheckout }: PaywallProps) {
   const t = useTranslations('funnel')
   const { prices, format, currency } = useCurrency()
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState(initialEmail)
+  // Emailul din formular e afișat ca text („Ссылка придёт на: …”); editarea se deschide doar la cerere.
+  const [editingEmail, setEditingEmail] = useState(!EMAIL_RE.test(initialEmail))
   const [promo, setPromo] = useState(initialPromo ?? '')
   const [showPromo, setShowPromo] = useState(Boolean(initialPromo))
   const [promoInfo, setPromoInfo] = useState<{ ok: boolean; text: string } | null>(null)
   const [localError, setLocalError] = useState('')
   const ref = useRef<HTMLElement>(null)
+
+  // Dacă utilizatorul recalculează cu alt email, preluăm valoarea nouă.
+  useEffect(() => {
+    setEmail(initialEmail)
+    setEditingEmail(!EMAIL_RE.test(initialEmail))
+  }, [initialEmail])
 
   // full_report_offer_viewed — o singură dată, când oferta intră în viewport.
   useEffect(() => {
@@ -59,9 +76,12 @@ export function FunnelPaywall({ id, initialPromo, busy, error, onCheckout }: Pay
   const submit = (e: FormEvent) => {
     e.preventDefault()
     const v = email.trim()
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return setLocalError(t('errorEmail'))
+    if (!EMAIL_RE.test(v)) {
+      setEditingEmail(true)
+      return setLocalError(t('errorEmail'))
+    }
     setLocalError('')
-    const code = promo.trim().toUpperCase().replace(/\s+/g, '')
+    const code = PROMO_ENABLED ? promo.trim().toUpperCase().replace(/\s+/g, '') : ''
     onCheckout(v, code || undefined)
   }
 
@@ -79,23 +99,40 @@ export function FunnelPaywall({ id, initialPromo, busy, error, onCheckout }: Pay
         </div>
 
         <form onSubmit={submit} noValidate className="mt-8 flex flex-col gap-4">
-          <div>
-            <label htmlFor="fn-email" className="mb-2 block font-mono text-[10.5px] uppercase tracking-[0.18em] text-primary/80">
-              {t('paywallEmail')}
-            </label>
-            <input
-              id="fn-email"
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              className={inputCls}
-              placeholder={t('paywallEmailPlaceholder')}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
+          {editingEmail ? (
+            <div>
+              <label htmlFor="fn-email" className="mb-2 block font-mono text-[10.5px] uppercase tracking-[0.18em] text-primary/80">
+                {t('paywallEmail')}
+              </label>
+              <input
+                id="fn-email"
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                className={inputCls}
+                placeholder={t('paywallEmailPlaceholder')}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+          ) : (
+            // Emailul vine din formular: îl confirmăm, nu-l mai cerem încă o dată.
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-lg border border-border/60 bg-background/30 px-4 py-3">
+              <div className="min-w-0">
+                <p className="font-mono text-[10.5px] uppercase tracking-[0.18em] text-primary/80">{t('paywallEmailConfirm')}</p>
+                <p className="mt-1 truncate text-base text-foreground">{email}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditingEmail(true)}
+                className="shrink-0 text-xs text-primary/70 underline-offset-4 hover:text-primary hover:underline"
+              >
+                {t('paywallEmailChange')}
+              </button>
+            </div>
+          )}
 
-          {showPromo ? (
+          {PROMO_ENABLED && (showPromo ? (
             <div>
               <label htmlFor="fn-promo" className="mb-2 block font-mono text-[10.5px] uppercase tracking-[0.18em] text-primary/80">
                 {t('paywallPromo')}
@@ -120,7 +157,7 @@ export function FunnelPaywall({ id, initialPromo, busy, error, onCheckout }: Pay
             <button type="button" onClick={() => setShowPromo(true)} className="self-start text-xs text-primary/70 underline-offset-4 hover:text-primary hover:underline">
               {t('paywallPromo')}
             </button>
-          )}
+          ))}
 
           {(localError || error) && <p role="alert" className="text-sm text-destructive">{localError || error}</p>}
 

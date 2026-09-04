@@ -51,7 +51,8 @@ rep("""  background:
   background-size: 160% 160%, 160% 160%, 100% 100%;
   animation: bgDrift 26s ease-in-out infinite alternate;
 """, "  background:transparent;\n")
-rep("  padding: 32px 18px 80px;", "  padding: 32px 6px 80px;")
+# Sus 0: hero-ul (glow-ul cristalului) continuă direct de sub bara de meniu, fără bandă goală.
+rep("  padding: 32px 18px 80px;", "  padding: 0 6px 80px;")
 rep(".bg-anim{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0;background-color:#161022;}",
     ".bg-anim{display:none !important;}")
 rep(".wrap{max-width:920px;margin:0 auto;position:relative;z-index:1;}",
@@ -61,7 +62,7 @@ rep("""  background-color:#1c1529;
 """, "  background-color:transparent;\n  background:transparent;\n")
 
 # 1b. body{min-height:100vh} în iframe = înălțimea iframe-ului → buclă infinită de resize. Eliminăm.
-rep("  min-height:100vh;\n  padding: 32px 6px 80px;", "  min-height:0;\n  padding: 32px 6px 80px;")
+rep("  min-height:100vh;\n  padding: 0 6px 80px;", "  min-height:0;\n  padding: 0 6px 80px;")
 
 # 2. Feedback tactil butoane ------------------------------------------------------------
 rep("""  transition:filter .15s ease, transform .1s ease;
@@ -90,22 +91,25 @@ _mail_re = re.compile(
     r'      <div class="full">\n        <label>Электронная почта</label>\n        <input id="pMail"[^\n]*\n        <p class="note"[^\n]*\n      </div>\n')
 assert len(_mail_re.findall(s)) == 1, 'blocul email (pMail) al uploadului nu a fost găsit exact o dată'
 s = _mail_re.sub("""      <div class="full">
-        <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(необязательно сейчас — понадобится при открытии полного разбора)</span></label>
-        <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="">
+        <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(на него придёт постоянная ссылка на твой разбор)</span></label>
+        <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="" required>
       </div>
-      <div class="full">
+      <div class="full" id="promoField" hidden style="display:none;">
         <label>Промокод <span style="opacity:.5;text-transform:none;letter-spacing:0;">(необязательно — скидка 15 %, действует один раз)</span></label>
         <input id="promoCode" type="text" placeholder="CRISTAL15-XXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" value="" style="text-transform:uppercase;letter-spacing:.08em;">
         <div id="promoMsg" style="display:none;margin-top:8px;font-size:13px;line-height:1.5;"></div>
       </div>
 """, s)
-# readMail() al uploadului citește #pMail → îl redirecționăm la #emailAddr; în modurile preview/raport
-# (auto=1 / preview=1) emailul NU e cerut de calculate() — este colectat de aplicație la plată.
+# readMail() al uploadului citește #pMail → îl redirecționăm la #emailAddr. Emailul este OBLIGATORIU în
+# formular (butonul principal îl validează); doar în modurile din link (auto=1 / preview=1, unde datele vin
+# din query) `__cdSkipMail` ocolește validarea. Promocodul (#promoField) este ASCUNS (păstrat pentru viitor).
 rep("""function readMail(){
   const el = document.getElementById('pMail');
   const v = el.value.trim();""", """function readMail(){
   const el = document.getElementById('emailAddr');
   const v = el ? el.value.trim() : '';""")
+rep("Укажи электронную почту — она нужна нам, чтобы присылать тебе новости и полезные разборы.",
+    "Укажи email — на него придёт постоянная ссылка на твой разбор.")
 rep("  const mailCheck = readMail();\n",
     "  const mailCheck = window.__cdSkipMail ? {ok:true, value:''} : readMail();\n")
 rep("  try{ localStorage.setItem('crystal_last_email', mailCheck.value); }catch(e){}\n",
