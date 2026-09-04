@@ -156,7 +156,6 @@ export function HeroSection() {
                 <span>{t("ctaPrimary")}</span>
               </Link>
             </Button>
-            <p className="text-xs tracking-wide text-primary/80">{t("ctaPrimaryNote")}</p>
           </div>
         </div>
 

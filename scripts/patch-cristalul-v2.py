@@ -116,6 +116,19 @@ rep("  try{ localStorage.setItem('crystal_last_email', mailCheck.value); }catch(
     "  try{ if(mailCheck.value) localStorage.setItem('crystal_last_email', mailCheck.value); }catch(e){}\n")
 assert "getElementById('pMail')" not in s, 'a rămas o referință la pMail'
 
+# 3a. Hero: glow-ul cristalului (top:-40px) ieșea peste marginea de sus a iframe-ului → tăiat brusc („ruptură”).
+#     Dăm hero-ului padding-top ca glow-ul să rămână complet în iframe (React nu mai adaugă padding sus).
+rep(".hero{text-align:center;margin-bottom:36px;position:relative;}",
+    ".hero{text-align:center;margin-bottom:36px;position:relative;padding-top:56px;}")
+rep(".hero .hero-glow{\n  position:absolute;top:-40px;",
+    ".hero .hero-glow{\n  position:absolute;top:8px;")
+#     Simbolul „◈” lipsește din fonturile Windows (apare dreptunghi gol) → SVG inline cu aceeași formă.
+rep('<div class="hero-crystal" aria-hidden="true">◈</div>',
+    '<div class="hero-crystal" aria-hidden="true">'
+    '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" '
+    'stroke-linejoin="round" aria-hidden="true"><path d="M12 2 22 12 12 22 2 12Z"/>'
+    '<path d="M12 7 17 12 12 17 7 12Z" fill="currentColor" fill-opacity=".55"/></svg></div>')
+
 # 3b. Textul hero (formular) — copy aprobat de utilizator; antetul React duplicat a fost eliminat.
 rep('<h1><span class="hero-lead">Твой</span><span class="hero-caps">Кристалл Судьбы</span></h1>',
     '<h1><span class="hero-lead">Открой свой</span><span class="hero-caps">Кристалл Судьбы</span></h1>')

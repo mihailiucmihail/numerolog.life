@@ -9,7 +9,7 @@ const CristalFunnel = dynamic(() => import('./funnel/cristal-funnel'), { ssr: fa
 
 export default function NumerologieClient() {
   return (
-    <div className="mx-auto w-full max-w-5xl px-1 pb-24 pt-6 sm:px-6 sm:pt-10">
+    <div className="mx-auto w-full max-w-5xl px-1 pb-24 sm:px-6">
       <CristalFunnel />
     </div>
   )
