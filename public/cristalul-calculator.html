@@ -6262,7 +6262,13 @@ function startPdfExport(){
     /* Card cu chenar dublu: primele 30 % lizibile; restul 70 % — blur care creşte TREPTAT (fără linie bruscă).
        Două straturi cu backdrop-filter, fiecare cu margine „topită” prin mask-image → efect de ceaţă care se îngroaşă. */
     .cd-part{position:relative;user-select:none;-webkit-user-select:none;}
-    .cd-part > *:not(.section-title):not(.cd-lock-badge){pointer-events:none;}
+    .cd-part > *:not(.section-title):not(.cd-unlock){pointer-events:none;}
+    /* Telefon: marginile minime, raportul cât mai lat. */
+    @media (max-width:560px){
+      body{padding:12px 4px 48px !important;}
+      .card{padding:14px 10px !important;margin-bottom:12px !important;}
+      .cd-unlock-text{font-size:12.5px;}
+    }
     .cd-part::before,.cd-part::after{
       content:"";position:absolute;left:0;right:0;bottom:0;z-index:2;pointer-events:none;
     }
@@ -6290,14 +6296,33 @@ function startPdfExport(){
     .cd-preview .cd-part .mandala-chart-svg{position:relative;z-index:3;}
     /* În grafice, „viitorul” = blur puternic (suprascrie stratul moderat). */
     .cd-preview .cd-part .cd-lock{filter:blur(11px) saturate(.7);opacity:.35;}
-    .cd-lock-badge{
-      position:absolute;right:0;top:0;z-index:3;
-      display:inline-flex;align-items:center;gap:6px;
-      font:600 10px/1 var(--sans, Inter, sans-serif);letter-spacing:.14em;text-transform:uppercase;
-      color:#1a1220;background:linear-gradient(180deg,var(--brass-bright,#d9a94f),var(--brass,#b8863b));
-      padding:6px 10px;border-radius:1px;white-space:nowrap;pointer-events:none;
+    /* CTA pe zona blurată (în locul badge-ului din colţ): text + buton către plată. */
+    .cd-unlock{
+      position:absolute;left:0;right:0;z-index:4;
+      top:calc(var(--cd-cut,30%) + (100% - var(--cd-cut,30%)) / 2);
+      transform:translateY(-50%);
+      display:flex;flex-direction:column;align-items:center;gap:10px;
+      padding:0 16px;text-align:center;pointer-events:none;
     }
-    .cd-lock-badge::before{content:"◈";font-size:9px;}
+    .cd-unlock-text{
+      font:500 13px/1.5 var(--sans, Inter, sans-serif);letter-spacing:.02em;
+      color:#f1e6cf;text-shadow:0 1px 14px rgba(22,16,34,.95), 0 0 2px rgba(22,16,34,.9);
+      max-width:360px;
+    }
+    .cd-unlock-btn{
+      pointer-events:auto;cursor:pointer;
+      display:inline-flex;align-items:center;gap:8px;
+      font:600 11px/1 var(--sans, Inter, sans-serif);letter-spacing:.16em;text-transform:uppercase;
+      color:#1a1220;background:linear-gradient(180deg,var(--brass-bright,#d9a94f),var(--brass,#b8863b));
+      border:0;border-radius:2px;padding:12px 18px;
+      box-shadow:0 8px 28px rgba(217,169,79,.28);
+      transition:transform .15s ease, box-shadow .15s ease;
+    }
+    .cd-unlock-btn:hover{transform:translateY(-1px);box-shadow:0 12px 34px rgba(217,169,79,.4);}
+    .cd-unlock-btn::after{content:"→";font-size:13px;}
+    /* Carduri scunde: doar butonul, ancorat în partea de jos a zonei blurate (nu peste textul vizibil). */
+    .cd-unlock.cd-unlock-compact .cd-unlock-text{display:none;}
+    .cd-unlock.cd-unlock-compact{top:auto;bottom:14px;transform:none;}
     .cd-preview .card{position:relative;}
     .cd-future-mask{
       position:absolute;top:0;bottom:0;right:0;z-index:2;pointer-events:none;
@@ -6356,12 +6381,31 @@ function startPdfExport(){
       mask.style.left = pct.toFixed(2) + '%';
       mask.style.width = 'auto';
     }
+    // Texte de marketing (rotite pe carduri, ca să nu fie repetitiv).
+    const __CD_UNLOCK_TEXTS = [
+      'Этот раздел уже рассчитан для тебя. Открой его — и узнай, что он говорит именно о твоей судьбе.',
+      'Самое важное — здесь, под размытием. Полный разбор открывается сразу после оплаты.',
+      'Твои числа уже говорят. Осталось только прочитать, что именно.',
+      'Здесь скрыт ответ, ради которого ты пришёл. Открой полный разбор — он твой навсегда.'
+    ];
+    function __cdRequestUnlock(){
+      try{ window.parent.postMessage({ type: 'unlockRequested' }, '*'); }catch(e){}
+    }
     function __cdBadge(card){
-      if(card.querySelector(':scope > .cd-lock-badge')) return;
-      const b = document.createElement('span');
-      b.className = 'cd-lock-badge';
-      b.textContent = 'в полном разборе';
-      card.appendChild(b);
+      if(card.querySelector(':scope > .cd-unlock')) return;
+      const idx = document.querySelectorAll('.cd-unlock').length;
+      const wrap = document.createElement('div');
+      wrap.className = 'cd-unlock' + (card.offsetHeight < 260 ? ' cd-unlock-compact' : '');
+      const t = document.createElement('p');
+      t.className = 'cd-unlock-text';
+      t.textContent = __CD_UNLOCK_TEXTS[idx % __CD_UNLOCK_TEXTS.length];
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'cd-unlock-btn';
+      b.textContent = 'Смотреть полный разбор';
+      b.addEventListener('click', __cdRequestUnlock);
+      wrap.appendChild(t); wrap.appendChild(b);
+      card.appendChild(wrap);
     }
     function __cdApplyPreviewLock(){
       document.body.classList.add('cd-preview');

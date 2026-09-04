@@ -134,6 +134,12 @@ export default function CristalFunnel() {
         setPreviewReady(false)
       }
 
+      // Butonul „Смотреть полный разбор” de pe cardurile blurate → derulăm la plată.
+      if (d.type === 'unlockRequested') {
+        trackFunnel('sticky_unlock_clicked', { source: 'card_cta' })
+        document.getElementById(PAYWALL_ID)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+
       if (d.type === 'validatePromo' && typeof d.code === 'string') {
         checkPromoCode(d.code)
           .then((result) => postToFrame({ type: 'promoResult', result }))

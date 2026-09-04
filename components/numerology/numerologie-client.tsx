@@ -12,8 +12,8 @@ export default function NumerologieClient() {
   const t = useTranslations('funnel')
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 pb-24 pt-10 sm:px-6 sm:pt-16">
-      <header className="mx-auto mb-12 max-w-2xl text-center sm:mb-16">
+    <div className="mx-auto w-full max-w-5xl px-1 pb-24 pt-10 sm:px-6 sm:pt-16">
+      <header className="mx-auto mb-12 max-w-2xl px-3 text-center sm:mb-16 sm:px-0">
         <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.3em] text-primary/80">{t('heroEyebrow')}</p>
         <h1 className="font-serif text-4xl font-light leading-tight text-foreground sm:text-6xl text-balance">
           {t('heroTitle1')} <span className="text-primary">{t('heroTitle2')}</span>
