@@ -118,10 +118,12 @@ assert "getElementById('pMail')" not in s, 'a rămas o referință la pMail'
 
 # 3a. Hero: glow-ul cristalului (top:-40px) ieșea peste marginea de sus a iframe-ului → tăiat brusc („ruptură”).
 #     Dăm hero-ului padding-top ca glow-ul să rămână complet în iframe (React nu mai adaugă padding sus).
+#     Spațiu compact: 16px pe telefon, 28px pe desktop (cristalul aproape de bara de meniu, glow-ul tot în iframe).
 rep(".hero{text-align:center;margin-bottom:36px;position:relative;}",
-    ".hero{text-align:center;margin-bottom:36px;position:relative;padding-top:56px;}")
+    ".hero{text-align:center;margin-bottom:36px;position:relative;padding-top:16px;}\n"
+    "@media (min-width:768px){.hero{padding-top:28px;}}")
 rep(".hero .hero-glow{\n  position:absolute;top:-40px;",
-    ".hero .hero-glow{\n  position:absolute;top:8px;")
+    ".hero .hero-glow{\n  position:absolute;top:0;")
 #     Simbolul „◈” lipsește din fonturile Windows (apare dreptunghi gol) → SVG inline cu aceeași formă.
 rep('<div class="hero-crystal" aria-hidden="true">◈</div>',
     '<div class="hero-crystal" aria-hidden="true">'
