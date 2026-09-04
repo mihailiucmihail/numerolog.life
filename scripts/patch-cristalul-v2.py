@@ -112,9 +112,23 @@ rep("  try{ localStorage.setItem('crystal_last_email', mailCheck.value); }catch(
     "  try{ if(mailCheck.value) localStorage.setItem('crystal_last_email', mailCheck.value); }catch(e){}\n")
 assert "getElementById('pMail')" not in s, 'a rămas o referință la pMail'
 
+# 3b. Textul hero (formular) — copy aprobat de utilizator; antetul React duplicat a fost eliminat.
+rep('<h1><span class="hero-lead">Твой</span><span class="hero-caps">Кристалл Судьбы</span></h1>',
+    '<h1><span class="hero-lead">Открой свой</span><span class="hero-caps">Кристалл Судьбы</span></h1>')
+rep('<p>Твоё имя и дата рождения хранят ответы о характере, судьбе и жизненном пути — '
+    '<span class="hero-highlight">узнай, что скрыто именно в тебе</span>.</p>',
+    '<p>Введи свои данные и узнай, что Кристалл Судьбы расскажет именно о тебе — о твоём характере, '
+    'отношениях, деньгах, предназначении и важных периодах жизни.</p>\n'
+    '    <p>А персональные графики покажут, какой путь ты уже прошёл и где находишься сейчас.</p>\n'
+    '    <p class="hero-question"><span class="hero-highlight">Готов узнать себя с неожиданной стороны?</span></p>')
+rep('.hero p .hero-highlight{color:var(--brass-bright);font-weight:600;}',
+    '.hero p .hero-highlight{color:var(--brass-bright);font-weight:600;}\n'
+    '.hero p + p{margin-top:10px;}\n'
+    '.hero p.hero-question{margin-top:16px;font-size:clamp(16px,1.2vw,18px);}')
+
 # 4. Butonul principal -> plată ------------------------------------------------------------
 rep('<button class="btn" onclick="calculate()">Рассчитать Кристалл</button>',
-    '<button id="mainCalcBtn" class="btn" onclick="cdMainAction()">Рассчитать Кристалл</button>')
+    '<button id="mainCalcBtn" class="btn" onclick="cdMainAction()">Рассчитать мой Кристалл Судьбы →</button>')
 assert 'onclick="calculate()"' not in s, 'a rămas un buton care sare peste plată'
 
 # 4b. Funnel (rezultat gratuit): expunem rezultatul determinist al ultimului calcul, ca aplicația

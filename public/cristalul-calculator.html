@@ -112,6 +112,8 @@ body{
 }
 .hero p{position:relative;z-index:1;color:var(--parchment-dim);font-size:clamp(15px,1.1vw,17px);max-width:560px;margin:0 auto;line-height:1.65;letter-spacing:-0.003em;font-weight:400;}
 .hero p .hero-highlight{color:var(--brass-bright);font-weight:600;}
+.hero p + p{margin-top:10px;}
+.hero p.hero-question{margin-top:16px;font-size:clamp(16px,1.2vw,18px);}
 .hero{opacity:0;transform:translateY(-10px);animation:heroRise 1s cubic-bezier(.16,.84,.44,1) .15s forwards;}
 @keyframes heroRise{to{opacity:1;transform:translateY(0);}}
 @keyframes heroShimmer{0%{background-position:0% 50%;}100%{background-position:220% 50%;}}
@@ -614,8 +616,10 @@ select option{color:#1a1420;background:#fff;}
     <div class="hero-glow" aria-hidden="true"></div>
     <div class="hero-crystal" aria-hidden="true">◈</div>
     <div class="eyebrow">Персональный разбор</div>
-    <h1><span class="hero-lead">Твой</span><span class="hero-caps">Кристалл Судьбы</span></h1>
-    <p>Твоё имя и дата рождения хранят ответы о характере, судьбе и жизненном пути — <span class="hero-highlight">узнай, что скрыто именно в тебе</span>.</p>
+    <h1><span class="hero-lead">Открой свой</span><span class="hero-caps">Кристалл Судьбы</span></h1>
+    <p>Введи свои данные и узнай, что Кристалл Судьбы расскажет именно о тебе — о твоём характере, отношениях, деньгах, предназначении и важных периодах жизни.</p>
+    <p>А персональные графики покажут, какой путь ты уже прошёл и где находишься сейчас.</p>
+    <p class="hero-question"><span class="hero-highlight">Готов узнать себя с неожиданной стороны?</span></p>
   </div>
 
   <div class="card" id="inputFormCard">
@@ -691,7 +695,7 @@ select option{color:#1a1420;background:#fff;}
         </select>
       </div>
     </div>
-    <button id="mainCalcBtn" class="btn" onclick="cdMainAction()">Рассчитать Кристалл</button>
+    <button id="mainCalcBtn" class="btn" onclick="cdMainAction()">Рассчитать мой Кристалл Судьбы →</button>
     <script>
       document.addEventListener('DOMContentLoaded', function(){
         paintGender();
