@@ -3970,6 +3970,7 @@ function calculate(){
   }
 
   const r = computeAll(last, first, middle, day, month, year, nameAlphabetKey);
+  window.__cdLastResult = r;
 
   // Скрыть форму ввода и показать красивую сводку введённых данных
   const inputFormCard = document.getElementById('inputFormCard');

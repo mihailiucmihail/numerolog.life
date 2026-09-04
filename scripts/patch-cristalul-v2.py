@@ -99,6 +99,12 @@ rep('<button class="btn" onclick="calculate()">Рассчитать Криста
     '<button id="mainCalcBtn" class="btn" onclick="requestPayment()">Рассчитать Кристалл</button>')
 assert 'onclick="calculate()"' not in s, 'a rămas un buton care sare peste plată'
 
+# 4b. Funnel (rezultat gratuit): expunem rezultatul determinist al ultimului calcul, ca aplicația
+#     React (același origin) să poată citi numerele reale fără să dubleze formulele.
+rep("  const r = computeAll(last, first, middle, day, month, year, nameAlphabetKey);\n",
+    "  const r = computeAll(last, first, middle, day, month, year, nameAlphabetKey);\n"
+    "  window.__cdLastResult = r;\n")
+
 # 5. Bridge-ul de integrare, înainte de </body> ------------------------------------------------
 bridge = BRIDGE.read_text(encoding='utf-8')
 assert 'requestPayment' in bridge and 'reportRendered' in bridge
