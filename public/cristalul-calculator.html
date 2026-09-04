@@ -670,7 +670,7 @@ select option{color:#1a1420;background:#fff;}
         </div>
       </div>
       <div class="full">
-        <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(на него придёт постоянная ссылка на твой отчёт)</span></label>
+        <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(необязательно сейчас — понадобится при открытии полного разбора)</span></label>
         <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="">
       </div>
       <div class="full">
@@ -691,7 +691,7 @@ select option{color:#1a1420;background:#fff;}
         </select>
       </div>
     </div>
-    <button id="mainCalcBtn" class="btn" onclick="requestPayment()">Рассчитать Кристалл</button>
+    <button id="mainCalcBtn" class="btn" onclick="cdMainAction()">Рассчитать Кристалл</button>
     <script>
       document.addEventListener('DOMContentLoaded', function(){
         paintGender();
@@ -6375,7 +6375,46 @@ function startPdfExport(){
       }
     }
 
-    // Mod preview: completează datele din link, calculează, apoi blochează.
+    // Datele formularului — trimise aplicației pentru checkout (emailul este colectat la plată).
+    function __cdCollectForm(){
+      const g = function(id){ const el = document.getElementById(id); return el ? String(el.value || '').trim() : ''; };
+      return {
+        last: g('lastName'), first: g('firstName'), middle: g('middleName'),
+        day: Number(g('day')), month: Number(g('month')), year: Number(g('year')),
+        email: g('emailAddr'),
+        gender: g('gender'),
+        nameAlphabetKey: typeof getNameAlphabetKey === 'function' ? getNameAlphabetKey() : undefined,
+        discountCode: (g('promoCode') || '').toUpperCase().replace(/\s+/g, '') || undefined
+      };
+    }
+
+    // Butonul formularului ORIGINAL: calculează real în acelaşi fişier, apoi arată raportul întreg blurat.
+    function __cdPreviewCalculate(){
+      window.__cdSkipMail = true;
+      window.__cdPreviewMode = true;
+      window.__cdLastResult = null;
+      const err = document.getElementById('errMsg');
+      if(err) err.style.display = 'none';
+      if(typeof calculate === 'function') calculate();
+      const ok = !!(window.__cdLastResult && document.getElementById('results'));
+      if(!ok) return; // calculate() a afişat deja eroarea de validare în formular
+      document.body.classList.add('cd-preview');
+      __cdApplyPreviewLock();
+      window.scrollTo(0, 0);
+      const data = __cdCollectForm();
+      window.parent.postMessage({ type: 'previewRendered', data: data, height: document.documentElement.scrollHeight }, '*');
+      setTimeout(function(){
+        // Elementele animate (bare, puncte) apar cu întârziere — a doua trecere prinde tot.
+        __cdApplyPreviewLock();
+        window.parent.postMessage({ type: 'resize', height: document.documentElement.scrollHeight }, '*');
+      }, 900);
+    }
+    function cdMainAction(){
+      if(window.__paymentUnlocked){ if(typeof calculate === 'function') calculate(); return; }
+      __cdPreviewCalculate();
+    }
+
+    // Mod preview din link (ex. întoarcere de la Stripe): completează datele, calculează, apoi blochează.
     (function(){
       const params = new URLSearchParams(window.location.search);
       if(params.get('preview') !== '1') return;
@@ -6408,7 +6447,7 @@ function startPdfExport(){
         setTimeout(function(){
           // Elementele animate (bare, puncte) apar cu întârziere — a doua trecere prinde tot.
           if(ok) __cdApplyPreviewLock();
-          window.parent.postMessage({ type: ok ? 'previewRendered' : 'previewFailed', height: document.documentElement.scrollHeight }, '*');
+          window.parent.postMessage({ type: ok ? 'previewRendered' : 'previewFailed', data: ok ? __cdCollectForm() : null, height: document.documentElement.scrollHeight }, '*');
         }, 900);
       });
     })();

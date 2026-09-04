@@ -12,7 +12,8 @@ Integrări aplicate (toate cu assert — dacă un pattern nu se potrivește, ada
      fără .bg-anim, .wrap full-width, .card transparent, padding lateral mic pe mobil.
   2. Butoane cu feedback tactil (mobil) pentru .btn și .chart-tab.
   3. Câmpuri Email (obligatoriu) + Промокод (opțional) în formular.
-  4. Butonul principal -> requestPayment() (plată Stripe prin parent), id="mainCalcBtn".
+  4. Butonul principal -> cdMainAction(), id="mainCalcBtn": calcul real + raport întreg blurat (preview);
+     după plată (paymentSuccess / auto=1) -> calculate() complet. requestPayment() rămâne disponibil.
   5. Bridge-ul de integrare (scripts/cristalul-bridge-snippet.html): resize, auto=1 pentru raport
      permanent, requestPayment, validare promo, paymentSuccess/Cancelled.
   6. Fără mențiuni de surse/autori în text vizibil (regulă permanentă).
@@ -86,7 +87,7 @@ _mail_re = re.compile(
     r'      <div class="full">\n        <label>Электронная почта</label>\n        <input id="pMail"[^\n]*\n        <p class="note"[^\n]*\n      </div>\n')
 assert len(_mail_re.findall(s)) == 1, 'blocul email (pMail) al uploadului nu a fost găsit exact o dată'
 s = _mail_re.sub("""      <div class="full">
-        <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(на него придёт постоянная ссылка на твой отчёт)</span></label>
+        <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(необязательно сейчас — понадобится при открытии полного разбора)</span></label>
         <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="">
       </div>
       <div class="full">
@@ -110,7 +111,7 @@ assert "getElementById('pMail')" not in s, 'a rămas o referință la pMail'
 
 # 4. Butonul principal -> plată ------------------------------------------------------------
 rep('<button class="btn" onclick="calculate()">Рассчитать Кристалл</button>',
-    '<button id="mainCalcBtn" class="btn" onclick="requestPayment()">Рассчитать Кристалл</button>')
+    '<button id="mainCalcBtn" class="btn" onclick="cdMainAction()">Рассчитать Кристалл</button>')
 assert 'onclick="calculate()"' not in s, 'a rămas un buton care sare peste plată'
 
 # 4b. Funnel (rezultat gratuit): expunem rezultatul determinist al ultimului calcul, ca aplicația
@@ -140,6 +141,7 @@ assert s.count('\ufffd') == 0, 'patch-ul a introdus caractere corupte'
 for marker in ('id="emailAddr"', 'id="promoCode"', 'id="mainCalcBtn"', 'function requestPayment',
                "params.get('auto')", 'reportRendered', 'validatePromo', 'paymentSuccess',
                "params.get('preview')", '__cdApplyPreviewLock', 'previewRendered', 'window.__cdSkipMail',
+               'function cdMainAction', 'onclick="cdMainAction()"',
                ':root{color-scheme:light;}', '.bg-anim{display:none !important;}'):
     assert marker in s, f'marker lipsă după patch: {marker}'
 

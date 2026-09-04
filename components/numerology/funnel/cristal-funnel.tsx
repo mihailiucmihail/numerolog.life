@@ -4,20 +4,31 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Loader2, Lock } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { startNumerologieCheckout, getNumerologieSessionStatus } from '@/app/actions/stripe'
 import { saveRaportAndSendEmail } from '@/app/actions/raport'
+import { checkPromoCode } from '@/app/actions/promo'
 import { useCurrency } from '@/components/providers/currency-provider'
 import { trackFunnel, trackPurchase } from '@/lib/funnel-analytics'
-import { FunnelForm } from './funnel-form'
 import { FunnelPaywall } from './funnel-paywall'
 import { CHECKOUT_STORAGE_KEY, FUNNEL_STORAGE_KEY, type FunnelForm as FormValues } from './types'
 
-type Step = 'form' | 'computing' | 'result'
-
-const PREVIEW_TIMEOUT_MS = 15000
-const MIN_COMPUTING_MS = 1200
 const PAYWALL_ID = 'funnel-paywall'
+const CALCULATOR_SRC = '/cristalul-calculator.html'
+
+/** Datele trimise de HTML după calcul (postMessage `previewRendered`). */
+interface PreviewData {
+  last: string
+  first: string
+  middle: string
+  day: number
+  month: number
+  year: number
+  email?: string
+  gender: string
+  nameAlphabetKey?: string
+  discountCode?: string
+}
 
 function readSaved(): FormValues | null {
   try {
@@ -28,7 +39,7 @@ function readSaved(): FormValues | null {
   }
 }
 
-/** URL-ul calculatorului în mod preview: aceleași formule ca raportul plătit, cu blocarea aplicată în HTML. */
+/** Întoarcere de la Stripe (anulat): re-deschidem direct raportul blurat cu datele salvate. */
 function buildPreviewSrc(v: FormValues): string {
   const params = new URLSearchParams({
     preview: '1',
@@ -41,9 +52,16 @@ function buildPreviewSrc(v: FormValues): string {
     gender: v.gender,
     alpha: v.nameAlphabetKey,
   })
-  return `/cristalul-calculator.html?${params.toString()}`
+  return `${CALCULATOR_SRC}?${params.toString()}`
 }
 
+/**
+ * Funnel Cristalul Destinului:
+ * 1) iframe-ul afișează FORMULARUL ORIGINAL din HTML (identic cu fișierul încărcat);
+ * 2) la „Рассчитать Кристалл” HTML-ul rulează calculate() real și afișează raportul ÎNTREG, blurat ~70 %
+ *    (trecutul vizibil pe grafice, viitorul mascat) — fără plată;
+ * 3) sub raport apare paywall-ul → Stripe → raport permanent complet (fluxul existent, neschimbat).
+ */
 export default function CristalFunnel() {
   const t = useTranslations('funnel')
   const router = useRouter()
@@ -52,15 +70,13 @@ export default function CristalFunnel() {
   const locale = pathname?.split('/')[1] || 'ro'
   const { currency, prices, format } = useCurrency()
 
+  const iframeRef = useRef<HTMLIFrameElement>(null)
   const didUnlock = useRef(false)
-  const computingStartedAt = useRef(0)
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const [step, setStep] = useState<Step>('form')
+  const [frameSrc, setFrameSrc] = useState<string>(CALCULATOR_SRC)
+  const [frameHeight, setFrameHeight] = useState(1200)
   const [form, setForm] = useState<FormValues | null>(null)
-  const [previewSrc, setPreviewSrc] = useState<string | null>(null)
-  const [frameHeight, setFrameHeight] = useState(900)
-  const [calcError, setCalcError] = useState('')
+  const [previewReady, setPreviewReady] = useState(false)
   const [checkoutBusy, setCheckoutBusy] = useState(false)
   const [checkoutError, setCheckoutError] = useState('')
   const [paidOverlay, setPaidOverlay] = useState(false)
@@ -73,69 +89,74 @@ export default function CristalFunnel() {
     trackFunnel('numerology_landing_view', { locale })
   }, [locale])
 
-  const clearTimer = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-      timeoutRef.current = null
-    }
-  }
+  const postToFrame = useCallback((msg: Record<string, unknown>) => {
+    iframeRef.current?.contentWindow?.postMessage(msg, '*')
+  }, [])
 
-  const startPreview = useCallback(
-    (values: FormValues) => {
-      setCalcError('')
-      setForm(values)
-      try {
-        sessionStorage.setItem(FUNNEL_STORAGE_KEY, JSON.stringify(values))
-      } catch {}
-      computingStartedAt.current = Date.now()
-      setStep('computing')
-      // Cheia de cache-busting forțează re-încărcarea iframe-ului la date noi.
-      setPreviewSrc(`${buildPreviewSrc(values)}&k=${Date.now()}`)
-      clearTimer()
-      timeoutRef.current = setTimeout(() => {
-        console.log('[v0] preview timeout — iframe did not report previewRendered')
-        setCalcError(t('errorCalc'))
-        setStep('form')
-        setPreviewSrc(null)
-      }, PREVIEW_TIMEOUT_MS)
-    },
-    [t],
-  )
-
-  // Mesaje din iframe: înălțime + confirmarea că preview-ul blocat a fost randat.
+  // Mesaje din iframe: înălțime, raport blurat randat, validare promo din formularul original.
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
       const d = event.data
       if (!d || typeof d !== 'object') return
+
       if ((d.type === 'resize' || d.type === 'reportRendered' || d.type === 'previewRendered') && typeof d.height === 'number') {
         setFrameHeight(Math.max(600, d.height + 24))
       }
+
       if (d.type === 'previewRendered') {
-        clearTimer()
-        const wait = Math.max(0, MIN_COMPUTING_MS - (Date.now() - computingStartedAt.current))
-        setTimeout(() => {
-          setStep('result')
-          trackFunnel('free_result_viewed', { mode: 'blurred_report' })
-        }, wait)
+        const p = d.data as PreviewData | undefined
+        if (p && p.first && p.last && p.day && p.month && p.year) {
+          const values: FormValues = {
+            first: p.first,
+            last: p.last,
+            middle: p.middle || '',
+            day: p.day,
+            month: p.month,
+            year: p.year,
+            gender: (p.gender === 'm' ? 'm' : 'f') as FormValues['gender'],
+            nameAlphabetKey: p.nameAlphabetKey || 'ru',
+          }
+          setForm(values)
+          try {
+            sessionStorage.setItem(FUNNEL_STORAGE_KEY, JSON.stringify(values))
+          } catch {}
+          trackFunnel('birth_data_submitted', { has_middle: Boolean(values.middle), alphabet: values.nameAlphabetKey })
+        }
+        setPreviewReady(true)
+        trackFunnel('free_result_viewed', { mode: 'blurred_report' })
+        // Aducem raportul la început (iframe-ul nu poate derula pagina părinte).
+        window.requestAnimationFrame(() => {
+          iframeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        })
       }
+
       if (d.type === 'previewFailed') {
-        clearTimer()
-        setCalcError(t('errorCalc'))
-        setStep('form')
-        setPreviewSrc(null)
+        setPreviewReady(false)
+      }
+
+      if (d.type === 'validatePromo' && typeof d.code === 'string') {
+        checkPromoCode(d.code)
+          .then((result) => postToFrame({ type: 'promoResult', result }))
+          .catch(() => postToFrame({ type: 'promoResult', result: { valid: false, reason: 'not_found' } }))
+      }
+
+      // Compatibilitate: dacă HTML-ul cere direct plata (după deblocare), folosim același checkout.
+      if (d.type === 'requestPayment' && d.data) {
+        const p = d.data as PreviewData
+        void handleCheckoutRef.current(p.email || '', p.discountCode)
       }
     }
     window.addEventListener('message', onMessage)
     return () => window.removeEventListener('message', onMessage)
-  }, [t])
+  }, [postToFrame])
 
-  // Restaurare după întoarcere de la Stripe (cancel) sau după refresh.
+  // Restaurare după întoarcere de la Stripe (anulat): raport blurat direct, fără re-completare.
   useEffect(() => {
     const saved = readSaved()
     if (saved) setForm(saved)
     if (searchParams.get('payment') === 'cancelled' && saved) {
       setCancelledNotice(true)
-      startPreview(saved)
+      setFrameSrc(`${buildPreviewSrc(saved)}&k=${Date.now()}`)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -176,7 +197,7 @@ export default function CristalFunnel() {
 
   // Bara sticky „Deschide raportul complet” — vizibilă cât timp paywall-ul nu e în viewport.
   useEffect(() => {
-    if (step !== 'result') {
+    if (!previewReady) {
       setShowSticky(false)
       return
     }
@@ -186,13 +207,7 @@ export default function CristalFunnel() {
     io.observe(el)
     setShowSticky(true)
     return () => io.disconnect()
-  }, [step])
-
-  const handleFormSubmit = (values: FormValues) => {
-    setCancelledNotice(false)
-    trackFunnel('birth_data_submitted', { has_middle: Boolean(values.middle), alphabet: values.nameAlphabetKey })
-    startPreview(values)
-  }
+  }, [previewReady])
 
   const handleCheckout = useCallback(
     async (email: string, promoCode?: string) => {
@@ -220,17 +235,24 @@ export default function CristalFunnel() {
       } catch (err) {
         localStorage.removeItem(CHECKOUT_STORAGE_KEY)
         setCheckoutBusy(false)
-        setCheckoutError(err instanceof Error && err.message ? err.message : t('errorCheckout'))
+        const message = err instanceof Error && err.message ? err.message : t('errorCheckout')
+        setCheckoutError(message)
+        postToFrame({ type: 'paymentError', message })
+        postToFrame({ type: 'paymentCancelled' })
       }
     },
-    [form, locale, discountCode, currency, prices.cristal, t],
+    [form, locale, discountCode, currency, prices.cristal, t, postToFrame],
   )
+  const handleCheckoutRef = useRef(handleCheckout)
+  useEffect(() => {
+    handleCheckoutRef.current = handleCheckout
+  }, [handleCheckout])
 
   const resetToForm = () => {
-    clearTimer()
-    setStep('form')
-    setPreviewSrc(null)
+    setPreviewReady(false)
     setCancelledNotice(false)
+    setFrameSrc(`${CALCULATOR_SRC}?k=${Date.now()}`)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const scrollToPaywall = () => {
@@ -238,109 +260,48 @@ export default function CristalFunnel() {
     document.getElementById(PAYWALL_ID)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  const showFrame = step === 'result' && previewSrc
-
   return (
     <div className="relative">
-      <AnimatePresence mode="wait">
-        {step === 'form' && (
-          <motion.div key="form" exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.3 }} className="flex flex-col gap-6">
-            {cancelledNotice && (
-              <p role="status" className="mx-auto max-w-md rounded-lg border border-primary/30 bg-primary/5 px-4 py-3 text-center text-sm text-foreground">
-                {t('cancelledNotice')}
-              </p>
-            )}
-            <FunnelForm initial={form ?? undefined} onSubmit={handleFormSubmit} />
-            {calcError && <p role="alert" className="text-center text-sm text-destructive">{calcError}</p>}
-          </motion.div>
-        )}
+      {cancelledNotice && (
+        <p role="status" className="mx-auto mb-6 max-w-md rounded-lg border border-primary/30 bg-primary/5 px-4 py-3 text-center text-sm text-foreground">
+          {t('cancelledNotice')}
+        </p>
+      )}
 
-        {step === 'computing' && (
+      {/* Calculatorul ORIGINAL (formular identic cu fișierul încărcat). După calcul afișează raportul întreg, blurat. */}
+      <iframe
+        ref={iframeRef}
+        key={frameSrc}
+        src={frameSrc}
+        title={t('previewFrameTitle')}
+        scrolling="no"
+        className="scroll-mt-20"
+        style={{ width: '100%', height: frameHeight, border: 'none', display: 'block', background: 'transparent', colorScheme: 'normal' }}
+      />
+
+      <AnimatePresence>
+        {previewReady && form && (
           <motion.div
-            key="computing"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            key="paywall"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-            className="flex min-h-[40vh] flex-col items-center justify-center gap-6 text-center"
-            role="status"
-            aria-live="polite"
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="mt-6 flex flex-col gap-10 sm:mt-8"
           >
-            <div className="premium-logo-pulse flex items-center justify-center" aria-hidden="true">
-              <div className="relative flex size-20 rotate-45 items-center justify-center border border-primary/70 bg-primary/10 shadow-[0_0_45px_rgba(212,175,55,0.3)]">
-                <div className="size-12 border border-primary/50 bg-primary/10" />
-              </div>
+            <FunnelPaywall id={PAYWALL_ID} initialPromo={discountCode} busy={checkoutBusy} error={checkoutError} onCheckout={handleCheckout} />
+            <div className="text-center">
+              <button type="button" onClick={resetToForm} className="text-xs text-muted-foreground/60 underline-offset-4 hover:text-foreground hover:underline">
+                {t('editData')}
+              </button>
             </div>
-            <div>
-              <p className="font-serif text-2xl text-foreground">{t('computing')}</p>
-              <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.25em] text-primary/70">{t('computingHint')}</p>
-            </div>
-            <Loader2 className="size-5 animate-spin text-primary/70" aria-hidden="true" />
           </motion.div>
         )}
-
       </AnimatePresence>
-
-      {showFrame && form && (
-        <motion.header
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mx-auto flex max-w-2xl flex-col items-center gap-3 text-center"
-        >
-          {cancelledNotice && (
-            <p role="status" className="mb-2 max-w-md rounded-lg border border-primary/30 bg-primary/5 px-4 py-3 text-sm text-foreground">
-              {t('cancelledNotice')}
-            </p>
-          )}
-          <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-primary/80">{t('previewEyebrow')}</p>
-          <h2 className="font-serif text-3xl font-light text-foreground sm:text-4xl text-balance">{t('previewTitle', { name: form.first })}</h2>
-          <p className="max-w-md text-sm leading-relaxed text-muted-foreground/80 text-pretty">{t('previewSubtitle')}</p>
-          <p className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-xs text-primary">
-            <Lock className="size-3.5" aria-hidden="true" />
-            {t('previewLegend')}
-          </p>
-        </motion.header>
-      )}
-
-      {/*
-        Raportul REAL în mod preview: montat în timpul calculului (ascuns), afișat după `previewRendered`.
-        Blocarea (blur ~70 %, viitor mascat pe grafice) este aplicată în HTML — nu se poate ocoli din CSS-ul paginii.
-      */}
-      {previewSrc && (
-        <div
-          className={showFrame ? 'mt-8 sm:mt-10' : 'pointer-events-none absolute -left-[9999px] top-0 h-px w-px overflow-hidden opacity-0'}
-          aria-hidden={!showFrame}
-        >
-          <iframe
-            key={previewSrc}
-            src={previewSrc}
-            title={t('previewFrameTitle')}
-            scrolling="no"
-            style={{ width: '100%', height: showFrame ? frameHeight : 1, border: 'none', display: 'block', background: 'transparent', colorScheme: 'normal' }}
-          />
-        </div>
-      )}
-
-      {showFrame && form && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mt-10 flex flex-col gap-10 sm:mt-14"
-        >
-          <FunnelPaywall id={PAYWALL_ID} initialPromo={discountCode} busy={checkoutBusy} error={checkoutError} onCheckout={handleCheckout} />
-          <div className="text-center">
-            <button type="button" onClick={resetToForm} className="text-xs text-muted-foreground/60 underline-offset-4 hover:text-foreground hover:underline">
-              {t('editData')}
-            </button>
-          </div>
-        </motion.div>
-      )}
 
       {/* Bara sticky pe mobil/desktop — duce la paywall. */}
       <AnimatePresence>
-        {showFrame && showSticky && (
+        {previewReady && showSticky && (
           <motion.div
             initial={{ y: 80, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
