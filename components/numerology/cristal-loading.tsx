@@ -50,35 +50,49 @@ export function CristalLoading({ eyebrow, title, phrases, durationMs = 7000, rea
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
+      // Apare INSTANT și complet opac (fără fade-in) — raportul de dedesubt nu trebuie să se vadă nicio clipă.
+      initial={{ opacity: 1 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0, transition: { duration: 0.6 } }}
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-background/95 backdrop-blur-xl"
+      exit={{ opacity: 0, transition: { duration: 0.7, ease: 'easeInOut' } }}
+      // `--background` al temei este transparent (fundalul cosmic e sub el) → fundal SOLID explicit, cu aceeași
+      // nuanță navy și un halou discret în centru. z-index peste navbar (z-50) și bara sticky (z-40).
+      className="fixed inset-0 z-[70] flex items-center justify-center"
+      style={{
+        background:
+          'radial-gradient(ellipse 60% 45% at 50% 42%, rgba(74,46,110,0.55) 0%, rgba(74,46,110,0) 70%), linear-gradient(180deg, #1a1030 0%, #120b22 55%, #0d0818 100%)',
+      }}
       role="status"
       aria-live="polite"
     >
       <div className="flex w-full max-w-md flex-col items-center gap-8 px-8 text-center">
-        {/* Cristalul — semnătura ecranului */}
-        <div className="relative flex size-40 items-center justify-center" aria-hidden="true">
+        {/* Cristalul — semnătura ecranului. Forma rămâne perfect nemișcată; pulsează doar lumina din jurul ei
+            (fără `scale` pe SVG sau pe straturile cu blur → fără vibrație subpixel). */}
+        <div className="relative flex size-40 items-center justify-center" aria-hidden="true" style={{ transform: 'translateZ(0)' }}>
           {[0, 1].map((i) => (
             <motion.span
               key={i}
               className="absolute inset-4 rounded-full border border-primary/30"
+              style={{ willChange: 'transform, opacity' }}
               initial={{ scale: 0.7, opacity: 0 }}
-              animate={{ scale: [0.7, 1.35], opacity: [0.55, 0] }}
-              transition={{ duration: 2.8, repeat: Infinity, ease: 'easeOut', delay: i * 1.4 }}
+              animate={{ scale: [0.7, 1.35], opacity: [0.5, 0] }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'easeOut', delay: i * 1.5 }}
             />
           ))}
+          {/* Halou: două straturi statice ca formă, animate doar în opacitate. */}
           <motion.div
-            className="absolute inset-0 rounded-full bg-primary/15 blur-2xl"
-            animate={{ opacity: [0.35, 0.8, 0.35], scale: [0.9, 1.1, 0.9] }}
-            transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+            className="absolute inset-2 rounded-full bg-primary/20 blur-2xl"
+            animate={{ opacity: [0.25, 0.75, 0.25] }}
+            transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
           />
-          <motion.svg
+          <motion.div
+            className="absolute inset-8 rounded-full bg-primary/30 blur-xl"
+            animate={{ opacity: [0.15, 0.6, 0.15] }}
+            transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut', delay: 0.2 }}
+          />
+          <svg
             viewBox="0 0 120 140"
             className="relative size-28 text-primary"
-            animate={{ scale: [0.96, 1.05, 0.96], filter: ['drop-shadow(0 0 6px rgba(212,175,55,0.25))', 'drop-shadow(0 0 22px rgba(212,175,55,0.6))', 'drop-shadow(0 0 6px rgba(212,175,55,0.25))'] }}
-            transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ filter: 'drop-shadow(0 0 14px rgba(212,175,55,0.45))' }}
           >
             <defs>
               <linearGradient id="cd-gem" x1="0" y1="0" x2="0" y2="1">
@@ -97,15 +111,22 @@ export function CristalLoading({ eyebrow, title, phrases, durationMs = 7000, rea
                 <line x1="60" y1="70" x2="60" y2="136" opacity="0.55" />
               </g>
             </g>
+            {/* Scânteia din inima cristalului — pulsează doar în opacitate (raza fixă). */}
             <motion.circle
               cx="60"
               cy="44"
-              r="2.2"
+              r="2.4"
               fill="#F3DFA2"
-              animate={{ opacity: [0.2, 1, 0.2], r: [1.6, 2.8, 1.6] }}
-              transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+              animate={{ opacity: [0.15, 1, 0.15] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
             />
-          </motion.svg>
+            <motion.polygon
+              points="60,4 104,44 60,136 16,44"
+              fill="#F3DFA2"
+              animate={{ opacity: [0, 0.18, 0] }}
+              transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          </svg>
         </div>
 
         <div className="flex flex-col items-center gap-3">

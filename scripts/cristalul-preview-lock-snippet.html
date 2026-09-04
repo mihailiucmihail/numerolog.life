@@ -3,6 +3,10 @@
     .cd-preview .hero,
     .cd-preview #inputFormCard,
     .cd-preview #pdfDownloadCard{display:none !important;}
+    /* În timpul ecranului „Cristalul se formează” conţinutul iframe-ului este invizibil (raportul se calculează
+       în fundal); când aplicaţia trimite `previewReveal`, apare cu un fade lin. */
+    body.cd-forming > *{opacity:0 !important;transition:none !important;}
+    body > *{transition:opacity .7s ease;}
     /* Blur PUTERNIC — folosit doar pe grafice (viitorul în bare/rânduri/linii). */
     .cd-lock{
       filter:blur(11px) saturate(.7);
@@ -223,11 +227,18 @@
       window.__cdLastResult = null;
       const err = document.getElementById('errMsg');
       if(err) err.style.display = 'none';
+      // Ascundem raportul ÎNAINTE de calcul: aplicaţia pune ecranul „Cristalul se formează” peste pagină,
+      // iar conţinutul din iframe rămâne invizibil (opacity 0) până când ecranul dispare → nicio străpungere.
+      document.body.classList.add('cd-forming');
+      window.parent.postMessage({ type: 'previewStarted' }, '*');
       if(typeof calculate === 'function') calculate();
       const ok = !!(window.__cdLastResult && document.getElementById('results'));
-      if(!ok) return; // calculate() a afişat deja eroarea de validare în formular
-      // Validarea a trecut → aplicaţia arată ecranul „Cristalul se formează” peste raport (≈7 s).
-      window.parent.postMessage({ type: 'previewStarted' }, '*');
+      if(!ok){
+        // Validarea a eşuat → revenim la formular vizibil şi anunţăm aplicaţia să închidă ecranul.
+        document.body.classList.remove('cd-forming');
+        window.parent.postMessage({ type: 'previewFailed' }, '*');
+        return;
+      }
       document.body.classList.add('cd-preview');
       __cdApplyPreviewLock();
       window.scrollTo(0, 0);
@@ -243,6 +254,12 @@
       if(window.__paymentUnlocked){ if(typeof calculate === 'function') calculate(); return; }
       __cdPreviewCalculate();
     }
+    // Aplicaţia anunţă că ecranul de formare se închide → raportul apare lin.
+    window.addEventListener('message', function(ev){
+      if(ev.data && ev.data.type === 'previewReveal'){
+        document.body.classList.remove('cd-forming');
+      }
+    });
 
     // Mod preview din link (ex. întoarcere de la Stripe): completează datele, calculează, apoi blochează.
     (function(){

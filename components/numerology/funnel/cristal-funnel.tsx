@@ -270,10 +270,11 @@ export default function CristalFunnel() {
 
   // Ecranul de formare s-a încheiat → dezvăluim raportul blurat de la început.
   const handleFormingDone = useCallback(() => {
+    // Poziționăm pagina pe raport cât ecranul e încă opac, apoi iframe-ul își arată conținutul (fade) și
+    // ecranul dispare (fade) — cele două tranziții se suprapun, fără cadru gol sau străpungere.
+    iframeRef.current?.scrollIntoView({ behavior: 'instant', block: 'start' })
+    iframeRef.current?.contentWindow?.postMessage({ type: 'previewReveal' }, '*')
     setForming(false)
-    window.requestAnimationFrame(() => {
-      iframeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    })
   }, [])
 
   const resetToForm = () => {
