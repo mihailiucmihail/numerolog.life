@@ -13,7 +13,7 @@ export type FunnelEvent =
   | 'free_result_viewed'
   | 'full_report_offer_viewed'
   | 'full_report_checkout_clicked'
-  | 'grani_offer_clicked'
+  | 'sticky_unlock_clicked'
   | 'stripe_checkout_started'
   | 'purchase_completed'
 

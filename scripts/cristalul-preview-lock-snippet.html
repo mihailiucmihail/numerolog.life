@@ -1,0 +1,178 @@
+<style>
+    /* ==== Mod preview (raport gratuit, parțial blurat) — activ doar cu ?preview=1 ==== */
+    .cd-preview .hero,
+    .cd-preview #inputFormCard,
+    .cd-preview #pdfDownloadCard{display:none !important;}
+    .cd-lock{
+      filter:blur(7px) saturate(.85);
+      opacity:.72;
+      user-select:none;-webkit-user-select:none;
+      pointer-events:none;
+    }
+    .cd-lock *{pointer-events:none !important;}
+    .cd-preview .cd-lock summary::after{content:"" !important;}
+    .cd-preview details.cd-lock[open] .body{max-height:120px;overflow:hidden;}
+    .cd-lock-badge{
+      position:absolute;right:0;top:0;z-index:3;
+      display:inline-flex;align-items:center;gap:6px;
+      font:600 10px/1 var(--sans, Inter, sans-serif);letter-spacing:.14em;text-transform:uppercase;
+      color:#1a1220;background:linear-gradient(180deg,var(--brass-bright,#d9a94f),var(--brass,#b8863b));
+      padding:6px 10px;border-radius:1px;white-space:nowrap;pointer-events:none;
+    }
+    .cd-lock-badge::before{content:"◈";font-size:9px;}
+    .cd-preview .card{position:relative;}
+    .cd-future-mask{
+      position:absolute;top:0;bottom:0;right:0;z-index:2;pointer-events:none;
+      backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+      background:linear-gradient(90deg, rgba(22,16,34,.25), rgba(22,16,34,.62));
+      border-left:1px dashed rgba(217,169,79,.7);
+    }
+    .cd-future-mask::after{
+      content:"будущее — в полном разборе";
+      position:absolute;top:10px;left:10px;right:10px;
+      font:600 9.5px/1.3 var(--sans, Inter, sans-serif);letter-spacing:.14em;text-transform:uppercase;
+      color:var(--brass-bright,#d9a94f);
+    }
+    .cd-preview .mandala-future-line{filter:blur(3px);opacity:.3 !important;}
+    .cd-preview .chart-tooltip{display:none !important;}
+</style>
+<script>
+    // ==== Preview blocat: raportul real, cu ~70 % din conținut blurat și viitorul mascat ====
+    function __cdAfterNow(items, isNow){
+      // Toate elementele DUPĂ cel „curent” (sau după ultimul „trecut”) devin blurate = viitor.
+      let ni = -1;
+      items.forEach(function(el, i){ if(isNow(el)) ni = i; });
+      if(ni < 0) return;
+      items.forEach(function(el, i){ if(i > ni) el.classList.add('cd-lock'); });
+    }
+    function __cdMaskFuture(stage){
+      if(!stage) return;
+      const svg = stage.querySelector('svg');
+      if(!svg) return;
+      let mask = stage.querySelector(':scope > .cd-future-mask');
+      const now = svg.querySelector('#nowLine, .now-line');
+      const vb = (svg.getAttribute('viewBox') || '0 0 640 320').split(/\s+/).map(Number);
+      const width = vb[2] || 640;
+      if(!now){
+        // Fără marker „acum” (vârstă în afara graficului): blurăm tot graficul.
+        if(mask) mask.remove();
+        svg.classList.add('cd-lock');
+        return;
+      }
+      svg.classList.remove('cd-lock');
+      const x = parseFloat(now.getAttribute('x1') || '0');
+      const pct = Math.max(8, Math.min(96, (x / width) * 100));
+      if(!mask){
+        mask = document.createElement('div');
+        mask.className = 'cd-future-mask';
+        stage.appendChild(mask);
+      }
+      mask.style.left = pct.toFixed(2) + '%';
+      mask.style.width = 'auto';
+    }
+    function __cdBadge(card){
+      if(card.querySelector(':scope > .cd-lock-badge')) return;
+      const b = document.createElement('span');
+      b.className = 'cd-lock-badge';
+      b.textContent = 'в полном разборе';
+      card.appendChild(b);
+    }
+    function __cdApplyPreviewLock(){
+      document.body.classList.add('cd-preview');
+      const results = document.getElementById('results');
+      if(!results) return;
+      const cards = Array.from(results.querySelectorAll(':scope > .card'));
+      cards.forEach(function(card){
+        if(card.id === 'pdfDownloadCard' || card.id === 'personalDataSummary') return;
+        const title = ((card.querySelector('.section-title') || {}).textContent || '');
+        const lockChildren = function(skip){
+          Array.from(card.children).forEach(function(ch){
+            if(ch.classList.contains('section-title') || ch.classList.contains('cd-lock-badge')) return;
+            if(skip && skip(ch)) return;
+            ch.classList.add('cd-lock');
+          });
+        };
+        // 1) Rezultatul gratuit: „День Рождения” — complet vizibil.
+        if(/День Рождения/.test(title)) return;
+        // 2) Numele: prima Arcană vizibilă, restul blurat.
+        if(card.id === 'nameCard'){
+          card.querySelectorAll('.namearc-item').forEach(function(it, k){ if(k > 0) it.classList.add('cd-lock'); });
+          card.querySelectorAll('.detail, .chart-interpret').forEach(function(d){ d.classList.add('cd-lock'); });
+          __cdBadge(card);
+          return;
+        }
+        // 3) Numerele-cheie: medalioanele rămân vizibile, interpretările sunt blurate.
+        if(/Ключевые числа/.test(title)){
+          card.querySelectorAll('.detail, .subnum-row, .chart-interpret, .hint').forEach(function(d){ d.classList.add('cd-lock'); });
+          __cdBadge(card);
+          return;
+        }
+        // 4) Carduri cu timp (grafice, cicluri, tranzite): trecutul vizibil, viitorul mascat, textele blurate.
+        const timeCard = card.querySelector('.chart-stage, .yc-bar, .transit-row, .tl-row, .age-chip, .meta-timeline, .mandala-chart-svg');
+        if(timeCard){
+          card.querySelectorAll('.detail, .chart-interpret, .chart-interpret-main').forEach(function(d){ d.classList.add('cd-lock'); });
+          card.querySelectorAll('.chart-stage').forEach(__cdMaskFuture);
+          card.querySelectorAll('#yearlyCycleChart, #qualityOfLifeChart').forEach(function(box){
+            const wraps = Array.from(box.querySelectorAll('.yc-bar-wrap'));
+            __cdAfterNow(wraps, function(w){ return !!w.querySelector('.yc-bar.now'); });
+          });
+          __cdAfterNow(Array.from(card.querySelectorAll('.transit-row')), function(r){ return r.classList.contains('active'); });
+          __cdAfterNow(Array.from(card.querySelectorAll('.tl-row')), function(r){ return r.classList.contains('active'); });
+          __cdAfterNow(Array.from(card.querySelectorAll('.age-chip')), function(r){ return r.classList.contains('now'); });
+          __cdBadge(card);
+          return;
+        }
+        // 5) Implicit: tot conținutul (fără titlu) blurat.
+        lockChildren();
+        __cdBadge(card);
+      });
+
+      // Graficele Destinului se re-randează la schimbarea tab-ului — re-aplicăm masca viitorului.
+      const life = document.getElementById('lifeChartSvg');
+      if(life && typeof MutationObserver !== 'undefined' && !life.__cdObserved){
+        life.__cdObserved = true;
+        const mo = new MutationObserver(function(){
+          window.requestAnimationFrame(function(){ __cdMaskFuture(life.parentElement); });
+        });
+        mo.observe(life, { childList: true });
+      }
+    }
+
+    // Mod preview: completează datele din link, calculează, apoi blochează.
+    (function(){
+      const params = new URLSearchParams(window.location.search);
+      if(params.get('preview') !== '1') return;
+      window.__cdSkipMail = true;
+      window.__cdPreviewMode = true;
+      window.addEventListener('DOMContentLoaded', function(){
+        const values = {
+          lastName: params.get('last') || '',
+          firstName: params.get('first') || '',
+          middleName: params.get('middle') || '',
+          day: params.get('day') || '',
+          month: params.get('month') || '',
+          year: params.get('year') || '',
+        };
+        Object.keys(values).forEach(function(id){
+          const field = document.getElementById(id);
+          if(field) field.value = values[id];
+        });
+        const gender = params.get('gender');
+        if(gender && document.getElementById('gender')){
+          document.getElementById('gender').value = gender;
+          if(typeof paintGender === 'function') try{ paintGender(); }catch(e){}
+        }
+        const alpha = params.get('alpha');
+        if(alpha && document.getElementById('nameAlphabetSelect')) document.getElementById('nameAlphabetSelect').value = alpha;
+        document.body.classList.add('cd-preview');
+        if(typeof calculate === 'function') calculate();
+        const ok = !!(window.__cdLastResult && document.getElementById('results'));
+        if(ok) __cdApplyPreviewLock();
+        setTimeout(function(){
+          // Elementele animate (bare, puncte) apar cu întârziere — a doua trecere prinde tot.
+          if(ok) __cdApplyPreviewLock();
+          window.parent.postMessage({ type: ok ? 'previewRendered' : 'previewFailed', height: document.documentElement.scrollHeight }, '*');
+        }, 900);
+      });
+    })();
+</script>

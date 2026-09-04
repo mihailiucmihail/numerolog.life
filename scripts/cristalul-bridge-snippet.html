@@ -8,6 +8,7 @@
     (function(){
       const params = new URLSearchParams(window.location.search);
       if(params.get('auto') !== '1') return;
+      window.__cdSkipMail = true; // emailul a fost deja colectat la plată
       const values = {
         lastName: params.get('last') || '',
         firstName: params.get('first') || '',
@@ -124,6 +125,7 @@
       if(!event.data) return;
       if(event.data.type === 'paymentSuccess'){
         window.__paymentUnlocked = true;
+        window.__cdSkipMail = true;
         const data = event.data.formData || {};
         ['lastName','firstName','middleName','day','month','year'].forEach((id) => {
           if(document.getElementById(id) && data[id] != null) document.getElementById(id).value = data[id];

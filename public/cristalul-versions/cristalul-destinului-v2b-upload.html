@@ -26,14 +26,18 @@
   --ui: var(--sans);
 }
 *{box-sizing:border-box;}
-:root{color-scheme:light;}
-html,body{margin:0;padding:0;background-color:transparent !important;background:transparent !important;color:var(--parchment);font-family:var(--sans);-webkit-text-size-adjust:100%;
+html,body{margin:0;padding:0;background-color:#161022;background:var(--ink);color:var(--parchment);font-family:var(--sans);-webkit-text-size-adjust:100%;
   -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;
   font-size:clamp(15px,0.5vw + 14px,16.5px);line-height:1.65;letter-spacing:-0.005em;font-weight:400;}
 body{
-  background:transparent;
+  background:
+    radial-gradient(ellipse at 20% -10%, rgba(110,35,52,0.35), transparent 55%),
+    radial-gradient(ellipse at 90% 10%, rgba(74,58,99,0.35), transparent 50%),
+    var(--ink);
+  background-size: 160% 160%, 160% 160%, 100% 100%;
+  animation: bgDrift 26s ease-in-out infinite alternate;
   min-height:100vh;
-  padding: 32px 6px 80px;
+  padding: 32px 18px 80px;
   position:relative;
 }
 @keyframes bgDrift{
@@ -41,7 +45,7 @@ body{
   50%{ background-position: 35% 5%, 70% 25%, 0 0; }
   100%{ background-position: 10% 0%, 100% 0%, 0 0; }
 }
-.bg-anim{display:none !important;}
+.bg-anim{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0;background-color:#161022;}
 .bg-star{
   position:absolute;border-radius:50%;background:var(--parchment);
   animation:starTwinkle ease-in-out infinite;
@@ -63,7 +67,7 @@ body{
   90%{ opacity:0.5; }
   100%{ transform:translateY(-110vh) translateX(var(--drift,20px)); opacity:0; }
 }
-.wrap{width:100%;max-width:none;margin:0;position:relative;z-index:1;}
+.wrap{max-width:920px;margin:0 auto;position:relative;z-index:1;}
 .hero{text-align:center;margin-bottom:36px;position:relative;}
 .hero .hero-glow{
   position:absolute;top:-40px;left:50%;transform:translateX(-50%);
@@ -123,8 +127,8 @@ body{
 }
 
 .card{
-  background-color:transparent;
-  background:transparent;
+  background-color:#1c1529;
+  background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), #1c1529;
   border:1px solid var(--line);
   border-radius:2px;
   padding:26px 28px;
@@ -177,12 +181,10 @@ input::placeholder{color:rgba(237,227,207,0.3);}
   color:#1a1220;border:none;padding:14px;font-family:var(--sans);
   letter-spacing:.16em;text-transform:uppercase;font-size:12.5px;font-weight:600;
   cursor:pointer;border-radius:1px;
-  transition:filter .2s ease, transform .14s cubic-bezier(0.34,1.56,0.64,1), box-shadow .2s ease;
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
-  box-shadow:0 6px 18px rgba(217,169,79,0.18);
-  }
-.btn:hover{filter:brightness(1.08);box-shadow:0 8px 24px rgba(217,169,79,0.28);}
-.btn:active{transform:scale(0.96) translateY(1px);filter:brightness(0.94);box-shadow:0 2px 8px rgba(217,169,79,0.15), inset 0 2px 6px rgba(26,18,32,0.25);transition-duration:.07s;}
+  transition:filter .15s ease, transform .1s ease;
+}
+.btn:hover{filter:brightness(1.08);}
+.btn:active{transform:translateY(1px);}
 .hint{font-size:15.5px;color:var(--parchment-dim);margin-top:10px;line-height:1.6;}
 .hint[style="margin:14px 0 10px;text-align:left;"]{font-size:15px;font-weight:600;color:var(--brass-bright);letter-spacing:.01em;line-height:1.4;}
 
@@ -277,10 +279,8 @@ input::placeholder{color:rgba(237,227,207,0.3);}
   background:transparent;border:1px solid var(--line);color:var(--parchment-dim);
   font-family:var(--sans);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
   padding:9px 14px;cursor:pointer;transition:all .2s ease;border-radius:1px;
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
 }
 .chart-tab:hover{border-color:var(--brass-bright);color:var(--parchment);}
-.chart-tab:active{transform:scale(0.94);transition-duration:.07s;}
 .chart-tab.active{background:var(--brass);border-color:var(--brass);color:#1a1220;font-weight:600;}
 
 .chart-stage{position:relative;width:100%;}
@@ -670,13 +670,9 @@ select option{color:#1a1420;background:#fff;}
         </div>
       </div>
       <div class="full">
-        <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(на него придёт постоянная ссылка на твой отчёт)</span></label>
-        <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="">
-      </div>
-      <div class="full">
-        <label>Промокод <span style="opacity:.5;text-transform:none;letter-spacing:0;">(необязательно — скидка 15 %, действует один раз)</span></label>
-        <input id="promoCode" type="text" placeholder="CRISTAL15-XXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" value="" style="text-transform:uppercase;letter-spacing:.08em;">
-        <div id="promoMsg" style="display:none;margin-top:8px;font-size:13px;line-height:1.5;"></div>
+        <label>Электронная почта</label>
+        <input id="pMail" type="email" inputmode="email" autocomplete="email" placeholder="ivan@example.com">
+        <p class="note" style="opacity:.5;text-transform:none;letter-spacing:0;font-size:13px;margin:6px 0 0;">Оставь почту — пришлём туда новости о твоём Кристалле Судьбы и полезные разборы.</p>
       </div>
       <div class="full">
         <label>Пол</label>
@@ -691,7 +687,7 @@ select option{color:#1a1420;background:#fff;}
         </select>
       </div>
     </div>
-    <button id="mainCalcBtn" class="btn" onclick="requestPayment()">Рассчитать Кристалл</button>
+    <button class="btn" onclick="calculate()">Рассчитать Кристалл</button>
     <script>
       document.addEventListener('DOMContentLoaded', function(){
         paintGender();
@@ -1548,8 +1544,8 @@ function autoGender(){
                                      : 'Определили по имени — проверь, пожалуйста.';
 }
 function readMail(){
-  const el = document.getElementById('emailAddr');
-  const v = el ? el.value.trim() : '';
+  const el = document.getElementById('pMail');
+  const v = el.value.trim();
   if(v === '') return {ok:false, msg:'Укажи электронную почту — она нужна нам, чтобы присылать тебе новости и полезные разборы.'};
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return {ok:false, msg:'Проверь адрес почты — похоже, в нём опечатка.'};
   return {ok:true, value:v};
@@ -4013,7 +4009,7 @@ function calculate(){
     err.style.display='block';
     return;
   }
-  const mailCheck = window.__cdSkipMail ? {ok:true, value:''} : readMail();
+  const mailCheck = readMail();
   if(!mailCheck.ok){
     err.textContent = mailCheck.msg;
     err.style.display='block';
@@ -4022,7 +4018,7 @@ function calculate(){
   // Почта провалидирована. Пока просто сохраняем локально (в браузере посетителя) —
   // для реального сбора лидов сюда нужно подключить свой webhook / Google Sheet / CRM
   // (например: fetch('https://твой-эндпоинт', {method:'POST', body: JSON.stringify({email: mailCheck.value})})).
-  try{ if(mailCheck.value) localStorage.setItem('crystal_last_email', mailCheck.value); }catch(e){}
+  try{ localStorage.setItem('crystal_last_email', mailCheck.value); }catch(e){}
   const last = document.getElementById('lastName').value.trim();
   const first = document.getElementById('firstName').value.trim();
   const middle = document.getElementById('middleName').value.trim();
@@ -4053,7 +4049,6 @@ function calculate(){
   }
 
   const r = computeAll(last, first, middle, day, month, year, nameAlphabetKey);
-  window.__cdLastResult = r;
 
   // Скрыть форму ввода и показать красивую сводку введённых данных
   const inputFormCard = document.getElementById('inputFormCard');
@@ -5191,7 +5186,7 @@ function calculate(){
   const notesBox = document.getElementById('pythNotes');
   if(notesBox){
     if(r.gridNotes && r.gridNotes.length){
-      notesBox.innerHTML = '<div class="hint" style="margin:0 0 10px;text-align:left;">Сравнение Карта Рождения ↔ Карта Имени — где цифры отличаются:</div>' +
+      notesBox.innerHTML = '<div class="hint" style="margin:0 0 10px;text-align:left;">Сравнение Карта Рождения ↔ Карта Имени (метод Айрэн По / Джули По) — где цифры отличаются:</div>' +
         r.gridNotes.map(n=>{
           const txt = DB.gridComparison[String(n.digit)][n.scenario];
           const label = n.scenario==='birth_more' ? `${channels[n.digit]} (${n.digit}): больше в Карта Рождения` : `${channels[n.digit]} (${n.digit}): больше в Карта Имени`;
@@ -6070,348 +6065,5 @@ function startPdfExport(){
 </script>
 
 </div>
-<script>
-    // ==== Bridge integrare aplicație principală: resize, plată Stripe, raport permanent ====
-    function __cdSendHeight(){
-      window.parent.postMessage({ type: 'resize', height: document.documentElement.scrollHeight }, '*');
-    }
-
-    // Modul raport: completează automat datele din link și afișează direct raportul.
-    (function(){
-      const params = new URLSearchParams(window.location.search);
-      if(params.get('auto') !== '1') return;
-      window.__cdSkipMail = true; // emailul a fost deja colectat la plată
-      const values = {
-        lastName: params.get('last') || '',
-        firstName: params.get('first') || '',
-        middleName: params.get('middle') || '',
-        day: params.get('day') || '',
-        month: params.get('month') || '',
-        year: params.get('year') || '',
-      };
-      window.addEventListener('DOMContentLoaded', function(){
-        Object.entries(values).forEach(([id, value]) => {
-          const field = document.getElementById(id);
-          if(field) field.value = value;
-        });
-        const gender = params.get('gender');
-        if(gender && document.getElementById('gender')) document.getElementById('gender').value = gender;
-        const alpha = params.get('alpha');
-        if(alpha && document.getElementById('nameAlphabetSelect')) document.getElementById('nameAlphabetSelect').value = alpha;
-        window.__paymentUnlocked = true;
-        const hero = document.querySelector('.hero');
-        if(hero) hero.style.display = 'none';
-        const inputCard = document.getElementById('inputFormCard');
-        if(inputCard) inputCard.style.display = 'none';
-        if(typeof calculate === 'function') calculate();
-        setTimeout(function(){
-          window.parent.postMessage({ type: 'reportRendered', height: document.documentElement.scrollHeight }, '*');
-        }, 250);
-      });
-    })();
-
-    // Bridge pentru checkout-ul Stripe și raportul permanent din aplicația principală.
-    function requestPayment(){
-      const err = document.getElementById('errMsg');
-      const email = (document.getElementById('emailAddr') && document.getElementById('emailAddr').value.trim()) || '';
-      const day = Number(document.getElementById('day').value);
-      const month = Number(document.getElementById('month').value);
-      const year = Number(document.getElementById('year').value);
-      if(!day || !month || !year || day < 1 || day > 31 || month < 1 || month > 12 || year < 1900){
-        err.textContent = 'Введи корректную дату рождения (день, месяц, год).';
-        err.style.display = 'block';
-        return;
-      }
-      if(document.getElementById('emailAddr') && (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))){
-        err.textContent = 'Введи корректный email, чтобы получить отчёт.';
-        err.style.display = 'block';
-        return;
-      }
-      err.style.display = 'none';
-      if(window.__paymentUnlocked){ calculate(); return; }
-      const promoEl = document.getElementById('promoCode');
-      const discountCode = promoEl ? promoEl.value.trim().toUpperCase().replace(/\s+/g, '') : '';
-      const data = {
-        last: document.getElementById('lastName').value.trim(),
-        first: document.getElementById('firstName').value.trim(),
-        middle: document.getElementById('middleName').value.trim(),
-        day, month, year, email,
-        gender: document.getElementById('gender').value,
-        nameAlphabetKey: typeof getNameAlphabetKey === 'function' ? getNameAlphabetKey() : undefined,
-        discountCode: discountCode || undefined
-      };
-      window.parent.postMessage({ type: 'requestPayment', data }, '*');
-      const btn = document.getElementById('mainCalcBtn');
-      if(btn){ btn.disabled = true; btn.textContent = 'Обработка...'; }
-    }
-
-    // Промокод: валидация на сервере через родительское окно (без побочных эффектов).
-    (function(){
-      const promoEl = document.getElementById('promoCode');
-      const promoMsg = document.getElementById('promoMsg');
-      if(!promoEl || !promoMsg) return;
-      let timer = null;
-      function showPromo(text, ok){
-        promoMsg.textContent = text;
-        promoMsg.style.color = ok ? 'var(--brass-bright, #D4AF37)' : '#e07a7a';
-        promoMsg.style.display = text ? 'block' : 'none';
-      }
-      function askValidate(){
-        const code = promoEl.value.trim().toUpperCase().replace(/\s+/g, '');
-        if(!code){ showPromo('', true); return; }
-        window.parent.postMessage({ type: 'validatePromo', code }, '*');
-      }
-      promoEl.addEventListener('input', function(){
-        promoEl.value = promoEl.value.toUpperCase();
-        clearTimeout(timer);
-        timer = setTimeout(askValidate, 450);
-      });
-      promoEl.addEventListener('blur', askValidate);
-      window.addEventListener('message', function(event){
-        if(!event.data) return;
-        if(event.data.type === 'promoResult'){
-          const r = event.data.result || {};
-          if(r.valid){
-            showPromo('Промокод принят: −' + r.percent + ' % → ' + r.finalPrice + ' вместо ' + r.basePrice + '.', true);
-          } else {
-            const reasons = {
-              format: 'Неверный формат промокода.',
-              not_found: 'Такой промокод не существует.',
-              used: 'Этот промокод уже был использован.'
-            };
-            showPromo(reasons[r.reason] || 'Промокод недействителен.', false);
-          }
-        }
-        if(event.data.type === 'prefillPromo' && event.data.code){
-          promoEl.value = String(event.data.code).toUpperCase();
-          askValidate();
-        }
-        if(event.data.type === 'paymentError'){
-          const err = document.getElementById('errMsg');
-          if(err && event.data.message){ err.textContent = event.data.message; err.style.display = 'block'; }
-        }
-      });
-    })();
-
-    window.addEventListener('message', function(event){
-      if(!event.data) return;
-      if(event.data.type === 'paymentSuccess'){
-        window.__paymentUnlocked = true;
-        window.__cdSkipMail = true;
-        const data = event.data.formData || {};
-        ['lastName','firstName','middleName','day','month','year'].forEach((id) => {
-          if(document.getElementById(id) && data[id] != null) document.getElementById(id).value = data[id];
-        });
-        if(document.getElementById('emailAddr') && data.email != null) document.getElementById('emailAddr').value = data.email;
-        if(data.gender) document.getElementById('gender').value = data.gender;
-        if(data.nameAlphabetKey && document.getElementById('nameAlphabetSelect')) document.getElementById('nameAlphabetSelect').value = data.nameAlphabetKey;
-        if(event.data.hideForm){
-          const hero = document.querySelector('.hero');
-          if(hero) hero.style.display = 'none';
-          const inputCard = document.getElementById('inputFormCard');
-          if(inputCard) inputCard.style.display = 'none';
-        }
-        calculate();
-        const btn = document.getElementById('mainCalcBtn');
-        if(btn){ btn.disabled = false; btn.textContent = 'Рассчитать Кристалл'; }
-      }
-      if(event.data.type === 'paymentCancelled'){
-        const btn = document.getElementById('mainCalcBtn');
-        if(btn){ btn.disabled = false; btn.textContent = 'Рассчитать Кристалл'; }
-      }
-      if(event.data.type === 'requestHeight'){
-        __cdSendHeight();
-      }
-    });
-
-    // Trimite înălțimea la load și la orice schimbare de conținut/dimensiune.
-    window.addEventListener('load', function(){
-      __cdSendHeight();
-      setTimeout(__cdSendHeight, 400);
-      if(typeof ResizeObserver !== 'undefined'){
-        const ro = new ResizeObserver(function(){ __cdSendHeight(); });
-        ro.observe(document.body);
-      }
-    });
-    window.addEventListener('resize', __cdSendHeight);
-  </script>
-<style>
-    /* ==== Mod preview (raport gratuit, parțial blurat) — activ doar cu ?preview=1 ==== */
-    .cd-preview .hero,
-    .cd-preview #inputFormCard,
-    .cd-preview #pdfDownloadCard{display:none !important;}
-    .cd-lock{
-      filter:blur(7px) saturate(.85);
-      opacity:.72;
-      user-select:none;-webkit-user-select:none;
-      pointer-events:none;
-    }
-    .cd-lock *{pointer-events:none !important;}
-    .cd-preview .cd-lock summary::after{content:"" !important;}
-    .cd-preview details.cd-lock[open] .body{max-height:120px;overflow:hidden;}
-    .cd-lock-badge{
-      position:absolute;right:0;top:0;z-index:3;
-      display:inline-flex;align-items:center;gap:6px;
-      font:600 10px/1 var(--sans, Inter, sans-serif);letter-spacing:.14em;text-transform:uppercase;
-      color:#1a1220;background:linear-gradient(180deg,var(--brass-bright,#d9a94f),var(--brass,#b8863b));
-      padding:6px 10px;border-radius:1px;white-space:nowrap;pointer-events:none;
-    }
-    .cd-lock-badge::before{content:"◈";font-size:9px;}
-    .cd-preview .card{position:relative;}
-    .cd-future-mask{
-      position:absolute;top:0;bottom:0;right:0;z-index:2;pointer-events:none;
-      backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-      background:linear-gradient(90deg, rgba(22,16,34,.25), rgba(22,16,34,.62));
-      border-left:1px dashed rgba(217,169,79,.7);
-    }
-    .cd-future-mask::after{
-      content:"будущее — в полном разборе";
-      position:absolute;top:10px;left:10px;right:10px;
-      font:600 9.5px/1.3 var(--sans, Inter, sans-serif);letter-spacing:.14em;text-transform:uppercase;
-      color:var(--brass-bright,#d9a94f);
-    }
-    .cd-preview .mandala-future-line{filter:blur(3px);opacity:.3 !important;}
-    .cd-preview .chart-tooltip{display:none !important;}
-</style>
-<script>
-    // ==== Preview blocat: raportul real, cu ~70 % din conținut blurat și viitorul mascat ====
-    function __cdAfterNow(items, isNow){
-      // Toate elementele DUPĂ cel „curent” (sau după ultimul „trecut”) devin blurate = viitor.
-      let ni = -1;
-      items.forEach(function(el, i){ if(isNow(el)) ni = i; });
-      if(ni < 0) return;
-      items.forEach(function(el, i){ if(i > ni) el.classList.add('cd-lock'); });
-    }
-    function __cdMaskFuture(stage){
-      if(!stage) return;
-      const svg = stage.querySelector('svg');
-      if(!svg) return;
-      let mask = stage.querySelector(':scope > .cd-future-mask');
-      const now = svg.querySelector('#nowLine, .now-line');
-      const vb = (svg.getAttribute('viewBox') || '0 0 640 320').split(/\s+/).map(Number);
-      const width = vb[2] || 640;
-      if(!now){
-        // Fără marker „acum” (vârstă în afara graficului): blurăm tot graficul.
-        if(mask) mask.remove();
-        svg.classList.add('cd-lock');
-        return;
-      }
-      svg.classList.remove('cd-lock');
-      const x = parseFloat(now.getAttribute('x1') || '0');
-      const pct = Math.max(8, Math.min(96, (x / width) * 100));
-      if(!mask){
-        mask = document.createElement('div');
-        mask.className = 'cd-future-mask';
-        stage.appendChild(mask);
-      }
-      mask.style.left = pct.toFixed(2) + '%';
-      mask.style.width = 'auto';
-    }
-    function __cdBadge(card){
-      if(card.querySelector(':scope > .cd-lock-badge')) return;
-      const b = document.createElement('span');
-      b.className = 'cd-lock-badge';
-      b.textContent = 'в полном разборе';
-      card.appendChild(b);
-    }
-    function __cdApplyPreviewLock(){
-      document.body.classList.add('cd-preview');
-      const results = document.getElementById('results');
-      if(!results) return;
-      const cards = Array.from(results.querySelectorAll(':scope > .card'));
-      cards.forEach(function(card){
-        if(card.id === 'pdfDownloadCard' || card.id === 'personalDataSummary') return;
-        const title = ((card.querySelector('.section-title') || {}).textContent || '');
-        const lockChildren = function(skip){
-          Array.from(card.children).forEach(function(ch){
-            if(ch.classList.contains('section-title') || ch.classList.contains('cd-lock-badge')) return;
-            if(skip && skip(ch)) return;
-            ch.classList.add('cd-lock');
-          });
-        };
-        // 1) Rezultatul gratuit: „День Рождения” — complet vizibil.
-        if(/День Рождения/.test(title)) return;
-        // 2) Numele: prima Arcană vizibilă, restul blurat.
-        if(card.id === 'nameCard'){
-          card.querySelectorAll('.namearc-item').forEach(function(it, k){ if(k > 0) it.classList.add('cd-lock'); });
-          card.querySelectorAll('.detail, .chart-interpret').forEach(function(d){ d.classList.add('cd-lock'); });
-          __cdBadge(card);
-          return;
-        }
-        // 3) Numerele-cheie: medalioanele rămân vizibile, interpretările sunt blurate.
-        if(/Ключевые числа/.test(title)){
-          card.querySelectorAll('.detail, .subnum-row, .chart-interpret, .hint').forEach(function(d){ d.classList.add('cd-lock'); });
-          __cdBadge(card);
-          return;
-        }
-        // 4) Carduri cu timp (grafice, cicluri, tranzite): trecutul vizibil, viitorul mascat, textele blurate.
-        const timeCard = card.querySelector('.chart-stage, .yc-bar, .transit-row, .tl-row, .age-chip, .meta-timeline, .mandala-chart-svg');
-        if(timeCard){
-          card.querySelectorAll('.detail, .chart-interpret, .chart-interpret-main').forEach(function(d){ d.classList.add('cd-lock'); });
-          card.querySelectorAll('.chart-stage').forEach(__cdMaskFuture);
-          card.querySelectorAll('#yearlyCycleChart, #qualityOfLifeChart').forEach(function(box){
-            const wraps = Array.from(box.querySelectorAll('.yc-bar-wrap'));
-            __cdAfterNow(wraps, function(w){ return !!w.querySelector('.yc-bar.now'); });
-          });
-          __cdAfterNow(Array.from(card.querySelectorAll('.transit-row')), function(r){ return r.classList.contains('active'); });
-          __cdAfterNow(Array.from(card.querySelectorAll('.tl-row')), function(r){ return r.classList.contains('active'); });
-          __cdAfterNow(Array.from(card.querySelectorAll('.age-chip')), function(r){ return r.classList.contains('now'); });
-          __cdBadge(card);
-          return;
-        }
-        // 5) Implicit: tot conținutul (fără titlu) blurat.
-        lockChildren();
-        __cdBadge(card);
-      });
-
-      // Graficele Destinului se re-randează la schimbarea tab-ului — re-aplicăm masca viitorului.
-      const life = document.getElementById('lifeChartSvg');
-      if(life && typeof MutationObserver !== 'undefined' && !life.__cdObserved){
-        life.__cdObserved = true;
-        const mo = new MutationObserver(function(){
-          window.requestAnimationFrame(function(){ __cdMaskFuture(life.parentElement); });
-        });
-        mo.observe(life, { childList: true });
-      }
-    }
-
-    // Mod preview: completează datele din link, calculează, apoi blochează.
-    (function(){
-      const params = new URLSearchParams(window.location.search);
-      if(params.get('preview') !== '1') return;
-      window.__cdSkipMail = true;
-      window.__cdPreviewMode = true;
-      window.addEventListener('DOMContentLoaded', function(){
-        const values = {
-          lastName: params.get('last') || '',
-          firstName: params.get('first') || '',
-          middleName: params.get('middle') || '',
-          day: params.get('day') || '',
-          month: params.get('month') || '',
-          year: params.get('year') || '',
-        };
-        Object.keys(values).forEach(function(id){
-          const field = document.getElementById(id);
-          if(field) field.value = values[id];
-        });
-        const gender = params.get('gender');
-        if(gender && document.getElementById('gender')){
-          document.getElementById('gender').value = gender;
-          if(typeof paintGender === 'function') try{ paintGender(); }catch(e){}
-        }
-        const alpha = params.get('alpha');
-        if(alpha && document.getElementById('nameAlphabetSelect')) document.getElementById('nameAlphabetSelect').value = alpha;
-        document.body.classList.add('cd-preview');
-        if(typeof calculate === 'function') calculate();
-        const ok = !!(window.__cdLastResult && document.getElementById('results'));
-        if(ok) __cdApplyPreviewLock();
-        setTimeout(function(){
-          // Elementele animate (bare, puncte) apar cu întârziere — a doua trecere prinde tot.
-          if(ok) __cdApplyPreviewLock();
-          window.parent.postMessage({ type: ok ? 'previewRendered' : 'previewFailed', height: document.documentElement.scrollHeight }, '*');
-        }, 900);
-      });
-    })();
-</script>
 </body>
 </html>

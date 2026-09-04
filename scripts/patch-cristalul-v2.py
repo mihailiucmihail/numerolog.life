@@ -24,9 +24,10 @@ import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-SRC = ROOT / 'public/cristalul-versions/cristalul-destinului-v2-upload.html'
+SRC = ROOT / 'public/cristalul-versions/cristalul-destinului-v2b-upload.html'
 DST = ROOT / 'public/cristalul-calculator.html'
 BRIDGE = ROOT / 'scripts/cristalul-bridge-snippet.html'
+PREVIEW = ROOT / 'scripts/cristalul-preview-lock-snippet.html'
 
 s = SRC.read_text(encoding='utf-8')
 assert s.count('\ufffd') == 0, 'uploadul conține deja caractere corupte (U+FFFD)'
@@ -80,9 +81,11 @@ rep("""  padding:9px 14px;cursor:pointer;transition:all .2s ease;border-radius:1
 .chart-tab:active{transform:scale(0.94);transition-duration:.07s;}
 """)
 
-# 3. Câmpuri Email + Промокод (înaintea blocului „Пол”) ------------------------------------
-rep("""      <div class="full">
-        <label>Пол <span""", """      <div class="full">
+# 3. Câmpuri Email + Промокод: înlocuim blocul „Электронная почта” (pMail) al uploadului -----------
+_mail_re = re.compile(
+    r'      <div class="full">\n        <label>Электронная почта</label>\n        <input id="pMail"[^\n]*\n        <p class="note"[^\n]*\n      </div>\n')
+assert len(_mail_re.findall(s)) == 1, 'blocul email (pMail) al uploadului nu a fost găsit exact o dată'
+s = _mail_re.sub("""      <div class="full">
         <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(на него придёт постоянная ссылка на твой отчёт)</span></label>
         <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="">
       </div>
@@ -91,8 +94,19 @@ rep("""      <div class="full">
         <input id="promoCode" type="text" placeholder="CRISTAL15-XXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" value="" style="text-transform:uppercase;letter-spacing:.08em;">
         <div id="promoMsg" style="display:none;margin-top:8px;font-size:13px;line-height:1.5;"></div>
       </div>
-      <div class="full">
-        <label>Пол <span""")
+""", s)
+# readMail() al uploadului citește #pMail → îl redirecționăm la #emailAddr; în modurile preview/raport
+# (auto=1 / preview=1) emailul NU e cerut de calculate() — este colectat de aplicație la plată.
+rep("""function readMail(){
+  const el = document.getElementById('pMail');
+  const v = el.value.trim();""", """function readMail(){
+  const el = document.getElementById('emailAddr');
+  const v = el ? el.value.trim() : '';""")
+rep("  const mailCheck = readMail();\n",
+    "  const mailCheck = window.__cdSkipMail ? {ok:true, value:''} : readMail();\n")
+rep("  try{ localStorage.setItem('crystal_last_email', mailCheck.value); }catch(e){}\n",
+    "  try{ if(mailCheck.value) localStorage.setItem('crystal_last_email', mailCheck.value); }catch(e){}\n")
+assert "getElementById('pMail')" not in s, 'a rămas o referință la pMail'
 
 # 4. Butonul principal -> plată ------------------------------------------------------------
 rep('<button class="btn" onclick="calculate()">Рассчитать Кристалл</button>',
@@ -108,7 +122,9 @@ rep("  const r = computeAll(last, first, middle, day, month, year, nameAlphabetK
 # 5. Bridge-ul de integrare, înainte de </body> ------------------------------------------------
 bridge = BRIDGE.read_text(encoding='utf-8')
 assert 'requestPayment' in bridge and 'reportRendered' in bridge
-rep('</body>', bridge.rstrip('\n') + '\n</body>')
+preview = PREVIEW.read_text(encoding='utf-8')
+assert '__cdApplyPreviewLock' in preview and "params.get('preview')" in preview
+rep('</body>', bridge.rstrip('\n') + '\n' + preview.rstrip('\n') + '\n</body>')
 
 # 6. Fără surse/autori în text vizibil -------------------------------------------------------------
 rep("Сравнение Карта Рождения ↔ Карта Имени (метод Айрэн По / Джули По) — где цифры отличаются:",
@@ -123,6 +139,7 @@ for bad in ('Источник:', 'Материал эзотерический', 
 assert s.count('\ufffd') == 0, 'patch-ul a introdus caractere corupte'
 for marker in ('id="emailAddr"', 'id="promoCode"', 'id="mainCalcBtn"', 'function requestPayment',
                "params.get('auto')", 'reportRendered', 'validatePromo', 'paymentSuccess',
+               "params.get('preview')", '__cdApplyPreviewLock', 'previewRendered', 'window.__cdSkipMail',
                ':root{color-scheme:light;}', '.bg-anim{display:none !important;}'):
     assert marker in s, f'marker lipsă după patch: {marker}'
 
