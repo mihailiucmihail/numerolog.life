@@ -185,6 +185,18 @@ rep('<button class="btn" onclick="calculate()">Рассчитать Криста
     '<button id="mainCalcBtn" class="btn" onclick="cdMainAction()">Рассчитать мой Кристалл Судьбы →</button>')
 assert 'onclick="calculate()"' not in s, 'a rămas un buton care sare peste plată'
 
+# 4a. Înălțimea iframe-ului, raportată IMEDIAT după formular. Bridge-ul de la finalul fișierului o
+#     trimite abia la `load`, adică după baza de date inline (~900 KB): până atunci părintele afișa
+#     600 px și formularul părea „tăiat” la data nașterii, cu butonul apărând după o pauză lungă.
+rep('<script id="data-blob"',
+    '<script>(function(){'
+    'function h(){var b=document.body,d=document.documentElement;'
+    'return Math.max(b?b.scrollHeight:0,d?d.scrollHeight:0);}'
+    'function send(){try{window.parent.postMessage({type:"resize",height:h()},"*");}catch(e){}}'
+    'send();setTimeout(send,150);'
+    'if(typeof ResizeObserver!=="undefined"&&document.body){new ResizeObserver(send).observe(document.body);}'
+    '})();</script>\n<script id="data-blob"')
+
 # 4b. Funnel (rezultat gratuit): expunem rezultatul determinist al ultimului calcul, ca aplicația
 #     React (același origin) să poată citi numerele reale fără să dubleze formulele.
 rep("  const r = computeAll(last, first, middle, day, month, year, nameAlphabetKey);\n",
