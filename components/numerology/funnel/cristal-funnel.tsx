@@ -69,7 +69,7 @@ export default function CristalFunnel() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const locale = pathname?.split('/')[1] || 'ro'
-  const { currency, prices, format, alphabet } = useCurrency()
+  const { currency, country, prices, format, alphabet } = useCurrency()
 
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const didUnlock = useRef(false)
@@ -159,7 +159,7 @@ export default function CristalFunnel() {
           trackFunnel('birth_data_submitted', { has_middle: Boolean(values.middle), alphabet: values.nameAlphabetKey })
           // Lead pentru panoul admin (/admin/leads): previzualizare blurată, neplătită. Fire-and-forget.
           if (p.email) {
-            void savePreviewLead({ ...values, email: p.email }, locale, currency)
+            void savePreviewLead({ ...values, email: p.email }, locale, currency, country)
           }
         }
         setPreviewReady(true)
@@ -192,7 +192,7 @@ export default function CristalFunnel() {
     }
     window.addEventListener('message', onMessage)
     return () => window.removeEventListener('message', onMessage)
-  }, [postToFrame])
+  }, [postToFrame, locale, currency, country])
 
   // Restaurare după întoarcere de la Stripe (anulat): raport blurat direct, fără re-completare.
   useEffect(() => {

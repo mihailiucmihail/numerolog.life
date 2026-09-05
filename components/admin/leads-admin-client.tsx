@@ -11,6 +11,28 @@ import {
   type LeadRow,
   type LeadFilter,
 } from "@/app/actions/leads-admin"
+import { countryFlag, currencyFromCountry } from "@/lib/currency"
+
+const CURRENCY_LABEL: Record<string, string> = { eur: "€", kzt: "₸", mdl: "MDL" }
+
+/** Steag + cod ISO + moneda în care va primi oferta; „—” când geolocația nu a fost disponibilă. */
+function CountryBadge({ country, currency }: { country: string | null; currency: string }) {
+  const cur = country ? currencyFromCountry(country) : currency
+  if (!country) {
+    return (
+      <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground" title="Страна не определена">
+        <span aria-hidden="true">🌐</span> — · {CURRENCY_LABEL[cur] ?? cur.toUpperCase()}
+      </span>
+    )
+  }
+  return (
+    <span className="inline-flex items-center gap-1.5 text-[12px] text-foreground/90" title={`Страна: ${country} · валюта: ${cur.toUpperCase()}`}>
+      <span className="text-base leading-none" aria-hidden="true">{countryFlag(country)}</span>
+      <span className="font-mono tracking-wide">{country}</span>
+      <span className="text-muted-foreground">· {CURRENCY_LABEL[cur] ?? cur.toUpperCase()}</span>
+    </span>
+  )
+}
 
 const DEFAULT_SUBJECT = "{name}, твой Кристалл Судьбы ждёт тебя"
 const DEFAULT_BODY = `Здравствуйте, {name}!
@@ -349,13 +371,14 @@ export function LeadsAdminClient() {
         <p className="py-16 text-center text-muted-foreground">Пока пусто.</p>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-primary/15">
-          <table className="w-full min-w-[880px] text-sm">
+          <table className="w-full min-w-[980px] text-sm">
             <thead className="bg-primary/10 text-left text-[11px] uppercase tracking-wide text-muted-foreground">
               <tr>
                 <th className="w-10 px-3 py-3">
                   <input type="checkbox" checked={allSelected} onChange={toggleAll} aria-label="Выбрать все" className="size-4 accent-primary" />
                 </th>
                 <th className="px-3 py-3">Клиент</th>
+                <th className="px-3 py-3">Страна</th>
                 <th className="px-3 py-3">Дата рождения</th>
                 <th className="px-3 py-3">Первый визит</th>
                 <th className="px-3 py-3">Последний</th>
@@ -377,6 +400,9 @@ export function LeadsAdminClient() {
                       <div className="font-medium text-foreground">{[l.first_name, l.last_name].filter(Boolean).join(" ") || "—"}</div>
                       <a href={`mailto:${l.email}`} className="text-primary/90 hover:underline">{l.email}</a>
                       <div className="text-[11px] uppercase text-muted-foreground">{l.locale}</div>
+                    </td>
+                    <td className="px-3 py-3 whitespace-nowrap">
+                      <CountryBadge country={l.country} currency={l.currency} />
                     </td>
                     <td className="px-3 py-3 whitespace-nowrap">{fmtBirth(l)}</td>
                     <td className="px-3 py-3 whitespace-nowrap text-muted-foreground">{fmtDate(l.created_at)}</td>

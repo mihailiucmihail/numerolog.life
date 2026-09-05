@@ -6,7 +6,7 @@ import { db } from '@/lib/db'
 import { buildRaportUrl, sendRaportEmail } from '@/lib/raport-email'
 import { buildOfferEmail, type OfferLocale } from '@/lib/offer-email'
 import { getOrCreateOfferCode, OFFER_PERCENT } from '@/lib/promo'
-import type { Currency } from '@/lib/currency'
+import { currencyFromCountry, type Currency } from '@/lib/currency'
 
 export interface LeadRow {
   id: string
@@ -18,6 +18,8 @@ export interface LeadRow {
   birth_year: number | null
   locale: string
   currency: string
+  /** Țara vizitatorului (ISO alpha-2) din geolocație la momentul previzualizării, sau null. */
+  country: string | null
   views: number
   created_at: string
   last_seen_at: string
@@ -33,7 +35,13 @@ export interface LeadRow {
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
 
-function asCurrency(v: string | null | undefined): Currency {
+/**
+ * Moneda în care primește oferta un lead: cea a țării lui (geolocație), altfel cea salvată la previzualizare.
+ * Așa lead-urile vechi (salvate înainte să reținem țara) și cele cu cookie învechit primesc totuși prețul local.
+ */
+function leadCurrency(lead: { country: string | null; currency: string | null }): Currency {
+  if (lead.country) return currencyFromCountry(lead.country)
+  const v = lead.currency
   return v === 'kzt' || v === 'mdl' ? v : 'eur'
 }
 
@@ -60,6 +68,7 @@ interface OfferLeadRow {
   birth_day: number | null
   locale: string
   currency: string
+  country: string | null
   paid_at: Date | null
   unsubscribed_at: Date | null
 }
@@ -69,14 +78,16 @@ async function composeOffer(lead: OfferLeadRow) {
   const locale: OfferLocale = lead.locale === 'ro' ? 'ro' : 'ru'
   const { code, expiresAt } = await getOrCreateOfferCode(lead.email)
   const unsubToken = await ensureUnsubscribeToken(lead.id)
-  const offerUrl = `${BASE_URL}/${locale}/numerologie?discount=${encodeURIComponent(code)}&email=${encodeURIComponent(lead.email)}`
+  const currency = leadCurrency(lead)
+  // `currency=` în link fixează aceeași monedă ca în email și dacă persoana deschide linkul de pe alt IP/VPN.
+  const offerUrl = `${BASE_URL}/${locale}/numerologie?discount=${encodeURIComponent(code)}&email=${encodeURIComponent(lead.email)}&currency=${currency}`
   const unsub = unsubscribeUrl(unsubToken, locale)
   const mail = buildOfferEmail({
     locale,
     firstName: lead.first_name,
     email: lead.email,
     birthDay: lead.birth_day,
-    currency: asCurrency(lead.currency),
+    currency,
     percent: OFFER_PERCENT,
     code,
     expiresAt,
@@ -102,7 +113,7 @@ export async function sendDiscountOffer(
   try {
     const ids = leadIds.slice(0, 500)
     const leads = await db<OfferLeadRow[]>`
-      SELECT id, email, first_name, birth_day, locale, currency, paid_at, unsubscribed_at
+      SELECT id, email, first_name, birth_day, locale, currency, country, paid_at, unsubscribed_at
       FROM cristalul_previews WHERE id = ANY(${ids}::uuid[])
     `
     const resend = new Resend(resendKey)
@@ -150,7 +161,7 @@ export async function previewDiscountOffer(
   if (!checkPassword(password)) return { ok: false, error: 'unauthorized' }
   try {
     const rows = await db<OfferLeadRow[]>`
-      SELECT id, email, first_name, birth_day, locale, currency, paid_at, unsubscribed_at
+      SELECT id, email, first_name, birth_day, locale, currency, country, paid_at, unsubscribed_at
       FROM cristalul_previews WHERE id = ${leadId} LIMIT 1
     `
     if (!rows.length) return { ok: false, error: 'not_found' }
@@ -207,7 +218,7 @@ export async function getLeads(
     const where =
       filter === 'unpaid' ? db`WHERE paid_at IS NULL` : filter === 'paid' ? db`WHERE paid_at IS NOT NULL` : db``
     const rows = await db`
-      SELECT id, email, first_name, last_name, birth_day, birth_month, birth_year, locale, currency, views,
+      SELECT id, email, first_name, last_name, birth_day, birth_month, birth_year, locale, currency, country, views,
              created_at, last_seen_at, paid_at, paid_token, permanent_token, permanent_created_at,
              offer_sent_at, offer_sent_count, offer_code, unsubscribed_at
       FROM cristalul_previews

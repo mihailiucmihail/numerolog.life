@@ -50,6 +50,19 @@ const COUNTRY_ALPHABET: Record<string, NameAlphabet> = {
   SA: 'ar', AE: 'ar', EG: 'ar', IQ: 'ar', JO: 'ar', KW: 'ar', LB: 'ar', MA: 'ar', OM: 'ar', QA: 'ar', SY: 'ar', TN: 'ar', DZ: 'ar', LY: 'ar', BH: 'ar', YE: 'ar',
 }
 
+/** Cod ISO alpha-2 valid (două litere) sau null. */
+export function normalizeCountry(country: string | null | undefined): string | null {
+  const c = country?.trim().toUpperCase()
+  return c && /^[A-Z]{2}$/.test(c) ? c : null
+}
+
+/** Emoji-steag din codul ISO alpha-2 (indicatori regionali Unicode). */
+export function countryFlag(country: string | null | undefined): string {
+  const c = normalizeCountry(country)
+  if (!c) return ''
+  return String.fromCodePoint(...[...c].map((ch) => 0x1f1e6 + ch.charCodeAt(0) - 65))
+}
+
 export function alphabetFromCountry(country: string | null | undefined): NameAlphabet {
   if (!country) return DEFAULT_ALPHABET
   return COUNTRY_ALPHABET[country.toUpperCase()] ?? DEFAULT_ALPHABET
@@ -73,7 +86,7 @@ const CONFIG: Record<Currency, CurrencyConfig> = {
 export const PRICES: Record<Currency, { cristal: number; graniStandard: number; graniGraph: number }> = {
   eur: { cristal: 1900, graniStandard: 199, graniGraph: 499 }, // 19,00 € / 1,99 € / 4,99 €
   kzt: { cristal: 699000, graniStandard: 105000, graniGraph: 265000 }, // 6 990 ₸ / 1 050 ₸ / 2 650 ₸
-  mdl: { cristal: 39900, graniStandard: 3900, graniGraph: 9900 }, // 399 lei / 39 lei / 99 lei
+  mdl: { cristal: 19900, graniStandard: 3900, graniGraph: 9900 }, // 199 lei / 39 lei / 99 lei
 }
 
 export function parseCurrency(value: string | null | undefined): Currency | null {
