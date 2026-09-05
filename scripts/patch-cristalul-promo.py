@@ -29,7 +29,8 @@ def rep(old, new, count=1):
 
 # 1. Câmpul de promocod, imediat sub email
 rep(
-    '''        <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="">
+    '''      <div class="full" id="emailField" hidden style="display:none;">
+        <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="">
       </div>
       <div class="full">
         <label>Пол <span''',

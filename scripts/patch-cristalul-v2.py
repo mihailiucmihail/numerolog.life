@@ -90,7 +90,7 @@ rep("""  padding:9px 14px;cursor:pointer;transition:all .2s ease;border-radius:1
 _mail_re = re.compile(
     r'      <div class="full">\n        <label>Электронная почта</label>\n        <input id="pMail"[^\n]*\n        <p class="note"[^\n]*\n      </div>\n')
 assert len(_mail_re.findall(s)) == 1, 'blocul email (pMail) al uploadului nu a fost găsit exact o dată'
-s = _mail_re.sub("""      <div class="full">
+s = _mail_re.sub("""      <div class="full" id="emailField" hidden style="display:none;">
         <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(на него придёт постоянная ссылка на твой разбор)</span></label>
         <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="" required>
       </div>
@@ -144,7 +144,7 @@ rep('<p>Твоё имя и дата рождения хранят ответы �
     '        </video>\n'
     '        <div class="hero-video-sheen" aria-hidden="true"></div>\n'
     '      </div>\n'
-    '      <p class="hero-video-caption"><span>Кристалл Судьбы</span> — персональный разбор твоего пути</p>\n'
+    '      <p class="hero-video-caption">Заполни данные ниже — и Кристалл рассчитается для тебя.</p>\n'
     '    </div>')
 rep('</head>', """<style>
 .hero-video{max-width:540px;margin:26px auto 0;text-align:left;}

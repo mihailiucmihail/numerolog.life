@@ -634,7 +634,7 @@ select option{color:#1a1420;background:#fff;}
         </video>
         <div class="hero-video-sheen" aria-hidden="true"></div>
       </div>
-      <p class="hero-video-caption"><span>Кристалл Судьбы</span> — персональный разбор твоего пути</p>
+      <p class="hero-video-caption">Заполни данные ниже — и Кристалл рассчитается для тебя.</p>
     </div>
   </div>
 
@@ -689,7 +689,7 @@ select option{color:#1a1420;background:#fff;}
           <input id="year" type="number" min="1900" max="2100" placeholder="Год" value="">
         </div>
       </div>
-      <div class="full">
+      <div class="full" id="emailField" hidden style="display:none;">
         <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(на него придёт постоянная ссылка на твой разбор)</span></label>
         <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="" required>
       </div>
@@ -6534,7 +6534,7 @@ function startPdfExport(){
 
     // Butonul formularului ORIGINAL: calculează real în acelaşi fişier, apoi arată raportul întreg blurat.
     function __cdPreviewCalculate(){
-      window.__cdSkipMail = false; // emailul este OBLIGATORIU: calculate() → readMail() îl validează
+      window.__cdSkipMail = true; // emailul se introduce la etapa de plată, după previzualizarea blurată
       window.__cdPreviewMode = true;
       window.__cdLastResult = null;
       const err = document.getElementById('errMsg');
