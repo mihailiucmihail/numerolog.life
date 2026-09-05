@@ -6269,9 +6269,17 @@ function startPdfExport(){
     .cd-preview .cd-lock summary::after{content:"" !important;}
     .cd-preview details.cd-lock[open] .body{max-height:120px;overflow:hidden;}
     /* Card cu chenar dublu: primele 30 % lizibile; restul 70 % — blur care creşte TREPTAT (fără linie bruscă).
-       Două straturi cu backdrop-filter, fiecare cu margine „topită” prin mask-image → efect de ceaţă care se îngroaşă. */
+       PERFORMANŢĂ: FĂRĂ `backdrop-filter`. Pe 40+ carduri / ~60 000 px de raport, backdrop-filter se
+       recompune la FIECARE cadru de derulare (măsurat: 34 ms/cadru vs 16 ms fără) şi pe iOS Safari epuizează
+       memoria GPU → pagina e reîncărcată (utilizatorul „e trimis înapoi la formular”). În loc, JS aplică
+       `filter: blur` direct pe elementele de sub linia de 30 % (rasterizat o singură dată, derulat ca imagine),
+       cu intensitate crescătoare (.cd-blur-1 … .cd-blur-4), iar ::after adaugă doar o ceaţă de gradient. */
     .cd-part{position:relative;user-select:none;-webkit-user-select:none;}
     .cd-part > *:not(.section-title):not(.cd-unlock){pointer-events:none;}
+    .cd-preview .cd-blur-1{filter:blur(2px) saturate(.95);}
+    .cd-preview .cd-blur-2{filter:blur(3.5px) saturate(.9);}
+    .cd-preview .cd-blur-3{filter:blur(5px) saturate(.85);}
+    .cd-preview .cd-blur-4{filter:blur(7px) saturate(.8);}
     /* Tab-urile graficelor (Карьера / Личная жизнь / …) rămân interactive şi în preview,
        deasupra straturilor de blur — utilizatorul poate comuta graficele înainte de plată. */
     .cd-preview .cd-part .chart-tabs,
@@ -6283,23 +6291,11 @@ function startPdfExport(){
       .card{padding:14px 10px !important;margin-bottom:12px !important;}
       .cd-unlock-text{font-size:12.5px;}
     }
-    .cd-part::before,.cd-part::after{
-      content:"";position:absolute;left:0;right:0;bottom:0;z-index:2;pointer-events:none;
-    }
-    /* Strat 1 — ceaţă uşoară, începe la 30 % şi se instalează pe următoarele ~22 % din card. */
-    .cd-part::before{
-      top:var(--cd-cut,30%);
-      backdrop-filter:blur(4px) saturate(.9);-webkit-backdrop-filter:blur(4px) saturate(.9);
-      -webkit-mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 22%, rgba(0,0,0,1) 100%);
-              mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 22%, rgba(0,0,0,1) 100%);
-    }
-    /* Strat 2 — blur moderat, începe mai jos (≈ 42 %) şi se îngroaşă lent până la capătul cardului. */
+    /* Ceaţă de gradient (fără filtre — cost zero la derulare): începe la 30 % şi se îngroaşă lent până jos. */
     .cd-part::after{
-      top:calc(var(--cd-cut,30%) + 12%);
-      backdrop-filter:blur(7px) saturate(.85);-webkit-backdrop-filter:blur(7px) saturate(.85);
-      background:linear-gradient(180deg, rgba(22,16,34,0) 0%, rgba(22,16,34,.1) 45%, rgba(22,16,34,.2) 100%);
-      -webkit-mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 100%);
-              mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,1) 100%);
+      content:"";position:absolute;left:0;right:0;bottom:0;z-index:2;pointer-events:none;
+      top:var(--cd-cut,30%);
+      background:linear-gradient(180deg, rgba(22,16,34,0) 0%, rgba(22,16,34,.08) 30%, rgba(22,16,34,.18) 65%, rgba(22,16,34,.26) 100%);
     }
     /* Graficele ies DEASUPRA stratului moderat: trecutul rămâne clar, viitorul are propria mască puternică. */
     .cd-preview .cd-part .chart-stage,
@@ -6340,7 +6336,7 @@ function startPdfExport(){
     .cd-preview .card{position:relative;}
     .cd-future-mask{
       position:absolute;top:0;bottom:0;right:0;z-index:2;pointer-events:none;
-      backdrop-filter:blur(18px) saturate(.6);-webkit-backdrop-filter:blur(18px) saturate(.6);
+      /* Fundal aproape opac — blur-ul de dedesubt nu se vede; fără backdrop-filter (cost la derulare). */
       background:linear-gradient(90deg, rgba(22,16,34,.9), rgba(22,16,34,.97) 18%, rgba(22,16,34,.97));
       border-left:1px dashed rgba(217,169,79,.85);
     }
@@ -6421,6 +6417,36 @@ function startPdfExport(){
       wrap.appendChild(t); wrap.appendChild(b);
       card.appendChild(wrap);
     }
+    // Elemente cu propria mască (grafice: trecut clar / viitor blurat) sau interactive — NU primesc blur de card.
+    const __CD_BLUR_SKIP = '.section-title, .cd-unlock, .chart-tabs, .chart-stage, #yearlyCycleChart, #qualityOfLifeChart, #transitSchedule, .meta-timeline, .mandala-chart-svg, svg, canvas';
+    // Blur progresiv pe ELEMENTE (nu backdrop-filter): tot ce e sub linia de 30 % a cardului devine blurat,
+    // din ce în ce mai puternic spre capătul cardului. Elementele care traversează linia (sau sunt foarte
+    // înalte) sunt descompuse în copii, ca zona de sus să rămână clară şi straturile GPU să fie mici.
+    function __cdBlurBelow(card){
+      const cardTop = card.getBoundingClientRect().top;
+      const H = card.offsetHeight;
+      if(!H) return;
+      const cut = H * 0.3;
+      function level(el){
+        const r = el.getBoundingClientRect();
+        const center = (r.top + r.bottom) / 2 - cardTop;
+        const f = Math.max(0, Math.min(1, (center - cut) / Math.max(1, H - cut)));
+        return 1 + Math.min(3, Math.floor(f * 4));
+      }
+      function walk(el){
+        if(el.matches(__CD_BLUR_SKIP)) return;
+        const r = el.getBoundingClientRect();
+        if(!r.height) return;
+        const top = r.top - cardTop, bottom = r.bottom - cardTop;
+        if(bottom <= cut) return; // complet în zona clară
+        const kids = Array.from(el.children);
+        const spans = top < cut;
+        if((spans || r.height > 900) && kids.length){ kids.forEach(walk); return; }
+        el.classList.remove('cd-blur-1','cd-blur-2','cd-blur-3','cd-blur-4');
+        el.classList.add('cd-blur-' + level(el));
+      }
+      Array.from(card.children).forEach(walk);
+    }
     function __cdApplyPreviewLock(){
       document.body.classList.add('cd-preview');
       const results = document.getElementById('results');
@@ -6435,6 +6461,7 @@ function startPdfExport(){
         card.classList.add('cd-part');
         card.style.setProperty('--cd-cut', '30%');
         __cdBadge(card);
+        __cdBlurBelow(card);
         // 3) Graficele (deasupra stratului moderat): trecutul clar, viitorul blurat PUTERNIC.
         card.querySelectorAll('.chart-stage').forEach(__cdMaskFuture);
         card.querySelectorAll('#yearlyCycleChart, #qualityOfLifeChart').forEach(function(box){

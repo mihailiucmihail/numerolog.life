@@ -11,15 +11,23 @@ const LOCALE_REGEX = /^\/ru(\/|$)/
 const CURRENCY_COOKIE_MAX_AGE = 60 * 60 * 24 * 30 // 30 de zile
 
 /**
- * Moneda vizitatorului: ?currency=kzt|eur (override explicit) > cookie existent > geolocație (KZ -> KZT) > EUR.
- * Returnează moneda și dacă trebuie (re)scris cookie-ul.
+ * Moneda vizitatorului: ?currency=kzt|mdl|eur (override explicit, ținut în cookie) > geolocație (KZ -> KZT,
+ * MD -> MDL) > cookie existent > EUR.
+ * Geolocația bate cookie-ul: altfel un vizitator din Kazahstan care a primit cândva `eur` (înainte de
+ * introducerea KZT sau de pe alt IP) ar rămâne blocat pe euro 30 de zile. Cookie-ul rămâne util doar
+ * pentru override-ul explicit și ca rezervă când header-ul de țară lipsește.
  */
 function resolveCurrency(request: NextRequest): { currency: Currency; persist: boolean } {
   const fromQuery = parseCurrency(request.nextUrl.searchParams.get('currency'))
   if (fromQuery) return { currency: fromQuery, persist: true }
   const fromCookie = parseCurrency(request.cookies.get(CURRENCY_COOKIE)?.value)
+  const country = request.headers.get('x-vercel-ip-country')
+  if (country) {
+    const fromCountry = currencyFromCountry(country)
+    return { currency: fromCountry, persist: fromCountry !== fromCookie }
+  }
   if (fromCookie) return { currency: fromCookie, persist: false }
-  return { currency: currencyFromCountry(request.headers.get('x-vercel-ip-country')), persist: true }
+  return { currency: currencyFromCountry(null), persist: true }
 }
 
 function withCurrencyCookie(response: NextResponse | Response, request: NextRequest): NextResponse | Response {
