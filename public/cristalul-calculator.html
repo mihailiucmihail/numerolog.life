@@ -615,7 +615,7 @@ select option{color:#1a1420;background:#fff;}
 .hero-video-sheen{position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.08),transparent 28%,transparent 72%,rgba(212,175,55,.06));mix-blend-mode:screen;}
 .hero-video-caption{margin:12px 4px 0!important;color:rgba(245,237,214,.68);font-size:13px!important;letter-spacing:.04em;}
 .hero-video-caption span{color:var(--brass-bright);font-weight:600;}
-@media (max-width:600px){.hero-video{margin-top:20px;}.hero-video-frame{border-radius:10px;}.hero-video-caption{font-size:12px!important;}}
+@media (max-width:600px){.hero-video{width:min(78vw,330px);margin:18px auto 0;}.hero-video-frame{border-radius:10px;}.hero-video-caption{font-size:12px!important;line-height:1.4;}}
 </style></head>
 <body>
 <div class="bg-anim" id="bgAnim" aria-hidden="true"></div>
@@ -628,7 +628,7 @@ select option{color:#1a1420;background:#fff;}
     <h1><span class="hero-lead">Открой свой</span><span class="hero-caps">Кристалл Судьбы</span></h1>
     <div class="hero-video" aria-label="Видео о персональном разборе">
       <div class="hero-video-frame">
-        <video class="hero-video-media" controls playsinline preload="metadata">
+        <video class="hero-video-media" controls autoplay muted loop playsinline preload="auto">
           <source src="/videos/cristalul-premium.mp4" type="video/mp4">
           Твой браузер не поддерживает воспроизведение видео.
         </video>
