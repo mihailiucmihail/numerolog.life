@@ -72,7 +72,7 @@ const CONFIG: Record<Currency, CurrencyConfig> = {
 // Curs orientativ la stabilire: 1 EUR ≈ 527 KZT, 1 EUR ≈ 20,12 MDL.
 export const PRICES: Record<Currency, { cristal: number; graniStandard: number; graniGraph: number }> = {
   eur: { cristal: 1900, graniStandard: 199, graniGraph: 499 }, // 19,00 € / 1,99 € / 4,99 €
-  kzt: { cristal: 999000, graniStandard: 105000, graniGraph: 265000 }, // 9 990 ₸ / 1 050 ₸ / 2 650 ₸
+  kzt: { cristal: 699000, graniStandard: 105000, graniGraph: 265000 }, // 6 990 ₸ / 1 050 ₸ / 2 650 ₸
   mdl: { cristal: 39900, graniStandard: 3900, graniGraph: 9900 }, // 399 lei / 39 lei / 99 lei
 }
 
