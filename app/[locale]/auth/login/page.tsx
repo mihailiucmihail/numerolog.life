@@ -58,6 +58,11 @@ export default function LoginPage() {
     }
   }
 
+  if (typeof window !== "undefined") {
+    window.location.replace("/ru")
+    return null
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <StarField />
