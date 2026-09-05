@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
 import { startNumerologieCheckout, getNumerologieSessionStatus } from '@/app/actions/stripe'
+import { savePreviewLead } from '@/app/actions/preview-lead'
 import { saveRaportAndSendEmail } from '@/app/actions/raport'
 import { checkPromoCode } from '@/app/actions/promo'
 import { useCurrency } from '@/components/providers/currency-provider'
@@ -132,6 +133,10 @@ export default function CristalFunnel() {
             if (p.email) sessionStorage.setItem(`${FUNNEL_STORAGE_KEY}:email`, p.email.trim())
           } catch {}
           trackFunnel('birth_data_submitted', { has_middle: Boolean(values.middle), alphabet: values.nameAlphabetKey })
+          // Lead pentru panoul admin (/admin/leads): previzualizare blurată, neplătită. Fire-and-forget.
+          if (p.email) {
+            void savePreviewLead({ ...values, email: p.email }, locale)
+          }
         }
         setPreviewReady(true)
         trackFunnel('free_result_viewed', { mode: 'blurred_report' })

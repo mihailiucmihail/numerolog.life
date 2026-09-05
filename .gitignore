@@ -12,3 +12,4 @@ node_modules
 # Fișiere temporare de verificare JS generate de scripturile de patch
 .v0-cristalul-check.js
 .v0-grani-check.js
+.pw.tmp
