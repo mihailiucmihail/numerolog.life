@@ -4,6 +4,9 @@ import crypto from 'crypto'
 import { Resend } from 'resend'
 import { db } from '@/lib/db'
 import { buildRaportUrl, sendRaportEmail } from '@/lib/raport-email'
+import { buildOfferEmail, type OfferLocale } from '@/lib/offer-email'
+import { getOrCreateOfferCode, OFFER_PERCENT } from '@/lib/promo'
+import { currencyFromCountry, type Currency } from '@/lib/currency'
 
 export interface LeadRow {
   id: string
@@ -14,6 +17,9 @@ export interface LeadRow {
   birth_month: number | null
   birth_year: number | null
   locale: string
+  currency: string
+  /** Țara vizitatorului (ISO alpha-2) din geolocație la momentul previzualizării, sau null. */
+  country: string | null
   views: number
   created_at: string
   last_seen_at: string
@@ -23,6 +29,163 @@ export interface LeadRow {
   permanent_created_at: string | null
   offer_sent_at: string | null
   offer_sent_count: number
+  offer_code: string | null
+  unsubscribed_at: string | null
+}
+
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
+
+/**
+ * Moneda în care primește oferta un lead: cea a țării lui (geolocație), altfel cea salvată la previzualizare.
+ * Așa lead-urile vechi (salvate înainte să reținem țara) și cele cu cookie învechit primesc totuși prețul local.
+ */
+function leadCurrency(lead: { country: string | null; currency: string | null }): Currency {
+  if (lead.country) return currencyFromCountry(lead.country)
+  const v = lead.currency
+  return v === 'kzt' || v === 'mdl' ? v : 'eur'
+}
+
+/** Tokenul de dezabonare al unui lead (creat la prima trimitere; stabil după aceea). */
+async function ensureUnsubscribeToken(leadId: string): Promise<string> {
+  const token = crypto.randomBytes(16).toString('hex')
+  const rows = await db<{ unsubscribe_token: string }[]>`
+    UPDATE cristalul_previews
+    SET unsubscribe_token = COALESCE(unsubscribe_token, ${token})
+    WHERE id = ${leadId}
+    RETURNING unsubscribe_token
+  `
+  return rows[0].unsubscribe_token
+}
+
+function unsubscribeUrl(token: string, locale: string): string {
+  return `${BASE_URL}/api/leads/unsubscribe?t=${token}&locale=${locale}`
+}
+
+interface OfferLeadRow {
+  id: string
+  email: string
+  first_name: string | null
+  birth_day: number | null
+  locale: string
+  currency: string
+  country: string | null
+  paid_at: Date | null
+  unsubscribed_at: Date | null
+}
+
+/** Construiește emailul ofertei pentru un lead: cod −20 % (72 h) + link cu codul aplicat automat. */
+async function composeOffer(lead: OfferLeadRow) {
+  const locale: OfferLocale = lead.locale === 'ro' ? 'ro' : 'ru'
+  const { code, expiresAt } = await getOrCreateOfferCode(lead.email)
+  const unsubToken = await ensureUnsubscribeToken(lead.id)
+  const currency = leadCurrency(lead)
+  // `currency=` în link fixează aceeași monedă ca în email și dacă persoana deschide linkul de pe alt IP/VPN.
+  const offerUrl = `${BASE_URL}/${locale}/numerologie?discount=${encodeURIComponent(code)}&email=${encodeURIComponent(lead.email)}&currency=${currency}`
+  const unsub = unsubscribeUrl(unsubToken, locale)
+  const mail = buildOfferEmail({
+    locale,
+    firstName: lead.first_name,
+    email: lead.email,
+    birthDay: lead.birth_day,
+    currency,
+    percent: OFFER_PERCENT,
+    code,
+    expiresAt,
+    offerUrl,
+    unsubscribeUrl: unsub,
+    baseUrl: BASE_URL,
+  })
+  return { ...mail, code, unsubscribeUrl: unsub, offerUrl }
+}
+
+/**
+ * Trimite oferta −20 % (șablonul premium) către lead-urile selectate. Sar peste cei care au plătit
+ * și peste cei dezabonați. Fiecare primește un cod personal, valabil 72 h, aplicat automat din link.
+ */
+export async function sendDiscountOffer(
+  password: string,
+  leadIds: string[],
+): Promise<{ ok: boolean; sent?: number; skippedPaid?: number; skippedUnsubscribed?: number; failed?: number; error?: string }> {
+  if (!checkPassword(password)) return { ok: false, error: 'unauthorized' }
+  if (!leadIds?.length) return { ok: false, error: 'no_leads' }
+  const resendKey = process.env.RESEND_API_KEY
+  if (!resendKey) return { ok: false, error: 'no_resend' }
+  try {
+    const ids = leadIds.slice(0, 500)
+    const leads = await db<OfferLeadRow[]>`
+      SELECT id, email, first_name, birth_day, locale, currency, country, paid_at, unsubscribed_at
+      FROM cristalul_previews WHERE id = ANY(${ids}::uuid[])
+    `
+    const resend = new Resend(resendKey)
+    const fromDomain = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
+    let sent = 0, skippedPaid = 0, skippedUnsubscribed = 0, failed = 0
+    for (const lead of leads) {
+      if (lead.paid_at) { skippedPaid++; continue }
+      if (lead.unsubscribed_at) { skippedUnsubscribed++; continue }
+      try {
+        const mail = await composeOffer(lead)
+        await resend.emails.send({
+          from: `Numerolog.life <${fromDomain}>`,
+          to: lead.email,
+          subject: mail.subject,
+          html: mail.html,
+          text: mail.text,
+          headers: {
+            'List-Unsubscribe': `<${mail.unsubscribeUrl}>`,
+            'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+          },
+        })
+        sent++
+        await db`
+          UPDATE cristalul_previews
+          SET offer_sent_at = now(), offer_sent_count = offer_sent_count + 1, offer_code = ${mail.code}
+          WHERE id = ${lead.id}
+        `
+      } catch (err) {
+        failed++
+        console.error('[v0] sendDiscountOffer error for', lead.email, err)
+      }
+    }
+    return { ok: true, sent, skippedPaid, skippedUnsubscribed, failed }
+  } catch (err) {
+    console.error('[v0] sendDiscountOffer error:', err)
+    return { ok: false, error: 'server_error' }
+  }
+}
+
+/** Previzualizarea emailului ofertei pentru un lead (HTML complet), fără trimitere și fără a marca nimic. */
+export async function previewDiscountOffer(
+  password: string,
+  leadId: string,
+): Promise<{ ok: boolean; subject?: string; html?: string; offerUrl?: string; error?: string }> {
+  if (!checkPassword(password)) return { ok: false, error: 'unauthorized' }
+  try {
+    const rows = await db<OfferLeadRow[]>`
+      SELECT id, email, first_name, birth_day, locale, currency, country, paid_at, unsubscribed_at
+      FROM cristalul_previews WHERE id = ${leadId} LIMIT 1
+    `
+    if (!rows.length) return { ok: false, error: 'not_found' }
+    const mail = await composeOffer(rows[0])
+    return { ok: true, subject: mail.subject, html: mail.html, offerUrl: mail.offerUrl }
+  } catch (err) {
+    console.error('[v0] previewDiscountOffer error:', err)
+    return { ok: false, error: 'server_error' }
+  }
+}
+
+/** Dezabonare lead (link din email / one-click). Public — tokenul e secretul. */
+export async function unsubscribeLeadByToken(token: string): Promise<{ ok: boolean }> {
+  try {
+    if (!token || !/^[a-f0-9]{32}$/.test(token)) return { ok: false }
+    const rows = await db<{ id: string }[]>`
+      UPDATE cristalul_previews SET unsubscribed_at = COALESCE(unsubscribed_at, now())
+      WHERE unsubscribe_token = ${token} RETURNING id
+    `
+    return { ok: rows.length > 0 }
+  } catch (err) {
+    console.error('[v0] unsubscribeLeadByToken error:', err)
+    return { ok: false }
+  }
 }
 
 export type LeadFilter = 'unpaid' | 'paid' | 'all'
@@ -42,6 +205,7 @@ function serialize(row: any): LeadRow {
     paid_at: toIso(row.paid_at),
     permanent_created_at: toIso(row.permanent_created_at),
     offer_sent_at: toIso(row.offer_sent_at),
+    unsubscribed_at: toIso(row.unsubscribed_at),
   }
 }
 
@@ -54,9 +218,9 @@ export async function getLeads(
     const where =
       filter === 'unpaid' ? db`WHERE paid_at IS NULL` : filter === 'paid' ? db`WHERE paid_at IS NOT NULL` : db``
     const rows = await db`
-      SELECT id, email, first_name, last_name, birth_day, birth_month, birth_year, locale, views,
+      SELECT id, email, first_name, last_name, birth_day, birth_month, birth_year, locale, currency, country, views,
              created_at, last_seen_at, paid_at, paid_token, permanent_token, permanent_created_at,
-             offer_sent_at, offer_sent_count
+             offer_sent_at, offer_sent_count, offer_code, unsubscribed_at
       FROM cristalul_previews
       ${where}
       ORDER BY last_seen_at DESC
@@ -154,17 +318,19 @@ export async function sendOfferToLeads(
 
   try {
     const ids = leadIds.slice(0, 500)
-    const leads = await db<{ id: string; email: string; first_name: string | null; locale: string }[]>`
-      SELECT id, email, first_name, locale FROM cristalul_previews WHERE id = ANY(${ids}::uuid[])
+    const leads = await db<{ id: string; email: string; first_name: string | null; locale: string; unsubscribed_at: Date | null }[]>`
+      SELECT id, email, first_name, locale, unsubscribed_at FROM cristalul_previews WHERE id = ANY(${ids}::uuid[])
     `
     const resend = new Resend(resendKey)
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
+    const baseUrl = BASE_URL
     const fromDomain = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
 
     let sent = 0
     for (const lead of leads) {
+      if (lead.unsubscribed_at) continue
       const locale = lead.locale === 'ro' ? 'ro' : 'ru'
       const link = `${baseUrl}/${locale}/numerologie`
+      const unsub = unsubscribeUrl(await ensureUnsubscribeToken(lead.id), locale)
       const name = lead.first_name || (locale === 'ro' ? 'prietene' : 'друг')
       const personal = cleanBody.replaceAll('{name}', name).replaceAll('{link}', link)
       const bodyHtml = personal
@@ -176,6 +342,10 @@ export async function sendOfferToLeads(
           from: `Numerolog.life <${fromDomain}>`,
           to: lead.email,
           subject: cleanSubject.replaceAll('{name}', name),
+          headers: {
+            'List-Unsubscribe': `<${unsub}>`,
+            'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+          },
           html: `
             <!DOCTYPE html>
             <html><head><meta charset="utf-8"></head>
@@ -189,7 +359,7 @@ export async function sendOfferToLeads(
                     </td></tr>
                     <tr><td style="padding:40px;color:rgba(237,227,207,0.85);font-size:15px;line-height:1.8;">${bodyHtml}</td></tr>
                     <tr><td style="padding:24px 40px;border-top:1px solid rgba(212,175,55,0.1);text-align:center;">
-                      <p style="margin:0;color:rgba(237,227,207,0.3);font-size:11px;">numerolog.life</p>
+                      <p style="margin:0;color:rgba(237,227,207,0.3);font-size:11px;">numerolog.life · <a href="${unsub}" style="color:rgba(212,175,55,0.7);">${locale === 'ro' ? 'Dezabonare' : 'Отписаться'}</a></p>
                     </td></tr>
                   </table>
                 </td></tr>

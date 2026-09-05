@@ -5,8 +5,9 @@ import { useTranslations } from "next-intl"
 import { Link } from "@/i18n/navigation"
 import { Check, X, Loader2 } from "lucide-react"
 import { unsubscribeByToken } from "@/app/actions/newsletter"
+import { unsubscribeLeadByToken } from "@/app/actions/leads-admin"
 
-export function UnsubscribeClient({ token }: { token: string }) {
+export function UnsubscribeClient({ token, kind = "newsletter" }: { token: string; kind?: "newsletter" | "lead" }) {
   const t = useTranslations("unsubscribe")
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading")
   const started = useRef(false)
@@ -18,10 +19,11 @@ export function UnsubscribeClient({ token }: { token: string }) {
       setStatus("error")
       return
     }
-    unsubscribeByToken(token).then((res) => {
+    const run = kind === "lead" ? unsubscribeLeadByToken(token) : unsubscribeByToken(token)
+    run.then((res) => {
       setStatus(res.ok ? "success" : "error")
     })
-  }, [token])
+  }, [token, kind])
 
   return (
     <div className="glass-warm relative w-full max-w-md overflow-hidden rounded-2xl border border-primary/20 p-8 text-center">

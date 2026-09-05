@@ -10,7 +10,7 @@ import { saveRaportAndSendEmail } from '@/app/actions/raport'
 import { checkPromoCode } from '@/app/actions/promo'
 import { useCurrency } from '@/components/providers/currency-provider'
 import { trackFunnel, trackPurchase } from '@/lib/funnel-analytics'
-import { FunnelPaywall } from './funnel-paywall'
+import { FunnelPaywall, type AppliedOffer } from './funnel-paywall'
 import { CristalLoading } from '@/components/numerology/cristal-loading'
 import { CHECKOUT_STORAGE_KEY, FUNNEL_STORAGE_KEY, type FunnelForm as FormValues } from './types'
 
@@ -69,12 +69,18 @@ export default function CristalFunnel() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const locale = pathname?.split('/')[1] || 'ro'
-  const { currency, prices, format } = useCurrency()
+  const { currency, country, prices, format, alphabet } = useCurrency()
 
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const didUnlock = useRef(false)
 
-  const [frameSrc, setFrameSrc] = useState<string>(CALCULATOR_SRC)
+  // Linkul din emailul de ofertă: ?discount=COD (aplicat automat, fără introducere manuală) + ?email= (precompletat).
+  const discountCode = searchParams.get('discount') || undefined
+  const emailParam = searchParams.get('email') || ''
+
+  // Formularul se deschide cu alfabetul numelui preselectat după țara vizitatorului (HTML-ul citește ?alpha=).
+  const formSrc = `${CALCULATOR_SRC}?alpha=${alphabet}${emailParam ? `&email=${encodeURIComponent(emailParam)}` : ''}`
+  const [frameSrc, setFrameSrc] = useState<string>(formSrc)
   const [frameHeight, setFrameHeight] = useState(1200)
   const [form, setForm] = useState<FormValues | null>(null)
   // Emailul introdus în formularul calculatorului (obligatoriu acolo) — la plată doar îl confirmăm.
@@ -88,7 +94,25 @@ export default function CristalFunnel() {
   const [cancelledNotice, setCancelledNotice] = useState(false)
   const [showSticky, setShowSticky] = useState(false)
 
-  const discountCode = searchParams.get('discount') || undefined
+  // Oferta din link, verificată pe server: preț redus afișat înainte de formular, în paywall și în bara sticky.
+  const [offer, setOffer] = useState<AppliedOffer | null>(null)
+  const [offerInvalid, setOfferInvalid] = useState<'used' | 'expired' | 'invalid' | null>(null)
+  useEffect(() => {
+    if (!discountCode) return
+    let cancelled = false
+    checkPromoCode(discountCode)
+      .then((r) => {
+        if (cancelled) return
+        if (r.valid && r.percent && r.finalPrice) {
+          setOffer({ code: discountCode, percent: r.percent, finalPrice: r.finalPrice, basePrice: r.basePrice })
+          trackFunnel('offer_link_opened', { percent: r.percent })
+        } else {
+          setOfferInvalid(r.reason === 'used' || r.reason === 'expired' ? r.reason : 'invalid')
+        }
+      })
+      .catch(() => { if (!cancelled) setOfferInvalid('invalid') })
+    return () => { cancelled = true }
+  }, [discountCode])
 
   useEffect(() => {
     trackFunnel('numerology_landing_view', { locale })
@@ -135,7 +159,7 @@ export default function CristalFunnel() {
           trackFunnel('birth_data_submitted', { has_middle: Boolean(values.middle), alphabet: values.nameAlphabetKey })
           // Lead pentru panoul admin (/admin/leads): previzualizare blurată, neplătită. Fire-and-forget.
           if (p.email) {
-            void savePreviewLead({ ...values, email: p.email }, locale)
+            void savePreviewLead({ ...values, email: p.email }, locale, currency, country)
           }
         }
         setPreviewReady(true)
@@ -168,7 +192,7 @@ export default function CristalFunnel() {
     }
     window.addEventListener('message', onMessage)
     return () => window.removeEventListener('message', onMessage)
-  }, [postToFrame])
+  }, [postToFrame, locale, currency, country])
 
   // Restaurare după întoarcere de la Stripe (anulat): raport blurat direct, fără re-completare.
   useEffect(() => {
@@ -254,7 +278,7 @@ export default function CristalFunnel() {
       try {
         // Aceeași cheie ca fluxul existent — citită la întoarcerea de la Stripe.
         localStorage.setItem(CHECKOUT_STORAGE_KEY, JSON.stringify(reportData))
-        const url = await startNumerologieCheckout(email, locale, reportData, promoCode || discountCode)
+        const url = await startNumerologieCheckout(email, locale, reportData, promoCode || offer?.code || discountCode)
         trackFunnel('stripe_checkout_started', { currency, value: prices.cristal / 100 })
         window.location.href = url
       } catch (err) {
@@ -266,7 +290,7 @@ export default function CristalFunnel() {
         postToFrame({ type: 'paymentCancelled' })
       }
     },
-    [form, locale, discountCode, currency, prices.cristal, t, postToFrame],
+    [form, locale, discountCode, offer?.code, currency, prices.cristal, t, postToFrame],
   )
   const handleCheckoutRef = useRef(handleCheckout)
   useEffect(() => {
@@ -285,7 +309,7 @@ export default function CristalFunnel() {
   const resetToForm = () => {
     setPreviewReady(false)
     setCancelledNotice(false)
-    setFrameSrc(`${CALCULATOR_SRC}?k=${Date.now()}`)
+    setFrameSrc(`${formSrc}&k=${Date.now()}`)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -299,6 +323,28 @@ export default function CristalFunnel() {
       {cancelledNotice && (
         <p role="status" className="mx-auto mb-6 max-w-md rounded-lg border border-primary/30 bg-primary/5 px-4 py-3 text-center text-sm text-foreground">
           {t('cancelledNotice')}
+        </p>
+      )}
+
+      {/* Oferta personală din email: codul e deja aplicat, prețul redus se vede de la primul ecran. */}
+      {offer && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          role="status"
+          className="mx-auto mb-6 flex max-w-xl flex-col items-center gap-1 rounded-2xl border border-primary/40 bg-primary/10 px-5 py-4 text-center shadow-lg shadow-primary/10"
+        >
+          <p className="font-mono text-[10.5px] uppercase tracking-[0.22em] text-primary">{t('offerBannerEyebrow', { percent: offer.percent })}</p>
+          <p className="font-serif text-2xl font-light text-foreground">
+            {offer.finalPrice} <span className="text-base text-muted-foreground line-through">{offer.basePrice}</span>
+          </p>
+          <p className="text-xs text-muted-foreground/80">{t('offerBannerNote')}</p>
+        </motion.div>
+      )}
+      {offerInvalid && (
+        <p role="status" className="mx-auto mb-6 max-w-md rounded-lg border border-border/60 bg-card/40 px-4 py-3 text-center text-sm text-muted-foreground">
+          {t(offerInvalid === 'used' ? 'offerUsed' : offerInvalid === 'expired' ? 'offerExpired' : 'offerInvalid')}
         </p>
       )}
 
@@ -323,7 +369,7 @@ export default function CristalFunnel() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="mt-6 flex flex-col gap-10 sm:mt-8"
           >
-            <FunnelPaywall id={PAYWALL_ID} initialEmail={formEmail} initialPromo={discountCode} busy={checkoutBusy} error={checkoutError} onCheckout={handleCheckout} />
+            <FunnelPaywall id={PAYWALL_ID} initialEmail={formEmail} initialPromo={discountCode} appliedOffer={offer} busy={checkoutBusy} error={checkoutError} onCheckout={handleCheckout} />
             <div className="text-center">
               <button type="button" onClick={resetToForm} className="text-xs text-muted-foreground/60 underline-offset-4 hover:text-foreground hover:underline">
                 {t('editData')}
@@ -346,7 +392,15 @@ export default function CristalFunnel() {
             <div className="mx-auto flex max-w-xl items-center justify-between gap-3 rounded-2xl border border-primary/40 bg-background/90 p-3 shadow-2xl shadow-primary/10 backdrop-blur-md">
               <div className="min-w-0 pl-2">
                 <p className="truncate text-sm text-foreground">{t('stickyTitle')}</p>
-                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-primary/80">{format(prices.cristal)}</p>
+                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-primary/80">
+                  {offer ? (
+                    <>
+                      {offer.finalPrice} <span className="text-muted-foreground line-through">{offer.basePrice}</span>
+                    </>
+                  ) : (
+                    format(prices.cristal)
+                  )}
+                </p>
               </div>
               <button
                 type="button"

@@ -18,6 +18,56 @@ const COUNTRY_CURRENCY: Record<string, Currency> = {
   MD: 'mdl',
 }
 
+/** Header intern setat de proxy cu țara vizitatorului (ISO alpha-2), pentru localizări dependente de țară. */
+export const COUNTRY_HEADER = 'x-country'
+
+/**
+ * Alfabetul numelui preselectat în calculatorul Cristalul Destinului, după țara vizitatorului.
+ * Cheile sunt exact valorile `<option>` din `#nameAlphabetSelect` (public/cristalul-calculator.html).
+ * Țările fără intrare (și vizitatorii fără geolocație) primesc 'ru'. Utilizatorul poate schimba manual.
+ */
+export type NameAlphabet =
+  | 'ru' | 'uk' | 'be' | 'kk' | 'bg' | 'en' | 'de' | 'es' | 'it' | 'ro' | 'pl' | 'cs'
+  | 'lt' | 'lv' | 'et' | 'sv' | 'fi' | 'da' | 'el' | 'hy' | 'az' | 'ar' | 'he'
+
+export const DEFAULT_ALPHABET: NameAlphabet = 'ru'
+
+const COUNTRY_ALPHABET: Record<string, NameAlphabet> = {
+  RU: 'ru', UA: 'uk', BY: 'be', KZ: 'kk', BG: 'bg',
+  // Spațiul post-sovietic fără alfabet propriu în listă: numele sunt de regulă scrise în chirilică rusă.
+  KG: 'ru', UZ: 'ru', TJ: 'ru', TM: 'ru',
+  MD: 'ro', RO: 'ro',
+  GB: 'en', US: 'en', CA: 'en', AU: 'en', NZ: 'en', IE: 'en',
+  DE: 'de', AT: 'de', CH: 'de', LI: 'de',
+  ES: 'es', MX: 'es', AR: 'es', CO: 'es', CL: 'es', PE: 'es', VE: 'es', EC: 'es', UY: 'es',
+  IT: 'it', SM: 'it',
+  PL: 'pl', CZ: 'cs', SK: 'cs',
+  LT: 'lt', LV: 'lv', EE: 'et',
+  SE: 'sv', FI: 'fi', DK: 'da', NO: 'da', IS: 'da',
+  GR: 'el', CY: 'el',
+  AM: 'hy', AZ: 'az',
+  IL: 'he',
+  SA: 'ar', AE: 'ar', EG: 'ar', IQ: 'ar', JO: 'ar', KW: 'ar', LB: 'ar', MA: 'ar', OM: 'ar', QA: 'ar', SY: 'ar', TN: 'ar', DZ: 'ar', LY: 'ar', BH: 'ar', YE: 'ar',
+}
+
+/** Cod ISO alpha-2 valid (două litere) sau null. */
+export function normalizeCountry(country: string | null | undefined): string | null {
+  const c = country?.trim().toUpperCase()
+  return c && /^[A-Z]{2}$/.test(c) ? c : null
+}
+
+/** Emoji-steag din codul ISO alpha-2 (indicatori regionali Unicode). */
+export function countryFlag(country: string | null | undefined): string {
+  const c = normalizeCountry(country)
+  if (!c) return ''
+  return String.fromCodePoint(...[...c].map((ch) => 0x1f1e6 + ch.charCodeAt(0) - 65))
+}
+
+export function alphabetFromCountry(country: string | null | undefined): NameAlphabet {
+  if (!country) return DEFAULT_ALPHABET
+  return COUNTRY_ALPHABET[country.toUpperCase()] ?? DEFAULT_ALPHABET
+}
+
 type CurrencyConfig = {
   /** Simbolul afișat după sumă. */
   symbol: string
@@ -35,8 +85,8 @@ const CONFIG: Record<Currency, CurrencyConfig> = {
 // Curs orientativ la stabilire: 1 EUR ≈ 527 KZT, 1 EUR ≈ 20,12 MDL.
 export const PRICES: Record<Currency, { cristal: number; graniStandard: number; graniGraph: number }> = {
   eur: { cristal: 1900, graniStandard: 199, graniGraph: 499 }, // 19,00 € / 1,99 € / 4,99 €
-  kzt: { cristal: 999000, graniStandard: 105000, graniGraph: 265000 }, // 9 990 ₸ / 1 050 ₸ / 2 650 ₸
-  mdl: { cristal: 39900, graniStandard: 3900, graniGraph: 9900 }, // 399 lei / 39 lei / 99 lei
+  kzt: { cristal: 699000, graniStandard: 105000, graniGraph: 265000 }, // 6 990 ₸ / 1 050 ₸ / 2 650 ₸
+  mdl: { cristal: 19900, graniStandard: 3900, graniGraph: 9900 }, // 199 lei / 39 lei / 99 lei
 }
 
 export function parseCurrency(value: string | null | undefined): Currency | null {

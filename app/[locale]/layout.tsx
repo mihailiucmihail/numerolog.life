@@ -7,7 +7,7 @@ import { notFound } from 'next/navigation'
 import '../globals.css'
 import { RootLayoutClient } from '../layout-client'
 import { routing } from '@/i18n/routing'
-import { getRequestCurrency } from '@/lib/currency-server'
+import { getRequestCountry, getRequestCurrency } from '@/lib/currency-server'
 import { CurrencyProvider } from '@/components/providers/currency-provider'
 
 const inter = Inter({ 
@@ -50,12 +50,14 @@ export default async function LocaleLayout({
   const messages = await getMessages()
   // Moneda vizitatorului (KZ -> tenge, altfel euro) — decisă pe server, fără flash la hidratare.
   const currency = await getRequestCurrency()
+  // Țara (geolocație) — pentru alfabetul numelui preselectat în calculator.
+  const country = await getRequestCountry()
 
   return (
     <html lang={locale} className={`${inter.variable} ${cormorant.variable} bg-background`} suppressHydrationWarning>
       <body className="font-sans antialiased bg-background">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <CurrencyProvider currency={currency}>
+          <CurrencyProvider currency={currency} country={country}>
             <RootLayoutClient>
               {children}
             </RootLayoutClient>

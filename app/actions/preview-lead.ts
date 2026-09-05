@@ -1,6 +1,7 @@
 "use server"
 
 import { db } from '@/lib/db'
+import { normalizeCountry } from '@/lib/currency'
 
 interface PreviewForm {
   last?: string
@@ -21,8 +22,15 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
  * Idempotent per persoană (email + nume + dată): la repetare crește `views` și `last_seen_at`.
  * Nu aruncă niciodată — fluxul utilizatorului nu depinde de această salvare.
  */
-export async function savePreviewLead(form: PreviewForm, locale: string = 'ru'): Promise<{ ok: boolean }> {
+export async function savePreviewLead(
+  form: PreviewForm,
+  locale: string = 'ru',
+  currency: string = 'eur',
+  country: string | null = null,
+): Promise<{ ok: boolean }> {
   try {
+    const safeCurrency = ['eur', 'kzt', 'mdl'].includes(currency) ? currency : 'eur'
+    const safeCountry = normalizeCountry(country)
     const email = String(form.email || '').trim().toLowerCase()
     if (!EMAIL_RE.test(email) || email.length > 200) return { ok: false }
 
@@ -49,14 +57,16 @@ export async function savePreviewLead(form: PreviewForm, locale: string = 'ru'):
 
     await db`
       INSERT INTO cristalul_previews
-        (lead_key, email, first_name, last_name, birth_day, birth_month, birth_year, form_data, locale)
+        (lead_key, email, first_name, last_name, birth_day, birth_month, birth_year, form_data, locale, currency, country)
       VALUES
-        (${leadKey}, ${email}, ${first}, ${last}, ${day}, ${month}, ${year}, ${db.json(formData as any)}, ${safeLocale})
+        (${leadKey}, ${email}, ${first}, ${last}, ${day}, ${month}, ${year}, ${db.json(formData as any)}, ${safeLocale}, ${safeCurrency}, ${safeCountry})
       ON CONFLICT (lead_key) DO UPDATE
         SET views = cristalul_previews.views + 1,
             last_seen_at = now(),
             form_data = EXCLUDED.form_data,
-            locale = EXCLUDED.locale
+            locale = EXCLUDED.locale,
+            currency = EXCLUDED.currency,
+            country = COALESCE(EXCLUDED.country, cristalul_previews.country)
     `
     return { ok: true }
   } catch (err) {

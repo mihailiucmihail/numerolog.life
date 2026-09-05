@@ -8,11 +8,20 @@ import { checkPromoCode } from '@/app/actions/promo'
 import { trackFunnel } from '@/lib/funnel-analytics'
 import { PROMO_ENABLED } from '@/lib/promo-flags'
 
+/** Reducere aplicată automat din linkul primit pe email (validată pe server) — nimic de introdus manual. */
+export interface AppliedOffer {
+  code: string
+  percent: number
+  finalPrice: string
+  basePrice: string
+}
+
 interface PaywallProps {
   id?: string
   /** Emailul introdus deja în formularul calculatorului — îl afișăm pentru confirmare, nu-l mai cerem. */
   initialEmail?: string
   initialPromo?: string
+  appliedOffer?: AppliedOffer | null
   busy: boolean
   error: string
   onCheckout: (email: string, promoCode?: string) => void
@@ -23,7 +32,7 @@ const inputCls =
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-export function FunnelPaywall({ id, initialEmail = '', initialPromo, busy, error, onCheckout }: PaywallProps) {
+export function FunnelPaywall({ id, initialEmail = '', initialPromo, appliedOffer, busy, error, onCheckout }: PaywallProps) {
   const t = useTranslations('funnel')
   const { prices, format, currency } = useCurrency()
   const [email, setEmail] = useState(initialEmail)
@@ -77,8 +86,9 @@ export function FunnelPaywall({ id, initialEmail = '', initialPromo, busy, error
       return setLocalError(t('errorEmail'))
     }
     setLocalError('')
-    const code = PROMO_ENABLED ? promo.trim().toUpperCase().replace(/\s+/g, '') : ''
-    onCheckout(v, code || undefined)
+    // Oferta din link are prioritate; câmpul manual contează doar când e activat.
+    const manual = PROMO_ENABLED ? promo.trim().toUpperCase().replace(/\s+/g, '') : ''
+    onCheckout(v, appliedOffer?.code || manual || undefined)
   }
 
   return (
@@ -89,9 +99,21 @@ export function FunnelPaywall({ id, initialEmail = '', initialPromo, busy, error
             {t('paywallTitle')}
           </h2>
           <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted-foreground/80 text-pretty">{t('paywallSubtitle')}</p>
-          <p className="mt-6 font-serif text-5xl font-light text-primary">
-            {promoInfo?.ok ? promoInfo.text.split(' · ')[1] : format(prices.cristal)}
-          </p>
+          {appliedOffer ? (
+            <div className="mt-6 flex flex-col items-center gap-2">
+              <span className="rounded-full border border-primary/40 bg-primary/10 px-3 py-1 font-mono text-[10.5px] uppercase tracking-[0.2em] text-primary">
+                {t('offerApplied', { percent: appliedOffer.percent })}
+              </span>
+              <p className="font-serif text-5xl font-light text-primary">{appliedOffer.finalPrice}</p>
+              <p className="text-sm text-muted-foreground">
+                <span className="line-through">{appliedOffer.basePrice}</span>
+              </p>
+            </div>
+          ) : (
+            <p className="mt-6 font-serif text-5xl font-light text-primary">
+              {promoInfo?.ok ? promoInfo.text.split(' · ')[1] : format(prices.cristal)}
+            </p>
+          )}
         </div>
 
         <form onSubmit={submit} noValidate className="mt-8 flex flex-col gap-4">
@@ -128,7 +150,7 @@ export function FunnelPaywall({ id, initialEmail = '', initialPromo, busy, error
             </div>
           )}
 
-          {PROMO_ENABLED && (showPromo ? (
+          {PROMO_ENABLED && !appliedOffer && (showPromo ? (
             <div>
               <label htmlFor="fn-promo" className="mb-2 block font-mono text-[10.5px] uppercase tracking-[0.18em] text-primary/80">
                 {t('paywallPromo')}
