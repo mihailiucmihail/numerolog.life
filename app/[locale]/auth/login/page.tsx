@@ -48,7 +48,7 @@ export default function LoginPage() {
       // Only allow safe, internal redirect targets
       const requestedRedirect = new URLSearchParams(window.location.search).get("redirect")
       const redirectTo =
-        requestedRedirect && requestedRedirect.startsWith("/") ? requestedRedirect : "/dashboard"
+        requestedRedirect && requestedRedirect.startsWith("/") ? requestedRedirect : "/"
 
       router.replace(redirectTo)
     } catch {
@@ -72,7 +72,7 @@ export default function LoginPage() {
 
         <div className="flex items-center gap-2 mb-8">
           <Sparkles className="h-8 w-8 text-primary" />
-          <span className="text-2xl font-bold text-gradient">AstroAI</span>
+          <span className="text-2xl font-bold text-gradient">NUMEROLOG.life</span>
         </div>
 
         <Card className="w-full max-w-md bg-card/95 border-border/50 shadow-2xl">
