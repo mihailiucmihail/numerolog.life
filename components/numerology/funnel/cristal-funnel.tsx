@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
 import { startNumerologieCheckout, getNumerologieSessionStatus } from '@/app/actions/stripe'
-import { savePreviewLead } from '@/app/actions/preview-lead'
+import { savePreviewLead, attachLeadEmail } from '@/app/actions/preview-lead'
 import { saveRaportAndSendEmail } from '@/app/actions/raport'
 import { checkPromoCode } from '@/app/actions/promo'
 import { useCurrency } from '@/components/providers/currency-provider'
@@ -160,9 +160,8 @@ export default function CristalFunnel() {
           } catch {}
           trackFunnel('birth_data_submitted', { has_middle: Boolean(values.middle), alphabet: values.nameAlphabetKey })
           // Lead pentru panoul admin (/admin/leads): previzualizare blurată, neplătită. Fire-and-forget.
-          if (p.email) {
-            void savePreviewLead({ ...values, email: p.email }, locale, currency, country)
-          }
+          // Emailul se cere abia la paywall, deci lead-ul se salvează și fără el (attachLeadEmail îl completează).
+          void savePreviewLead({ ...values, email: p.email || undefined }, locale, currency, country)
         }
         setPreviewReady(true)
         trackFunnel('free_result_viewed', { mode: 'blurred_report' })
@@ -280,6 +279,8 @@ export default function CristalFunnel() {
       try {
         // Aceeași cheie ca fluxul existent — citită la întoarcerea de la Stripe.
         localStorage.setItem(CHECKOUT_STORAGE_KEY, JSON.stringify(reportData))
+        // Lead-ul anonim din previzualizare primește emailul acum; așteptăm scurt ca redirectul să nu-l anuleze.
+        await Promise.race([attachLeadEmail(reportData, email), new Promise((r) => setTimeout(r, 1500))])
         const url = await startNumerologieCheckout(email, locale, reportData, promoCode || offer?.code || discountCode)
         trackFunnel('stripe_checkout_started', { currency, value: prices.cristal / 100 })
         window.location.href = url

@@ -10,7 +10,8 @@ import { currencyFromCountry, type Currency } from '@/lib/currency'
 
 export interface LeadRow {
   id: string
-  email: string
+  /** Null când previzualizarea a fost generată fără email (se cere abia la paywall). */
+  email: string | null
   first_name: string | null
   last_name: string | null
   birth_day: number | null
@@ -63,7 +64,7 @@ function unsubscribeUrl(token: string, locale: string): string {
 
 interface OfferLeadRow {
   id: string
-  email: string
+  email: string | null
   first_name: string | null
   birth_day: number | null
   locale: string
@@ -76,6 +77,7 @@ interface OfferLeadRow {
 /** Construiește emailul ofertei pentru un lead: cod −20 % (72 h) + link cu codul aplicat automat. */
 async function composeOffer(lead: OfferLeadRow) {
   const locale: OfferLocale = lead.locale === 'ro' ? 'ro' : 'ru'
+  if (!lead.email) throw new Error('lead_without_email')
   const { code, expiresAt } = await getOrCreateOfferCode(lead.email)
   const unsubToken = await ensureUnsubscribeToken(lead.id)
   const currency = leadCurrency(lead)
@@ -121,7 +123,7 @@ export async function sendDiscountOffer(
     let sent = 0, skippedPaid = 0, skippedUnsubscribed = 0, failed = 0
     for (const lead of leads) {
       if (lead.paid_at) { skippedPaid++; continue }
-      if (lead.unsubscribed_at) { skippedUnsubscribed++; continue }
+      if (lead.unsubscribed_at || !lead.email) { skippedUnsubscribed++; continue }
       try {
         const mail = await composeOffer(lead)
         await resend.emails.send({
@@ -255,12 +257,13 @@ export async function createPermanentLink(
 ): Promise<{ ok: boolean; url?: string; emailSent?: boolean; error?: string }> {
   if (!checkPassword(password)) return { ok: false, error: 'unauthorized' }
   try {
-    const rows = await db<{ email: string; first_name: string | null; last_name: string | null; form_data: any; locale: string; permanent_token: string | null }[]>`
+    const rows = await db<{ email: string | null; first_name: string | null; last_name: string | null; form_data: any; locale: string; permanent_token: string | null }[]>`
       SELECT email, first_name, last_name, form_data, locale, permanent_token
       FROM cristalul_previews WHERE id = ${leadId} LIMIT 1
     `
     if (!rows.length) return { ok: false, error: 'not_found' }
-    const lead = rows[0]
+    const lead = { ...rows[0], email: rows[0].email ?? '' }
+    if (sendEmail && !lead.email) return { ok: false, error: 'no_email' }
     const locale = lead.locale === 'ro' ? 'ro' : 'ru'
 
     let token = lead.permanent_token
@@ -327,7 +330,7 @@ export async function sendOfferToLeads(
 
     let sent = 0
     for (const lead of leads) {
-      if (lead.unsubscribed_at) continue
+      if (lead.unsubscribed_at || !lead.email) continue
       const locale = lead.locale === 'ro' ? 'ro' : 'ru'
       const link = `${baseUrl}/${locale}/numerologie`
       const unsub = unsubscribeUrl(await ensureUnsubscribeToken(lead.id), locale)

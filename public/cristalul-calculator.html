@@ -6389,17 +6389,21 @@ function startPdfExport(){
     .cd-preview .card{position:relative;}
     .cd-future-mask{
       position:absolute;top:0;bottom:0;right:0;z-index:2;pointer-events:none;
-      /* Fundal aproape opac — blur-ul de dedesubt nu se vede; fără backdrop-filter (cost la derulare). */
-      background:linear-gradient(90deg, rgba(22,16,34,.9), rgba(22,16,34,.97) 18%, rgba(22,16,34,.97));
+      /* Fundal COMPLET opac: pe telefon, orice transparență lăsa să se ghicească direcția liniilor. */
+      background:#161022;
       border-left:1px dashed rgba(217,169,79,.85);
+      /* Tranziție scurtă spre stânga, ca marginea să nu pară un „ștraif” tăiat; tot opac. */
+      box-shadow:-14px 0 14px -4px rgba(22,16,34,.85);
     }
+    /* Orice element SVG marcat „viitor” dispare de tot — nu doar blur (blur-ul păstrează forma curbei). */
+    .cd-preview svg .cd-lock{opacity:0 !important;filter:none !important;}
     .cd-future-mask::after{
       content:"будущее — в полном разборе";
       position:absolute;top:10px;left:10px;right:10px;
       font:600 9.5px/1.3 var(--sans, Inter, sans-serif);letter-spacing:.14em;text-transform:uppercase;
       color:var(--brass-bright,#d9a94f);
     }
-    .cd-preview .mandala-future-line{filter:blur(7px);opacity:.12 !important;}
+    .cd-preview .mandala-future-line{opacity:0 !important;}
     .cd-preview .chart-tooltip{display:none !important;}
 </style>
 <script>
