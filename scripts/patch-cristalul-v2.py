@@ -138,7 +138,7 @@ rep('<p>Твоё имя и дата рождения хранят ответы �
     '<span class="hero-highlight">узнай, что скрыто именно в тебе</span>.</p>',
     '<div class="hero-video" aria-label="Видео о персональном разборе">\n'
     '      <div class="hero-video-frame">\n'
-    '        <video class="hero-video-media" controls playsinline preload="metadata">\n'
+    '        <video class="hero-video-media" controls autoplay muted loop playsinline preload="auto">\n'
     '          <source src="/videos/cristalul-premium.mp4" type="video/mp4">\n'
     '          Твой браузер не поддерживает воспроизведение видео.\n'
     '        </video>\n'
@@ -153,7 +153,7 @@ rep('</head>', """<style>
 .hero-video-sheen{position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.08),transparent 28%,transparent 72%,rgba(212,175,55,.06));mix-blend-mode:screen;}
 .hero-video-caption{margin:12px 4px 0!important;color:rgba(245,237,214,.68);font-size:13px!important;letter-spacing:.04em;}
 .hero-video-caption span{color:var(--brass-bright);font-weight:600;}
-@media (max-width:600px){.hero-video{margin-top:20px;}.hero-video-frame{border-radius:10px;}.hero-video-caption{font-size:12px!important;}}
+@media (max-width:600px){.hero-video{width:min(78vw,330px);margin:18px auto 0;}.hero-video-frame{border-radius:10px;}.hero-video-caption{font-size:12px!important;line-height:1.4;}}
 </style></head>""", 1) 
 rep('.hero p .hero-highlight{color:var(--brass-bright);font-weight:600;}',
     '.hero p .hero-highlight{color:var(--brass-bright);font-weight:600;}\n'
