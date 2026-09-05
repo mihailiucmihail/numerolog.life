@@ -136,10 +136,25 @@ rep('<h1><span class="hero-lead">Твой</span><span class="hero-caps">Крис
     '<h1><span class="hero-lead">Открой свой</span><span class="hero-caps">Кристалл Судьбы</span></h1>')
 rep('<p>Твоё имя и дата рождения хранят ответы о характере, судьбе и жизненном пути — '
     '<span class="hero-highlight">узнай, что скрыто именно в тебе</span>.</p>',
-    '<p>Введи свои данные и узнай, что Кристалл Судьбы расскажет именно о тебе — о твоём характере, '
-    'отношениях, деньгах, предназначении и важных периодах жизни.</p>\n'
-    '    <p>А персональные графики покажут, какой путь ты уже прошёл и где находишься сейчас.</p>\n'
-    '    <p class="hero-question"><span class="hero-highlight">Готов узнать себя с неожиданной стороны?</span></p>')
+    '<div class="hero-video" aria-label="Видео о персональном разборе">\n'
+    '      <div class="hero-video-frame">\n'
+    '        <video class="hero-video-media" controls playsinline preload="metadata">\n'
+    '          <source src="/videos/cristalul-premium.mp4" type="video/mp4">\n'
+    '          Твой браузер не поддерживает воспроизведение видео.\n'
+    '        </video>\n'
+    '        <div class="hero-video-sheen" aria-hidden="true"></div>\n'
+    '      </div>\n'
+    '      <p class="hero-video-caption"><span>Кристалл Судьбы</span> — персональный разбор твоего пути</p>\n'
+    '    </div>')
+rep('</head>', """<style>
+.hero-video{max-width:720px;margin:26px auto 0;text-align:left;}
+.hero-video-frame{position:relative;overflow:hidden;border:1px solid rgba(212,175,55,.42);border-radius:14px;background:#080b18;box-shadow:0 18px 50px rgba(3,7,18,.45),0 0 0 5px rgba(212,175,55,.045);}
+.hero-video-media{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#080b18;}
+.hero-video-sheen{position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.08),transparent 28%,transparent 72%,rgba(212,175,55,.06));mix-blend-mode:screen;}
+.hero-video-caption{margin:12px 4px 0!important;color:rgba(245,237,214,.68);font-size:13px!important;letter-spacing:.04em;}
+.hero-video-caption span{color:var(--brass-bright);font-weight:600;}
+@media (max-width:600px){.hero-video{margin-top:20px;}.hero-video-frame{border-radius:10px;}.hero-video-caption{font-size:12px!important;}}
+</style></head>""", 1) 
 rep('.hero p .hero-highlight{color:var(--brass-bright);font-weight:600;}',
     '.hero p .hero-highlight{color:var(--brass-bright);font-weight:600;}\n'
     '.hero p + p{margin-top:10px;}\n'
@@ -177,7 +192,7 @@ assert s.count('\ufffd') == 0, 'patch-ul a introdus caractere corupte'
 for marker in ('id="emailAddr"', 'id="promoCode"', 'id="mainCalcBtn"', 'function requestPayment',
                "params.get('auto')", 'reportRendered', 'validatePromo', 'paymentSuccess',
                "params.get('preview')", '__cdApplyPreviewLock', 'previewRendered', 'window.__cdSkipMail',
-               'function cdMainAction', 'onclick="cdMainAction()"',
+               'function cdMainAction', 'onclick="cdMainAction()"', 'cristalul-premium.mp4', 'hero-video',
                ':root{color-scheme:light;}', '.bg-anim{display:none !important;}'):
     assert marker in s, f'marker lipsă după patch: {marker}'
 
