@@ -628,8 +628,7 @@ select option{color:#1a1420;background:#fff;}
     <h1><span class="hero-lead">Открой свой</span><span class="hero-caps">Кристалл Судьбы</span></h1>
     <div class="hero-video" aria-label="Видео о персональном разборе">
       <div class="hero-video-frame">
-        <video class="hero-video-media" controls autoplay muted loop playsinline preload="auto">
-          <source src="/videos/cristalul-premium.mp4" type="video/mp4">
+        <video class="hero-video-media" controls muted loop playsinline preload="none" poster="/videos/cristalul-premium-poster.jpg" data-src="/videos/cristalul-premium.mp4">
           Твой браузер не поддерживает воспроизведение видео.
         </video>
         <button class="hero-video-sound" type="button" aria-label="Включить звук видео">Включить звук</button>
@@ -6096,9 +6095,18 @@ function startPdfExport(){
   const video=document.querySelector('.hero-video-media');
   const sound=document.querySelector('.hero-video-sound');
   if(!video||!sound)return;
-  const enable=()=>{video.muted=false; video.volume=1; video.play().catch(()=>{}); sound.classList.add('is-on');};
+  // Sursa video se atașează abia după `load`, ca fișierul să nu concureze cu HTML-ul (baza de date a raportului).
+  let started=false;
+  const start=()=>{
+    if(started)return; started=true;
+    video.src=video.dataset.src; video.preload='auto'; video.autoplay=true;
+    video.play().catch(()=>{});
+  };
+  const enable=()=>{start(); video.muted=false; video.volume=1; video.play().catch(()=>{}); sound.classList.add('is-on');};
   sound.addEventListener('click',enable,{once:true});
   video.addEventListener('pointerdown',enable,{once:true});
+  if(document.readyState==='complete') setTimeout(start,300);
+  else window.addEventListener('load',()=>setTimeout(start,300),{once:true});
 })();
 </script><script>
     // ==== Bridge integrare aplicație principală: resize, plată Stripe, raport permanent ====

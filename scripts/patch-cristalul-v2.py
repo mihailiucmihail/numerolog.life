@@ -138,8 +138,8 @@ rep('<p>Твоё имя и дата рождения хранят ответы �
     '<span class="hero-highlight">узнай, что скрыто именно в тебе</span>.</p>',
     '<div class="hero-video" aria-label="Видео о персональном разборе">\n'
     '      <div class="hero-video-frame">\n'
-    '        <video class="hero-video-media" controls autoplay muted loop playsinline preload="auto">\n'
-    '          <source src="/videos/cristalul-premium.mp4" type="video/mp4">\n'
+    '        <video class="hero-video-media" controls muted loop playsinline preload="none" '
+    'poster="/videos/cristalul-premium-poster.jpg" data-src="/videos/cristalul-premium.mp4">\n'
     '          Твой браузер не поддерживает воспроизведение видео.\n'
     '        </video>\n'
     '        <button class="hero-video-sound" type="button" aria-label="Включить звук видео">Включить звук</button>\n'
@@ -161,9 +161,18 @@ rep('</body>', '''<script>
   const video=document.querySelector('.hero-video-media');
   const sound=document.querySelector('.hero-video-sound');
   if(!video||!sound)return;
-  const enable=()=>{video.muted=false; video.volume=1; video.play().catch(()=>{}); sound.classList.add('is-on');};
+  // Sursa video se atașează abia după `load`, ca fișierul să nu concureze cu HTML-ul (baza de date a raportului).
+  let started=false;
+  const start=()=>{
+    if(started)return; started=true;
+    video.src=video.dataset.src; video.preload='auto'; video.autoplay=true;
+    video.play().catch(()=>{});
+  };
+  const enable=()=>{start(); video.muted=false; video.volume=1; video.play().catch(()=>{}); sound.classList.add('is-on');};
   sound.addEventListener('click',enable,{once:true});
   video.addEventListener('pointerdown',enable,{once:true});
+  if(document.readyState==='complete') setTimeout(start,300);
+  else window.addEventListener('load',()=>setTimeout(start,300),{once:true});
 })();
 </script></body>''', 1) 
 rep('.hero p .hero-highlight{color:var(--brass-bright);font-weight:600;}',
