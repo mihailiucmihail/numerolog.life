@@ -142,6 +142,7 @@ rep('<p>Твоё имя и дата рождения хранят ответы �
     '          <source src="/videos/cristalul-premium.mp4" type="video/mp4">\n'
     '          Твой браузер не поддерживает воспроизведение видео.\n'
     '        </video>\n'
+    '        <button class="hero-video-sound" type="button" aria-label="Включить звук видео">Включить звук</button>\n'
     '        <div class="hero-video-sheen" aria-hidden="true"></div>\n'
     '      </div>\n'
     '      <p class="hero-video-caption">Заполни данные ниже — и Кристалл рассчитается для тебя.</p>\n'
@@ -150,11 +151,21 @@ rep('</head>', """<style>
 .hero-video{max-width:540px;margin:26px auto 0;text-align:left;}
 .hero-video-frame{position:relative;overflow:hidden;border:1px solid rgba(212,175,55,.42);border-radius:14px;background:#080b18;box-shadow:0 18px 50px rgba(3,7,18,.45),0 0 0 5px rgba(212,175,55,.045);}
 .hero-video-media{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;object-position:center;background:#080b18;}
-.hero-video-sheen{position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.08),transparent 28%,transparent 72%,rgba(212,175,55,.06));mix-blend-mode:screen;}
+.hero-video-sound{position:absolute;z-index:2;right:12px;bottom:12px;border:1px solid rgba(212,175,55,.55);border-radius:999px;padding:8px 12px;background:rgba(8,11,24,.82);color:#f5edd6;font-size:12px;cursor:pointer;backdrop-filter:blur(8px);}.hero-video-sound.is-on{opacity:0;pointer-events:none;}.hero-video-sheen{position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.08),transparent 28%,transparent 72%,rgba(212,175,55,.06));mix-blend-mode:screen;}
 .hero-video-caption{margin:12px 4px 0!important;color:rgba(245,237,214,.68);font-size:13px!important;letter-spacing:.04em;}
 .hero-video-caption span{color:var(--brass-bright);font-weight:600;}
 @media (max-width:600px){.hero-video{width:min(78vw,330px);margin:18px auto 0;}.hero-video-frame{border-radius:10px;}.hero-video-caption{font-size:12px!important;line-height:1.4;}}
-</style></head>""", 1) 
+  </style></head>""", 1)
+rep('</body>', '''<script>
+(function(){
+  const video=document.querySelector('.hero-video-media');
+  const sound=document.querySelector('.hero-video-sound');
+  if(!video||!sound)return;
+  const enable=()=>{video.muted=false; video.volume=1; video.play().catch(()=>{}); sound.classList.add('is-on');};
+  sound.addEventListener('click',enable,{once:true});
+  video.addEventListener('pointerdown',enable,{once:true});
+})();
+</script></body>''', 1) 
 rep('.hero p .hero-highlight{color:var(--brass-bright);font-weight:600;}',
     '.hero p .hero-highlight{color:var(--brass-bright);font-weight:600;}\n'
     '.hero p + p{margin-top:10px;}\n'
