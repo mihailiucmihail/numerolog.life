@@ -191,7 +191,7 @@ export function LeadsAdminClient() {
       setNotice("Не удалось построить письмо.")
       return
     }
-    setPreview({ subject: res.subject ?? "", html: res.html, email: lead.email })
+    setPreview({ subject: res.subject ?? "", html: res.html, email: lead.email ?? "" })
   }
 
   const allSelected = useMemo(() => leads.length > 0 && selected.size === leads.length, [leads, selected])
@@ -394,11 +394,17 @@ export function LeadsAdminClient() {
                 return (
                   <tr key={l.id} className="align-top hover:bg-primary/5">
                     <td className="px-3 py-3">
-                      <input type="checkbox" checked={selected.has(l.id)} onChange={() => toggle(l.id)} aria-label={`Выбрать ${l.email}`} className="size-4 accent-primary" />
+                      <input type="checkbox" checked={selected.has(l.id)} onChange={() => toggle(l.id)} aria-label={`Выбрать ${l.email ?? [l.first_name, l.last_name].filter(Boolean).join(" ")}`} className="size-4 accent-primary" />
                     </td>
                     <td className="px-3 py-3">
                       <div className="font-medium text-foreground">{[l.first_name, l.last_name].filter(Boolean).join(" ") || "—"}</div>
-                      <a href={`mailto:${l.email}`} className="text-primary/90 hover:underline">{l.email}</a>
+                      {l.email ? (
+                        <a href={`mailto:${l.email}`} className="text-primary/90 hover:underline">{l.email}</a>
+                      ) : (
+                        <span className="inline-flex w-fit rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground" title="Email вводится на шаге оплаты — пока не указан">
+                          без email
+                        </span>
+                      )}
                       <div className="text-[11px] uppercase text-muted-foreground">{l.locale}</div>
                     </td>
                     <td className="px-3 py-3 whitespace-nowrap">
@@ -425,7 +431,7 @@ export function LeadsAdminClient() {
                     </td>
                     <td className="px-3 py-3">
                       <div className="flex flex-col items-end gap-2">
-                        {!l.paid_at && (
+                        {!l.paid_at && l.email && (
                           <div className="flex items-center gap-1">
                             <button
                               onClick={() => handlePreview(l)}
