@@ -22,10 +22,29 @@ const cormorant = Cormorant_Garamond({
 })
 
 export const metadata: Metadata = {
-  title: 'NUMEROLOG.life | Кристалл судьбы',
-  description: 'Откройте свой Кристалл судьбы с помощью персонального нумерологического разбора имени, даты рождения и жизненных этапов.',
-  keywords: 'нумерология, Кристалл судьбы, 22 Аркана, карта имени, жизненные циклы',
-  robots: 'index, follow',
+  metadataBase: new URL('https://numerolog.life'),
+  title: {
+    default: 'NUMEROLOG.life — Кристалл Судьбы',
+    template: '%s | NUMEROLOG.life',
+  },
+  description: 'Персональный нумерологический разбор имени и даты рождения: Кристалл Судьбы, характер, отношения, деньги и важные периоды жизни.',
+  keywords: ['нумерология', 'Кристалл Судьбы', 'разбор даты рождения', 'карта имени', 'жизненные циклы'],
+  applicationName: 'NUMEROLOG.life',
+  authors: [{ name: 'NUMEROLOG.life' }],
+  creator: 'NUMEROLOG.life',
+  publisher: 'NUMEROLOG.life',
+  alternates: {
+    canonical: './',
+    languages: { ro: '/ro', ru: '/ru' },
+  },
+  openGraph: {
+    type: 'website',
+    siteName: 'NUMEROLOG.life',
+    title: 'NUMEROLOG.life — Кристалл Судьбы',
+    description: 'Персональный нумерологический разбор имени и даты рождения.',
+    url: 'https://numerolog.life',
+  },
+  robots: { index: true, follow: true },
 }
 
 export function generateStaticParams() {

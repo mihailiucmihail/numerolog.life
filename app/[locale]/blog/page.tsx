@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic"
 export async function generateMetadata() {
   const t = await getTranslations("blog")
   return {
-    title: `${t("title")} | AstroAI`,
+    title: t("title"),
     description: t("description"),
   }
 }

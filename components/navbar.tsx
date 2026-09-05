@@ -225,17 +225,7 @@ export function Navbar() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
-              <>
-                <Button 
-                  size="sm" 
-                  asChild 
-                  className="bg-gradient-to-r from-primary/90 to-primary hover:from-primary hover:to-primary/90 text-primary-foreground rounded-full px-5 border border-primary/30 shadow-[0_0_20px_rgba(200,165,80,0.3)] hover:shadow-[0_0_30px_rgba(200,165,80,0.5)] transition-all duration-300"
-                >
-                  <Link href="/auth/sign-up">{t("start")}</Link>
-                </Button>
-              </>
-            )}
+            ) : null}
           </div>
 
           {/* Mobile language selector */}
