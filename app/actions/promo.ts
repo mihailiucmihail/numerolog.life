@@ -1,12 +1,12 @@
 "use server"
 
-import { validatePromoCodeServer, cristalPriceLabels, PROMO_PERCENT } from '@/lib/promo'
+import { validatePromoCodeServer, cristalPriceLabels, PROMO_PERCENT, type PromoReason } from '@/lib/promo'
 import { getRequestCurrency } from '@/lib/currency-server'
 import { formatPrice } from '@/lib/currency'
 
 export interface PromoCheckResult {
   valid: boolean
-  reason?: 'empty' | 'format' | 'not_found' | 'used'
+  reason?: PromoReason
   percent?: number
   finalPrice?: string
   basePrice: string

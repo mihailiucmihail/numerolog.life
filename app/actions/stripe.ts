@@ -12,11 +12,13 @@ const PROMO_ERRORS = {
     format: 'Codul promoțional are un format invalid.',
     not_found: 'Codul promoțional nu există.',
     used: 'Acest cod promoțional a fost deja folosit.',
+    expired: 'Acest cod promoțional a expirat.',
   },
   ru: {
     format: 'Неверный формат промокода.',
     not_found: 'Такой промокод не существует.',
     used: 'Этот промокод уже был использован.',
+    expired: 'Срок действия этого промокода истёк.',
   },
 } as const
 
@@ -37,6 +39,7 @@ export async function startNumerologieCheckout(
   const currency = await getRequestCurrency()
   let unitAmount = PRICES[currency].cristal
   let appliedPromo: string | null = null
+  let appliedPercent = 0
   if (normalizePromoCode(discountCode)) {
     const promo = await validatePromoCodeServer(discountCode, currency)
     if (!promo.valid) {
@@ -46,6 +49,7 @@ export async function startNumerologieCheckout(
     }
     unitAmount = promo.finalMinor
     appliedPromo = promo.code
+    appliedPercent = promo.percent
   }
 
   const productName = isRu ? 'Кристалл Судьбы' : product.name
@@ -58,7 +62,7 @@ export async function startNumerologieCheckout(
           currency,
           // Doar denumirea raportului — fără descriere, metodă sau autori pe pagina de plată.
           product_data: {
-            name: appliedPromo ? `${productName} (−15 %)` : productName,
+            name: appliedPromo ? `${productName} (−${appliedPercent} %)` : productName,
           },
           unit_amount: unitAmount,
         },

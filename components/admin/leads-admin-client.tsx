@@ -1,8 +1,16 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { Loader2, Lock, Link2, Copy, Check, Mail, Send, RefreshCw, ExternalLink } from "lucide-react"
-import { getLeads, createPermanentLink, sendOfferToLeads, type LeadRow, type LeadFilter } from "@/app/actions/leads-admin"
+import { Loader2, Lock, Link2, Copy, Check, Mail, Send, RefreshCw, ExternalLink, Percent, Eye, X } from "lucide-react"
+import {
+  getLeads,
+  createPermanentLink,
+  sendOfferToLeads,
+  sendDiscountOffer,
+  previewDiscountOffer,
+  type LeadRow,
+  type LeadFilter,
+} from "@/app/actions/leads-admin"
 
 const DEFAULT_SUBJECT = "{name}, твой Кристалл Судьбы ждёт тебя"
 const DEFAULT_BODY = `Здравствуйте, {name}!
@@ -45,6 +53,10 @@ export function LeadsAdminClient() {
   const [subject, setSubject] = useState(DEFAULT_SUBJECT)
   const [body, setBody] = useState(DEFAULT_BODY)
   const [sending, setSending] = useState(false)
+
+  const [offerSending, setOfferSending] = useState(false)
+  const [preview, setPreview] = useState<{ subject: string; html: string; email: string } | null>(null)
+  const [previewLoading, setPreviewLoading] = useState<string | null>(null)
 
   async function load(pw = password, f = filter) {
     setLoading(true)
@@ -122,6 +134,42 @@ export function LeadsAdminClient() {
     } else {
       setNotice(res.error === "no_resend" ? "RESEND_API_KEY не настроен." : "Ошибка отправки. Попробуй ещё раз.")
     }
+  }
+
+  async function handleDiscountOffer(ids: string[]) {
+    if (offerSending || !ids.length) return
+    const eligible = leads.filter((l) => ids.includes(l.id) && !l.paid_at && !l.unsubscribed_at)
+    if (!eligible.length) {
+      setNotice("Среди выбранных нет подходящих получателей (оплатили или отписались).")
+      return
+    }
+    if (!confirm(`Отправить письмо со скидкой −20 % (72 часа) ${eligible.length} получателям?`)) return
+    setOfferSending(true)
+    setNotice("")
+    const res = await sendDiscountOffer(password, ids)
+    setOfferSending(false)
+    if (res.ok) {
+      const parts = [`Отправлено: ${res.sent}`]
+      if (res.skippedPaid) parts.push(`оплатили: ${res.skippedPaid}`)
+      if (res.skippedUnsubscribed) parts.push(`отписались: ${res.skippedUnsubscribed}`)
+      if (res.failed) parts.push(`ошибок: ${res.failed}`)
+      setNotice(parts.join(" · ") + ".")
+      await load()
+    } else {
+      setNotice(res.error === "no_resend" ? "RESEND_API_KEY не настроен." : "Ошибка отправки. Попробуй ещё раз.")
+    }
+  }
+
+  async function handlePreview(lead: LeadRow) {
+    if (previewLoading) return
+    setPreviewLoading(lead.id)
+    const res = await previewDiscountOffer(password, lead.id)
+    setPreviewLoading(null)
+    if (!res.ok || !res.html) {
+      setNotice("Не удалось построить письмо.")
+      return
+    }
+    setPreview({ subject: res.subject ?? "", html: res.html, email: lead.email })
   }
 
   const allSelected = useMemo(() => leads.length > 0 && selected.size === leads.length, [leads, selected])
@@ -215,15 +263,24 @@ export function LeadsAdminClient() {
           <RefreshCw className={`size-4 ${loading ? "animate-spin" : ""}`} aria-hidden="true" />
           Обновить
         </button>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex flex-wrap items-center gap-2">
           <span className="text-sm text-muted-foreground">Выбрано: {selected.size}</span>
           <button
             onClick={() => setShowCompose((v) => !v)}
             disabled={!selected.size}
-            className="flex h-10 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground disabled:opacity-50"
+            className="flex h-10 items-center gap-2 rounded-lg border border-primary/30 px-4 text-sm font-medium text-foreground/90 hover:bg-primary/10 disabled:opacity-50"
           >
             <Mail className="size-4" aria-hidden="true" />
             Написать выбранным
+          </button>
+          <button
+            onClick={() => handleDiscountOffer(Array.from(selected))}
+            disabled={!selected.size || offerSending}
+            title="Премиум-письмо со скидкой −20 % на 72 часа: персональный код применяется автоматически по ссылке"
+            className="flex h-10 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/20 disabled:opacity-50"
+          >
+            {offerSending ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : <Percent className="size-4" aria-hidden="true" />}
+            Скидка −20 % выбранным
           </button>
         </div>
       </div>
@@ -232,6 +289,23 @@ export function LeadsAdminClient() {
         <p role="status" className="mb-4 rounded-lg border border-primary/25 bg-primary/10 px-4 py-3 text-sm text-foreground">
           {notice}
         </p>
+      )}
+
+      {preview && (
+        <div role="dialog" aria-modal="true" aria-label="Предпросмотр письма" className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm">
+          <div className="flex h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-primary/30 bg-card shadow-2xl">
+            <div className="flex items-center justify-between gap-4 border-b border-primary/15 px-5 py-3">
+              <div className="min-w-0">
+                <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Письмо для {preview.email}</p>
+                <p className="truncate text-sm text-foreground">{preview.subject}</p>
+              </div>
+              <button onClick={() => setPreview(null)} aria-label="Закрыть" className="flex size-9 shrink-0 items-center justify-center rounded-md hover:bg-primary/10">
+                <X className="size-4" aria-hidden="true" />
+              </button>
+            </div>
+            <iframe title="Предпросмотр письма" srcDoc={preview.html} sandbox="" className="h-full w-full flex-1 bg-[#07070F]" />
+          </div>
+        </div>
       )}
 
       {showCompose && (
@@ -315,12 +389,37 @@ export function LeadsAdminClient() {
                         ) : (
                           <span className="inline-flex w-fit rounded-full bg-primary/15 px-2 py-0.5 text-[11px] font-medium text-primary">Без оплаты</span>
                         )}
+                        {l.unsubscribed_at && (
+                          <span className="inline-flex w-fit rounded-full bg-destructive/15 px-2 py-0.5 text-[11px] font-medium text-destructive">Отписался {fmtDate(l.unsubscribed_at)}</span>
+                        )}
                         {hasLink && <span className="text-[11px] text-muted-foreground">Ссылка создана {fmtDate(l.permanent_created_at)}</span>}
                         {l.offer_sent_count > 0 && <span className="text-[11px] text-muted-foreground">Писем: {l.offer_sent_count} · {fmtDate(l.offer_sent_at)}</span>}
+                        {l.offer_code && <span className="font-mono text-[11px] text-primary/80">{l.offer_code}</span>}
                       </div>
                     </td>
                     <td className="px-3 py-3">
                       <div className="flex flex-col items-end gap-2">
+                        {!l.paid_at && (
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => handlePreview(l)}
+                              disabled={previewLoading === l.id}
+                              className="flex h-9 items-center gap-1 rounded-md border border-primary/25 px-2 text-xs text-primary hover:bg-primary/10 disabled:opacity-60"
+                              title="Предпросмотр письма со скидкой"
+                            >
+                              {previewLoading === l.id ? <Loader2 className="size-3.5 animate-spin" aria-hidden="true" /> : <Eye className="size-3.5" aria-hidden="true" />}
+                              Письмо
+                            </button>
+                            <button
+                              onClick={() => handleDiscountOffer([l.id])}
+                              disabled={offerSending || Boolean(l.unsubscribed_at)}
+                              className="flex h-9 items-center gap-1 rounded-md border border-primary/40 bg-primary/10 px-2 text-xs font-medium text-primary hover:bg-primary/20 disabled:opacity-50"
+                              title={l.unsubscribed_at ? "Отписался от писем" : "Отправить скидку −20 % (72 часа)"}
+                            >
+                              <Percent className="size-3.5" aria-hidden="true" /> −20 %
+                            </button>
+                          </div>
+                        )}
                         {url ? (
                           <div className="flex items-center gap-1">
                             <a href={url} target="_blank" rel="noreferrer" className="flex h-9 items-center gap-1 rounded-md border border-primary/25 px-2 text-xs text-primary hover:bg-primary/10">

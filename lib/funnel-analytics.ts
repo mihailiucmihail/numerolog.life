@@ -14,6 +14,7 @@ export type FunnelEvent =
   | 'full_report_offer_viewed'
   | 'full_report_checkout_clicked'
   | 'sticky_unlock_clicked'
+  | 'offer_link_opened'
   | 'stripe_checkout_started'
   | 'purchase_completed'
 

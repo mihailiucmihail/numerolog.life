@@ -379,7 +379,13 @@
       "Salvăm raportul — linkul permanent pleacă spre emailul tău…",
       "Cristalul Destinului este deschis complet"
     ],
-    "raportBanner": "Raportul tău{name} — acces permanent, fără plată suplimentară. Un link a fost trimis și pe emailul tău."
+    "raportBanner": "Raportul tău{name} — acces permanent, fără plată suplimentară. Un link a fost trimis și pe emailul tău.",
+    "offerBannerEyebrow": "Reducerea ta personală −{percent} % este activată",
+    "offerBannerNote": "Codul e deja aplicat. Completează formularul — prețul redus apare la pasul de plată.",
+    "offerApplied": "Reducere −{percent} % aplicată",
+    "offerUsed": "Acest cod promoțional a fost deja folosit — raportul e disponibil la prețul obișnuit.",
+    "offerExpired": "Reducerea ta personală a expirat — raportul e disponibil la prețul obișnuit.",
+    "offerInvalid": "Codul din link nu a fost recunoscut — raportul e disponibil la prețul obișnuit."
   },
   "language": "Limba"
 }
