@@ -249,7 +249,7 @@
 
     // Butonul formularului ORIGINAL: calculează real în acelaşi fişier, apoi arată raportul întreg blurat.
     function __cdPreviewCalculate(){
-      window.__cdSkipMail = false; // emailul este OBLIGATORIU: calculate() → readMail() îl validează
+      window.__cdSkipMail = true; // emailul se introduce la etapa de plată, după previzualizarea blurată
       window.__cdPreviewMode = true;
       window.__cdLastResult = null;
       const err = document.getElementById('errMsg');
