@@ -41,6 +41,15 @@ function withCurrencyCookie(response: NextResponse | Response, request: NextRequ
 export default function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
+  // Pagina de login nu mai este publică în produsul actual: orice acces direct
+  // la ruta localizată sau ne-localizată merge la pagina principală.
+  if (/^\/(?:ru\/)?auth\/login\/?$/.test(pathname)) {
+    const home = request.nextUrl.clone()
+    home.pathname = '/ru'
+    home.search = ''
+    return NextResponse.redirect(home)
+  }
+
   // Dacă URL-ul este deja în rusă, lasă next-intl să gestioneze ruta.
   if (LOCALE_REGEX.test(pathname)) {
     // Moneda merge și ca header de request, ca prima randare (înainte să existe cookie-ul)
