@@ -138,8 +138,8 @@ rep('<p>Твоё имя и дата рождения хранят ответы �
     '<span class="hero-highlight">узнай, что скрыто именно в тебе</span>.</p>',
     '<div class="hero-video" aria-label="Видео о персональном разборе">\n'
     '      <div class="hero-video-frame">\n'
-    '        <video class="hero-video-media" controls autoplay muted loop playsinline preload="auto">\n'
-    '          <source src="/videos/cristalul-premium.mp4" type="video/mp4">\n'
+    '        <video class="hero-video-media" controls muted loop playsinline preload="none" '
+    'poster="/videos/cristalul-premium-poster.jpg" data-src="/videos/cristalul-premium.mp4">\n'
     '          Твой браузер не поддерживает воспроизведение видео.\n'
     '        </video>\n'
     '        <button class="hero-video-sound" type="button" aria-label="Включить звук видео">Включить звук</button>\n'
@@ -161,9 +161,18 @@ rep('</body>', '''<script>
   const video=document.querySelector('.hero-video-media');
   const sound=document.querySelector('.hero-video-sound');
   if(!video||!sound)return;
-  const enable=()=>{video.muted=false; video.volume=1; video.play().catch(()=>{}); sound.classList.add('is-on');};
+  // Sursa video se atașează abia după `load`, ca fișierul să nu concureze cu HTML-ul (baza de date a raportului).
+  let started=false;
+  const start=()=>{
+    if(started)return; started=true;
+    video.src=video.dataset.src; video.preload='auto'; video.autoplay=true;
+    video.play().catch(()=>{});
+  };
+  const enable=()=>{start(); video.muted=false; video.volume=1; video.play().catch(()=>{}); sound.classList.add('is-on');};
   sound.addEventListener('click',enable,{once:true});
   video.addEventListener('pointerdown',enable,{once:true});
+  if(document.readyState==='complete') setTimeout(start,300);
+  else window.addEventListener('load',()=>setTimeout(start,300),{once:true});
 })();
 </script></body>''', 1) 
 rep('.hero p .hero-highlight{color:var(--brass-bright);font-weight:600;}',
@@ -175,6 +184,18 @@ rep('.hero p .hero-highlight{color:var(--brass-bright);font-weight:600;}',
 rep('<button class="btn" onclick="calculate()">Рассчитать Кристалл</button>',
     '<button id="mainCalcBtn" class="btn" onclick="cdMainAction()">Рассчитать мой Кристалл Судьбы →</button>')
 assert 'onclick="calculate()"' not in s, 'a rămas un buton care sare peste plată'
+
+# 4a. Înălțimea iframe-ului, raportată IMEDIAT după formular. Bridge-ul de la finalul fișierului o
+#     trimite abia la `load`, adică după baza de date inline (~900 KB): până atunci părintele afișa
+#     600 px și formularul părea „tăiat” la data nașterii, cu butonul apărând după o pauză lungă.
+rep('<script id="data-blob"',
+    '<script>(function(){'
+    'function h(){var b=document.body,d=document.documentElement;'
+    'return Math.max(b?b.scrollHeight:0,d?d.scrollHeight:0);}'
+    'function send(){try{window.parent.postMessage({type:"resize",height:h()},"*");}catch(e){}}'
+    'send();setTimeout(send,150);'
+    'if(typeof ResizeObserver!=="undefined"&&document.body){new ResizeObserver(send).observe(document.body);}'
+    '})();</script>\n<script id="data-blob"')
 
 # 4b. Funnel (rezultat gratuit): expunem rezultatul determinist al ultimului calcul, ca aplicația
 #     React (același origin) să poată citi numerele reale fără să dubleze formulele.
