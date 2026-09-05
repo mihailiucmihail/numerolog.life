@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params
   const post = getBlogPost(slug)
   if (!post) return {}
-  return { title: `${post.title} | AstroAI`, description: post.excerpt }
+  return { title: post.title, description: post.excerpt }
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
