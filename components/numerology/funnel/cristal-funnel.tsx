@@ -69,12 +69,14 @@ export default function CristalFunnel() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const locale = pathname?.split('/')[1] || 'ro'
-  const { currency, prices, format } = useCurrency()
+  const { currency, prices, format, alphabet } = useCurrency()
 
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const didUnlock = useRef(false)
 
-  const [frameSrc, setFrameSrc] = useState<string>(CALCULATOR_SRC)
+  // Formularul se deschide cu alfabetul numelui preselectat după țara vizitatorului (HTML-ul citește ?alpha=).
+  const formSrc = `${CALCULATOR_SRC}?alpha=${alphabet}`
+  const [frameSrc, setFrameSrc] = useState<string>(formSrc)
   const [frameHeight, setFrameHeight] = useState(1200)
   const [form, setForm] = useState<FormValues | null>(null)
   // Emailul introdus în formularul calculatorului (obligatoriu acolo) — la plată doar îl confirmăm.
@@ -285,7 +287,7 @@ export default function CristalFunnel() {
   const resetToForm = () => {
     setPreviewReady(false)
     setCancelledNotice(false)
-    setFrameSrc(`${CALCULATOR_SRC}?k=${Date.now()}`)
+    setFrameSrc(`${formSrc}&k=${Date.now()}`)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 

@@ -1,6 +1,17 @@
 import 'server-only'
 import { cookies, headers } from 'next/headers'
-import { CURRENCY_COOKIE, CURRENCY_HEADER, currencyFromCountry, parseCurrency, type Currency } from '@/lib/currency'
+import { COUNTRY_HEADER, CURRENCY_COOKIE, CURRENCY_HEADER, currencyFromCountry, parseCurrency, type Currency } from '@/lib/currency'
+
+/** Țara vizitatorului (ISO alpha-2) sau null: header-ul intern din proxy, altfel x-vercel-ip-country. */
+export async function getRequestCountry(): Promise<string | null> {
+  try {
+    const h = await headers()
+    const c = h.get(COUNTRY_HEADER) || h.get('x-vercel-ip-country')
+    return c && /^[A-Za-z]{2}$/.test(c) ? c.toUpperCase() : null
+  } catch {
+    return null
+  }
+}
 
 /**
  * Moneda cererii curente (Server Components, Server Actions, Route Handlers).

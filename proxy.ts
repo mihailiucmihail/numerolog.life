@@ -1,7 +1,7 @@
 import createMiddleware from 'next-intl/middleware'
 import { NextRequest, NextResponse } from 'next/server'
 import { routing } from './i18n/routing'
-import { CURRENCY_COOKIE, CURRENCY_HEADER, currencyFromCountry, parseCurrency, type Currency } from './lib/currency'
+import { COUNTRY_HEADER, CURRENCY_COOKIE, CURRENCY_HEADER, currencyFromCountry, parseCurrency, type Currency } from './lib/currency'
 
 const handleI18nRouting = createMiddleware(routing)
 
@@ -48,6 +48,9 @@ export default function proxy(request: NextRequest) {
     const { currency } = resolveCurrency(request)
     const headers = new Headers(request.headers)
     headers.set(CURRENCY_HEADER, currency)
+    // Țara (pentru alfabetul numelui preselectat etc.); ?country=XX permite testarea fără VPN.
+    const country = request.nextUrl.searchParams.get('country') || request.headers.get('x-vercel-ip-country')
+    if (country && /^[A-Za-z]{2}$/.test(country)) headers.set(COUNTRY_HEADER, country.toUpperCase())
     const forwarded = new NextRequest(request, { headers })
     return withCurrencyCookie(handleI18nRouting(forwarded), request)
   }
