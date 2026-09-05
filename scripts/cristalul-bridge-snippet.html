@@ -13,6 +13,20 @@
       window.parent.postMessage({ type: 'resize', height: __cdContentHeight() }, '*');
     }
 
+    // Alfabetul numelui preselectat după țara vizitatorului (?alpha=xx, decis de aplicație din geolocație).
+    // Se aplică doar formularului gol; utilizatorul poate alege alt alfabet din listă.
+    (function(){
+      const params = new URLSearchParams(window.location.search);
+      const alpha = params.get('alpha');
+      if(!alpha || params.get('auto') === '1' || params.get('preview') === '1') return;
+      window.addEventListener('DOMContentLoaded', function(){
+        const sel = document.getElementById('nameAlphabetSelect');
+        if(!sel) return;
+        const has = Array.from(sel.options).some(function(o){ return o.value === alpha; });
+        if(has){ sel.value = alpha; sel.dispatchEvent(new Event('change', { bubbles: true })); }
+      });
+    })();
+
     // Modul raport: completează automat datele din link și afișează direct raportul.
     (function(){
       const params = new URLSearchParams(window.location.search);
