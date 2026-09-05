@@ -48,9 +48,10 @@ export default function LoginPage() {
       // Only allow safe, internal redirect targets
       const requestedRedirect = new URLSearchParams(window.location.search).get("redirect")
       const redirectTo =
-        requestedRedirect && requestedRedirect.startsWith("/") ? requestedRedirect : "/"
+        requestedRedirect && requestedRedirect.startsWith("/") ? requestedRedirect : "/ru"
 
-      router.replace(redirectTo)
+      // Folosim ruta localizată explicit; `/` este rescrisă de proxy și poate păstra pagina de login în navigarea client-side.
+      window.location.replace(redirectTo)
     } catch {
       setError("A apărut o eroare. Încearcă din nou.")
       setLoading(false)
