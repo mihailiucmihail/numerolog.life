@@ -248,7 +248,19 @@
     }
 
     // Butonul formularului ORIGINAL: calculează real în acelaşi fişier, apoi arată raportul întreg blurat.
-    function __cdPreviewCalculate(){
+    function __cdWaitForReportData(timeout){
+      return new Promise(function(resolve){
+        const started = Date.now();
+        (function check(){
+          if((typeof DB !== 'undefined' && DB) || Date.now() - started >= timeout){
+            resolve(typeof DB !== 'undefined' && !!DB);
+            return;
+          }
+          setTimeout(check, 40);
+        })();
+      });
+    }
+    async function __cdPreviewCalculate(){
       window.__cdSkipMail = true; // emailul se introduce la etapa de plată, după previzualizarea blurată
       window.__cdPreviewMode = true;
       window.__cdLastResult = null;
@@ -258,6 +270,12 @@
       // iar conţinutul din iframe rămâne invizibil (opacity 0) până când ecranul dispare → nicio străpungere.
       document.body.classList.add('cd-forming');
       window.parent.postMessage({ type: 'previewStarted' }, '*');
+      const dataReady = await __cdWaitForReportData(5000);
+      if(!dataReady){
+        document.body.classList.remove('cd-forming');
+        window.parent.postMessage({ type: 'previewFailed' }, '*');
+        return;
+      }
       if(typeof calculate === 'function') calculate();
       const ok = !!(window.__cdLastResult && document.getElementById('results'));
       if(!ok){
@@ -279,7 +297,7 @@
     }
     function cdMainAction(){
       if(window.__paymentUnlocked){ if(typeof calculate === 'function') calculate(); return; }
-      __cdPreviewCalculate();
+      void __cdPreviewCalculate();
     }
     // Aplicaţia anunţă că ecranul de formare se închide → raportul apare lin.
     window.addEventListener('message', function(ev){
@@ -294,7 +312,7 @@
       if(params.get('preview') !== '1') return;
       window.__cdSkipMail = true;
       window.__cdPreviewMode = true;
-      window.addEventListener('DOMContentLoaded', function(){
+      window.addEventListener('DOMContentLoaded', async function(){
         const values = {
           lastName: params.get('last') || '',
           firstName: params.get('first') || '',
@@ -315,6 +333,7 @@
         const alpha = params.get('alpha');
         if(alpha && document.getElementById('nameAlphabetSelect')) document.getElementById('nameAlphabetSelect').value = alpha;
         document.body.classList.add('cd-preview');
+        await __cdWaitForReportData(5000);
         if(typeof calculate === 'function') calculate();
         const ok = !!(window.__cdLastResult && document.getElementById('results'));
         if(ok) __cdApplyPreviewLock();
