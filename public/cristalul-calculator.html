@@ -609,7 +609,7 @@ select option{color:#1a1420;background:#fff;}
 #printChartsContainer{display:none;}
 </style>
 <style>
-.card#inputFormCard{position:relative;overflow:hidden;border-radius:18px;padding:0 22px 22px;background:radial-gradient(circle at 50% 8%,rgba(212,175,55,.12),transparent 26%),radial-gradient(circle at 15% 70%,rgba(116,62,112,.18),transparent 34%),linear-gradient(145deg,rgba(12,10,30,.96),rgba(35,18,51,.92));box-shadow:0 20px 55px rgba(2,3,15,.34),inset 0 1px rgba(255,255,255,.08);}.card#inputFormCard>.section-title{position:relative;z-index:4;margin-top:20px;}.card#inputFormCard>form,.card#inputFormCard>div:not(.numerology-intro){position:relative;z-index:3;}.numerology-intro{position:relative;isolation:isolate;max-width:none;min-height:250px;margin:0 -22px 8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:0;border-bottom:1px solid rgba(212,175,55,.28);border-radius:18px 18px 0 0;background:transparent;box-shadow:none;}}
+.card#inputFormCard{position:relative;overflow:hidden;border-radius:18px;padding:0 22px 22px;background:radial-gradient(circle at 50% 8%,rgba(212,175,55,.12),transparent 26%),radial-gradient(circle at 15% 70%,rgba(116,62,112,.18),transparent 34%),linear-gradient(145deg,rgba(12,10,30,.96),rgba(35,18,51,.92));box-shadow:0 20px 55px rgba(2,3,15,.34),inset 0 1px rgba(255,255,255,.08);}.card#inputFormCard>.section-title{display:none!important;}.card#inputFormCard .section-title{display:none!important;}.card#inputFormCard>form,.card#inputFormCard>div:not(.numerology-intro){position:relative;z-index:3;}.numerology-intro{position:relative;isolation:isolate;max-width:none;min-height:250px;margin:0 -22px 8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:0;border-bottom:1px solid rgba(212,175,55,.28);border-radius:18px 18px 0 0;background:transparent;box-shadow:none;}}
 .numerology-copy{position:relative;z-index:3;width:min(90%,530px);padding:28px 22px;text-align:center;animation:numerologyReveal .9s cubic-bezier(.2,.8,.2,1) both;}
 .numerology-kicker{display:block;margin-bottom:8px;color:rgba(212,175,55,.76);font:600 10px/1.4 Arial,sans-serif;letter-spacing:.28em;}
 .numerology-copy h2{margin:0;color:#f5edd6;font:500 clamp(24px,4vw,42px)/1.1 Georgia,serif;letter-spacing:.02em;text-shadow:0 0 24px rgba(212,175,55,.22);}
@@ -667,8 +667,8 @@ select option{color:#1a1420;background:#fff;}
       <div class="numerology-numbers" aria-hidden="true"><span>3</span><span>7</span><span>11</span><span>17</span><span>22</span></div>
       <div class="numerology-copy">
         <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>
-        <h2 id="numerology-intro-title">Введи свои данные</h2>
-        <p>Введите данные — и получите персональный разбор, созданный именно для вас.</p>
+        <h2 id="numerology-intro-title">Узнай, что скрывает твоя дата рождения</h2>
+        <p>Введи свои данные и получи персональ��ый нумерологический разбор, созданный именно для тебя.</p>
       </div>
     </div>
 
@@ -688,17 +688,20 @@ select option{color:#1a1420;background:#fff;}
         <div id="promoMsg" style="display:none;margin-top:8px;font-size:13px;line-height:1.5;"></div>
       </div>
       <div>
-        <label>Фамилия <span style="opacity:.5;text-transform:none;letter-spacing:0;">(для замужних женщин — рекомендуем девичью фамилию)</span></label>
-        <input id="lastName" type="text" placeholder="ex: Иванов" autocomplete="off" value="">
-      </div>
-      <div>
         <label>Имя</label>
         <input id="firstName" type="text" placeholder="ex: Михаил" autocomplete="off" value="">
       </div>
-<div class="full" id="emailField">
+<div>
+        <label>Фамилия <span style="opacity:.5;text-transform:none;letter-spacing:0;">(для замужних женщин — рекомендуем девичью фамилию)</span></label>
+        <input id="lastName" type="text" placeholder="ex: Иванов" autocomplete="off" value="">
+      </div>
+<div class="full" id="emailField" hidden style="display:none;">
         <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(на него придёт постоянная ссылка на твой разбор)</span></label>
         <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="" required>
       </div>
+
+      
+
       
       <div class="full" hidden style="display:none;">
         <label>Отчество <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(необязательно, но рекомендуем — для более полного и точного разбора)</span></label>
@@ -745,7 +748,7 @@ select option{color:#1a1420;background:#fff;}
         </select>
       </div>
     </div>
-    <button id="mainCalcBtn" class="btn" onclick="cdMainAction()">Рассчитать мой Кристалл Судьбы →</button>
+    <button id="mainCalcBtn" class="btn" onclick="cdMainAction()">ПОЛУЧИТЬ МОЙ РАЗБОР</button>
     <script>
       document.addEventListener('DOMContentLoaded', function(){
         paintGender();

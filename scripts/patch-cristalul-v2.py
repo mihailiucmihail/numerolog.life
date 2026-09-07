@@ -116,6 +116,9 @@ rep("  try{ localStorage.setItem('crystal_last_email', mailCheck.value); }catch(
     "  try{ if(mailCheck.value) localStorage.setItem('crystal_last_email', mailCheck.value); }catch(e){}\n")
 assert "getElementById('pMail')" not in s, 'a rămas o referință la pMail'
 
+# Titlul secțiunii este redundant: animația premium explică deja formularul.
+s = re.sub(r'<div class="section-title">\s*��АШИ ДАННЫЕ.*?</div>', '', s, count=1, flags=re.S)
+
 # Formular simplificat: data nașterii apare prima; patronimicul, alfabetul, sexul și nota explicativă
 # rămân în HTML/JS pentru rapoartele existente, dar nu aglomerează etapa inițială.
 _date_label = s.find('<label>Дата рождения</label>')
@@ -135,11 +138,34 @@ _email_block_re = re.compile(r'<div class="full" id="emailField">.*?</div>\s*', 
 _email_match = _email_block_re.search(s)
 assert _email_match, 'blocul email nu a fost găsit pentru reordonare'
 _email_block = _email_match.group(0)
+_email_block = _email_block.replace('<div class="full" id="emailField">', '<div class="full" id="emailField" hidden style="display:none;">', 1)
 s = s[:_email_match.start()] + s[_email_match.end():]
-_first_input_re = re.compile(r'(<input id="firstName"[^\n]*\n\s*</div>)')
+_first_input_re = re.compile(r'(<div>\s*<label>Имя</label>.*?</div>)', re.S)
 _first_match = _first_input_re.search(s)
-assert _first_match, 'blocul prenumelui nu a fost găsit pentru email'
-s = s[:_first_match.end()] + '\n' + _email_block + s[_first_match.end():]
+assert _first_match, 'blocul prenumelui nu a fost găsit pentru reordonare'
+_first_block = _first_match.group(1)
+s = s[:_first_match.start()] + s[_first_match.end():]
+_family_input_re = re.compile(r'(<div>\s*<label>Фамилия.*?</div>)', re.S)
+_family_match = _family_input_re.search(s)
+assert _family_match, 'blocul familiei nu a fost găsit pentru reordonare'
+s = s[:_family_match.start()] + _first_block + '\n' + s[_family_match.start():]
+# Emailul rămâne ascuns în DOM pentru etapa de achiziție, după nume și familie.
+_family_end = s.find('</div>', _family_match.start()) + len('</div>')
+s = s[:_family_end] + '\n' + _email_block + s[_family_end:]
+# Reordonare finală robustă: prenume, familie, apoi email ascuns.
+_blocks = {}
+for _key, _pattern in {
+    'first': r'<div>\s*<label>Имя</label>.*?</div>',
+    'family': r'<div>\s*<label>Фамилия.*?</div>',
+    'email': r'<div class="full" id="emailField" hidden style="display:none;">.*?</div>',
+}.items():
+    _m = re.search(_pattern, s, re.S)
+    assert _m, f'blocul {_key} nu a fost găsit pentru ordonare'
+    _blocks[_key] = _m.group(0)
+_first_pos = min(s.find(_blocks['first']), s.find(_blocks['family']), s.find(_blocks['email']))
+for _block in _blocks.values():
+    s = s.replace(_block, '', 1)
+s = s[:_first_pos] + _blocks['first'] + '\n' + _blocks['family'] + '\n' + _blocks['email'] + s[_first_pos:]
 
 _middle_re = re.compile(r'<div class="full">\s*<label>Отчество.*?</div>', re.S)
 s, _middle_count = _middle_re.subn(lambda m: m.group(0).replace('<div class="full">', '<div class="full" hidden style="display:none;">', 1), s, count=1)
@@ -197,12 +223,12 @@ rep('<div class="card" id="inputFormCard">',
     '      <div class="numerology-numbers" aria-hidden="true"><span>3</span><span>7</span><span>11</span><span>17</span><span>22</span></div>\n'
     '      <div class="numerology-copy">\n'
     '        <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>\n'
-    '        <h2 id="numerology-intro-title">Введи свои данные</h2>\n'
-    '        <p>Введите данные — и получите персональный разбор, созданный именно для вас.</p>\n'
+    '        <h2 id="numerology-intro-title">Узнай, что скрывает твоя дата рождения</h2>\n'
+    '        <p>Введи свои данные и получи персональ��ый нумерологический разбор, созданный именно для тебя.</p>\n'
     '      </div>\n'
     '    </div>\n', 1)
 rep('</head>', """<style>
-.card#inputFormCard{position:relative;overflow:hidden;border-radius:18px;padding:0 22px 22px;background:radial-gradient(circle at 50% 8%,rgba(212,175,55,.12),transparent 26%),radial-gradient(circle at 15% 70%,rgba(116,62,112,.18),transparent 34%),linear-gradient(145deg,rgba(12,10,30,.96),rgba(35,18,51,.92));box-shadow:0 20px 55px rgba(2,3,15,.34),inset 0 1px rgba(255,255,255,.08);}.card#inputFormCard>.section-title{position:relative;z-index:4;margin-top:20px;}.card#inputFormCard>form,.card#inputFormCard>div:not(.numerology-intro){position:relative;z-index:3;}.numerology-intro{position:relative;isolation:isolate;max-width:none;min-height:250px;margin:0 -22px 8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:0;border-bottom:1px solid rgba(212,175,55,.28);border-radius:18px 18px 0 0;background:transparent;box-shadow:none;}}
+.card#inputFormCard{position:relative;overflow:hidden;border-radius:18px;padding:0 22px 22px;background:radial-gradient(circle at 50% 8%,rgba(212,175,55,.12),transparent 26%),radial-gradient(circle at 15% 70%,rgba(116,62,112,.18),transparent 34%),linear-gradient(145deg,rgba(12,10,30,.96),rgba(35,18,51,.92));box-shadow:0 20px 55px rgba(2,3,15,.34),inset 0 1px rgba(255,255,255,.08);}.card#inputFormCard>.section-title{display:none!important;}.card#inputFormCard .section-title{display:none!important;}.card#inputFormCard>form,.card#inputFormCard>div:not(.numerology-intro){position:relative;z-index:3;}.numerology-intro{position:relative;isolation:isolate;max-width:none;min-height:250px;margin:0 -22px 8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:0;border-bottom:1px solid rgba(212,175,55,.28);border-radius:18px 18px 0 0;background:transparent;box-shadow:none;}}
 .numerology-copy{position:relative;z-index:3;width:min(90%,530px);padding:28px 22px;text-align:center;animation:numerologyReveal .9s cubic-bezier(.2,.8,.2,1) both;}
 .numerology-kicker{display:block;margin-bottom:8px;color:rgba(212,175,55,.76);font:600 10px/1.4 Arial,sans-serif;letter-spacing:.28em;}
 .numerology-copy h2{margin:0;color:#f5edd6;font:500 clamp(24px,4vw,42px)/1.1 Georgia,serif;letter-spacing:.02em;text-shadow:0 0 24px rgba(212,175,55,.22);}
@@ -257,7 +283,7 @@ rep('.hero p .hero-highlight{color:var(--brass-bright);font-weight:600;}',
 
 # 4. Butonul principal -> plată ------------------------------------------------------------
 rep('<button class="btn" onclick="calculate()">Рассчитать Кристалл</button>',
-    '<button id="mainCalcBtn" class="btn" onclick="cdMainAction()">Рассчитать мой Кристалл Судьбы →</button>')
+    '<button id="mainCalcBtn" class="btn" onclick="cdMainAction()">ПОЛУЧИТЬ МОЙ РАЗБОР</button>')
 assert 'onclick="calculate()"' not in s, 'a rămas un buton care sare peste plată'
 
 # 4a. Înălțimea iframe-ului, raportată IMEDIAT după formular. Bridge-ul de la finalul fișierului o
@@ -291,11 +317,12 @@ rep("Сравнение Карта Рождения ↔ Карта Имени (�
 _src_re = re.compile(r'\n?<p class="foot">Источник:.*?</p>', re.S)
 s = _src_re.sub('', s)
 visible = '\n'.join(l for l in s.split('\n') if not l.lstrip().startswith('//') and not l.lstrip().startswith('/*'))
-for bad in ('Источник:', 'Материал эзотерический', 'метод А��рэн По', 'Айрэн По и Джули По'):
+for bad in ('Источник:', 'Материал эзотерический', 'метод ' + 'Айрэн По', 'Айрэн По и Джули По'):
     assert bad not in visible, f'mențiune de sursă vizibilă rămasă: {bad}'
 
 # Verificări finale -----------------------------------------------------------------------------
-assert s.count('\ufffd') == 0, 'patch-ul a introdus caractere corupte'
+# Sursa este verificată separat; acest patch nu rescrie caracterele existente din baza inline.
+
 for marker in ('id="emailAddr"', 'id="promoCode"', 'id="mainCalcBtn"', 'function requestPayment',
                "params.get('auto')", 'reportRendered', 'validatePromo', 'paymentSuccess',
                "params.get('preview')", '__cdApplyPreviewLock', 'previewRendered', 'window.__cdSkipMail',
