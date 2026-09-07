@@ -251,7 +251,13 @@
     "regComLabel": "Nr. Reg. Com.",
     "addressLabel": "Sediu social",
     "verifyRegistry": "Verifică la Registrul Comerțului",
-    "writeUs": "Scrie-ne"
+    "writeUs": "Scrie-ne",
+    "trustTitle": "Plată și suport",
+    "trustSubtitle": "Serviciu premium, transparent și sigur",
+    "refunds": "Politica de rambursare",
+    "companyDetails": "Date juridice",
+    "securePayments": "Plăți securizate prin Stripe",
+    "numerologistHelp": "Dacă apar întrebări, le puteți adresa numerologului Daria Mihailiuc la contact@numerolog.life."
   },
   "numerologie": {
     "title": "Cristalul Destinului",

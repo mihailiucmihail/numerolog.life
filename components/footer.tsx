@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { Instagram, ArrowUpRight, FileText, MapPin, Mail } from "lucide-react"
+import { Instagram, ArrowUpRight, FileText, MapPin, Mail, ShieldCheck, CreditCard } from "lucide-react"
 
 export function Footer() {
   const t = useTranslations("footer")
@@ -51,51 +51,41 @@ export function Footer() {
             </a>
           </div>
 
-          {/* Company & contact */}
+          {/* Trust & support */}
           <div className="flex flex-col gap-4">
             <div>
-              <span className="text-xs uppercase tracking-widest text-muted-foreground/50">{t("company")}</span>
-              <p className="mt-1 font-serif text-base text-foreground/90">MIHAILIUC GROUP SRL</p>
+              <span className="text-xs uppercase tracking-widest text-muted-foreground/50">{t("trustTitle")}</span>
+              <p className="mt-1 flex items-center gap-2 font-serif text-base text-foreground/90"><ShieldCheck className="h-4 w-4 text-primary" aria-hidden="true" />{t("trustSubtitle")}</p>
             </div>
             <ul className="flex flex-col gap-2.5 text-sm">
-              <li>
-                <a
-                  href="https://portal.onrc.ro/ONRCPortalWeb/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-start gap-2 text-muted-foreground/60 transition-colors hover:text-foreground"
-                  title={t("verifyRegistry")}
-                >
-                  <FileText className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/60" aria-hidden="true" />
-                  <span>CUI 49596845 · {t("regComLabel")} J2024003230404</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.google.com/maps/search/?api=1&query=Intrarea+Gheorghe+Simionescu+19+Bucuresti"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-start gap-2 text-muted-foreground/60 transition-colors hover:text-foreground"
-                >
-                  <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/60" aria-hidden="true" />
-                  <span>Intr. Gheorghe Simionescu 19, Sector 1, București</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="mailto:contact@numerolog.life"
-                  className="inline-flex items-center gap-2 text-muted-foreground/60 transition-colors hover:text-foreground"
-                >
-                  <Mail className="h-3.5 w-3.5 shrink-0 text-primary/60" aria-hidden="true" />
-                  contact@numerolog.life
-                </a>
-              </li>
+              <li><Link href="/restituiri" className="text-muted-foreground/70 transition-colors hover:text-foreground">{t("refunds")}</Link></li>
+              <li><Link href="/termeni" className="text-muted-foreground/70 transition-colors hover:text-foreground">{t("terms")}</Link></li>
+              <li><Link href="/confidentialitate" className="text-muted-foreground/70 transition-colors hover:text-foreground">{t("privacy")}</Link></li>
+              <li><Link href="/cookies" className="text-muted-foreground/70 transition-colors hover:text-foreground">{t("cookies")}</Link></li>
+              <li><Link href="/contact" className="text-muted-foreground/70 transition-colors hover:text-foreground">{t("contact")}</Link></li>
             </ul>
+            <details className="text-xs text-muted-foreground/55">
+              <summary className="cursor-pointer transition-colors hover:text-foreground">{t("companyDetails")}</summary>
+              <div className="mt-2 space-y-1 leading-relaxed">
+                <p>MIHAILIUC GROUP SRL · CUI 49596845</p>
+                <p>{t("regComLabel")} J2024003230404</p>
+                <p>Intr. Gheorghe Simionescu 19, București</p>
+              </div>
+            </details>
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col-reverse items-center gap-3 border-t border-primary/10 pt-8 sm:flex-row sm:justify-between">
-          <p className="text-xs text-muted-foreground/50">{t("rights")}</p>
+        <div className="mt-14 border-t border-primary/10 pt-8">
+          <p className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-muted-foreground/65">{t("numerologistHelp")}</p>
+          <div className="mt-6 flex flex-col items-center justify-between gap-5 sm:flex-row">
+            <p className="text-xs text-muted-foreground/50">{t("rights")}</p>
+            <div className="flex items-center gap-3 text-muted-foreground/60" aria-label={t("securePayments")}>
+              <CreditCard className="h-4 w-4 text-primary/70" aria-hidden="true" />
+              <span className="font-sans text-sm font-semibold tracking-widest text-[#d8d8dc]">VISA</span>
+              <span className="rounded bg-[#f3f3f4] px-2 py-1 text-[10px] font-bold tracking-tight text-[#17171b]">mastercard</span>
+              <span className="text-xs">{t("securePayments")}</span>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
