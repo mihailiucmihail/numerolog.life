@@ -239,8 +239,7 @@
       return new Promise(function(resolve){
         const started = Date.now();
         (function check(){
-          if((typeof DB !== 'undefined' && DB) || Date.now() - started
-= timeout){
+          if((typeof DB !== 'undefined' && DB) || Date.now() - started >= timeout){
             resolve(typeof DB !== 'undefined' && !!DB);
             return;
           }
