@@ -29,6 +29,7 @@ SRC = ROOT / 'public/cristalul-versions/cristalul-destinului-v2b-upload.html'
 DST = ROOT / 'public/cristalul-calculator.html'
 BRIDGE = ROOT / 'scripts/cristalul-bridge-snippet.html'
 PREVIEW = ROOT / 'scripts/cristalul-preview-lock-snippet.html'
+PREMIUM_CSS = ROOT / 'scripts/cristalul-premium-report.css'
 
 s = SRC.read_text(encoding='utf-8')
 # Unele uploaduri au primit accidental prefixul `> ` la începutul liniilor; îl eliminăm înainte de orice inserare.
@@ -119,7 +120,7 @@ rep("  try{ localStorage.setItem('crystal_last_email', mailCheck.value); }catch(
 assert "getElementById('pMail')" not in s, 'a rămas o referință la pMail'
 
 # Titlul secțiunii este redundant: animația premium explică deja formularul.
-s = re.sub(r'<div class="section-title">\s*��АШИ ДАННЫЕ.*?</div>', '', s, count=1, flags=re.S)
+s = re.sub(r'<div class="section-title">\s*���АШИ ДАННЫЕ.*?</div>', '', s, count=1, flags=re.S)
 
 # Formular simplificat: data nașterii apare prima; patronimicul, alfabetul, sexul și nota explicativă
 # rămân în HTML/JS pentru rapoartele existente, dar nu aglomerează etapa inițială.
@@ -270,6 +271,11 @@ rep('</head>', """<style>
   #inputFormCard::before,#inputFormCard::after{display:none!important;content:none!important;}
   #inputFormCard .numerology-intro{border:0!important;box-shadow:none!important;}
   </style></head>""", 1)
+
+# 1c. Strat de design premium pentru raport (doar #results) — sursa: scripts/cristalul-premium-report.css
+premium_css = PREMIUM_CSS.read_text(encoding='utf-8')
+assert premium_css.count('\ufffd') == 0, 'CSS-ul premium conține U+FFFD'
+rep('</style></head>', '</style>\n<style id="cd-premium">\n' + premium_css + '\n</style></head>')
 rep('</body>', '''<script>
 (function(){
   const video=document.querySelector('.hero-video-media');
