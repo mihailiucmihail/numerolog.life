@@ -227,7 +227,7 @@ rep('<div class="card" id="inputFormCard">',
     '      <div class="numerology-copy">\n'
     '        <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>\n'
     '        <h2 id="numerology-intro-title">Узнай, что скрывает твоя дата рождения</h2>\n'
-    '        <p>Введи свои данные и получи персональный нумерологический разбор, созданный именно для тебя.</p>\n'
+    '        <p>Введи свои данные — и узнай, что твоя дата рождения и имя могут рассказать именно о тебе.</p>\n'
     '      </div>\n'
     '    </div>\n', 1)
 rep('</head>', """<style>
