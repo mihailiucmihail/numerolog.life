@@ -318,9 +318,9 @@ rep("  const r = computeAll(last, first, middle, day, month, year, nameAlphabetK
     "  window.__cdLastResult = r;\n")
 
 # 5. Bridge-ul de integrare, înainte de </body> ------------------------------------------------
-bridge = re.sub(r'(?m)^(\s*)> ', r'\1', BRIDGE.read_text(encoding='utf-8'))
+bridge = re.sub(r'(?m)^([ \t]*)> ', r'\1', BRIDGE.read_text(encoding='utf-8'))
 assert 'requestPayment' in bridge and 'reportRendered' in bridge
-preview = re.sub(r'(?m)^(\s*)> ', r'\1', PREVIEW.read_text(encoding='utf-8'))
+preview = re.sub(r'(?m)^([ \t]*)> ', r'\1', PREVIEW.read_text(encoding='utf-8'))
 assert '__cdApplyPreviewLock' in preview and "params.get('preview')" in preview
 rep('</body>', bridge.rstrip('\n') + '\n' + preview.rstrip('\n') + '\n</body>')
 

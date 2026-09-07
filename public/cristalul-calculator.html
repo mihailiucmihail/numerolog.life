@@ -6351,19 +6351,16 @@ function startPdfExport(){
     });
     window.addEventListener('resize', __cdSendHeight);
   </script>
-<style
-
+<style>
     /* ==== Mod preview (raport gratuit, parțial blurat) — activ doar cu ?preview=1 ==== */
     .cd-preview .hero,
     .cd-preview #inputFormCard,
     .cd-preview #pdfDownloadCard{display:none !important;}
     /* În timpul ecranului „Cristalul se formează” conţinutul iframe-ului este invizibil (raportul se calculează
        în fundal); când aplicaţia trimite `previewReveal`, apare cu un fade lin. */
-    body.cd-forming
- *{opacity:0 !important;transition:none !important;}
-    body
- *{transition:opacity .7s ease;}
-    /* Blur premium uniform pentru conținutul de după primele 30% din fiecare card. */
+    body.cd-forming > *{opacity:0 !important;transition:none !important;}
+    body > *{transition:opacity .7s ease;}
+    /* Blur PUTERNIC — folosit doar pe grafice (viitorul în bare/rânduri/linii). */
     .cd-lock{
       filter:blur(11px) saturate(.7);
       opacity:.5;
@@ -6373,7 +6370,7 @@ function startPdfExport(){
     .cd-lock *{pointer-events:none !important;}
     .cd-preview .cd-lock summary::after{content:"" !important;}
     .cd-preview details.cd-lock[open] .body{max-height:120px;overflow:hidden;}
-    /* Fiecare card: primele 30% lizibile; restul de 70% are același blur premium uniform. Fără reguli separate pentru grafice.
+    /* Card cu chenar dublu: primele 30 % lizibile; restul 70 % — blur care creşte TREPTAT (fără linie bruscă).
        PERFORMANŢĂ: FĂRĂ `backdrop-filter`. Pe 40+ carduri / ~60 000 px de raport, backdrop-filter se
        recompune la FIECARE cadru de derulare (măsurat: 34 ms/cadru vs 16 ms fără) şi pe iOS Safari epuizează
        memoria GPU → pagina e reîncărcată (utilizatorul „e trimis înapoi la formular”). În loc, JS aplică
@@ -6381,8 +6378,7 @@ function startPdfExport(){
        cu intensitate crescătoare (.cd-blur-1 … .cd-blur-4), iar ::after adaugă doar o ceaţă de gradient. */
     .cd-report-part{position:relative;user-select:none;-webkit-user-select:none;}
     .cd-part{position:relative;user-select:none;-webkit-user-select:none;}
-    .cd-part
- *:not(.section-title):not(.cd-unlock){pointer-events:none;}
+    .cd-part > *:not(.section-title):not(.cd-unlock){pointer-events:none;}
     .cd-preview .cd-blur-1,
     .cd-preview .cd-blur-2,
     .cd-preview .cd-blur-3,
@@ -6404,7 +6400,6 @@ function startPdfExport(){
       top:var(--cd-cut,30%);
       background:linear-gradient(180deg, rgba(22,16,34,0) 0%, rgba(22,16,34,.08) 30%, rgba(22,16,34,.18) 65%, rgba(22,16,34,.26) 100%);
     }
-    /* Graficele folosesc exact aceeași regulă de 30% vizibil + 70% blur ca restul raportului. */
     /* CTA pe zona blurată (în locul badge-ului din colţ): text + buton către plată. */
     .cd-unlock{
       position:absolute;left:0;right:0;z-index:4;
@@ -6451,25 +6446,21 @@ function startPdfExport(){
     }
     .cd-preview .mandala-future-line{opacity:0 !important;}
     .cd-preview .chart-tooltip{display:none !important;}
-</style
-
-<script
-
+</style>
+<script>
     // ==== Preview blocat: raportul real; fiecare card 30 % vizibil / 70 % blur gradual moderat, grafice: viitor blurat puternic ====
     function __cdAfterNow(items, isNow){
       // Toate elementele DUPĂ cel „curent” (sau după ultimul „trecut”) devin blurate = viitor.
       let ni = -1;
       items.forEach(function(el, i){ if(isNow(el)) ni = i; });
       if(ni < 0) return;
-      items.forEach(function(el, i){ if(i
- ni) el.classList.add('cd-lock'); });
+      items.forEach(function(el, i){ if(i > ni) el.classList.add('cd-lock'); });
     }
     function __cdMaskFuture(stage){
       if(!stage) return;
       const svg = stage.querySelector('svg');
       if(!svg) return;
-      let mask = stage.querySelector(':scope
- .cd-future-mask');
+      let mask = stage.querySelector(':scope > .cd-future-mask');
       const now = svg.querySelector('#nowLine, .now-line');
       const vb = (svg.getAttribute('viewBox') || '0 0 640 320').split(/\s+/).map(Number);
       const width = vb[2] || 640;
@@ -6509,8 +6500,7 @@ function startPdfExport(){
       try{ window.parent.postMessage({ type: 'unlockRequested' }, '*'); }catch(e){}
     }
     function __cdBadge(card){
-      if(card.querySelector(':scope
- .cd-unlock')) return;
+      if(card.querySelector(':scope > .cd-unlock')) return;
       const idx = document.querySelectorAll('.cd-unlock').length;
       const wrap = document.createElement('div');
       wrap.className = 'cd-unlock' + (card.offsetHeight < 260 ? ' cd-unlock-compact' : '');
@@ -6549,8 +6539,7 @@ function startPdfExport(){
         if(bottom <= cut) return; // complet în zona clară
         const kids = Array.from(el.children);
         const spans = top < cut;
-        if((spans || r.height
- 900) && kids.length){ kids.forEach(walk); return; }
+        if((spans || r.height > 900) && kids.length){ kids.forEach(walk); return; }
         el.classList.remove('cd-blur-1','cd-blur-2','cd-blur-3','cd-blur-4');
         el.classList.add('cd-blur-' + level(el));
       }
@@ -6563,14 +6552,12 @@ function startPdfExport(){
       results.classList.add('cd-report-part');
       results.style.setProperty('--cd-cut', '30%');
       __cdBlurBelow(results);
-      const cards = Array.from(results.querySelectorAll(':scope .card'));
-      cards.forEach(function(card){
+      const cutY = results.getBoundingClientRect().top + results.scrollHeight * 0.3;
+      Array.from(results.querySelectorAll(':scope > .card')).forEach(function(card){
         if(card.id === 'pdfDownloadCard' || card.id === 'personalDataSummary') return;
         card.classList.add('cd-part');
-        card.style.setProperty('--cd-cut', '30%');
-        __cdBadge(card);
+        if(card.getBoundingClientRect().top >= cutY) __cdBadge(card);
       });
-    }
     }
 
     // Datele formularului — trimise aplicației pentru checkout (emailul este obligatoriu în formular;
