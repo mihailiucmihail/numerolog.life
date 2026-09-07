@@ -258,7 +258,7 @@ rep('</head>', """<style>
 .hero-video-caption{margin:12px 4px 0!important;color:rgba(245,237,214,.68);font-size:13px!important;letter-spacing:.04em;}
 .hero-video-caption span{color:var(--brass-bright);font-weight:600;}
 @media (max-width:600px){.hero-video{width:min(78vw,330px);margin:18px auto 0;}.hero-video-frame{border-radius:10px;}.hero-video-caption{font-size:12px!important;line-height:1.4;}}
-  #inputFormCard{box-sizing:border-box;width:100%;max-width:none;margin:28px auto 0;padding:0 28px 28px!important;overflow:hidden;border:1px solid rgba(212,175,55,.15);border-radius:2rem;background:linear-gradient(145deg,rgba(40,24,62,.72),rgba(13,13,35,.9))!important;box-shadow:none;}
+  #inputFormCard{box-sizing:border-box;display:block;width:100%;max-width:none;margin:0!important;padding:0 28px 28px!important;overflow:hidden;border:1px solid rgba(212,175,55,.15);border-radius:2rem;background:linear-gradient(145deg,rgba(40,24,62,.72),rgba(13,13,35,.9))!important;box-shadow:none;}
   #inputFormCard input{min-height:58px;border:1px solid rgba(212,175,55,.15);border-radius:1rem;background:rgba(13,13,35,.34);color:#f5edd6;padding:0 16px;font:400 16px/1.4 Arial,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.03),0 0 0 1px rgba(212,175,55,.025);transition:border-color .2s,box-shadow .2s,background .2s;}
   #inputFormCard input::placeholder{color:rgba(245,237,214,.38);}#inputFormCard input:focus{outline:none;border-color:rgba(239,202,105,.9);background:rgba(12,8,30,.72);box-shadow:0 0 0 3px rgba(212,175,55,.12),0 0 28px rgba(212,175,55,.12);}
   #inputFormCard label{display:block;margin:22px 0 9px;color:rgba(239,202,105,.86);font:600 11px/1.3 Arial,sans-serif;letter-spacing:.2em;text-transform:uppercase;}
