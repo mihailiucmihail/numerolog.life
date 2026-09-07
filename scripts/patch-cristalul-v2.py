@@ -130,6 +130,7 @@ _date_start = s.rfind('<div class="full">', 0, _date_label)
 _date_end = s.find('<div class="full">', _date_label)
 assert _date_start >= 0 and _date_end > _date_start, 'finalul blocului data nașterii nu a fost găsit'
 _date_block = s[_date_start:_date_end]
+_date_block = _date_block.replace('<label>Дата рождения</label>', '<label>Дата рождения</label><p class="numerology-action-hint">Введите данные для персонального расчёта</p>', 1)
 s = s[:_date_start] + s[_date_end:]
 _name_label = s.find('<label>Фамилия')
 _name_marker = s.rfind('<div>', 0, _name_label)
@@ -227,7 +228,7 @@ rep('<div class="card" id="inputFormCard">',
     '      <div class="numerology-copy">\n'
     '        <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>\n'
     '        <h2 id="numerology-intro-title">Узнай, что скрывает твоя дата рождения</h2>\n'
-    '        <p>Введи свои данные — и узнай, что твоя дата рождения и имя могут рассказать именно о тебе.</p>\n'
+    '        <p>Введи свои данные — и узнай, что твоя дата рождения и имя могут рассказать и��енно о тебе.</p>\n'
     '      </div>\n'
     '    </div>\n', 1)
 rep('</head>', """<style>
@@ -236,6 +237,8 @@ rep('</head>', """<style>
 .numerology-kicker{display:block;margin-bottom:8px;color:rgba(212,175,55,.76);font:600 10px/1.4 Arial,sans-serif;letter-spacing:.28em;}
 .numerology-copy h2{margin:0;color:#f5edd6;font:500 clamp(24px,4vw,42px)/1.1 Georgia,serif;letter-spacing:.02em;text-shadow:0 0 24px rgba(212,175,55,.22);}
 .numerology-copy p{max-width:470px;margin:14px auto 0;color:rgba(245,237,214,.78);font:400 clamp(14px,1.8vw,17px)/1.55 Arial,sans-serif;letter-spacing:.01em;}
+.numerology-copy .numerology-action-hint{max-width:none;margin:22px auto 0;color:rgba(245,237,214,.56);font:500 12px/1.4 Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;}
+#inputFormCard .numerology-action-hint{margin:-3px 0 10px;color:rgba(245,237,214,.56);font:400 12px/1.4 Arial,sans-serif;letter-spacing:.01em;text-transform:none;}
 .numerology-crystal{position:absolute;z-index:2;width:76px;height:76px;display:grid;place-items:center;border:1px solid rgba(239,202,105,.8);transform:rotate(45deg);box-shadow:0 0 22px rgba(212,175,55,.4),inset 0 0 24px rgba(212,175,55,.18);animation:numerologyPulse 3.4s ease-in-out infinite;}
 .numerology-crystal:before{content:"";position:absolute;inset:11px;border:1px solid rgba(239,202,105,.55);}
 .numerology-crystal span{transform:rotate(-45deg);color:#f3cf70;font:600 15px Arial,sans-serif;letter-spacing:.08em;text-shadow:0 0 12px rgba(239,202,105,.8);}
@@ -262,6 +265,7 @@ rep('</head>', """<style>
   #inputFormCard{box-sizing:border-box;display:block;width:100%;max-width:none;margin:0!important;padding:0 28px 28px!important;overflow:hidden;border:1px solid rgba(212,175,55,.15);border-radius:2rem;background:linear-gradient(145deg,rgba(40,24,62,.72),rgba(13,13,35,.9))!important;box-shadow:none;}
   #inputFormCard input{min-height:58px;border:1px solid rgba(212,175,55,.15);border-radius:1rem;background:rgba(13,13,35,.34);color:#f5edd6;padding:0 16px;font:400 16px/1.4 Arial,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.03),0 0 0 1px rgba(212,175,55,.025);transition:border-color .2s,box-shadow .2s,background .2s;}
   #inputFormCard input::placeholder{color:rgba(245,237,214,.38);}#inputFormCard input:focus{outline:none;border-color:rgba(239,202,105,.9);background:rgba(12,8,30,.72);box-shadow:0 0 0 3px rgba(212,175,55,.12),0 0 28px rgba(212,175,55,.12);}
+  #inputFormCard .cd-field-hint{display:inline-block;margin-left:.45rem;color:rgba(245,237,214,.58);font-size:.78em;font-weight:400;letter-spacing:0;text-transform:none;}
   #inputFormCard label{display:block;margin:22px 0 9px;color:rgba(239,202,105,.86);font:600 11px/1.3 Arial,sans-serif;letter-spacing:.2em;text-transform:uppercase;}
   #inputFormCard .numerology-intro{min-height:330px;margin-inline:-28px;padding-inline:20px;border-bottom:1px solid rgba(212,175,55,.1);background:linear-gradient(145deg,rgba(40,24,62,.28),rgba(13,13,35,.3));}
   #inputFormCard .numerology-copy{width:min(100%,680px);padding:48px 12px;text-align:left;}#inputFormCard .numerology-copy h2{max-width:680px;font-size:clamp(30px,6vw,54px);line-height:1.02;}#inputFormCard .numerology-copy p{max-width:560px;margin-top:20px;font-size:16px;line-height:1.6;}#inputFormCard .numerology-kicker{margin-bottom:16px;}
@@ -301,10 +305,12 @@ rep('.hero p .hero-highlight{color:var(--brass-bright);font-weight:600;}',
     '.hero p.hero-question{margin-top:16px;font-size:clamp(16px,1.2vw,18px);}')
 
 # 4. Butonul principal -> plată ------------------------------------------------------------
+rep('<label>Фамилия <span style="opacity:.5;text-transform:none;letter-spacing:0;">(для замужних женщин — рекомендуем девичью фамилию)</span></label>',
+    '<label>Фамилия <span class="cd-field-hint">Если меняли фамилию — укажите девичью</span></label>')
 rep('<input id="lastName" type="text" placeholder="ex: Иванов" autocomplete="off" value="">',
-    '<input id="lastName" type="text" placeholder="ex: Морозова" autocomplete="off" value="">')
+    '<input id="lastName" type="text" placeholder="" autocomplete="off" value="">')
 rep('<input id="firstName" type="text" placeholder="ex: Михаил" autocomplete="off" value="">',
-    '<input id="firstName" type="text" placeholder="ex: Анна" autocomplete="off" value="">')
+    '<input id="firstName" type="text" placeholder="" autocomplete="off" value="">')
 rep('<button class="btn" onclick="calculate()">Рассчитать Кристалл</button>',
     '<button id="mainCalcBtn" class="btn cd-main-cta" onclick="cdMainAction()">УЗНАТЬ СВОЙ РЕЗУЛЬТАТ</button>\n'
     '      <p class="cd-main-cta-note">Расчёт займёт меньше минуты</p>')
