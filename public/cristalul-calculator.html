@@ -6890,7 +6890,31 @@ function startPdfExport(){
         window.parent.postMessage({ type: 'resize', height: __cdContentHeight() }, '*');
       }, 900);
     }
+    // Alfabetul se alege automat după literele introduse: vizitatorii din RO/MD primesc 'ro' din geolocație,
+    // dar mulți scriu numele în chirilică → fără această corecție apărea eroarea „алфавит не соответствует”.
+    function __cdAutoAlphabet(){
+      const sel = document.getElementById('nameAlphabetSelect');
+      if(!sel || typeof ALPHABETS === 'undefined') return;
+      const read = function(id){ const el = document.getElementById(id); return el ? el.value : ''; };
+      const name = (read('lastName') + read('firstName') + read('middleName')).toUpperCase().replace(/[^\p{L}]/gu, '');
+      if(!name) return;
+      const ratio = function(key){
+        const letters = ALPHABETS[key] && ALPHABETS[key].letters; if(!letters) return 0;
+        let hit = 0; for(const ch of name){ if(letters.indexOf(ch) >= 0) hit++; }
+        return hit / name.length;
+      };
+      if(ratio(sel.value) >= 0.5) return;
+      const preferred = ['ru', 'ro', 'en', 'uk', 'kk', 'be', 'bg', 'de', 'es', 'it'];
+      const keys = preferred.concat(Object.keys(ALPHABETS).filter(function(k){ return preferred.indexOf(k) < 0; }));
+      let best = sel.value, bestRatio = ratio(sel.value);
+      for(const k of keys){ const r = ratio(k); if(r > bestRatio){ best = k; bestRatio = r; } }
+      if(best !== sel.value && bestRatio >= 0.5){
+        sel.value = best;
+        sel.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }
     function cdMainAction(){
+      __cdAutoAlphabet();
       if(window.__paymentUnlocked){ if(typeof calculate === 'function') calculate(); return; }
       void __cdPreviewCalculate();
     }
