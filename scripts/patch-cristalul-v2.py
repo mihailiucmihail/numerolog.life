@@ -116,6 +116,9 @@ rep("  try{ localStorage.setItem('crystal_last_email', mailCheck.value); }catch(
     "  try{ if(mailCheck.value) localStorage.setItem('crystal_last_email', mailCheck.value); }catch(e){}\n")
 assert "getElementById('pMail')" not in s, 'a rămas o referință la pMail'
 
+# Titlul secțiunii este redundant: animația premium explică deja formularul.
+s = re.sub(r'<div class="section-title">\s*ВАШИ ДАННЫЕ.*?</div>', '', s, count=1, flags=re.S)
+
 # Formular simplificat: data nașterii apare prima; patronimicul, alfabetul, sexul și nota explicativă
 # rămân în HTML/JS pentru rapoartele existente, dar nu aglomerează etapa inițială.
 _date_label = s.find('<label>Дата рождения</label>')
@@ -135,11 +138,34 @@ _email_block_re = re.compile(r'<div class="full" id="emailField">.*?</div>\s*', 
 _email_match = _email_block_re.search(s)
 assert _email_match, 'blocul email nu a fost găsit pentru reordonare'
 _email_block = _email_match.group(0)
+_email_block = _email_block.replace('<div class="full" id="emailField">', '<div class="full" id="emailField" hidden style="display:none;">', 1)
 s = s[:_email_match.start()] + s[_email_match.end():]
-_first_input_re = re.compile(r'(<input id="firstName"[^\n]*\n\s*</div>)')
+_first_input_re = re.compile(r'(<div>\s*<label>Имя</label>.*?</div>)', re.S)
 _first_match = _first_input_re.search(s)
-assert _first_match, 'blocul prenumelui nu a fost găsit pentru email'
-s = s[:_first_match.end()] + '\n' + _email_block + s[_first_match.end():]
+assert _first_match, 'blocul prenumelui nu a fost găsit pentru reordonare'
+_first_block = _first_match.group(1)
+s = s[:_first_match.start()] + s[_first_match.end():]
+_family_input_re = re.compile(r'(<div>\s*<label>Фамилия.*?</div>)', re.S)
+_family_match = _family_input_re.search(s)
+assert _family_match, 'blocul familiei nu a fost găsit pentru reordonare'
+s = s[:_family_match.start()] + _first_block + '\n' + s[_family_match.start():]
+# Emailul rămâne ascuns în DOM pentru etapa de achiziție, după nume și familie.
+_family_end = s.find('</div>', _family_match.start()) + len('</div>')
+s = s[:_family_end] + '\n' + _email_block + s[_family_end:]
+# Reordonare finală robustă: prenume, familie, apoi email ascuns.
+_blocks = {}
+for _key, _pattern in {
+    'first': r'<div>\s*<label>Имя</label>.*?</div>',
+    'family': r'<div>\s*<label>Фамилия.*?</div>',
+    'email': r'<div class="full" id="emailField" hidden style="display:none;">.*?</div>',
+}.items():
+    _m = re.search(_pattern, s, re.S)
+    assert _m, f'blocul {_key} nu a fost găsit pentru ordonare'
+    _blocks[_key] = _m.group(0)
+_first_pos = min(s.find(_blocks['first']), s.find(_blocks['family']), s.find(_blocks['email']))
+for _block in _blocks.values():
+    s = s.replace(_block, '', 1)
+s = s[:_first_pos] + _blocks['first'] + '\n' + _blocks['family'] + '\n' + _blocks['email'] + s[_first_pos:]
 
 _middle_re = re.compile(r'<div class="full">\s*<label>Отчество.*?</div>', re.S)
 s, _middle_count = _middle_re.subn(lambda m: m.group(0).replace('<div class="full">', '<div class="full" hidden style="display:none;">', 1), s, count=1)
