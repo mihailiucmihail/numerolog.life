@@ -120,7 +120,7 @@ rep("  try{ localStorage.setItem('crystal_last_email', mailCheck.value); }catch(
 assert "getElementById('pMail')" not in s, 'a rămas o referință la pMail'
 
 # Titlul secțiunii este redundant: animația premium explică deja formularul.
-s = re.sub(r'<div class="section-title">\s*���АШИ ДАННЫЕ.*?</div>', '', s, count=1, flags=re.S)
+s = re.sub(r'[ \t]*<div class="section-title">\s*ВАШИ ДАННЫЕ.*?</div>[ \t]*\n?', '', s, count=1, flags=re.S | re.I)
 
 # Formular simplificat: data nașterii apare prima; patronimicul, alfabetul, sexul și nota explicativă
 # rămân în HTML/JS pentru rapoartele existente, dar nu aglomerează etapa inițială.
@@ -228,7 +228,7 @@ rep('<div class="card" id="inputFormCard">',
     '      <div class="numerology-copy">\n'
     '        <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>\n'
     '        <h2 id="numerology-intro-title">Узнай, что скрывает твоя дата рождения</h2>\n'
-    '        <p>Введи свои данные — и узнай, что твоя дата рождения и имя могут рассказать и��енно о тебе.</p>\n'
+    '        <p>Введи свои данные — и узнай, что твоя дата рождения и имя могут рассказать именно о тебе.</p>\n'
     '      </div>\n'
     '    </div>\n', 1)
 rep('</head>', """<style>

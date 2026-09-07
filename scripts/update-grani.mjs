@@ -24,7 +24,7 @@ html = html
 await writeFile(activePath, html, "utf8")
 console.log(`Raport actualizat și versiunea anterioară arhivată: ${path.basename(activePath)}`)
 
-if (html.includes("�")) {
-  console.error("Atenție: raportul conține caractere Unicode corupte (�).")
+if (html.includes("\uFFFD")) {
+  console.error("Atenție: raportul conține caractere Unicode corupte (U+FFFD).")
   process.exitCode = 1
 }

@@ -128,9 +128,9 @@ export function validateTestCase(testCase: ValidationTestCase): ValidationResult
 }
 
 export function runValidation(): void {
-  console.log('\n╔════════════════════════════════════════════════════════════╗')
+  console.log('\n========================================')
   console.log('║     Numerology 22 Engine - Validation Runner                ║')
-  console.log('╚════════════════════════════════════════════════════════════╝\n')
+  console.log('========================================\n')
 
   const results: ValidationResult[] = []
 

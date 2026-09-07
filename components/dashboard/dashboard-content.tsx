@@ -1087,7 +1087,7 @@ export function DashboardContent({ user, profile: initialProfile }: DashboardCon
                           <div className="absolute inset-0 bg-gradient-to-r from-accent/5 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl" />
                           <div className="relative space-y-3">
                             <Crown className="h-6 w-6 text-accent" />
-                            <h3 className="font-bold text-sm">Descoper������ următoarele 12 luni ale destinului tău</h3>
+                            <h3 className="font-bold text-sm">Descoperă următoarele 12 luni ale destinului tău</h3>
                             <ul className="text-xs text-muted-foreground space-y-1">
                               <li>✓ Previziuni lunare detaliate</li>
                               <li>✓ Perioade favorabile</li>
@@ -1131,9 +1131,9 @@ export function DashboardContent({ user, profile: initialProfile }: DashboardCon
             </Card>
           </motion.div>
 
-          {/* ═══════════════════════════════════════════════════════════════════════
+          {/* ====================
               ASTROGRAMA TA - sectiune clara, vizibila, premium
-          ══════════════════════════════════════��════════════════════════════════ */}
+          ==================== */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1226,9 +1226,9 @@ export function DashboardContent({ user, profile: initialProfile }: DashboardCon
             </Card>
           </motion.div>
 
-          {/* ═══════════════════════════════════════════════════════════════════════
+          {/* ====================
               QUICK ENERGY CARDS
-          ═══════════════════════════════════════════════════════════════════���═══ */}
+          ==================== */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
             {[
               { label: "Emoțional", value: energies.emotional, icon: Heart, color: "text-rose-400", bg: "bg-rose-500/10" },
@@ -1256,9 +1256,9 @@ export function DashboardContent({ user, profile: initialProfile }: DashboardCon
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* ════════════════════���════════════════════════════════════════════════���═
+            {/* ====================
                 MAIN CONTENT - LEFT 2 COLUMNS
-            ═��══════════════���══════════════════════════════════════════════════════ */}
+            ==================== */}
             <div className="lg:col-span-2 space-y-6">
               
               {/* Daily Insights Card */}
@@ -1508,9 +1508,9 @@ export function DashboardContent({ user, profile: initialProfile }: DashboardCon
               </motion.div>
             </div>
 
-            {/* ═══════════════════════════════════════════════════════════════════════
+            {/* ====================
                 SIDEBAR - RIGHT COLUMN
-            ══════��════════════════════════════════��══════════════════════════════�� */}
+            ==================== */}
             <div className="space-y-6">
               {/* Profile Completeness */}
               {!hasProfile && (

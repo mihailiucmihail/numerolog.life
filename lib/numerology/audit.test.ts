@@ -474,9 +474,9 @@ describe('Numerology 22 Engine - Comprehensive Audit', () => {
   })
 
   afterAll(() => {
-    console.log('\n╔════════════════════════════════════════════════════════════╗')
+    console.log('\n========================================')
     console.log('║          NUMEROLOGY 22 ENGINE AUDIT REPORT                 ║')
-    console.log('╚════════════════════════════════════════════════════════════╝\n')
+    console.log('========================================\n')
     console.log(`Total Tests Run:   ${passedCount + failedCount}`)
     console.log(`Passed:            ${passedCount} ✓`)
     console.log(`Failed:            ${failedCount} ✗`)

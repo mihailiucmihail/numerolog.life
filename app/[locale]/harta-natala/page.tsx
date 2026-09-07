@@ -216,9 +216,9 @@ export default function BirthChartPage() {
       <StarField />
       <Navbar />
       
-      {/* ═══════════════════════════════════════════════════════════════════
+      {/* ========================================
           HERO SECTION - Emotional, Cinematic, Premium
-          ═══════════════════════════════════════════════════════════════════ */}
+          ======================================== */}
       <section className="relative min-h-screen flex flex-col items-center justify-center px-4 sm:px-6">
         
         {/* Ambient cosmic glow */}
@@ -286,9 +286,9 @@ export default function BirthChartPage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════════════
+      {/* ========================================
           WHAT YOU'LL DISCOVER - Premium value proposition
-          ═══════════════════════════════════════════════════════════════════ */}
+          ======================================== */}
       <section className="relative z-10 py-20 sm:py-28 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
           
@@ -318,9 +318,9 @@ export default function BirthChartPage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════════════
+      {/* ========================================
           FORM SECTION - Elegant, Premium, Soft
-          ═══════════════════════════════════════════════════════════════════ */}
+          ======================================== */}
       <section ref={formRef} className="relative z-10 py-20 sm:py-28 px-4 sm:px-6">
         
         {/* Ambient glow behind form */}

@@ -658,9 +658,9 @@ export async function POST(request: Request) {
       return elements
     }
 
-    // ═══════════════════════════════════════════════════════════════════════════════
+    // ========================================
     // PSYCHOLOGICAL DEPTH ANALYSIS - Authentic, Uncomfortable, Real
-    // ═══════════════════════════════════════════════════════════════════════════════
+    // ========================================
     
     // Calculate additional data for deep analysis
     const dominantElement = Object.entries(astrologyData?.elementBalance || {fire: 0, earth: 0, air: 0, water: 0})

@@ -360,7 +360,7 @@ export default function CristalFunnel() {
         </p>
       )}
 
-      {/* Calculatorul ORIGINAL (formular identic cu fișierul încărcat). După calcul afișeaz�� raportul întreg, blurat. */}
+      {/* Calculatorul ORIGINAL (formular identic cu fișierul încărcat). După calcul afișează raportul întreg, blurat. */}
       <iframe
         ref={iframeRef}
         key={frameSrc}

@@ -11,9 +11,9 @@ import {
   Mountain, Sun, ArrowRight, ShieldAlert, Brain, Hash,
 } from "lucide-react"
 
-// ─────────────────────────────────────────────────────────────
+// ========================================
 // Tipuri
-// ─────────────────────────────────────────────────────────────
+// ========================================
 export interface DeepInterpretation {
   esentaPersonalitatii?: string
   emotiileAscunse?: string
@@ -66,9 +66,9 @@ export interface ChartPoints {
   partOfFortune: { sign: string; degree: number }
 }
 
-// ─────────────────────────────────────────────────────────────
+// ========================================
 // 1. ANALIZA PSIHOLOGICĂ PROFUNDĂ (12 secțiuni)
-// ─────────────────────────────────────────────────────────────
+// ========================================
 const deepSections: Array<{
   key: keyof DeepInterpretation
   title: string
@@ -161,9 +161,9 @@ export function DeepPsychologicalAnalysis({ ai }: { ai: DeepInterpretation }) {
   )
 }
 
-// ─────────────────────────────────────────────────────────────
+// ========================================
 // 2. DOMINANTE ENERGETICE (elemente, modalități, polaritate)
-// ─────────────────────────────────────────────────────────────
+// ========================================
 const elementMeta: Record<string, { icon: typeof Flame; color: string; bar: string }> = {
   Foc: { icon: Flame, color: "text-red-400", bar: "bg-red-400" },
   Pamant: { icon: Mountain, color: "text-emerald-400", bar: "bg-emerald-400" },
@@ -268,9 +268,9 @@ export function EnergyDominants({ dominants }: { dominants: Dominants }) {
   )
 }
 
-// ─────────────────────────────────────────────────────────────
+// ========================================
 // 3. PUNCTE SIMBOLICE (Descendent, IC, Punctul Norocului)
-// ─────────────────────────────────────────────────────────────
+// ========================================
 const pointMeta: Array<{ key: keyof ChartPoints; title: string; icon: typeof Sparkles; desc: string; color: string }> = [
   { key: "descendant", title: "Descendent", icon: Heart, color: "text-rose-300", desc: "Ce cauți în celălalt și ce tip de parteneri atragi în viața ta." },
   { key: "imumCoeli", title: "Fundul Cerului (IC)", icon: Moon, color: "text-blue-300", desc: "Rădăcinile tale emoționale, căminul interior și moștenirea familială." },
@@ -326,9 +326,9 @@ export function SymbolicPoints({ points }: { points: ChartPoints }) {
   )
 }
 
-// ─────────────────────────────────────────────────────────────
+// ========================================
 // 4. NUMEROLOGIE PREMIUM (interpretări AI)
-// ─────────────────────────────────────────────────────────────
+// ========================================
 const numeroItems: Array<{ key: string; title: string; icon: typeof Hash }> = [
   { key: "interpretareDestin", title: "Numărul destinului", icon: Compass },
   { key: "interpretareSuflet", title: "Numărul sufletului", icon: Heart },
@@ -384,9 +384,9 @@ export function NumerologyPremium({ numerologie }: { numerologie?: DeepInterpret
   )
 }
 
-// ─────────────────────────────────────────────────────────────
+// ========================================
 // 5. PREVIZIUNI 12 LUNI (timeline)
-// ─────────────────────────────────────────────────────────────
+// ========================================
 const tipMeta: Record<string, { color: string; bg: string; border: string; label: string }> = {
   favorabil: { color: "text-emerald-300", bg: "bg-emerald-500/10", border: "border-emerald-500/30", label: "Favorabil" },
   transformare: { color: "text-violet-300", bg: "bg-violet-500/10", border: "border-violet-500/30", label: "Transformare" },
@@ -458,9 +458,9 @@ export function TwelveMonthTimeline({ items, locked = false }: { items?: DeepInt
   )
 }
 
-// ─────────────────────────────────────────────────────────────
+// ========================================
 // 6. SECȚIUNI PREMIUM BLOCATE (teasing emoțional)
-// ─────────────────────────────────────────────────────────────
+// ========================================
 const lockedSections: Array<{ key: keyof DeepInterpretation; title: string; icon: typeof EyeOff }> = [
   { key: "adevarulAscuns", title: "Adevărul tău ascuns", icon: EyeOff },
   { key: "ceaMaiMareFrica", title: "Cea mai mare frică", icon: ShieldAlert },
