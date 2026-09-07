@@ -2,11 +2,13 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { ArrowUpRight, ShieldCheck, CreditCard } from "lucide-react"
 
 export function Footer() {
   const t = useTranslations("footer")
+  const locale = useLocale()
+  const legalHref = (path: string) => `/${locale}${path}`
 
   return (
     <footer className="relative z-10 border-t border-primary/10 pt-8 pb-10 bg-transparent">
@@ -35,7 +37,7 @@ export function Footer() {
 
             <div className="flex flex-col gap-6 p-7 sm:p-9">
               <div><span className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground/55">{t("trustTitle")}</span><p className="mt-3 flex items-center gap-2 text-sm text-foreground/85"><ShieldCheck className="h-4 w-4 text-primary" aria-hidden="true" />{t("trustSubtitle")}</p></div>
-              <nav aria-label={t("trustTitle")} className="grid gap-2 text-sm text-muted-foreground/65"><Link href="/restituiri" className="transition-colors hover:text-foreground">{t("refunds")}</Link><Link href="/termeni" className="transition-colors hover:text-foreground">{t("terms")}</Link><Link href="/confidentialitate" className="transition-colors hover:text-foreground">{t("privacy")}</Link><Link href="/cookies" className="transition-colors hover:text-foreground">{t("cookies")}</Link><Link href="/contact" className="transition-colors hover:text-foreground">{t("contact")}</Link></nav>
+              <nav aria-label={t("trustTitle")} className="grid gap-2 text-sm text-muted-foreground/65"><Link href={legalHref("/restituiri")} className="transition-colors hover:text-foreground">{t("refunds")}</Link><Link href={legalHref("/termeni")} className="transition-colors hover:text-foreground">{t("terms")}</Link><Link href={legalHref("/confidentialitate")} className="transition-colors hover:text-foreground">{t("privacy")}</Link><Link href={legalHref("/cookies")} className="transition-colors hover:text-foreground">{t("cookies")}</Link><Link href={legalHref("/contact")} className="transition-colors hover:text-foreground">{t("contact")}</Link></nav>
               <div className="flex items-center gap-3 border-t border-primary/10 pt-5" aria-label={t("securePayments")}><CreditCard className="h-4 w-4 text-primary/75" aria-hidden="true" /><span className="text-sm font-semibold tracking-widest text-foreground/80">VISA</span><span className="rounded bg-[#f3f3f4] px-2 py-1 text-[10px] font-bold text-[#17171b]">mastercard</span></div>
               <details className="text-xs text-muted-foreground/50"><summary className="cursor-pointer transition-colors hover:text-foreground">{t("companyDetails")}</summary><div className="mt-2 space-y-1 leading-relaxed"><p>MIHAILIUC GROUP SRL · CUI 49596845</p><p>{t("regComLabel")} J2024003230404</p></div></details>
             </div>
