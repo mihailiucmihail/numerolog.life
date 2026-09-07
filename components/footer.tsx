@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { Instagram, ArrowUpRight, FileText, MapPin, Mail } from "lucide-react"
+import { Instagram, ArrowUpRight, ShieldCheck, CreditCard } from "lucide-react"
 
 export function Footer() {
   const t = useTranslations("footer")
@@ -10,92 +10,37 @@ export function Footer() {
   return (
     <footer className="relative z-10 border-t border-primary/10 pt-20 pb-10 bg-transparent">
       <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="grid gap-12 md:grid-cols-[1.1fr_1fr_1.15fr] md:gap-8">
-          {/* Brand */}
-          <div className="flex flex-col gap-4">
-            <Link href="/" className="font-serif text-2xl tracking-tight text-foreground/90">
-              NUMEROLOG<span className="text-primary">.life</span>
-            </Link>
-            <p className="max-w-xs text-sm leading-relaxed text-muted-foreground/60">
-              {t("tagline")}
-            </p>
-          </div>
-
-          {/* Instagram card */}
-          <div className="flex flex-col gap-3">
-            <span className="text-xs uppercase tracking-widest text-muted-foreground/50">
-              {t("instagramFollow")}
-            </span>
-            <a
-              href="https://instagram.com/mihailiucdaria"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Instagram Mihailiuc Daria, fondatoarea NUMEROLOG"
-              className="group flex items-center gap-4 rounded-2xl glass-card p-4 transition-all duration-300 hover:border-primary/25 hover:shadow-[0_0_40px_-14px_rgba(200,165,80,0.35)]"
-            >
-              <span
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full"
-                style={{ background: "linear-gradient(135deg, #f9ce34 0%, #ee2a7b 55%, #6228d7 100%)" }}
-              >
-                <Instagram className="h-5 w-5 text-white" aria-hidden="true" />
-              </span>
-              <span className="flex-1">
-                <span className="block font-serif text-base text-foreground/90">Mihailiuc Daria</span>
-                <span className="block text-xs text-muted-foreground/60">{t("instagramRole")}</span>
-                <span className="mt-0.5 block text-xs text-primary/70">@mihailiucdaria</span>
-              </span>
-              <ArrowUpRight
-                className="h-4 w-4 shrink-0 text-muted-foreground/40 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
-                aria-hidden="true"
-              />
-            </a>
-          </div>
-
-          {/* Company & contact */}
-          <div className="flex flex-col gap-4">
-            <div>
-              <span className="text-xs uppercase tracking-widest text-muted-foreground/50">{t("company")}</span>
-              <p className="mt-1 font-serif text-base text-foreground/90">MIHAILIUC GROUP SRL</p>
+        <div className="overflow-hidden rounded-[2rem] border border-primary/15 bg-[linear-gradient(145deg,rgba(40,24,62,.72),rgba(13,13,35,.9))] shadow-[0_24px_80px_-40px_rgba(212,175,55,.35)]">
+          <div className="grid gap-0 lg:grid-cols-[1.05fr_1.35fr_1fr]">
+            <div className="flex flex-col justify-between gap-10 border-b border-primary/10 p-7 sm:p-9 lg:border-b-0 lg:border-r">
+              <div className="flex flex-col gap-4">
+                <Link href="/" className="font-serif text-2xl tracking-tight text-foreground/95">NUMEROLOG<span className="text-primary">.life</span></Link>
+                <p className="max-w-xs text-sm leading-relaxed text-muted-foreground/65">{t("tagline")}</p>
+              </div>
+              <p className="max-w-xs text-xs uppercase leading-relaxed tracking-[0.18em] text-primary/65">{t("numerologistHelp")}</p>
             </div>
-            <ul className="flex flex-col gap-2.5 text-sm">
-              <li>
-                <a
-                  href="https://portal.onrc.ro/ONRCPortalWeb/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-start gap-2 text-muted-foreground/60 transition-colors hover:text-foreground"
-                  title={t("verifyRegistry")}
-                >
-                  <FileText className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/60" aria-hidden="true" />
-                  <span>CUI 49596845 · {t("regComLabel")} J2024003230404</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.google.com/maps/search/?api=1&query=Intrarea+Gheorghe+Simionescu+19+Bucuresti"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-start gap-2 text-muted-foreground/60 transition-colors hover:text-foreground"
-                >
-                  <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary/60" aria-hidden="true" />
-                  <span>Intr. Gheorghe Simionescu 19, Sector 1, București</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="mailto:contact@numerolog.life"
-                  className="inline-flex items-center gap-2 text-muted-foreground/60 transition-colors hover:text-foreground"
-                >
-                  <Mail className="h-3.5 w-3.5 shrink-0 text-primary/60" aria-hidden="true" />
-                  contact@numerolog.life
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
 
-        <div className="mt-14 flex flex-col-reverse items-center gap-3 border-t border-primary/10 pt-8 sm:flex-row sm:justify-between">
-          <p className="text-xs text-muted-foreground/50">{t("rights")}</p>
+            <div className="border-b border-primary/10 p-7 sm:p-9 lg:border-b-0 lg:border-r">
+              <span className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground/55">{t("instagramFollow")}</span>
+              <a href="https://instagram.com/mihailiucdaria" target="_blank" rel="noopener noreferrer" aria-label="Instagram Mihailiuc Daria, fondatoarea NUMEROLOG" className="group mt-5 block overflow-hidden rounded-2xl border border-primary/15 bg-background/20 transition-all duration-300 hover:border-primary/40 hover:shadow-[0_0_45px_-18px_rgba(212,175,55,.7)]">
+                <div className="flex items-center gap-4 border-b border-primary/10 p-5">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full ring-2 ring-primary/25 ring-offset-2 ring-offset-[#221536]" style={{ background: "linear-gradient(135deg, #f9ce34 0%, #ee2a7b 55%, #6228d7 100%)" }}><Instagram className="h-5 w-5 text-white" aria-hidden="true" /></span>
+                  <span className="min-w-0 flex-1"><span className="block font-serif text-lg text-foreground/95">Mihailiuc Daria</span><span className="block text-xs text-muted-foreground/60">{t("instagramRole")}</span><span className="mt-1 block text-xs text-primary/80">@mihailiucdaria</span></span>
+                  <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground/45 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden="true" />
+                </div>
+                <div className="grid grid-cols-3 gap-px bg-primary/10"><div className="h-16 bg-[#362046]" /><div className="h-16 bg-[#5a314b]" /><div className="h-16 bg-[#27254a]" /></div>
+                <div className="flex items-center justify-between px-5 py-3 text-xs text-muted-foreground/60"><span>{t("instagramCaption")}</span><span className="text-primary/75">{t("instagramCta")}</span></div>
+              </a>
+            </div>
+
+            <div className="flex flex-col gap-6 p-7 sm:p-9">
+              <div><span className="text-[10px] uppercase tracking-[0.24em] text-muted-foreground/55">{t("trustTitle")}</span><p className="mt-3 flex items-center gap-2 text-sm text-foreground/85"><ShieldCheck className="h-4 w-4 text-primary" aria-hidden="true" />{t("trustSubtitle")}</p></div>
+              <nav aria-label={t("trustTitle")} className="grid gap-2 text-sm text-muted-foreground/65"><Link href="/restituiri" className="transition-colors hover:text-foreground">{t("refunds")}</Link><Link href="/termeni" className="transition-colors hover:text-foreground">{t("terms")}</Link><Link href="/confidentialitate" className="transition-colors hover:text-foreground">{t("privacy")}</Link><Link href="/cookies" className="transition-colors hover:text-foreground">{t("cookies")}</Link><Link href="/contact" className="transition-colors hover:text-foreground">{t("contact")}</Link></nav>
+              <div className="flex items-center gap-3 border-t border-primary/10 pt-5" aria-label={t("securePayments")}><CreditCard className="h-4 w-4 text-primary/75" aria-hidden="true" /><span className="text-sm font-semibold tracking-widest text-foreground/80">VISA</span><span className="rounded bg-[#f3f3f4] px-2 py-1 text-[10px] font-bold text-[#17171b]">mastercard</span></div>
+              <details className="text-xs text-muted-foreground/50"><summary className="cursor-pointer transition-colors hover:text-foreground">{t("companyDetails")}</summary><div className="mt-2 space-y-1 leading-relaxed"><p>MIHAILIUC GROUP SRL · CUI 49596845</p><p>{t("regComLabel")} J2024003230404</p></div></details>
+            </div>
+          </div>
+          <div className="flex flex-col items-center justify-between gap-3 border-t border-primary/10 px-7 py-5 text-xs text-muted-foreground/45 sm:flex-row sm:px-9"><p>{t("rights")}</p><p>{t("securePayments")}</p></div>
         </div>
       </div>
     </footer>
