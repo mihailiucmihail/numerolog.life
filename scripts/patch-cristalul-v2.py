@@ -90,7 +90,7 @@ rep("""  padding:9px 14px;cursor:pointer;transition:all .2s ease;border-radius:1
 _mail_re = re.compile(
     r'      <div class="full">\n        <label>Электронная почта</label>\n        <input id="pMail"[^\n]*\n        <p class="note"[^\n]*\n      </div>\n')
 assert len(_mail_re.findall(s)) == 1, 'blocul email (pMail) al uploadului nu a fost găsit exact o dată'
-s = _mail_re.sub("""      <div class="full" id="emailField" hidden style="display:none;">
+s = _mail_re.sub("""      <div class="full" id="emailField">
         <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(на него придёт постоянная ссылка на твой разбор)</span></label>
         <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="" required>
       </div>
@@ -116,12 +116,53 @@ rep("  try{ localStorage.setItem('crystal_last_email', mailCheck.value); }catch(
     "  try{ if(mailCheck.value) localStorage.setItem('crystal_last_email', mailCheck.value); }catch(e){}\n")
 assert "getElementById('pMail')" not in s, 'a rămas o referință la pMail'
 
+# Formular simplificat: data nașterii apare prima; patronimicul, alfabetul, sexul și nota explicativă
+# rămân în HTML/JS pentru rapoartele existente, dar nu aglomerează etapa inițială.
+_date_label = s.find('<label>Дата рождения</label>')
+assert _date_label >= 0, 'blocul data nașterii nu a fost găsit'
+_date_start = s.rfind('<div class="full">', 0, _date_label)
+_date_end = s.find('<div class="full">', _date_label)
+assert _date_start >= 0 and _date_end > _date_start, 'finalul blocului data nașterii nu a fost găsit'
+_date_block = s[_date_start:_date_end]
+s = s[:_date_start] + s[_date_end:]
+_name_label = s.find('<label>Фамилия')
+_name_marker = s.rfind('<div>', 0, _name_label)
+assert _name_marker >= 0, 'blocul numelui nu a fost găsit pentru reordonare'
+s = s[:_name_marker] + _date_block + s[_name_marker:]
+
+# Emailul vine imediat după numele de familie, înainte de prenume.
+_email_block_re = re.compile(r'<div class="full" id="emailField">.*?</div>\s*', re.S)
+_email_match = _email_block_re.search(s)
+assert _email_match, 'blocul email nu a fost găsit pentru reordonare'
+_email_block = _email_match.group(0)
+s = s[:_email_match.start()] + s[_email_match.end():]
+_first_input_re = re.compile(r'(<input id="firstName"[^\n]*\n\s*</div>)')
+_first_match = _first_input_re.search(s)
+assert _first_match, 'blocul prenumelui nu a fost găsit pentru email'
+s = s[:_first_match.end()] + '\n' + _email_block + s[_first_match.end():]
+
+_middle_re = re.compile(r'<div class="full">\s*<label>Отчество.*?</div>', re.S)
+s, _middle_count = _middle_re.subn(lambda m: m.group(0).replace('<div class="full">', '<div class="full" hidden style="display:none;">', 1), s, count=1)
+assert _middle_count == 1, 'blocul patronimic nu a fost găsit'
+
+_alpha_re = re.compile(r'<div class="full">\s*<label>Алфавит имени.*?</div>', re.S)
+s, _alpha_count = _alpha_re.subn(lambda m: m.group(0).replace('<div class="full">', '<div class="full" hidden style="display:none;">', 1), s, count=1)
+assert _alpha_count == 1, 'blocul alfabetului nu a fost găsit'
+
+_gender_re = re.compile(r'<div class="full">\s*>?\s*<label>Пол</label>.*?</div>\s*</div>', re.S)
+s, _gender_count = _gender_re.subn(lambda m: m.group(0).replace('<div class="full">', '<div class="full" hidden style="display:none;">', 1), s, count=1)
+assert _gender_count == 1, 'blocul sexului nu a fost găsit'
+
+_hint_re = re.compile(r'<div class="hint">Выбери алфавит, соответствующий языку имени.*?</div>', re.S)
+s, _hint_count = _hint_re.subn(lambda m: m.group(0).replace('<div class="hint">', '<div class="hint" hidden style="display:none;">', 1), s, count=1)
+assert _hint_count == 1, 'nota despre alfabet nu a fost găsită'
+
 # 3a. Hero: glow-ul cristalului (top:-40px) ieșea peste marginea de sus a iframe-ului → tăiat brusc („ruptură”).
 #     Dăm hero-ului padding-top ca glow-ul să rămână complet în iframe (React nu mai adaugă padding sus).
 #     Spațiu compact: 16px pe telefon, 28px pe desktop (cristalul aproape de bara de meniu, glow-ul tot în iframe).
 rep(".hero{text-align:center;margin-bottom:36px;position:relative;}",
-    ".hero{text-align:center;margin-bottom:36px;position:relative;padding-top:16px;}\n"
-    "@media (min-width:768px){.hero{padding-top:28px;}}")
+ ".hero{display:none!important;margin:0;padding:0;}\n"
+ ".hero h1[hidden]{display:none!important;}")
 rep(".hero .hero-glow{\n  position:absolute;top:-40px;",
     ".hero .hero-glow{\n  position:absolute;top:0;")
 #     Simbolul „◈” lipsește din fonturile Windows (apare dreptunghi gol) → SVG inline cu aceeași formă.
@@ -133,13 +174,13 @@ rep('<div class="hero-crystal" aria-hidden="true">◈</div>',
 
 # 3b. Textul hero (formular) — copy aprobat de utilizator; antetul React duplicat a fost eliminat.
 rep('<h1><span class="hero-lead">Твой</span><span class="hero-caps">Кристалл Судьбы</span></h1>',
-    '<h1><span class="hero-lead">Открой свой</span><span class="hero-caps">Кристалл Судьбы</span></h1>')
+    '<h1 hidden aria-hidden="true"><span class="hero-lead">Открой свой</span><span class="hero-caps">Кристалл Судьбы</span></h1>')
 rep('<p>Твоё имя и дата рождения хранят ответы о характере, судьбе и жизненном пути — '
     '<span class="hero-highlight">узнай, что скрыто именно в тебе</span>.</p>',
-    '<div class="hero-video" aria-label="Видео о персональном разборе">\n'
+    '<div class="hero-video" aria-label="Видео о персональном разборе" hidden>\n'
     '      <div class="hero-video-frame">\n'
     '        <video class="hero-video-media" controls muted loop playsinline preload="none" '
-    'poster="/videos/cristalul-premium-poster.jpg" data-src="/videos/cristalul-premium.mp4">\n'
+    'data-src="/videos/cristalul-premium.mp4">\n'
     '          Твой браузер не поддерживает воспроизведение видео.\n'
     '        </video>\n'
     '        <button class="hero-video-sound" type="button" aria-label="Включить звук видео">Включить звук</button>\n'
@@ -147,8 +188,42 @@ rep('<p>Твоё имя и дата рождения хранят ответы �
     '      </div>\n'
     '      <p class="hero-video-caption">Заполни данные ниже — и Кристалл рассчитается для тебя.</p>\n'
     '    </div>')
+rep('<div class="card" id="inputFormCard">',
+    '<div class="card" id="inputFormCard">\n'
+    '    <div class="numerology-intro" aria-labelledby="numerology-intro-title">\n'
+    '      <div class="numerology-orbit numerology-orbit-one" aria-hidden="true"></div>\n'
+    '      <div class="numerology-orbit numerology-orbit-two" aria-hidden="true"></div>\n'
+    '      <div class="numerology-crystal" aria-hidden="true"><span>22</span></div>\n'
+    '      <div class="numerology-numbers" aria-hidden="true"><span>3</span><span>7</span><span>11</span><span>17</span><span>22</span></div>\n'
+    '      <div class="numerology-copy">\n'
+    '        <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>\n'
+    '        <h2 id="numerology-intro-title">Введи свои данные</h2>\n'
+    '        <p>Введите данные — и получите персональный разбор, созданный именно для вас.</p>\n'
+    '      </div>\n'
+    '    </div>\n', 1)
 rep('</head>', """<style>
-.hero-video{max-width:540px;margin:26px auto 0;text-align:left;}
+.card#inputFormCard{position:relative;overflow:hidden;border-radius:18px;padding:0 22px 22px;background:radial-gradient(circle at 50% 8%,rgba(212,175,55,.12),transparent 26%),radial-gradient(circle at 15% 70%,rgba(116,62,112,.18),transparent 34%),linear-gradient(145deg,rgba(12,10,30,.96),rgba(35,18,51,.92));box-shadow:0 20px 55px rgba(2,3,15,.34),inset 0 1px rgba(255,255,255,.08);}.card#inputFormCard>.section-title{position:relative;z-index:4;margin-top:20px;}.card#inputFormCard>form,.card#inputFormCard>div:not(.numerology-intro){position:relative;z-index:3;}.numerology-intro{position:relative;isolation:isolate;max-width:none;min-height:250px;margin:0 -22px 8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:0;border-bottom:1px solid rgba(212,175,55,.28);border-radius:18px 18px 0 0;background:transparent;box-shadow:none;}}
+.numerology-copy{position:relative;z-index:3;width:min(90%,530px);padding:28px 22px;text-align:center;animation:numerologyReveal .9s cubic-bezier(.2,.8,.2,1) both;}
+.numerology-kicker{display:block;margin-bottom:8px;color:rgba(212,175,55,.76);font:600 10px/1.4 Arial,sans-serif;letter-spacing:.28em;}
+.numerology-copy h2{margin:0;color:#f5edd6;font:500 clamp(24px,4vw,42px)/1.1 Georgia,serif;letter-spacing:.02em;text-shadow:0 0 24px rgba(212,175,55,.22);}
+.numerology-copy p{max-width:470px;margin:14px auto 0;color:rgba(245,237,214,.78);font:400 clamp(14px,1.8vw,17px)/1.55 Arial,sans-serif;letter-spacing:.01em;}
+.numerology-crystal{position:absolute;z-index:2;width:76px;height:76px;display:grid;place-items:center;border:1px solid rgba(239,202,105,.8);transform:rotate(45deg);box-shadow:0 0 22px rgba(212,175,55,.4),inset 0 0 24px rgba(212,175,55,.18);animation:numerologyPulse 3.4s ease-in-out infinite;}
+.numerology-crystal:before{content:"";position:absolute;inset:11px;border:1px solid rgba(239,202,105,.55);}
+.numerology-crystal span{transform:rotate(-45deg);color:#f3cf70;font:600 15px Arial,sans-serif;letter-spacing:.08em;text-shadow:0 0 12px rgba(239,202,105,.8);}
+.numerology-orbit{position:absolute;border:1px solid rgba(212,175,55,.24);border-radius:50%;pointer-events:none;}
+.numerology-orbit-one{width:290px;height:150px;animation:numerologyOrbit 14s linear infinite;}
+.numerology-orbit-two{width:500px;height:220px;transform:rotate(-18deg);border-color:rgba(143,117,190,.2);animation:numerologyOrbitReverse 20s linear infinite;}
+.numerology-numbers{position:absolute;inset:0;z-index:1;color:rgba(239,202,105,.5);font:500 12px Arial,sans-serif;}
+.numerology-numbers span{position:absolute;animation:numerologyFloat 4s ease-in-out infinite;}
+.numerology-numbers span:nth-child(1){top:22%;left:16%;}.numerology-numbers span:nth-child(2){top:67%;left:24%;animation-delay:-1s}.numerology-numbers span:nth-child(3){top:20%;right:18%;animation-delay:-2s}.numerology-numbers span:nth-child(4){bottom:17%;right:25%;animation-delay:-3s}.numerology-numbers span:nth-child(5){top:48%;right:9%;color:rgba(239,202,105,.8);}
+@keyframes numerologyReveal{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes numerologyPulse{0%,100%{opacity:.72;box-shadow:0 0 18px rgba(212,175,55,.25),inset 0 0 20px rgba(212,175,55,.12)}50%{opacity:1;box-shadow:0 0 34px rgba(212,175,55,.62),inset 0 0 28px rgba(212,175,55,.26)}}
+@keyframes numerologyOrbit{to{transform:rotate(360deg)}}
+@keyframes numerologyOrbitReverse{to{transform:rotate(-378deg)}}
+@keyframes numerologyFloat{0%,100%{transform:translateY(0);opacity:.42}50%{transform:translateY(-8px);opacity:.92}}
+@media (prefers-reduced-motion:reduce){.numerology-intro *{animation:none!important}.numerology-copy{opacity:1;transform:none;}}
+@media (max-width:600px){.numerology-intro{min-height:190px;margin-top:4px;border-radius:14px;}.numerology-copy{padding:24px 16px}.numerology-kicker{font-size:9px;letter-spacing:.2em}.numerology-crystal{width:62px;height:62px}.numerology-orbit-one{width:230px;height:120px}.numerology-orbit-two{width:360px;height:180px}.numerology-numbers span:nth-child(1){left:8%}.numerology-numbers span:nth-child(3){right:8%}}
+.hero-video{display:none!important;max-width:540px;margin:26px auto 0;text-align:left;}
 .hero-video-frame{position:relative;overflow:hidden;border:1px solid rgba(212,175,55,.42);border-radius:14px;background:#080b18;box-shadow:0 18px 50px rgba(3,7,18,.45),0 0 0 5px rgba(212,175,55,.045);}
 .hero-video-media{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;object-position:center;background:#080b18;}
 .hero-video-sound{position:absolute;z-index:2;right:12px;bottom:12px;border:1px solid rgba(212,175,55,.55);border-radius:999px;padding:8px 12px;background:rgba(8,11,24,.82);color:#f5edd6;font-size:12px;cursor:pointer;backdrop-filter:blur(8px);}.hero-video-sound.is-on{opacity:0;pointer-events:none;}.hero-video-sheen{position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.08),transparent 28%,transparent 72%,rgba(212,175,55,.06));mix-blend-mode:screen;}
@@ -160,7 +235,7 @@ rep('</body>', '''<script>
 (function(){
   const video=document.querySelector('.hero-video-media');
   const sound=document.querySelector('.hero-video-sound');
-  if(!video||!sound)return;
+  if(!video||!sound||video.hidden)return;
   // Sursa video se atașează abia după `load`, ca fișierul să nu concureze cu HTML-ul (baza de date a raportului).
   let started=false;
   const start=()=>{
@@ -216,7 +291,7 @@ rep("Сравнение Карта Рождения ↔ Карта Имени (�
 _src_re = re.compile(r'\n?<p class="foot">Источник:.*?</p>', re.S)
 s = _src_re.sub('', s)
 visible = '\n'.join(l for l in s.split('\n') if not l.lstrip().startswith('//') and not l.lstrip().startswith('/*'))
-for bad in ('Источник:', 'Материал эзотерический', 'метод Айрэн По', 'Айрэн По и Джули По'):
+for bad in ('Источник:', 'Материал эзотерический', 'метод А��рэн По', 'Айрэн По и Джули По'):
     assert bad not in visible, f'mențiune de sursă vizibilă rămasă: {bad}'
 
 # Verificări finale -----------------------------------------------------------------------------
