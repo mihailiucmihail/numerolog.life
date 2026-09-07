@@ -1,47 +1,6 @@
 import { Footer } from "@/components/footer"
 import { Navbar } from "@/components/navbar"
 import { StarField } from "@/components/star-field"
-
 export const dynamic = "force-dynamic"
-
-export const metadata = {
-  title: "Politica de rambursare | NUMEROLOG.life",
-  description: "Condițiile și procedura de rambursare pentru serviciile NUMEROLOG.life.",
-}
-
-export default function RestituiriPage() {
-  return (
-    <main className="relative min-h-screen bg-background">
-      <StarField />
-      <Navbar />
-      <article className="relative z-10 mx-auto max-w-3xl px-6 pb-20 pt-32 sm:px-8">
-        <p className="mb-4 text-xs uppercase tracking-[0.28em] text-primary">NUMEROLOG.life</p>
-        <h1 className="mb-8 font-serif text-4xl font-medium text-gradient sm:text-5xl">Politica de rambursare</h1>
-        <div className="space-y-8 text-sm leading-7 text-muted-foreground/80">
-          <p>Ultima actualizare: septembrie 2026</p>
-          <section className="space-y-3">
-            <h2 className="font-serif text-2xl text-foreground/90">Dreptul de retragere</h2>
-            <p>În conformitate cu OUG nr. 34/2014, consumatorul are dreptul de a se retrage din contract în termen de 14 zile, cu excepția cazului în care executarea serviciului digital a început, cu acordul expres al consumatorului, înainte de expirarea acestui termen.</p>
-          </section>
-          <section className="space-y-3">
-            <h2 className="font-serif text-2xl text-foreground/90">Servicii digitale personalizate</h2>
-            <p>Rapoartele numerologice sunt servicii digitale personalizate, generate pentru datele introduse de client. După confirmarea plății și începerea generării raportului, anularea sau rambursarea nu mai este posibilă, dacă utilizatorul și-a dat acordul expres pentru începerea furnizării imediate.</p>
-          </section>
-          <section className="space-y-3">
-            <h2 className="font-serif text-2xl text-foreground/90">Când se aprobă rambursarea</h2>
-            <p>Analizăm solicitările pentru plăți duplicate, tranzacții neautorizate, erori tehnice care au împiedicat livrarea raportului sau situații în care serviciul nu a fost început. Rambursarea aprobată se efectuează prin metoda inițială de plată, în termenul procesatorului de plăți.</p>
-          </section>
-          <section className="space-y-3">
-            <h2 className="font-serif text-2xl text-foreground/90">Cum soliciți rambursarea</h2>
-            <p>Trimite o solicitare la <a className="text-primary hover:underline" href="mailto:contact@numerolog.life">contact@numerolog.life</a>, cu numele, adresa de email folosită la comandă, data plății și motivul solicitării. Nu trimite date complete de card. Vom confirma primirea și vom analiza cererea în cel mai scurt timp.</p>
-          </section>
-          <section className="space-y-3">
-            <h2 className="font-serif text-2xl text-foreground/90">Contact</h2>
-            <p>MIHAILIUC GROUP SRL, CUI 49596845, București. Pentru întrebări despre această politică, scrie-ne la adresa de mai sus.</p>
-          </section>
-        </div>
-      </article>
-      <Footer />
-    </main>
-  )
-}
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) { const { locale } = await params; return locale === "ru" ? { title: "Политика возврата средств | NUMEROLOG.life", description: "Условия и порядок возврата средств NUMEROLOG.life" } : { title: "Politica de rambursare | NUMEROLOG.life", description: "Condițiile și procedura de rambursare pentru serviciile NUMEROLOG.life." } }
+export default async function RestituiriPage({ params }: { params: Promise<{ locale: string }> }) { const { locale } = await params; const ru = locale === "ru"; const sections = ru ? [["Право на отказ", "В соответствии с законодательством Европейского союза и Румынии потребитель имеет право отказаться от договора в течение 14 дней, кроме случаев, когда оказание цифровой услуги началось с его прямого согласия до истечения этого срока."], ["Персонализированные цифровые услуги", "Нумерологические отчёты являются персонализированными цифровыми услугами, созданными на основе данных клиента. После подтверждения оплаты и начала формирования отчёта возврат невозможен, если клиент прямо согласился на немедленное начало оказания услуги и был проинформирован о прекращении права на отказ."], ["Когда возможен возврат", "Мы рассматриваем запросы о дублирующихся платежах, несанкционированных транзакциях, технических ошибках, помешавших доставке отчёта, а также случаях, когда услуга не была начата. Одобренный возврат производится первоначальным способом оплаты в сроки платёжного провайдера."], ["Как запросить возврат", "Напишите на contact@numerolog.life, указав имя, адрес электронной почты заказа, дату платежа и причину запроса. Не отправляйте полный номер карты. Мы подтвердим получение и рассмотрим запрос."], ["Контакты", "MIHAILIUC GROUP SRL, CUI 49596845, Бухарест. По вопросам политики: contact@numerolog.life"]] : [["Dreptul de retragere", "În conformitate cu legislația aplicabilă a Uniunii Europene și a României, consumatorul are dreptul de a se retrage în termen de 14 zile, cu excepția cazului în care serviciul digital a început cu acordul expres al consumatorului înainte de expirarea termenului."], ["Servicii digitale personalizate", "Rapoartele numerologice sunt servicii digitale personalizate, generate pe baza datelor clientului. După confirmarea plății și începerea generării, rambursarea nu mai este posibilă dacă utilizatorul a solicitat expres furnizarea imediată și a fost informat despre pierderea dreptului de retragere."], ["Când se aprobă rambursarea", "Analizăm plățile duplicate, tranzacțiile neautorizate, erorile tehnice care au împiedicat livrarea raportului și situațiile în care serviciul nu a început. Rambursarea aprobată se efectuează prin metoda inițială de plată."], ["Cum soliciți rambursarea", "Trimite o solicitare la contact@numerolog.life, cu numele, adresa de email folosită la comandă, data plății și motivul. Nu trimite date complete de card."], ["Contact", "MIHAILIUC GROUP SRL, CUI 49596845, București. Contact: contact@numerolog.life"]]; return <main className="relative min-h-screen bg-background"><StarField/><Navbar/><article className="relative z-10 mx-auto max-w-3xl px-6 pb-20 pt-32 sm:px-8"><p className="mb-4 text-xs uppercase tracking-[0.28em] text-primary">NUMEROLOG.life</p><h1 className="mb-8 font-serif text-4xl font-medium text-gradient sm:text-5xl">{ru ? "Политика возврата средств" : "Politica de rambursare"}</h1><div className="space-y-8 text-sm leading-7 text-muted-foreground/80"><p>{ru ? "Последнее обновление: сентябрь 2026" : "Ultima actualizare: septembrie 2026"}</p>{sections.map(([title,body])=><section className="space-y-3" key={title}><h2 className="font-serif text-2xl text-foreground/90">{title}</h2><p>{body}</p></section>)}</div></article><Footer/></main> }
