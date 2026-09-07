@@ -136,7 +136,18 @@ rep('<h1><span class="hero-lead">Твой</span><span class="hero-caps">Крис
     '<h1><span class="hero-lead">Открой свой</span><span class="hero-caps">Кристалл Судьбы</span></h1>')
 rep('<p>Твоё имя и дата рождения хранят ответы о характере, судьбе и жизненном пути — '
     '<span class="hero-highlight">узнай, что скрыто именно в тебе</span>.</p>',
-    '<div class="hero-video" aria-label="Видео о персональном разборе">\n'
+    '<div class="numerology-intro" aria-labelledby="numerology-intro-title">\n'
+    '      <div class="numerology-orbit numerology-orbit-one" aria-hidden="true"></div>\n'
+    '      <div class="numerology-orbit numerology-orbit-two" aria-hidden="true"></div>\n'
+    '      <div class="numerology-crystal" aria-hidden="true"><span>22</span></div>\n'
+    '      <div class="numerology-numbers" aria-hidden="true"><span>3</span><span>7</span><span>11</span><span>17</span><span>22</span></div>\n'
+    '      <div class="numerology-copy">\n'
+    '        <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>\n'
+    '        <h2 id="numerology-intro-title">Введи свои данные</h2>\n'
+    '        <p>Введите данные — и получите персональный разбор, созданный именно для вас.</p>\n'
+    '      </div>\n'
+    '    </div>\n'
+    '    <div class="hero-video" aria-label="Видео о персональном разборе">\n'
     '      <div class="hero-video-frame">\n'
     '        <video class="hero-video-media" controls muted loop playsinline preload="none" '
     'poster="/videos/cristalul-premium-poster.jpg" data-src="/videos/cristalul-premium.mp4">\n'
@@ -148,6 +159,27 @@ rep('<p>Твоё имя и дата рождения хранят ответы �
     '      <p class="hero-video-caption">Заполни данные ниже — и Кристалл рассчитается для тебя.</p>\n'
     '    </div>')
 rep('</head>', """<style>
+.numerology-intro{position:relative;isolation:isolate;max-width:760px;min-height:210px;margin:10px auto 8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(212,175,55,.22);border-radius:18px;background:radial-gradient(circle at center,rgba(212,175,55,.12),transparent 40%),linear-gradient(135deg,rgba(12,10,30,.92),rgba(35,18,51,.78));box-shadow:0 20px 55px rgba(2,3,15,.34),inset 0 1px rgba(255,255,255,.08);}
+.numerology-copy{position:relative;z-index:3;width:min(90%,530px);padding:28px 22px;text-align:center;animation:numerologyReveal .9s cubic-bezier(.2,.8,.2,1) both;}
+.numerology-kicker{display:block;margin-bottom:8px;color:rgba(212,175,55,.76);font:600 10px/1.4 Arial,sans-serif;letter-spacing:.28em;}
+.numerology-copy h2{margin:0;color:#f5edd6;font:500 clamp(24px,4vw,42px)/1.1 Georgia,serif;letter-spacing:.02em;text-shadow:0 0 24px rgba(212,175,55,.22);}
+.numerology-copy p{max-width:470px;margin:14px auto 0;color:rgba(245,237,214,.78);font:400 clamp(14px,1.8vw,17px)/1.55 Arial,sans-serif;letter-spacing:.01em;}
+.numerology-crystal{position:absolute;z-index:2;width:76px;height:76px;display:grid;place-items:center;border:1px solid rgba(239,202,105,.8);transform:rotate(45deg);box-shadow:0 0 22px rgba(212,175,55,.4),inset 0 0 24px rgba(212,175,55,.18);animation:numerologyPulse 3.4s ease-in-out infinite;}
+.numerology-crystal:before{content:"";position:absolute;inset:11px;border:1px solid rgba(239,202,105,.55);}
+.numerology-crystal span{transform:rotate(-45deg);color:#f3cf70;font:600 15px Arial,sans-serif;letter-spacing:.08em;text-shadow:0 0 12px rgba(239,202,105,.8);}
+.numerology-orbit{position:absolute;border:1px solid rgba(212,175,55,.24);border-radius:50%;pointer-events:none;}
+.numerology-orbit-one{width:290px;height:150px;animation:numerologyOrbit 14s linear infinite;}
+.numerology-orbit-two{width:500px;height:220px;transform:rotate(-18deg);border-color:rgba(143,117,190,.2);animation:numerologyOrbitReverse 20s linear infinite;}
+.numerology-numbers{position:absolute;inset:0;z-index:1;color:rgba(239,202,105,.5);font:500 12px Arial,sans-serif;}
+.numerology-numbers span{position:absolute;animation:numerologyFloat 4s ease-in-out infinite;}
+.numerology-numbers span:nth-child(1){top:22%;left:16%;}.numerology-numbers span:nth-child(2){top:67%;left:24%;animation-delay:-1s}.numerology-numbers span:nth-child(3){top:20%;right:18%;animation-delay:-2s}.numerology-numbers span:nth-child(4){bottom:17%;right:25%;animation-delay:-3s}.numerology-numbers span:nth-child(5){top:48%;right:9%;color:rgba(239,202,105,.8);}
+@keyframes numerologyReveal{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes numerologyPulse{0%,100%{opacity:.72;box-shadow:0 0 18px rgba(212,175,55,.25),inset 0 0 20px rgba(212,175,55,.12)}50%{opacity:1;box-shadow:0 0 34px rgba(212,175,55,.62),inset 0 0 28px rgba(212,175,55,.26)}}
+@keyframes numerologyOrbit{to{transform:rotate(360deg)}}
+@keyframes numerologyOrbitReverse{to{transform:rotate(-378deg)}}
+@keyframes numerologyFloat{0%,100%{transform:translateY(0);opacity:.42}50%{transform:translateY(-8px);opacity:.92}}
+@media (prefers-reduced-motion:reduce){.numerology-intro *{animation:none!important}.numerology-copy{opacity:1;transform:none;}}
+@media (max-width:600px){.numerology-intro{min-height:190px;margin-top:4px;border-radius:14px;}.numerology-copy{padding:24px 16px}.numerology-kicker{font-size:9px;letter-spacing:.2em}.numerology-crystal{width:62px;height:62px}.numerology-orbit-one{width:230px;height:120px}.numerology-orbit-two{width:360px;height:180px}.numerology-numbers span:nth-child(1){left:8%}.numerology-numbers span:nth-child(3){right:8%}}
 .hero-video{max-width:540px;margin:26px auto 0;text-align:left;}
 .hero-video-frame{position:relative;overflow:hidden;border:1px solid rgba(212,175,55,.42);border-radius:14px;background:#080b18;box-shadow:0 18px 50px rgba(3,7,18,.45),0 0 0 5px rgba(212,175,55,.045);}
 .hero-video-media{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;object-position:center;background:#080b18;}
@@ -216,7 +248,7 @@ rep("Сравнение Карта Рождения ↔ Карта Имени (�
 _src_re = re.compile(r'\n?<p class="foot">Источник:.*?</p>', re.S)
 s = _src_re.sub('', s)
 visible = '\n'.join(l for l in s.split('\n') if not l.lstrip().startswith('//') and not l.lstrip().startswith('/*'))
-for bad in ('Источник:', 'Материал эзотерический', 'метод Айрэн По', 'Айрэн По и Джули По'):
+for bad in ('Источник:', 'Материал эзотерический', 'метод А��рэн По', 'Айрэн По и Джули По'):
     assert bad not in visible, f'mențiune de sursă vizibilă rămasă: {bad}'
 
 # Verificări finale -----------------------------------------------------------------------------
