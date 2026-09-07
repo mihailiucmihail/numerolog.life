@@ -301,8 +301,12 @@ rep('.hero p .hero-highlight{color:var(--brass-bright);font-weight:600;}',
     '.hero p.hero-question{margin-top:16px;font-size:clamp(16px,1.2vw,18px);}')
 
 # 4. Butonul principal -> plată ------------------------------------------------------------
+rep('<input id="lastName" type="text" placeholder="ex: Иванов" autocomplete="off" value="">',
+    '<input id="lastName" type="text" placeholder="ex: Петрова" autocomplete="off" value="">')
+rep('<input id="firstName" type="text" placeholder="ex: Михаил" autocomplete="off" value="">',
+    '<input id="firstName" type="text" placeholder="ex: Анна" autocomplete="off" value="">')
 rep('<button class="btn" onclick="calculate()">Рассчитать Кристалл</button>',
-    '<button id="mainCalcBtn" class="btn" onclick="cdMainAction()">ПОЛУЧИТЬ МОЙ РАЗБОР</button>')
+    '<button id="mainCalcBtn" class="btn cd-main-cta" onclick="cdMainAction()">ПОЛУЧИТЬ ОТЧЁТ</button>')
 assert 'onclick="calculate()"' not in s, 'a rămas un buton care sare peste plată'
 
 # 4a. Înălțimea iframe-ului, raportată IMEDIAT după formular. Bridge-ul de la finalul fișierului o
