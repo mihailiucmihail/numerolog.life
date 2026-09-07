@@ -1,0 +1,233 @@
+/* ==== Cristalul Destinului - strat de design premium pentru raport (injectat de patch-cristalul-v2.py) ==== */
+/* Scop: doar cardurile din #results. Formularul (#inputFormCard) NU este atins. */
+
+#results{
+  --cdp-gold:#d9a94f;
+  --cdp-gold-soft:rgba(217,169,79,.55);
+  --cdp-gold-line:rgba(217,169,79,.22);
+  --cdp-gold-glow:rgba(217,169,79,.16);
+  --cdp-ink:#ede3cf;
+  --cdp-ink-dim:#cbbfa6;
+  --cdp-plum:rgba(40,24,62,.72);
+  --cdp-navy:rgba(13,13,35,.9);
+  --cdp-serif:'Cormorant Garamond','EB Garamond',Georgia,serif;
+  --cdp-body:'EB Garamond','Cormorant Garamond',Georgia,serif;
+  --cdp-sans:'Inter',system-ui,sans-serif;
+  counter-reset:cdp-section;
+}
+
+/* ---- Cardul: aceeasi geometrie ca footerul si formularul ---- */
+#results .card{
+  position:relative;
+  border:1px solid var(--cdp-gold-line);
+  border-radius:2rem;
+  padding:clamp(28px,3.4vw,48px) clamp(22px,3.6vw,54px) clamp(30px,3.4vw,50px);
+  margin-bottom:28px;
+  background:
+    radial-gradient(120% 90% at 100% 0%,rgba(217,169,79,.07),transparent 46%),
+    linear-gradient(145deg,var(--cdp-plum),var(--cdp-navy));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.05),
+    inset 0 0 0 1px rgba(255,255,255,.015),
+    0 30px 80px -50px rgba(0,0,0,.9);
+  transition:border-color .5s ease,box-shadow .5s ease;
+}
+#results .card::before{
+  content:"";
+  position:absolute;left:8%;right:8%;top:-1px;height:1px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--cdp-gold-soft),transparent);
+  opacity:.9;
+}
+#results .card:hover{border-color:rgba(217,169,79,.34);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 60px -30px var(--cdp-gold-glow),0 30px 80px -50px rgba(0,0,0,.9);}
+
+/* ---- Cardul de identitate (nume, data) ---- */
+#results #personalDataSummary{
+  text-align:center;
+  padding-top:clamp(34px,4vw,56px);
+  padding-bottom:clamp(34px,4vw,56px);
+  background:
+    radial-gradient(60% 120% at 50% 0%,rgba(217,169,79,.12),transparent 60%),
+    linear-gradient(145deg,var(--cdp-plum),var(--cdp-navy));
+}
+#results #personalDataSummary .section-title{display:none;}
+#results #personalDataSummary div,#results #personalDataSummary span,#results #personalDataSummary b{font-family:var(--cdp-serif);}
+#results #personalDataSummary [style*="font-size:22px"],
+#results #personalDataSummary [style*="font-size:24px"],
+#results #personalDataSummary [style*="font-size:26px"]{
+  font-size:clamp(30px,3.4vw,44px)!important;font-weight:500;letter-spacing:.01em;color:var(--cdp-ink)!important;line-height:1.1;
+}
+#results #personalDataSummary .hint{font-family:var(--cdp-sans);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--cdp-gold);opacity:.85;}
+
+/* ---- Titlul de sectiune: eyebrow numerotat + display serif ---- */
+#results .card .section-title{
+  counter-increment:cdp-section;
+  display:block;
+  margin:0 0 22px;
+  padding-bottom:18px;
+  font-family:var(--cdp-serif);
+  font-size:clamp(26px,2.4vw,36px);
+  font-weight:500;
+  letter-spacing:-.005em;
+  line-height:1.08;
+  text-transform:none;
+  color:var(--cdp-ink);
+  position:relative;
+}
+#results .card .section-title::before{
+  content:"Раздел " counter(cdp-section,upper-roman);
+  display:block;
+  margin-bottom:10px;
+  font-family:var(--cdp-sans);
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:var(--cdp-gold);
+}
+#results .card .section-title::after{
+  content:"";
+  position:absolute;left:0;bottom:0;height:1px;width:100%;flex:none;min-width:0;
+  background:linear-gradient(90deg,var(--cdp-gold-soft),var(--cdp-gold-line) 40%,transparent);
+}
+#results .card .section-title .arcnum{font-family:var(--cdp-serif);font-size:.72em;color:var(--cdp-gold);margin-left:.35em;font-weight:500;}
+
+/* ---- Corpul textului: serif de lectura, contrast calibrat ---- */
+#results .card,#results .card .hint,#results .card p{
+  font-family:var(--cdp-body);
+  font-size:clamp(16.5px,1.05vw,18.5px);
+  line-height:1.62;
+  color:var(--cdp-ink-dim);
+}
+#results .card .hint{margin-top:10px;}
+#results .card p{max-width:none;}
+/* Paragrafe narative cu font inline mic (13px / 13.5px / 14px, fara clasa) -> marimea de lectura */
+#results .card div[style*="font-size:13px"]:not([class]),
+#results .card div[style*="font-size:13.5px"]:not([class]),
+#results .card div[style*="font-size:14px"]:not([class]),
+#results .card p[style*="font-size:13px"],
+#results .card p[style*="font-size:13.5px"],
+#results .card p[style*="font-size:14px"]{font-size:clamp(16px,1vw,17.5px)!important;line-height:1.62!important;}
+/* Badge-uri inline in titlul de sectiune */
+#results .card .section-title .opv-badge,
+#results .card .section-title .tag,
+#results .card .section-title .badge,
+#results .card .section-title span[style*="border"]{
+  display:inline-block;vertical-align:middle;margin-left:.6em;position:relative;top:-.15em;
+  font-family:var(--cdp-sans);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;font-weight:600;
+}
+#results .card .hint b,#results .card b{color:var(--cdp-ink);font-weight:600;}
+#results .card i,#results .card em{font-style:italic;color:var(--cdp-ink);}
+
+/* Subtitluri inline aurii (div style="font-weight:600;color:var(--brass-bright)") -> small caps serif */
+#results .card div[style*="font-weight:600"][style*="color:var(--brass-bright)"],
+#results .card div[style*="font-weight:600;color:var(--brass-bright)"],
+#results .card .hint[style*="text-align:left"]{
+  font-family:var(--cdp-serif)!important;
+  font-size:clamp(19px,1.35vw,23px)!important;
+  font-weight:600!important;
+  letter-spacing:.005em;
+  color:var(--cdp-gold)!important;
+  margin-top:28px!important;
+  margin-bottom:8px!important;
+  line-height:1.25;
+}
+
+/* ---- Blocurile de citat (bara stanga inline, orice culoare) -> panouri de sticla ---- */
+#results .card div[style*="border-left:2px solid"],
+#results .card div[style*="border-left:3px solid"],
+#results .card div[style*="border-left:2px solid var(--brass-bright)"]{
+  position:relative;
+  border-left:0!important;
+  border:1px solid rgba(217,169,79,.14)!important;
+  border-radius:1.25rem;
+  padding:22px 26px 22px 30px!important;
+  margin:14px 0 18px;
+  background:linear-gradient(160deg,rgba(217,169,79,.07),rgba(13,13,35,.28))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+  overflow:hidden;
+}
+#results .card div[style*="border-left:2px solid"]::before,
+#results .card div[style*="border-left:3px solid"]::before{
+  content:"";
+  position:absolute;left:0;top:14%;bottom:14%;width:2px;border-radius:2px;
+  background:linear-gradient(180deg,transparent,var(--cdp-gold),transparent);
+}
+/* Blocurile colorate (karma / risc) pastreaza accentul lor prin culoarea titlului; bara ramane aurie discreta */
+#results .card div[style*="border-left:2px solid #"] b,
+#results .card div[style*="border-left:2px solid var(--wine)"] b{font-family:var(--cdp-serif);font-size:1.15em;font-weight:600;}
+#results .card div[style*="border-left:2px solid var(--brass-bright)"] b{
+  font-family:var(--cdp-serif);font-size:1.25em;font-weight:600;color:var(--cdp-gold)!important;letter-spacing:.01em;
+}
+#results .card div[style*="border-left:2px solid var(--brass-bright)"] span[style*="font-size:12.5px"]{
+  font-family:var(--cdp-sans)!important;font-size:10.5px!important;letter-spacing:.2em;text-transform:uppercase;color:var(--cdp-gold)!important;opacity:.75;margin-left:.5em;
+}
+
+/* Separatoare interne (border-top pe div inline) */
+#results .card div[style*="border-top:2px solid var(--brass-bright)"],
+#results .card div[style*="border-top:1px solid"]{
+  border-top:1px solid var(--cdp-gold-line)!important;
+  margin-top:32px!important;padding-top:26px!important;
+}
+#results .card hr{border:0;height:1px;margin:28px 0;background:linear-gradient(90deg,transparent,var(--cdp-gold-line),transparent);}
+
+/* ---- Medalioane / numere-cheie ---- */
+#results .card .medallion-row{display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(14px,2vw,28px);margin:6px 0 10px;}
+#results .card .medallion{
+  border-radius:1.25rem;
+  padding:18px 16px 16px;
+  border:1px solid rgba(217,169,79,.4);
+  background:radial-gradient(circle at 50% 30%,rgba(217,169,79,.16),rgba(13,13,35,.6) 70%);
+  box-shadow:0 0 0 6px rgba(217,169,79,.05),0 0 40px -12px var(--cdp-gold-glow),inset 0 1px 0 rgba(255,255,255,.08);
+}
+#results .card .medallion .num,#results .card .num{font-family:var(--cdp-serif);font-weight:500;color:var(--cdp-gold);text-shadow:0 0 18px rgba(217,169,79,.35);}
+#results .card .medallion .label,#results .card .label{font-family:var(--cdp-sans);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--cdp-ink-dim);}
+
+/* Arcanele numelui */
+#results .card .namearc-list{display:grid;gap:18px;margin-top:8px;}
+#results .card .namearc-item{
+  display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:start;
+  padding:20px 22px;border-radius:1.25rem;
+  border:1px solid rgba(217,169,79,.12);
+  background:linear-gradient(160deg,rgba(217,169,79,.05),rgba(13,13,35,.25));
+}
+#results .card .namearc-item .ring{
+  width:64px;height:64px;border-radius:50%;
+  border:1px solid rgba(217,169,79,.55);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--cdp-serif);font-size:26px;font-weight:500;color:var(--cdp-gold);
+  background:radial-gradient(circle at 50% 30%,rgba(217,169,79,.18),rgba(13,13,35,.7) 72%);
+  box-shadow:0 0 0 5px rgba(217,169,79,.05),0 0 30px -10px var(--cdp-gold-glow);
+}
+#results .card .namearc-text .chan,#results .card .chan{font-family:var(--cdp-sans);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--cdp-gold);opacity:.85;}
+
+/* Grila Pitagora */
+#results .card .pyth-grid{gap:6px;}
+#results .card .pyth-cell{
+  border:1px solid rgba(217,169,79,.18);border-radius:.9rem;
+  background:linear-gradient(160deg,rgba(217,169,79,.05),rgba(13,13,35,.3));
+  font-family:var(--cdp-serif);color:var(--cdp-ink);
+}
+#results .card .pyth-cell.opornaya{border-color:rgba(217,169,79,.55);box-shadow:0 0 28px -10px var(--cdp-gold-glow);}
+#results .card .pyth-cell.empty{opacity:.45;}
+
+/* Tab-uri grafice */
+#results .card .chart-tab{
+  font-family:var(--cdp-sans);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  border:1px solid rgba(217,169,79,.18);border-radius:999px;padding:9px 16px;color:var(--cdp-ink-dim);background:rgba(13,13,35,.35);
+}
+#results .card .chart-tab.active,#results .card .chart-tab[aria-selected="true"]{color:var(--cdp-ink);border-color:rgba(217,169,79,.55);background:rgba(217,169,79,.1);}
+
+/* Badge-uri de stare */
+#results .card .opv-badge,#results .card .status{font-family:var(--cdp-sans);letter-spacing:.14em;text-transform:uppercase;font-size:10.5px;border-radius:999px;}
+
+/* Badge-ul de deblocare din preview - aliniat cu restul */
+#results .cd-unlock{font-family:var(--cdp-sans);letter-spacing:.14em;text-transform:uppercase;border-radius:999px;}
+
+/* ---- Mobil ---- */
+@media (max-width:600px){
+  #results .card{border-radius:1.5rem;padding:24px 18px 26px;margin-bottom:18px;}
+  #results .card .section-title{font-size:24px;}
+  #results .card,#results .card .hint,#results .card p{font-size:16px;line-height:1.58;}
+  #results .card div[style*="border-left:2px solid var(--brass-bright)"]{padding:18px 18px 18px 22px!important;border-radius:1rem;}
+  #results .card .namearc-item{grid-template-columns:1fr;gap:12px;padding:16px;}
+}
