@@ -653,6 +653,33 @@ select option{color:#1a1420;background:#fff;}
 /* ==== Cristalul Destinului - strat de design premium pentru raport (injectat de patch-cristalul-v2.py) ==== */
 /* Scop: doar cardurile din #results. Formularul (#inputFormCard) NU este atins. */
 
+/* Butonul principal al formularului: vizibil, premium și animat discret. */
+#mainCalcBtn.cd-main-cta{
+  position:relative;isolation:isolate;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+  width:100%;min-height:64px;padding:18px 28px;
+  border:1px solid rgba(247,211,126,.78);border-radius:18px;
+  color:#fff8e8;background:linear-gradient(110deg,#9b6928,#d9a94f 42%,#f1cf7a 58%,#a76f2d);
+  background-size:220% 100%;
+  font-family:var(--cdp-sans);font-size:clamp(14px,1vw,16px);font-weight:800;letter-spacing:.16em;
+  text-shadow:0 1px 2px rgba(28,15,12,.55);
+  box-shadow:0 12px 30px rgba(217,169,79,.26),inset 0 1px 0 rgba(255,255,255,.48);
+  animation:cdCtaShimmer 3.8s ease-in-out infinite,cdCtaFloat 2.8s ease-in-out infinite;
+  transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
+}
+#mainCalcBtn.cd-main-cta::before{
+  content:"";position:absolute;inset:0;z-index:-1;transform:translateX(-120%);
+  background:linear-gradient(105deg,transparent 25%,rgba(255,255,255,.5) 50%,transparent 75%);
+  animation:cdCtaSweep 3.8s ease-in-out infinite;
+}
+#mainCalcBtn.cd-main-cta:hover{transform:translateY(-3px) scale(1.01);filter:saturate(1.08);box-shadow:0 18px 38px rgba(217,169,79,.38),inset 0 1px 0 rgba(255,255,255,.58);}
+#mainCalcBtn.cd-main-cta:active{transform:translateY(1px) scale(.985);}
+#mainCalcBtn.cd-main-cta:disabled{animation:none;opacity:.72;cursor:wait;}
+@keyframes cdCtaShimmer{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+@keyframes cdCtaSweep{0%,45%{transform:translateX(-120%);}70%,100%{transform:translateX(120%);}}
+@keyframes cdCtaFloat{0%,100%{box-shadow:0 12px 30px rgba(217,169,79,.24),inset 0 1px 0 rgba(255,255,255,.48);}50%{box-shadow:0 16px 36px rgba(217,169,79,.38),inset 0 1px 0 rgba(255,255,255,.58);}}
+@media (prefers-reduced-motion:reduce){#mainCalcBtn.cd-main-cta,#mainCalcBtn.cd-main-cta::before{animation:none;}}
+
 #results{
   --cdp-gold:#d9a94f;
   --cdp-gold-soft:rgba(217,169,79,.55);
@@ -938,11 +965,11 @@ select option{color:#1a1420;background:#fff;}
       </div>
       <div>
         <label>Имя</label>
-        <input id="firstName" type="text" placeholder="ex: Михаил" autocomplete="off" value="">
+        <input id="firstName" type="text" placeholder="ex: Анна" autocomplete="off" value="">
       </div>
 <div>
         <label>Фамилия <span style="opacity:.5;text-transform:none;letter-spacing:0;">(для замужних женщин — рекомендуем девичью фамилию)</span></label>
-        <input id="lastName" type="text" placeholder="ex: Иванов" autocomplete="off" value="">
+        <input id="lastName" type="text" placeholder="ex: Морозова" autocomplete="off" value="">
       </div>
 <div class="full" id="emailField" hidden style="display:none;">
         <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(на него придёт постоянная ссылка на твой разбор)</span></label>
@@ -997,7 +1024,7 @@ select option{color:#1a1420;background:#fff;}
         </select>
       </div>
     </div>
-    <button id="mainCalcBtn" class="btn" onclick="cdMainAction()">ПОЛУЧИТЬ МОЙ РАЗБОР</button>
+    <button id="mainCalcBtn" class="btn cd-main-cta" onclick="cdMainAction()">ПОЛУЧИТЬ ОТЧЁТ</button>
     <script>
       document.addEventListener('DOMContentLoaded', function(){
         paintGender();
@@ -6567,11 +6594,11 @@ function startPdfExport(){
         }
         calculate();
         const btn = document.getElementById('mainCalcBtn');
-        if(btn){ btn.disabled = false; btn.textContent = 'Рассчитать Кристалл'; }
+        if(btn){ btn.disabled = false; btn.textContent = 'ПОЛУЧИТЬ ОТЧЁТ'; }
       }
       if(event.data.type === 'paymentCancelled'){
         const btn = document.getElementById('mainCalcBtn');
-        if(btn){ btn.disabled = false; btn.textContent = 'Рассчитать Кристалл'; }
+        if(btn){ btn.disabled = false; btn.textContent = 'ПОЛУЧИТЬ ОТЧЁТ'; }
       }
       if(event.data.type === 'requestHeight'){
         __cdSendHeight();
