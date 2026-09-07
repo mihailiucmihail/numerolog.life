@@ -8,7 +8,7 @@ export function Footer() {
   const t = useTranslations("footer")
 
   return (
-    <footer className="relative z-10 border-t border-primary/10 pt-20 pb-10 bg-transparent">
+    <footer className="relative z-10 border-t border-primary/10 pt-8 pb-10 bg-transparent">
       <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="overflow-hidden rounded-[2rem] border border-primary/15 bg-[linear-gradient(145deg,rgba(40,24,62,.72),rgba(13,13,35,.9))] shadow-[0_24px_80px_-40px_rgba(212,175,55,.35)]">
           <div className="grid gap-0 lg:grid-cols-[1.05fr_1.35fr_1fr]">
