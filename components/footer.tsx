@@ -18,7 +18,6 @@ export function Footer() {
                 <Link href="/" className="font-serif text-2xl tracking-tight text-foreground/95">NUMEROLOG<span className="text-primary">.life</span></Link>
                 <p className="max-w-xs text-sm leading-relaxed text-muted-foreground/65">{t("tagline")}</p>
               </div>
-              <p className="max-w-xs text-xs uppercase leading-relaxed tracking-[0.18em] text-primary/65">{t("numerologistHelp")}</p>
             </div>
 
             <div className="border-b border-primary/10 p-7 sm:p-9 lg:border-b-0 lg:border-r">
