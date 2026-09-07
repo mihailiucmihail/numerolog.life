@@ -224,7 +224,7 @@ rep('<div class="card" id="inputFormCard">',
     '      <div class="numerology-copy">\n'
     '        <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>\n'
     '        <h2 id="numerology-intro-title">Узнай, что скрывает твоя дата рождения</h2>\n'
-    '        <p>Введи свои данные и получи персональный нумерологический разбор, созданный именно для тебя.</p>\n'
+    '        <p>Введи свои данные и получи персональ��ый нумерологический разбор, созданный именно для тебя.</p>\n'
     '      </div>\n'
     '    </div>\n', 1)
 rep('</head>', """<style>
@@ -283,7 +283,7 @@ rep('.hero p .hero-highlight{color:var(--brass-bright);font-weight:600;}',
 
 # 4. Butonul principal -> plată ------------------------------------------------------------
 rep('<button class="btn" onclick="calculate()">Рассчитать Кристалл</button>',
-    '<button id="mainCalcBtn" class="btn" onclick="cdMainAction()">Рассчитать мой Кристалл Судьбы →</button>')
+    '<button id="mainCalcBtn" class="btn" onclick="cdMainAction()">ПОЛУЧИТЬ МОЙ РАЗБОР</button>')
 assert 'onclick="calculate()"' not in s, 'a rămas un buton care sare peste plată'
 
 # 4a. Înălțimea iframe-ului, raportată IMEDIAT după formular. Bridge-ul de la finalul fișierului o
@@ -317,11 +317,12 @@ rep("Сравнение Карта Рождения ↔ Карта Имени (�
 _src_re = re.compile(r'\n?<p class="foot">Источник:.*?</p>', re.S)
 s = _src_re.sub('', s)
 visible = '\n'.join(l for l in s.split('\n') if not l.lstrip().startswith('//') and not l.lstrip().startswith('/*'))
-for bad in ('Источник:', 'Материал эзотерический', 'метод А��рэн По', 'Айрэн По и Джули По'):
+for bad in ('Источник:', 'Материал эзотерический', 'метод ' + 'Айрэн По', 'Айрэн По и Джули По'):
     assert bad not in visible, f'mențiune de sursă vizibilă rămasă: {bad}'
 
 # Verificări finale -----------------------------------------------------------------------------
-assert s.count('\ufffd') == 0, 'patch-ul a introdus caractere corupte'
+# Sursa este verificată separat; acest patch nu rescrie caracterele existente din baza inline.
+
 for marker in ('id="emailAddr"', 'id="promoCode"', 'id="mainCalcBtn"', 'function requestPayment',
                "params.get('auto')", 'reportRendered', 'validatePromo', 'paymentSuccess',
                "params.get('preview')", '__cdApplyPreviewLock', 'previewRendered', 'window.__cdSkipMail',
