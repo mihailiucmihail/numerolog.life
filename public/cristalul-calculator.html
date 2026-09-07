@@ -630,7 +630,7 @@ select option{color:#1a1420;background:#fff;}
 @keyframes numerologyFloat{0%,100%{transform:translateY(0);opacity:.42}50%{transform:translateY(-8px);opacity:.92}}
 @media (prefers-reduced-motion:reduce){.numerology-intro *{animation:none!important}.numerology-copy{opacity:1;transform:none;}}
 @media (max-width:600px){.numerology-intro{min-height:190px;margin-top:4px;border-radius:14px;}.numerology-copy{padding:24px 16px}.numerology-kicker{font-size:9px;letter-spacing:.2em}.numerology-crystal{width:62px;height:62px}.numerology-orbit-one{width:230px;height:120px}.numerology-orbit-two{width:360px;height:180px}.numerology-numbers span:nth-child(1){left:8%}.numerology-numbers span:nth-child(3){right:8%}}
-.hero-video{max-width:540px;margin:26px auto 0;text-align:left;}
+.hero-video{display:none!important;max-width:540px;margin:26px auto 0;text-align:left;}
 .hero-video-frame{position:relative;overflow:hidden;border:1px solid rgba(212,175,55,.42);border-radius:14px;background:#080b18;box-shadow:0 18px 50px rgba(3,7,18,.45),0 0 0 5px rgba(212,175,55,.045);}
 .hero-video-media{display:block;width:100%;aspect-ratio:3/4;object-fit:cover;object-position:center;background:#080b18;}
 .hero-video-sound{position:absolute;z-index:2;right:12px;bottom:12px;border:1px solid rgba(212,175,55,.55);border-radius:999px;padding:8px 12px;background:rgba(8,11,24,.82);color:#f5edd6;font-size:12px;cursor:pointer;backdrop-filter:blur(8px);}.hero-video-sound.is-on{opacity:0;pointer-events:none;}.hero-video-sheen{position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,rgba(255,255,255,.08),transparent 28%,transparent 72%,rgba(212,175,55,.06));mix-blend-mode:screen;}
@@ -658,9 +658,9 @@ select option{color:#1a1420;background:#fff;}
         <p>Введите данные — и получите персональный разбор, созданный именно для вас.</p>
       </div>
     </div>
-    <div class="hero-video" aria-label="Видео о персональном разборе">
+    <div class="hero-video" aria-label="Видео о персональном разборе" hidden>
       <div class="hero-video-frame">
-        <video class="hero-video-media" controls muted loop playsinline preload="none" poster="/videos/cristalul-premium-poster.jpg" data-src="/videos/cristalul-premium.mp4">
+        <video class="hero-video-media" controls muted loop playsinline preload="none" data-src="/videos/cristalul-premium.mp4">
           Твой браузер не поддерживает воспроизведение видео.
         </video>
         <button class="hero-video-sound" type="button" aria-label="Включить звук видео">Включить звук</button>
@@ -6127,7 +6127,7 @@ function startPdfExport(){
 (function(){
   const video=document.querySelector('.hero-video-media');
   const sound=document.querySelector('.hero-video-sound');
-  if(!video||!sound)return;
+  if(!video||!sound||video.hidden)return;
   // Sursa video se atașează abia după `load`, ca fișierul să nu concureze cu HTML-ul (baza de date a raportului).
   let started=false;
   const start=()=>{
