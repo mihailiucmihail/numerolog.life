@@ -31,6 +31,8 @@ BRIDGE = ROOT / 'scripts/cristalul-bridge-snippet.html'
 PREVIEW = ROOT / 'scripts/cristalul-preview-lock-snippet.html'
 
 s = SRC.read_text(encoding='utf-8')
+# Unele uploaduri au primit accidental prefixul `> ` la începutul liniilor; îl eliminăm înainte de orice inserare.
+s = re.sub(r'(?m)^(\s*)> ', r'\1', s)
 assert s.count('\ufffd') == 0, 'uploadul conține deja caractere corupte (U+FFFD)'
 
 
@@ -59,7 +61,7 @@ rep(".wrap{max-width:920px;margin:0 auto;position:relative;z-index:1;}",
     ".wrap{width:100%;max-width:none;margin:0;position:relative;z-index:1;}")
 rep("""  background-color:#1c1529;
   background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), #1c1529;
-""", "  background-color:transparent;\n  background:transparent;\n")
+""", "  background-color:transparent;\n  background:linear-gradient(145deg,rgba(40,24,62,.72),rgba(13,13,35,.9));\n")
 
 # 1b. body{min-height:100vh} în iframe = înălțimea iframe-ului → buclă infinită de resize. Eliminăm.
 rep("  min-height:100vh;\n  padding: 0 6px 80px;", "  min-height:0;\n  padding: 0 6px 80px;")
@@ -256,7 +258,7 @@ rep('</head>', """<style>
 .hero-video-caption{margin:12px 4px 0!important;color:rgba(245,237,214,.68);font-size:13px!important;letter-spacing:.04em;}
 .hero-video-caption span{color:var(--brass-bright);font-weight:600;}
 @media (max-width:600px){.hero-video{width:min(78vw,330px);margin:18px auto 0;}.hero-video-frame{border-radius:10px;}.hero-video-caption{font-size:12px!important;line-height:1.4;}}
-  #inputFormCard{max-width:920px;margin:28px auto 0;padding:0 28px 28px!important;background:linear-gradient(160deg,rgba(16,12,34,.98),rgba(32,17,47,.96))!important;border:1px solid rgba(212,175,55,.42);}
+  #inputFormCard{max-width:920px;margin:28px auto 0;padding:0 28px 28px!important;background:linear-gradient(145deg,rgba(40,24,62,.72),rgba(13,13,35,.9))!important;border:1px solid rgba(212,175,55,.42);}
   #inputFormCard input{min-height:58px;border:1px solid rgba(212,175,55,.34);border-radius:8px;background:rgba(7,6,22,.42);color:#f5edd6;padding:0 16px;font:400 16px/1.4 Arial,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);transition:border-color .2s,box-shadow .2s,background .2s;}
   #inputFormCard input::placeholder{color:rgba(245,237,214,.38);}#inputFormCard input:focus{outline:none;border-color:rgba(239,202,105,.9);background:rgba(12,8,30,.72);box-shadow:0 0 0 3px rgba(212,175,55,.12),0 0 28px rgba(212,175,55,.12);}
   #inputFormCard label{display:block;margin:22px 0 9px;color:rgba(239,202,105,.86);font:600 11px/1.3 Arial,sans-serif;letter-spacing:.2em;text-transform:uppercase;}
@@ -313,9 +315,9 @@ rep("  const r = computeAll(last, first, middle, day, month, year, nameAlphabetK
     "  window.__cdLastResult = r;\n")
 
 # 5. Bridge-ul de integrare, înainte de </body> ------------------------------------------------
-bridge = BRIDGE.read_text(encoding='utf-8')
+bridge = re.sub(r'(?m)^(\s*)> ', r'\1', BRIDGE.read_text(encoding='utf-8'))
 assert 'requestPayment' in bridge and 'reportRendered' in bridge
-preview = PREVIEW.read_text(encoding='utf-8')
+preview = re.sub(r'(?m)^(\s*)> ', r'\1', PREVIEW.read_text(encoding='utf-8'))
 assert '__cdApplyPreviewLock' in preview and "params.get('preview')" in preview
 rep('</body>', bridge.rstrip('\n') + '\n' + preview.rstrip('\n') + '\n</body>')
 
