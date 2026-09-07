@@ -654,10 +654,12 @@ select option{color:#1a1420;background:#fff;}
 /* Scop: doar cardurile din #results. Formularul (#inputFormCard) NU este atins. */
 
 /* Butonul principal al formularului: vizibil, premium și animat discret. */
+.cd-main-cta-note{margin:8px auto 0;text-align:center;color:rgba(245,237,214,.58);font:400 12px/1.4 var(--cdp-sans);letter-spacing:.04em;}
+
 #mainCalcBtn.cd-main-cta{
   position:relative;isolation:isolate;overflow:hidden;
   display:flex;align-items:center;justify-content:center;
-  width:100%;min-height:64px;padding:18px 28px;
+  width:min(100%, 420px);min-height:54px;padding:14px 22px;margin-inline:auto;
   border:1px solid rgba(247,211,126,.78);border-radius:18px;
   color:#fff8e8;background:linear-gradient(110deg,#9b6928,#d9a94f 42%,#f1cf7a 58%,#a76f2d);
   background-size:220% 100%;
@@ -1024,7 +1026,8 @@ select option{color:#1a1420;background:#fff;}
         </select>
       </div>
     </div>
-    <button id="mainCalcBtn" class="btn cd-main-cta" onclick="cdMainAction()">ПОЛУЧИТЬ ОТЧЁТ</button>
+    <button id="mainCalcBtn" class="btn cd-main-cta" onclick="cdMainAction()">УЗНАТЬ СВОЙ РЕЗУЛЬТАТ</button>
+      <p class="cd-main-cta-note">Расчёт займёт меньше минуты</p>
     <script>
       document.addEventListener('DOMContentLoaded', function(){
         paintGender();
@@ -6594,11 +6597,11 @@ function startPdfExport(){
         }
         calculate();
         const btn = document.getElementById('mainCalcBtn');
-        if(btn){ btn.disabled = false; btn.textContent = 'ПОЛУЧИТЬ ОТЧЁТ'; }
+        if(btn){ btn.disabled = false; btn.textContent = 'УЗНАТЬ СВОЙ РЕЗУЛЬТАТ'; }
       }
       if(event.data.type === 'paymentCancelled'){
         const btn = document.getElementById('mainCalcBtn');
-        if(btn){ btn.disabled = false; btn.textContent = 'ПОЛУЧИТЬ ОТЧЁТ'; }
+        if(btn){ btn.disabled = false; btn.textContent = 'УЗНАТЬ СВОЙ РЕЗУЛЬТАТ'; }
       }
       if(event.data.type === 'requestHeight'){
         __cdSendHeight();

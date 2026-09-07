@@ -306,7 +306,8 @@ rep('<input id="lastName" type="text" placeholder="ex: Иванов" autocomplet
 rep('<input id="firstName" type="text" placeholder="ex: Михаил" autocomplete="off" value="">',
     '<input id="firstName" type="text" placeholder="ex: Анна" autocomplete="off" value="">')
 rep('<button class="btn" onclick="calculate()">Рассчитать Кристалл</button>',
-    '<button id="mainCalcBtn" class="btn cd-main-cta" onclick="cdMainAction()">ПОЛУЧИТЬ ОТЧЁТ</button>')
+    '<button id="mainCalcBtn" class="btn cd-main-cta" onclick="cdMainAction()">УЗНАТЬ СВОЙ РЕЗУЛЬТАТ</button>\n'
+    '      <p class="cd-main-cta-note">Расчёт займёт меньше минуты</p>')
 assert 'onclick="calculate()"' not in s, 'a rămas un buton care sare peste plată'
 
 # 4a. Înălțimea iframe-ului, raportată IMEDIAT după formular. Bridge-ul de la finalul fișierului o
