@@ -120,8 +120,9 @@ assert "getElementById('pMail')" not in s, 'a rămas o referință la pMail'
 #     Dăm hero-ului padding-top ca glow-ul să rămână complet în iframe (React nu mai adaugă padding sus).
 #     Spațiu compact: 16px pe telefon, 28px pe desktop (cristalul aproape de bara de meniu, glow-ul tot în iframe).
 rep(".hero{text-align:center;margin-bottom:36px;position:relative;}",
-    ".hero{text-align:center;margin-bottom:36px;position:relative;padding-top:16px;}\n"
-    "@media (min-width:768px){.hero{padding-top:28px;}}")
+    ".hero{text-align:center;margin-bottom:36px;position:relative;padding-top:0;}\n"
+    ".hero h1[hidden]{display:none!important;}\n"
+    "@media (min-width:768px){.hero{padding-top:0;}}")
 rep(".hero .hero-glow{\n  position:absolute;top:-40px;",
     ".hero .hero-glow{\n  position:absolute;top:0;")
 #     Simbolul „◈” lipsește din fonturile Windows (apare dreptunghi gol) → SVG inline cu aceeași formă.
@@ -133,7 +134,7 @@ rep('<div class="hero-crystal" aria-hidden="true">◈</div>',
 
 # 3b. Textul hero (formular) — copy aprobat de utilizator; antetul React duplicat a fost eliminat.
 rep('<h1><span class="hero-lead">Твой</span><span class="hero-caps">Кристалл Судьбы</span></h1>',
-    '<h1><span class="hero-lead">Открой свой</span><span class="hero-caps">Кристалл Судьбы</span></h1>')
+    '<h1 hidden aria-hidden="true"><span class="hero-lead">Открой свой</span><span class="hero-caps">Кристалл Судьбы</span></h1>')
 rep('<p>Твоё имя и дата рождения хранят ответы о характере, судьбе и жизненном пути — '
     '<span class="hero-highlight">узнай, что скрыто именно в тебе</span>.</p>',
     '<div class="numerology-intro" aria-labelledby="numerology-intro-title">\n'
