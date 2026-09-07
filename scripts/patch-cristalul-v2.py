@@ -61,7 +61,7 @@ rep(".wrap{max-width:920px;margin:0 auto;position:relative;z-index:1;}",
     ".wrap{width:100%;max-width:none;margin:0;position:relative;z-index:1;}")
 rep("""  background-color:#1c1529;
   background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), #1c1529;
-""", "  background-color:transparent;\n  background:transparent;\n")
+""", "  background-color:transparent;\n  background:linear-gradient(145deg,rgba(40,24,62,.72),rgba(13,13,35,.9));\n")
 
 # 1b. body{min-height:100vh} în iframe = înălțimea iframe-ului → buclă infinită de resize. Eliminăm.
 rep("  min-height:100vh;\n  padding: 0 6px 80px;", "  min-height:0;\n  padding: 0 6px 80px;")
