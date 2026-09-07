@@ -224,7 +224,7 @@ rep('<div class="card" id="inputFormCard">',
     '      <div class="numerology-copy">\n'
     '        <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>\n'
     '        <h2 id="numerology-intro-title">Узнай, что скрывает твоя дата рождения</h2>\n'
-    '        <p>Введи свои данные и получи персональ����ый нумерологический разбор, созданный именно для тебя.</p>\n'
+    '        <p>Введи свои данные и получи персональ������ый нумерологический разбор, созданный именно для тебя.</p>\n'
     '      </div>\n'
     '    </div>\n', 1)
 rep('</head>', """<style>
@@ -256,14 +256,14 @@ rep('</head>', """<style>
 .hero-video-caption{margin:12px 4px 0!important;color:rgba(245,237,214,.68);font-size:13px!important;letter-spacing:.04em;}
 .hero-video-caption span{color:var(--brass-bright);font-weight:600;}
 @media (max-width:600px){.hero-video{width:min(78vw,330px);margin:18px auto 0;}.hero-video-frame{border-radius:10px;}.hero-video-caption{font-size:12px!important;line-height:1.4;}}
-  #inputFormCard{max-width:920px;margin-inline:auto;padding:0 28px 28px!important;background:linear-gradient(160deg,rgba(16,12,34,.98),rgba(32,17,47,.96))!important;border:1px solid rgba(212,175,55,.42);}
+  #inputFormCard{max-width:920px;margin:28px auto 0;padding:0 28px 28px!important;background:linear-gradient(160deg,rgba(16,12,34,.98),rgba(32,17,47,.96))!important;border:1px solid rgba(212,175,55,.42);}
   #inputFormCard input{min-height:58px;border:1px solid rgba(212,175,55,.34);border-radius:8px;background:rgba(7,6,22,.42);color:#f5edd6;padding:0 16px;font:400 16px/1.4 Arial,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);transition:border-color .2s,box-shadow .2s,background .2s;}
   #inputFormCard input::placeholder{color:rgba(245,237,214,.38);}#inputFormCard input:focus{outline:none;border-color:rgba(239,202,105,.9);background:rgba(12,8,30,.72);box-shadow:0 0 0 3px rgba(212,175,55,.12),0 0 28px rgba(212,175,55,.12);}
   #inputFormCard label{display:block;margin:22px 0 9px;color:rgba(239,202,105,.86);font:600 11px/1.3 Arial,sans-serif;letter-spacing:.2em;text-transform:uppercase;}
   #inputFormCard .numerology-intro{min-height:330px;margin-inline:-28px;padding-inline:20px;border-bottom:1px solid rgba(212,175,55,.4);background:radial-gradient(ellipse at 50% 55%,rgba(212,175,55,.12),transparent 38%),linear-gradient(145deg,rgba(17,13,39,.7),rgba(45,20,57,.46));}
   #inputFormCard .numerology-copy{width:min(100%,680px);padding:48px 12px;text-align:left;}#inputFormCard .numerology-copy h2{max-width:680px;font-size:clamp(30px,6vw,54px);line-height:1.02;}#inputFormCard .numerology-copy p{max-width:560px;margin-top:20px;font-size:16px;line-height:1.6;}#inputFormCard .numerology-kicker{margin-bottom:16px;}
   #inputFormCard .btn,#inputFormCard button{min-height:58px;border:1px solid rgba(255,226,145,.5);border-radius:7px;background:linear-gradient(135deg,#d4af37,#b98227);color:#171020;box-shadow:0 12px 28px rgba(212,175,55,.18);font:600 13px/1 Arial,sans-serif;letter-spacing:.22em;text-transform:uppercase;transition:transform .2s,box-shadow .2s,filter .2s;}#inputFormCard .btn:hover,#inputFormCard button:hover{filter:brightness(1.08);box-shadow:0 16px 34px rgba(212,175,55,.28);}#inputFormCard .btn:active,#inputFormCard button:active{transform:translateY(1px);}
-  @media (max-width:600px){#inputFormCard{padding:0 16px 18px!important;border-radius:18px;}#inputFormCard .numerology-intro{min-height:330px;margin-inline:-16px;padding-inline:18px;}#inputFormCard .numerology-copy{padding:38px 2px;text-align:left;}#inputFormCard .numerology-copy h2{font-size:clamp(31px,9vw,43px);line-height:1.04;}#inputFormCard .numerology-copy p{font-size:15px;line-height:1.55;}#inputFormCard input{min-height:56px;font-size:16px;}#inputFormCard label{margin-top:20px;font-size:10px;letter-spacing:.16em;}#inputFormCard .btn,#inputFormCard button{width:100%;min-height:60px;font-size:12px;letter-spacing:.16em;}}
+  @media (max-width:600px){#inputFormCard{margin-top:18px;padding:0 16px 18px!important;border-radius:18px;}#inputFormCard .numerology-intro{min-height:330px;margin-inline:-16px;padding-inline:18px;}#inputFormCard .numerology-copy{padding:38px 2px;text-align:left;}#inputFormCard .numerology-copy h2{font-size:clamp(31px,9vw,43px);line-height:1.04;}#inputFormCard .numerology-copy p{font-size:15px;line-height:1.55;}#inputFormCard input{min-height:56px;font-size:16px;}#inputFormCard label{margin-top:20px;font-size:10px;letter-spacing:.16em;}#inputFormCard .btn,#inputFormCard button{width:100%;min-height:60px;font-size:12px;letter-spacing:.16em;}}
   </style></head>""", 1)
 rep('</body>', '''<script>
 (function(){
