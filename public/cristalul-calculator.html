@@ -6169,9 +6169,27 @@ function startPdfExport(){
       window.parent.postMessage({ type: 'resize', height: __cdContentHeight() }, '*');
     }
 
-    // Alfabetul numelui preselectat după țara vizitatorului (?alpha=xx, decis de aplicație din geolocație).
-    // Se aplică doar formularului gol; utilizatorul poate alege alt alfabet din listă.
-    // Emailul (?email=, din linkul ofertei trimise pe mail) se precompletează în același mod.
+    // Alfabet automat: țara oferă preferința, iar alfabetul scris în nume are prioritate.
+    function __cdAutoAlphabet(){
+      const sel = document.getElementById('nameAlphabetSelect');
+      if(!sel) return;
+      const first = (document.getElementById('firstName')?.value || '').trim();
+      const last = (document.getElementById('lastName')?.value || '').trim();
+      const text = (first + ' ' + last).toUpperCase();
+      const country = (new URLSearchParams(window.location.search).get('country') || '').toUpperCase();
+      const hasCyrillic = /[А-ЯЁӘҒҚҢӨҰҮҺІЇЄҐЎ]/.test(text);
+      let preferred = 'ro';
+      if(country === 'UA' && hasCyrillic) preferred = 'uk';
+      else if(country === 'KZ' && hasCyrillic) preferred = 'kk';
+      else if((country === 'RO' || country === 'MD') && hasCyrillic) preferred = 'ru';
+      else if(country === 'RU' || country === 'BY') preferred = country === 'BY' ? 'be' : 'ru';
+      else if(country === 'KZ') preferred = 'ro';
+      else if(country === 'UA') preferred = 'ro';
+      if(Array.from(sel.options).some(function(o){ return o.value === preferred; })){
+        sel.value = preferred;
+        sel.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }
     (function(){
       const params = new URLSearchParams(window.location.search);
       const alpha = params.get('alpha');
@@ -6185,6 +6203,8 @@ function startPdfExport(){
         }
         const mail = document.getElementById('emailAddr');
         if(mail && email && !mail.value) mail.value = email;
+        ['firstName','lastName'].forEach(function(id){ const field = document.getElementById(id); if(field) field.addEventListener('input', __cdAutoAlphabet); });
+        __cdAutoAlphabet();
       });
     })();
 
@@ -6224,6 +6244,7 @@ function startPdfExport(){
 
     // Bridge pentru checkout-ul Stripe și raportul permanent din aplicația principală.
     function requestPayment(){
+      __cdAutoAlphabet();
       const err = document.getElementById('errMsg');
       const email = (document.getElementById('emailAddr') && document.getElementById('emailAddr').value.trim()) || '';
       const day = Number(document.getElementById('day').value);

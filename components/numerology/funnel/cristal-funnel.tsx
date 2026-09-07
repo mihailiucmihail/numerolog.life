@@ -79,7 +79,7 @@ export default function CristalFunnel() {
   const emailParam = searchParams.get('email') || ''
 
   // Formularul se deschide cu alfabetul numelui preselectat după țara vizitatorului (HTML-ul citește ?alpha=).
-  const formSrc = `${CALCULATOR_SRC}?alpha=${alphabet}${emailParam ? `&email=${encodeURIComponent(emailParam)}` : ''}`
+  const formSrc = `${CALCULATOR_SRC}?alpha=${alphabet}&country=${country || ''}${emailParam ? `&email=${encodeURIComponent(emailParam)}` : ''}`
   const [frameSrc, setFrameSrc] = useState<string>(formSrc)
   // Înălțime de pornire ≥ formular complet (titlu + video 3:4 + câmpuri + buton), ca nimic să nu fie
   // tăiat până sosește prima măsurătoare `resize` din iframe.
