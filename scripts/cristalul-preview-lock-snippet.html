@@ -7,7 +7,7 @@
        în fundal); când aplicaţia trimite `previewReveal`, apare cu un fade lin. */
     body.cd-forming > *{opacity:0 !important;transition:none !important;}
     body > *{transition:opacity .7s ease;}
-    /* Blur PUTERNIC — folosit doar pe grafice (viitorul în bare/rânduri/linii). */
+    /* Blur premium uniform pentru conținutul de după primele 30% din fiecare card. */
     .cd-lock{
       filter:blur(11px) saturate(.7);
       opacity:.5;
@@ -17,7 +17,7 @@
     .cd-lock *{pointer-events:none !important;}
     .cd-preview .cd-lock summary::after{content:"" !important;}
     .cd-preview details.cd-lock[open] .body{max-height:120px;overflow:hidden;}
-    /* Card cu chenar dublu: primele 30 % lizibile; restul 70 % — blur care creşte TREPTAT (fără linie bruscă).
+    /* Fiecare card: primele 30% lizibile; restul de 70% are același blur premium uniform. Fără reguli separate pentru grafice.
        PERFORMANŢĂ: FĂRĂ `backdrop-filter`. Pe 40+ carduri / ~60 000 px de raport, backdrop-filter se
        recompune la FIECARE cadru de derulare (măsurat: 34 ms/cadru vs 16 ms fără) şi pe iOS Safari epuizează
        memoria GPU → pagina e reîncărcată (utilizatorul „e trimis înapoi la formular”). În loc, JS aplică
@@ -25,10 +25,10 @@
        cu intensitate crescătoare (.cd-blur-1 … .cd-blur-4), iar ::after adaugă doar o ceaţă de gradient. */
     .cd-part{position:relative;user-select:none;-webkit-user-select:none;}
     .cd-part > *:not(.section-title):not(.cd-unlock){pointer-events:none;}
-    .cd-preview .cd-blur-1{filter:blur(2px) saturate(.95);}
-    .cd-preview .cd-blur-2{filter:blur(3.5px) saturate(.9);}
-    .cd-preview .cd-blur-3{filter:blur(5px) saturate(.85);}
-    .cd-preview .cd-blur-4{filter:blur(7px) saturate(.8);}
+    .cd-preview .cd-blur-1,
+    .cd-preview .cd-blur-2,
+    .cd-preview .cd-blur-3,
+    .cd-preview .cd-blur-4{filter:blur(8px) saturate(.78);opacity:.48;}
     /* Tab-urile graficelor (Карьера / Личная жизнь / …) rămân interactive şi în preview,
        deasupra straturilor de blur — utilizatorul poate comuta graficele înainte de plată. */
     .cd-preview .cd-part .chart-tabs,
@@ -46,15 +46,7 @@
       top:var(--cd-cut,30%);
       background:linear-gradient(180deg, rgba(22,16,34,0) 0%, rgba(22,16,34,.08) 30%, rgba(22,16,34,.18) 65%, rgba(22,16,34,.26) 100%);
     }
-    /* Graficele ies DEASUPRA stratului moderat: trecutul rămâne clar, viitorul are propria mască puternică. */
-    .cd-preview .cd-part .chart-stage,
-    .cd-preview .cd-part #yearlyCycleChart,
-    .cd-preview .cd-part #qualityOfLifeChart,
-    .cd-preview .cd-part #transitSchedule,
-    .cd-preview .cd-part .meta-timeline,
-    .cd-preview .cd-part .mandala-chart-svg{position:relative;z-index:3;}
-    /* În grafice, „viitorul” = blur puternic (suprascrie stratul moderat). */
-    .cd-preview .cd-part .cd-lock{filter:blur(11px) saturate(.7);opacity:.35;}
+    /* Graficele folosesc exact aceeași regulă de 30% vizibil + 70% blur ca restul raportului. */
     /* CTA pe zona blurată (în locul badge-ului din colţ): text + buton către plată. */
     .cd-unlock{
       position:absolute;left:0;right:0;z-index:4;
@@ -171,7 +163,7 @@
       card.appendChild(wrap);
     }
     // Elemente cu propria mască (grafice: trecut clar / viitor blurat) sau interactive — NU primesc blur de card.
-    const __CD_BLUR_SKIP = '.section-title, .cd-unlock, .chart-tabs, .chart-stage, #yearlyCycleChart, #qualityOfLifeChart, #transitSchedule, .meta-timeline, .mandala-chart-svg, svg, canvas';
+    const __CD_BLUR_SKIP = '.section-title, .cd-unlock, .chart-tabs';
     // Blur progresiv pe ELEMENTE (nu backdrop-filter): tot ce e sub linia de 30 % a cardului devine blurat,
     // din ce în ce mai puternic spre capătul cardului. Elementele care traversează linia (sau sunt foarte
     // înalte) sunt descompuse în copii, ca zona de sus să rămână clară şi straturile GPU să fie mici.
@@ -215,15 +207,7 @@
         card.style.setProperty('--cd-cut', '30%');
         __cdBadge(card);
         __cdBlurBelow(card);
-        // 3) Graficele (deasupra stratului moderat): trecutul clar, viitorul blurat PUTERNIC.
-        card.querySelectorAll('.chart-stage').forEach(__cdMaskFuture);
-        card.querySelectorAll('#yearlyCycleChart, #qualityOfLifeChart').forEach(function(box){
-          const wraps = Array.from(box.querySelectorAll('.yc-bar-wrap'));
-          __cdAfterNow(wraps, function(w){ return !!w.querySelector('.yc-bar.now'); });
-        });
-        __cdAfterNow(Array.from(card.querySelectorAll('.transit-row')), function(r){ return r.classList.contains('active'); });
-        __cdAfterNow(Array.from(card.querySelectorAll('.tl-row')), function(r){ return r.classList.contains('active'); });
-        __cdAfterNow(Array.from(card.querySelectorAll('.age-chip')), function(r){ return r.classList.contains('now'); });
+        // 3) Graficele rămân în aceeași regulă de blur a cardului; nu au mască suplimentară.
       });
 
       // Graficele Destinului se re-randează la schimbarea tab-ului — re-aplicăm masca viitorului.
