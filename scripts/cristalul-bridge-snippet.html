@@ -5,9 +5,10 @@
     function __cdContentHeight(){
       const wrap = document.querySelector('.wrap') || document.body;
       const rect = wrap.getBoundingClientRect();
-      const bottom = rect.bottom + window.scrollY;
+      const visualBottom = rect.bottom + window.scrollY;
+      const contentBottom = wrap.scrollHeight + rect.top + window.scrollY;
       const pad = parseFloat(getComputedStyle(document.body).paddingBottom) || 0;
-      return Math.ceil(bottom + pad + 8);
+      return Math.ceil(Math.max(visualBottom, contentBottom) + pad + 8);
     }
     function __cdSendHeight(){
       window.parent.postMessage({ type: 'resize', height: __cdContentHeight() }, '*');

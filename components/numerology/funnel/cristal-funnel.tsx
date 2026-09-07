@@ -131,7 +131,7 @@ export default function CristalFunnel() {
       if (!d || typeof d !== 'object') return
 
       if ((d.type === 'resize' || d.type === 'reportRendered' || d.type === 'previewRendered') && typeof d.height === 'number') {
-        setFrameHeight(Math.max(420, Math.min(d.height, 5000)))
+        setFrameHeight(Math.max(420, Math.ceil(d.height)))
       }
 
       if (d.type === 'previewStarted') {
@@ -327,7 +327,7 @@ export default function CristalFunnel() {
     const body = frame?.contentDocument?.body
     if (!documentElement || !body) return
     const contentHeight = Math.max(documentElement.scrollHeight, body.scrollHeight, documentElement.offsetHeight, body.offsetHeight)
-    setFrameHeight(Math.max(420, Math.min(contentHeight, 5000)))
+    setFrameHeight(Math.max(420, Math.ceil(contentHeight)))
   }, [])
 
   return (
