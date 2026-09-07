@@ -32,7 +32,7 @@ PREVIEW = ROOT / 'scripts/cristalul-preview-lock-snippet.html'
 
 s = SRC.read_text(encoding='utf-8')
 # Unele uploaduri au primit accidental prefixul `> ` la începutul liniilor; îl eliminăm înainte de orice inserare.
-s = re.sub(r'(?m)^(\s*)> ', r'\1', s)
+s = re.sub(r'(?m)^([ \t]*)> ', r'\1', s)
 assert s.count('\ufffd') == 0, 'uploadul conține deja caractere corupte (U+FFFD)'
 
 
@@ -318,9 +318,9 @@ rep("  const r = computeAll(last, first, middle, day, month, year, nameAlphabetK
     "  window.__cdLastResult = r;\n")
 
 # 5. Bridge-ul de integrare, înainte de </body> ------------------------------------------------
-bridge = re.sub(r'(?m)^(\s*)> ', r'\1', BRIDGE.read_text(encoding='utf-8'))
+bridge = re.sub(r'(?m)^([ \t]*)> ', r'\1', BRIDGE.read_text(encoding='utf-8'))
 assert 'requestPayment' in bridge and 'reportRendered' in bridge
-preview = re.sub(r'(?m)^(\s*)> ', r'\1', PREVIEW.read_text(encoding='utf-8'))
+preview = re.sub(r'(?m)^([ \t]*)> ', r'\1', PREVIEW.read_text(encoding='utf-8'))
 assert '__cdApplyPreviewLock' in preview and "params.get('preview')" in preview
 rep('</body>', bridge.rstrip('\n') + '\n' + preview.rstrip('\n') + '\n</body>')
 
@@ -335,7 +335,7 @@ for bad in ('Источник:', 'Материал эзотерический', 
 
 # Verificări finale -----------------------------------------------------------------------------
 # Elimină prefixele de citare accidentale înainte de scriere: altfel scripturile inline devin invalide.
-s = re.sub(r'(?m)^(\s*)> ', r'\1', s)
+s = re.sub(r'(?m)^([ \t]*)> ', r'\1', s)
 # Sursa este verificată separat; acest patch nu rescrie caracterele existente din baza inline.
 
 for marker in ('id="emailAddr"', 'id="promoCode"', 'id="mainCalcBtn"', 'function requestPayment',
