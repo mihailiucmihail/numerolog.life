@@ -161,9 +161,8 @@ assert _hint_count == 1, 'nota despre alfabet nu a fost găsită'
 #     Dăm hero-ului padding-top ca glow-ul să rămână complet în iframe (React nu mai adaugă padding sus).
 #     Spațiu compact: 16px pe telefon, 28px pe desktop (cristalul aproape de bara de meniu, glow-ul tot în iframe).
 rep(".hero{text-align:center;margin-bottom:36px;position:relative;}",
-    ".hero{text-align:center;margin-bottom:36px;position:relative;padding-top:0;}\n"
-    ".hero h1[hidden]{display:none!important;}\n"
-    "@media (min-width:768px){.hero{padding-top:0;}}")
+ ".hero{display:none!important;margin:0;padding:0;}\n"
+ ".hero h1[hidden]{display:none!important;}")
 rep(".hero .hero-glow{\n  position:absolute;top:-40px;",
     ".hero .hero-glow{\n  position:absolute;top:0;")
 #     Simbolul „◈” lipsește din fonturile Windows (apare dreptunghi gol) → SVG inline cu aceeași formă.
