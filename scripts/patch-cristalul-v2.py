@@ -262,6 +262,7 @@ rep('</head>', """<style>
   #inputFormCard{box-sizing:border-box;display:block;width:100%;max-width:none;margin:0!important;padding:0 28px 28px!important;overflow:hidden;border:1px solid rgba(212,175,55,.15);border-radius:2rem;background:linear-gradient(145deg,rgba(40,24,62,.72),rgba(13,13,35,.9))!important;box-shadow:none;}
   #inputFormCard input{min-height:58px;border:1px solid rgba(212,175,55,.15);border-radius:1rem;background:rgba(13,13,35,.34);color:#f5edd6;padding:0 16px;font:400 16px/1.4 Arial,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.03),0 0 0 1px rgba(212,175,55,.025);transition:border-color .2s,box-shadow .2s,background .2s;}
   #inputFormCard input::placeholder{color:rgba(245,237,214,.38);}#inputFormCard input:focus{outline:none;border-color:rgba(239,202,105,.9);background:rgba(12,8,30,.72);box-shadow:0 0 0 3px rgba(212,175,55,.12),0 0 28px rgba(212,175,55,.12);}
+  #inputFormCard .cd-field-hint{display:inline-block;margin-left:.45rem;color:rgba(245,237,214,.58);font-size:.78em;font-weight:400;letter-spacing:0;text-transform:none;}
   #inputFormCard label{display:block;margin:22px 0 9px;color:rgba(239,202,105,.86);font:600 11px/1.3 Arial,sans-serif;letter-spacing:.2em;text-transform:uppercase;}
   #inputFormCard .numerology-intro{min-height:330px;margin-inline:-28px;padding-inline:20px;border-bottom:1px solid rgba(212,175,55,.1);background:linear-gradient(145deg,rgba(40,24,62,.28),rgba(13,13,35,.3));}
   #inputFormCard .numerology-copy{width:min(100%,680px);padding:48px 12px;text-align:left;}#inputFormCard .numerology-copy h2{max-width:680px;font-size:clamp(30px,6vw,54px);line-height:1.02;}#inputFormCard .numerology-copy p{max-width:560px;margin-top:20px;font-size:16px;line-height:1.6;}#inputFormCard .numerology-kicker{margin-bottom:16px;}
@@ -301,10 +302,12 @@ rep('.hero p .hero-highlight{color:var(--brass-bright);font-weight:600;}',
     '.hero p.hero-question{margin-top:16px;font-size:clamp(16px,1.2vw,18px);}')
 
 # 4. Butonul principal -> plată ------------------------------------------------------------
+rep('<label>Фамилия <span style="opacity:.5;text-transform:none;letter-spacing:0;">(для замужних женщин — рекомендуем девичью фамилию)</span></label>',
+    '<label>Фамилия <span class="cd-field-hint">Если меняли фамилию — укажите девичью</span></label>')
 rep('<input id="lastName" type="text" placeholder="ex: Иванов" autocomplete="off" value="">',
-    '<input id="lastName" type="text" placeholder="ex: Морозова" autocomplete="off" value="">')
+    '<input id="lastName" type="text" placeholder="" autocomplete="off" value="">')
 rep('<input id="firstName" type="text" placeholder="ex: Михаил" autocomplete="off" value="">',
-    '<input id="firstName" type="text" placeholder="ex: Анна" autocomplete="off" value="">')
+    '<input id="firstName" type="text" placeholder="" autocomplete="off" value="">')
 rep('<button class="btn" onclick="calculate()">Рассчитать Кристалл</button>',
     '<button id="mainCalcBtn" class="btn cd-main-cta" onclick="cdMainAction()">УЗНАТЬ СВОЙ РЕЗУЛЬТАТ</button>\n'
     '      <p class="cd-main-cta-note">Расчёт займёт меньше минуты</p>')
