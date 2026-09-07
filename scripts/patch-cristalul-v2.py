@@ -224,7 +224,7 @@ rep('<div class="card" id="inputFormCard">',
     '      <div class="numerology-copy">\n'
     '        <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>\n'
     '        <h2 id="numerology-intro-title">Узнай, что скрывает твоя дата рождения</h2>\n'
-    '        <p>Введи свои данные и получи персональ������ый нумерологический разбор, созданный именно для тебя.</p>\n'
+    '        <p>Введи свои данные и получи персональный нумерологический разбор, созданный именно для тебя.</p>\n'
     '      </div>\n'
     '    </div>\n', 1)
 rep('</head>', """<style>
@@ -263,7 +263,7 @@ rep('</head>', """<style>
   #inputFormCard .numerology-intro{min-height:330px;margin-inline:-28px;padding-inline:20px;border-bottom:1px solid rgba(212,175,55,.4);background:radial-gradient(ellipse at 50% 55%,rgba(212,175,55,.12),transparent 38%),linear-gradient(145deg,rgba(17,13,39,.7),rgba(45,20,57,.46));}
   #inputFormCard .numerology-copy{width:min(100%,680px);padding:48px 12px;text-align:left;}#inputFormCard .numerology-copy h2{max-width:680px;font-size:clamp(30px,6vw,54px);line-height:1.02;}#inputFormCard .numerology-copy p{max-width:560px;margin-top:20px;font-size:16px;line-height:1.6;}#inputFormCard .numerology-kicker{margin-bottom:16px;}
   #inputFormCard .btn,#inputFormCard button{min-height:58px;border:1px solid rgba(255,226,145,.5);border-radius:7px;background:linear-gradient(135deg,#d4af37,#b98227);color:#171020;box-shadow:0 12px 28px rgba(212,175,55,.18);font:600 13px/1 Arial,sans-serif;letter-spacing:.22em;text-transform:uppercase;transition:transform .2s,box-shadow .2s,filter .2s;}#inputFormCard .btn:hover,#inputFormCard button:hover{filter:brightness(1.08);box-shadow:0 16px 34px rgba(212,175,55,.28);}#inputFormCard .btn:active,#inputFormCard button:active{transform:translateY(1px);}
-  @media (max-width:600px){#inputFormCard{margin-top:18px;padding:0 16px 18px!important;border-radius:18px;}#inputFormCard .numerology-intro{min-height:330px;margin-inline:-16px;padding-inline:18px;}#inputFormCard .numerology-copy{padding:38px 2px;text-align:left;}#inputFormCard .numerology-copy h2{font-size:clamp(31px,9vw,43px);line-height:1.04;}#inputFormCard .numerology-copy p{font-size:15px;line-height:1.55;}#inputFormCard input{min-height:56px;font-size:16px;}#inputFormCard label{margin-top:20px;font-size:10px;letter-spacing:.16em;}#inputFormCard .btn,#inputFormCard button{width:100%;min-height:60px;font-size:12px;letter-spacing:.16em;}}
+  @media (max-width:600px){#inputFormCard{margin-top:12px;padding:0 12px 14px!important;border-radius:14px;}#inputFormCard .numerology-intro{min-height:230px;margin-inline:-12px;padding-inline:14px;}#inputFormCard .numerology-copy{padding:24px 4px;text-align:left;}#inputFormCard .numerology-copy h2{font-size:clamp(25px,7.4vw,34px);line-height:1.08;}#inputFormCard .numerology-copy p{margin-top:12px;font-size:14px;line-height:1.45;}#inputFormCard .numerology-kicker{margin-bottom:10px;font-size:8px;}#inputFormCard input{min-height:46px;font-size:16px;padding-inline:12px;}#inputFormCard label{margin-top:14px;margin-bottom:6px;font-size:9px;letter-spacing:.12em;}#inputFormCard .btn,#inputFormCard button{width:100%;min-height:48px;font-size:11px;letter-spacing:.12em;}}
   </style></head>""", 1)
 rep('</body>', '''<script>
 (function(){
