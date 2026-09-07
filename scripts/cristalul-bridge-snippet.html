@@ -1,5 +1,4 @@
-<script
-
+<script>
     // ==== Bridge integrare aplicație principală: resize, plată Stripe, raport permanent ====
     // Înălțimea CONȚINUTULUI, nu a documentului: body are min-height:100vh, iar în iframe 100vh =
     // înălțimea iframe-ului → scrollHeight ar crește la infinit (buclă resize). Măsurăm .wrap.
@@ -14,29 +13,9 @@
       window.parent.postMessage({ type: 'resize', height: __cdContentHeight() }, '*');
     }
 
-    // Alfabet automat: țara oferă preferința, iar alfabetul scris în nume are prioritate.
-    function __cdAutoAlphabet(){
-      const sel = document.getElementById('nameAlphabetSelect');
-      if(!sel) return;
-      const first = (document.getElementById('firstName')?.value || '').trim();
-      const last = (document.getElementById('lastName')?.value || '').trim();
-      const text = (first + ' ' + last).toUpperCase();
-      const country = (new URLSearchParams(window.location.search).get('country') || '').toUpperCase();
-      const hasCyrillic = /[А-ЯЁӘҒҚҢӨҰҮҺІЇЄҐЎ]/.test(text);
-      const hasLatin = /[A-ZĂÂÎȘȚ]/.test(text);
-      let preferred = 'ro';
-      if((country === 'RO' || country === 'MD') && hasLatin && !hasCyrillic) preferred = 'ro';
-      else if(country === 'UA' && hasCyrillic) preferred = 'uk';
-      else if(country === 'KZ' && hasCyrillic) preferred = 'kk';
-      else if((country === 'RO' || country === 'MD') && hasCyrillic) preferred = 'ru';
-      else if(country === 'RU' || country === 'BY') preferred = country === 'BY' ? 'be' : 'ru';
-      else if(country === 'KZ') preferred = 'ro';
-      else if(country === 'UA') preferred = 'ro';
-      if(Array.from(sel.options).some(function(o){ return o.value === preferred; })){
-        sel.value = preferred;
-        sel.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-    }
+    // Alfabetul numelui preselectat după țara vizitatorului (?alpha=xx, decis de aplicație din geolocație).
+    // Se aplică doar formularului gol; utilizatorul poate alege alt alfabet din listă.
+    // Emailul (?email=, din linkul ofertei trimise pe mail) se precompletează în același mod.
     (function(){
       const params = new URLSearchParams(window.location.search);
       const alpha = params.get('alpha');
@@ -50,8 +29,6 @@
         }
         const mail = document.getElementById('emailAddr');
         if(mail && email && !mail.value) mail.value = email;
-        ['firstName','lastName'].forEach(function(id){ const field = document.getElementById(id); if(field) field.addEventListener('input', __cdAutoAlphabet); });
-        __cdAutoAlphabet();
       });
     })();
 
@@ -69,8 +46,7 @@
         year: params.get('year') || '',
       };
       window.addEventListener('DOMContentLoaded', function(){
-        Object.entries(values).forEach(([id, value]) =
- {
+        Object.entries(values).forEach(([id, value]) => {
           const field = document.getElementById(id);
           if(field) field.value = value;
         });
@@ -92,15 +68,12 @@
 
     // Bridge pentru checkout-ul Stripe și raportul permanent din aplicația principală.
     function requestPayment(){
-      __cdAutoAlphabet();
       const err = document.getElementById('errMsg');
       const email = (document.getElementById('emailAddr') && document.getElementById('emailAddr').value.trim()) || '';
       const day = Number(document.getElementById('day').value);
       const month = Number(document.getElementById('month').value);
       const year = Number(document.getElementById('year').value);
-      if(!day || !month || !year || day < 1 || day 
- 31 || month < 1 || month 
- 12 || year < 1900){
+      if(!day || !month || !year || day < 1 || day > 31 || month < 1 || month > 12 || year < 1900){
         err.textContent = 'Введи корректную дату рождения (день, месяц, год).';
         err.style.display = 'block';
         return;
@@ -182,8 +155,7 @@
         window.__paymentUnlocked = true;
         window.__cdSkipMail = true;
         const data = event.data.formData || {};
-        ['lastName','firstName','middleName','day','month','year'].forEach((id) =
- {
+        ['lastName','firstName','middleName','day','month','year'].forEach((id) => {
           if(document.getElementById(id) && data[id] != null) document.getElementById(id).value = data[id];
         });
         if(document.getElementById('emailAddr') && data.email != null) document.getElementById('emailAddr').value = data.email;
@@ -219,4 +191,3 @@
     });
     window.addEventListener('resize', __cdSendHeight);
   </script>
-

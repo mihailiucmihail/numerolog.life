@@ -637,7 +637,7 @@ select option{color:#1a1420;background:#fff;}
 .hero-video-caption{margin:12px 4px 0!important;color:rgba(245,237,214,.68);font-size:13px!important;letter-spacing:.04em;}
 .hero-video-caption span{color:var(--brass-bright);font-weight:600;}
 @media (max-width:600px){.hero-video{width:min(78vw,330px);margin:18px auto 0;}.hero-video-frame{border-radius:10px;}.hero-video-caption{font-size:12px!important;line-height:1.4;}}
-  #inputFormCard{max-width:920px;margin:28px auto 0;padding:0 28px 28px!important;background:linear-gradient(160deg,rgba(16,12,34,.98),rgba(32,17,47,.96))!important;border:1px solid rgba(212,175,55,.42);}
+  #inputFormCard{max-width:920px;margin:28px auto 0;padding:0 28px 28px!important;background:linear-gradient(145deg,rgba(40,24,62,.72),rgba(13,13,35,.9))!important;border:1px solid rgba(212,175,55,.42);}
   #inputFormCard input{min-height:58px;border:1px solid rgba(212,175,55,.34);border-radius:8px;background:rgba(7,6,22,.42);color:#f5edd6;padding:0 16px;font:400 16px/1.4 Arial,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);transition:border-color .2s,box-shadow .2s,background .2s;}
   #inputFormCard input::placeholder{color:rgba(245,237,214,.38);}#inputFormCard input:focus{outline:none;border-color:rgba(239,202,105,.9);background:rgba(12,8,30,.72);box-shadow:0 0 0 3px rgba(212,175,55,.12),0 0 28px rgba(212,175,55,.12);}
   #inputFormCard label{display:block;margin:22px 0 9px;color:rgba(239,202,105,.86);font:600 11px/1.3 Arial,sans-serif;letter-spacing:.2em;text-transform:uppercase;}
@@ -6154,8 +6154,7 @@ function startPdfExport(){
   if(document.readyState==='complete') setTimeout(start,300);
   else window.addEventListener('load',()=>setTimeout(start,300),{once:true});
 })();
-</script><script
-
+</script><script>
     // ==== Bridge integrare aplicație principală: resize, plată Stripe, raport permanent ====
     // Înălțimea CONȚINUTULUI, nu a documentului: body are min-height:100vh, iar în iframe 100vh =
     // înălțimea iframe-ului → scrollHeight ar crește la infinit (buclă resize). Măsurăm .wrap.
@@ -6170,29 +6169,9 @@ function startPdfExport(){
       window.parent.postMessage({ type: 'resize', height: __cdContentHeight() }, '*');
     }
 
-    // Alfabet automat: țara oferă preferința, iar alfabetul scris în nume are prioritate.
-    function __cdAutoAlphabet(){
-      const sel = document.getElementById('nameAlphabetSelect');
-      if(!sel) return;
-      const first = (document.getElementById('firstName')?.value || '').trim();
-      const last = (document.getElementById('lastName')?.value || '').trim();
-      const text = (first + ' ' + last).toUpperCase();
-      const country = (new URLSearchParams(window.location.search).get('country') || '').toUpperCase();
-      const hasCyrillic = /[А-ЯЁӘҒҚҢӨҰҮҺІЇЄҐЎ]/.test(text);
-      const hasLatin = /[A-ZĂÂÎȘȚ]/.test(text);
-      let preferred = 'ro';
-      if((country === 'RO' || country === 'MD') && hasLatin && !hasCyrillic) preferred = 'ro';
-      else if(country === 'UA' && hasCyrillic) preferred = 'uk';
-      else if(country === 'KZ' && hasCyrillic) preferred = 'kk';
-      else if((country === 'RO' || country === 'MD') && hasCyrillic) preferred = 'ru';
-      else if(country === 'RU' || country === 'BY') preferred = country === 'BY' ? 'be' : 'ru';
-      else if(country === 'KZ') preferred = 'ro';
-      else if(country === 'UA') preferred = 'ro';
-      if(Array.from(sel.options).some(function(o){ return o.value === preferred; })){
-        sel.value = preferred;
-        sel.dispatchEvent(new Event('change', { bubbles: true }));
-      }
-    }
+    // Alfabetul numelui preselectat după țara vizitatorului (?alpha=xx, decis de aplicație din geolocație).
+    // Se aplică doar formularului gol; utilizatorul poate alege alt alfabet din listă.
+    // Emailul (?email=, din linkul ofertei trimise pe mail) se precompletează în același mod.
     (function(){
       const params = new URLSearchParams(window.location.search);
       const alpha = params.get('alpha');
@@ -6206,8 +6185,6 @@ function startPdfExport(){
         }
         const mail = document.getElementById('emailAddr');
         if(mail && email && !mail.value) mail.value = email;
-        ['firstName','lastName'].forEach(function(id){ const field = document.getElementById(id); if(field) field.addEventListener('input', __cdAutoAlphabet); });
-        __cdAutoAlphabet();
       });
     })();
 
@@ -6225,8 +6202,7 @@ function startPdfExport(){
         year: params.get('year') || '',
       };
       window.addEventListener('DOMContentLoaded', function(){
-        Object.entries(values).forEach(([id, value]) =
- {
+        Object.entries(values).forEach(([id, value]) => {
           const field = document.getElementById(id);
           if(field) field.value = value;
         });
@@ -6248,15 +6224,12 @@ function startPdfExport(){
 
     // Bridge pentru checkout-ul Stripe și raportul permanent din aplicația principală.
     function requestPayment(){
-      __cdAutoAlphabet();
       const err = document.getElementById('errMsg');
       const email = (document.getElementById('emailAddr') && document.getElementById('emailAddr').value.trim()) || '';
       const day = Number(document.getElementById('day').value);
       const month = Number(document.getElementById('month').value);
       const year = Number(document.getElementById('year').value);
-      if(!day || !month || !year || day < 1 || day 
- 31 || month < 1 || month 
- 12 || year < 1900){
+      if(!day || !month || !year || day < 1 || day > 31 || month < 1 || month > 12 || year < 1900){
         err.textContent = 'Введи корректную дату рождения (день, месяц, год).';
         err.style.display = 'block';
         return;
@@ -6338,8 +6311,7 @@ function startPdfExport(){
         window.__paymentUnlocked = true;
         window.__cdSkipMail = true;
         const data = event.data.formData || {};
-        ['lastName','firstName','middleName','day','month','year'].forEach((id) =
- {
+        ['lastName','firstName','middleName','day','month','year'].forEach((id) => {
           if(document.getElementById(id) && data[id] != null) document.getElementById(id).value = data[id];
         });
         if(document.getElementById('emailAddr') && data.email != null) document.getElementById('emailAddr').value = data.email;
