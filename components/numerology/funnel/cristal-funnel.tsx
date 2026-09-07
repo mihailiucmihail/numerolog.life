@@ -321,6 +321,15 @@ export default function CristalFunnel() {
     document.getElementById(PAYWALL_ID)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
+  const handleFrameLoad = useCallback(() => {
+    const frame = iframeRef.current
+    const documentElement = frame?.contentDocument?.documentElement
+    const body = frame?.contentDocument?.body
+    if (!documentElement || !body) return
+    const contentHeight = Math.max(documentElement.scrollHeight, body.scrollHeight, documentElement.offsetHeight, body.offsetHeight)
+    setFrameHeight(Math.max(420, Math.min(contentHeight, 1800)))
+  }, [])
+
   return (
     <div className="relative [&>iframe]:mb-0">
       {cancelledNotice && (
@@ -356,6 +365,7 @@ export default function CristalFunnel() {
         ref={iframeRef}
         key={frameSrc}
         src={frameSrc}
+        onLoad={handleFrameLoad}
         title={t('previewFrameTitle')}
         scrolling="no"
         className="scroll-mt-20"
