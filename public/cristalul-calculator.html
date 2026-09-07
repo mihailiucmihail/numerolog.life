@@ -610,7 +610,7 @@ select option{color:#1a1420;background:#fff;}
 #printChartsContainer{display:none;}
 </style>
 <style>
-.numerology-intro{position:relative;isolation:isolate;max-width:760px;min-height:210px;margin:10px auto 8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(212,175,55,.22);border-radius:18px;background:radial-gradient(circle at center,rgba(212,175,55,.12),transparent 40%),linear-gradient(135deg,rgba(12,10,30,.92),rgba(35,18,51,.78));box-shadow:0 20px 55px rgba(2,3,15,.34),inset 0 1px rgba(255,255,255,.08);}
+.card#inputFormCard{overflow:hidden;border-radius:18px;padding:0 22px 22px;}.card#inputFormCard>.section-title{margin-top:20px;}.numerology-intro{position:relative;isolation:isolate;max-width:none;min-height:250px;margin:0 -22px 8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:0;border-bottom:1px solid rgba(212,175,55,.28);border-radius:18px 18px 0 0;background:radial-gradient(circle at center,rgba(212,175,55,.12),transparent 40%),linear-gradient(135deg,rgba(12,10,30,.92),rgba(35,18,51,.78));box-shadow:0 20px 55px rgba(2,3,15,.34),inset 0 1px rgba(255,255,255,.08);}
 .numerology-copy{position:relative;z-index:3;width:min(90%,530px);padding:28px 22px;text-align:center;animation:numerologyReveal .9s cubic-bezier(.2,.8,.2,1) both;}
 .numerology-kicker{display:block;margin-bottom:8px;color:rgba(212,175,55,.76);font:600 10px/1.4 Arial,sans-serif;letter-spacing:.28em;}
 .numerology-copy h2{margin:0;color:#f5edd6;font:500 clamp(24px,4vw,42px)/1.1 Georgia,serif;letter-spacing:.02em;text-shadow:0 0 24px rgba(212,175,55,.22);}
@@ -648,17 +648,6 @@ select option{color:#1a1420;background:#fff;}
     <div class="hero-crystal" aria-hidden="true"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 22 12 12 22 2 12Z"/><path d="M12 7 17 12 12 17 7 12Z" fill="currentColor" fill-opacity=".55"/></svg></div>
     <div class="eyebrow">Персональный разбор</div>
     <h1 hidden aria-hidden="true"><span class="hero-lead">Открой свой</span><span class="hero-caps">Кристалл Судьбы</span></h1>
-    <div class="numerology-intro" aria-labelledby="numerology-intro-title">
-      <div class="numerology-orbit numerology-orbit-one" aria-hidden="true"></div>
-      <div class="numerology-orbit numerology-orbit-two" aria-hidden="true"></div>
-      <div class="numerology-crystal" aria-hidden="true"><span>22</span></div>
-      <div class="numerology-numbers" aria-hidden="true"><span>3</span><span>7</span><span>11</span><span>17</span><span>22</span></div>
-      <div class="numerology-copy">
-        <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>
-        <h2 id="numerology-intro-title">Введи свои данные</h2>
-        <p>Введите данные — и получите персональный разбор, созданный именно для вас.</p>
-      </div>
-    </div>
     <div class="hero-video" aria-label="Видео о персональном разборе" hidden>
       <div class="hero-video-frame">
         <video class="hero-video-media" controls muted loop playsinline preload="none" data-src="/videos/cristalul-premium.mp4">
@@ -672,6 +661,18 @@ select option{color:#1a1420;background:#fff;}
   </div>
 
   <div class="card" id="inputFormCard">
+    <div class="numerology-intro" aria-labelledby="numerology-intro-title">
+      <div class="numerology-orbit numerology-orbit-one" aria-hidden="true"></div>
+      <div class="numerology-orbit numerology-orbit-two" aria-hidden="true"></div>
+      <div class="numerology-crystal" aria-hidden="true"><span>22</span></div>
+      <div class="numerology-numbers" aria-hidden="true"><span>3</span><span>7</span><span>11</span><span>17</span><span>22</span></div>
+      <div class="numerology-copy">
+        <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>
+        <h2 id="numerology-intro-title">Введи свои данные</h2>
+        <p>Введите данные — и получите персональный разбор, созданный именно для вас.</p>
+      </div>
+    </div>
+
     <div class="section-title">Ваши данные</div>
     <div class="form-grid">
       <div class="full">

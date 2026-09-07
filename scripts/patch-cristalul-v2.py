@@ -178,18 +178,7 @@ rep('<h1><span class="hero-lead">Твой</span><span class="hero-caps">Крис
     '<h1 hidden aria-hidden="true"><span class="hero-lead">Открой свой</span><span class="hero-caps">Кристалл Судьбы</span></h1>')
 rep('<p>Твоё имя и дата рождения хранят ответы о характере, судьбе и жизненном пути — '
     '<span class="hero-highlight">узнай, что скрыто именно в тебе</span>.</p>',
-    '<div class="numerology-intro" aria-labelledby="numerology-intro-title">\n'
-    '      <div class="numerology-orbit numerology-orbit-one" aria-hidden="true"></div>\n'
-    '      <div class="numerology-orbit numerology-orbit-two" aria-hidden="true"></div>\n'
-    '      <div class="numerology-crystal" aria-hidden="true"><span>22</span></div>\n'
-    '      <div class="numerology-numbers" aria-hidden="true"><span>3</span><span>7</span><span>11</span><span>17</span><span>22</span></div>\n'
-    '      <div class="numerology-copy">\n'
-    '        <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>\n'
-    '        <h2 id="numerology-intro-title">Введи свои данные</h2>\n'
-    '        <p>Введите данные — и получите персональный разбор, созданный именно для вас.</p>\n'
-    '      </div>\n'
-    '    </div>\n'
-    '    <div class="hero-video" aria-label="Видео о персональном разборе" hidden>\n'
+    '<div class="hero-video" aria-label="Видео о персональном разборе" hidden>\n'
     '      <div class="hero-video-frame">\n'
     '        <video class="hero-video-media" controls muted loop playsinline preload="none" '
     'data-src="/videos/cristalul-premium.mp4">\n'
@@ -200,8 +189,21 @@ rep('<p>Твоё имя и дата рождения хранят ответы �
     '      </div>\n'
     '      <p class="hero-video-caption">Заполни данные ниже — и Кристалл рассчитается для тебя.</p>\n'
     '    </div>')
+rep('<div class="card" id="inputFormCard">',
+    '<div class="card" id="inputFormCard">\n'
+    '    <div class="numerology-intro" aria-labelledby="numerology-intro-title">\n'
+    '      <div class="numerology-orbit numerology-orbit-one" aria-hidden="true"></div>\n'
+    '      <div class="numerology-orbit numerology-orbit-two" aria-hidden="true"></div>\n'
+    '      <div class="numerology-crystal" aria-hidden="true"><span>22</span></div>\n'
+    '      <div class="numerology-numbers" aria-hidden="true"><span>3</span><span>7</span><span>11</span><span>17</span><span>22</span></div>\n'
+    '      <div class="numerology-copy">\n'
+    '        <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>\n'
+    '        <h2 id="numerology-intro-title">Введи свои данные</h2>\n'
+    '        <p>Введите данные — и получите персональный разбор, созданный именно для вас.</p>\n'
+    '      </div>\n'
+    '    </div>\n', 1)
 rep('</head>', """<style>
-.numerology-intro{position:relative;isolation:isolate;max-width:760px;min-height:210px;margin:10px auto 8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(212,175,55,.22);border-radius:18px;background:radial-gradient(circle at center,rgba(212,175,55,.12),transparent 40%),linear-gradient(135deg,rgba(12,10,30,.92),rgba(35,18,51,.78));box-shadow:0 20px 55px rgba(2,3,15,.34),inset 0 1px rgba(255,255,255,.08);}
+.card#inputFormCard{overflow:hidden;border-radius:18px;padding:0 22px 22px;}.card#inputFormCard>.section-title{margin-top:20px;}.numerology-intro{position:relative;isolation:isolate;max-width:none;min-height:250px;margin:0 -22px 8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:0;border-bottom:1px solid rgba(212,175,55,.28);border-radius:18px 18px 0 0;background:radial-gradient(circle at center,rgba(212,175,55,.12),transparent 40%),linear-gradient(135deg,rgba(12,10,30,.92),rgba(35,18,51,.78));box-shadow:0 20px 55px rgba(2,3,15,.34),inset 0 1px rgba(255,255,255,.08);}
 .numerology-copy{position:relative;z-index:3;width:min(90%,530px);padding:28px 22px;text-align:center;animation:numerologyReveal .9s cubic-bezier(.2,.8,.2,1) both;}
 .numerology-kicker{display:block;margin-bottom:8px;color:rgba(212,175,55,.76);font:600 10px/1.4 Arial,sans-serif;letter-spacing:.28em;}
 .numerology-copy h2{margin:0;color:#f5edd6;font:500 clamp(24px,4vw,42px)/1.1 Georgia,serif;letter-spacing:.02em;text-shadow:0 0 24px rgba(212,175,55,.22);}
