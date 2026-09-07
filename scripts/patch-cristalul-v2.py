@@ -334,6 +334,8 @@ for bad in ('Источник:', 'Материал эзотерический', 
     assert bad not in visible, f'mențiune de sursă vizibilă rămasă: {bad}'
 
 # Verificări finale -----------------------------------------------------------------------------
+# Elimină prefixele de citare accidentale înainte de scriere: altfel scripturile inline devin invalide.
+s = re.sub(r'(?m)^(\s*)> ', r'\1', s)
 # Sursa este verificată separat; acest patch nu rescrie caracterele existente din baza inline.
 
 for marker in ('id="emailAddr"', 'id="promoCode"', 'id="mainCalcBtn"', 'function requestPayment',
