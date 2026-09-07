@@ -1,4 +1,5 @@
-<script>
+<script
+
     // ==== Bridge integrare aplicație principală: resize, plată Stripe, raport permanent ====
     // Înălțimea CONȚINUTULUI, nu a documentului: body are min-height:100vh, iar în iframe 100vh =
     // înălțimea iframe-ului → scrollHeight ar crește la infinit (buclă resize). Măsurăm .wrap.
@@ -22,8 +23,10 @@
       const text = (first + ' ' + last).toUpperCase();
       const country = (new URLSearchParams(window.location.search).get('country') || '').toUpperCase();
       const hasCyrillic = /[А-ЯЁӘҒҚҢӨҰҮҺІЇЄҐЎ]/.test(text);
+      const hasLatin = /[A-ZĂÂÎȘȚ]/.test(text);
       let preferred = 'ro';
-      if(country === 'UA' && hasCyrillic) preferred = 'uk';
+      if((country === 'RO' || country === 'MD') && hasLatin && !hasCyrillic) preferred = 'ro';
+      else if(country === 'UA' && hasCyrillic) preferred = 'uk';
       else if(country === 'KZ' && hasCyrillic) preferred = 'kk';
       else if((country === 'RO' || country === 'MD') && hasCyrillic) preferred = 'ru';
       else if(country === 'RU' || country === 'BY') preferred = country === 'BY' ? 'be' : 'ru';
@@ -66,7 +69,8 @@
         year: params.get('year') || '',
       };
       window.addEventListener('DOMContentLoaded', function(){
-        Object.entries(values).forEach(([id, value]) => {
+        Object.entries(values).forEach(([id, value]) =
+ {
           const field = document.getElementById(id);
           if(field) field.value = value;
         });
@@ -94,7 +98,9 @@
       const day = Number(document.getElementById('day').value);
       const month = Number(document.getElementById('month').value);
       const year = Number(document.getElementById('year').value);
-      if(!day || !month || !year || day < 1 || day > 31 || month < 1 || month > 12 || year < 1900){
+      if(!day || !month || !year || day < 1 || day 
+ 31 || month < 1 || month 
+ 12 || year < 1900){
         err.textContent = 'Введи корректную дату рождения (день, месяц, год).';
         err.style.display = 'block';
         return;
@@ -176,7 +182,8 @@
         window.__paymentUnlocked = true;
         window.__cdSkipMail = true;
         const data = event.data.formData || {};
-        ['lastName','firstName','middleName','day','month','year'].forEach((id) => {
+        ['lastName','firstName','middleName','day','month','year'].forEach((id) =
+ {
           if(document.getElementById(id) && data[id] != null) document.getElementById(id).value = data[id];
         });
         if(document.getElementById('emailAddr') && data.email != null) document.getElementById('emailAddr').value = data.email;
@@ -212,3 +219,4 @@
     });
     window.addEventListener('resize', __cdSendHeight);
   </script>
+

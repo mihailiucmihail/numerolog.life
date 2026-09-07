@@ -31,6 +31,8 @@ BRIDGE = ROOT / 'scripts/cristalul-bridge-snippet.html'
 PREVIEW = ROOT / 'scripts/cristalul-preview-lock-snippet.html'
 
 s = SRC.read_text(encoding='utf-8')
+# Unele uploaduri au primit accidental prefixul `> ` la începutul liniilor; îl eliminăm înainte de orice inserare.
+s = re.sub(r'(?m)^(\s*)> ', r'\1', s)
 assert s.count('\ufffd') == 0, 'uploadul conține deja caractere corupte (U+FFFD)'
 
 
@@ -313,9 +315,9 @@ rep("  const r = computeAll(last, first, middle, day, month, year, nameAlphabetK
     "  window.__cdLastResult = r;\n")
 
 # 5. Bridge-ul de integrare, înainte de </body> ------------------------------------------------
-bridge = BRIDGE.read_text(encoding='utf-8')
+bridge = re.sub(r'(?m)^(\s*)> ', r'\1', BRIDGE.read_text(encoding='utf-8'))
 assert 'requestPayment' in bridge and 'reportRendered' in bridge
-preview = PREVIEW.read_text(encoding='utf-8')
+preview = re.sub(r'(?m)^(\s*)> ', r'\1', PREVIEW.read_text(encoding='utf-8'))
 assert '__cdApplyPreviewLock' in preview and "params.get('preview')" in preview
 rep('</body>', bridge.rstrip('\n') + '\n' + preview.rstrip('\n') + '\n</body>')
 
