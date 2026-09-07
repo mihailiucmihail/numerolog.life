@@ -302,7 +302,7 @@ rep('.hero p .hero-highlight{color:var(--brass-bright);font-weight:600;}',
 
 # 4. Butonul principal -> plată ------------------------------------------------------------
 rep('<input id="lastName" type="text" placeholder="ex: Иванов" autocomplete="off" value="">',
-    '<input id="lastName" type="text" placeholder="ex: Петрова" autocomplete="off" value="">')
+    '<input id="lastName" type="text" placeholder="ex: Морозова" autocomplete="off" value="">')
 rep('<input id="firstName" type="text" placeholder="ex: Михаил" autocomplete="off" value="">',
     '<input id="firstName" type="text" placeholder="ex: Анна" autocomplete="off" value="">')
 rep('<button class="btn" onclick="calculate()">Рассчитать Кристалл</button>',
