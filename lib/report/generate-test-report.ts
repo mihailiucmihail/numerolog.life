@@ -30,14 +30,14 @@ const REAL_ASTROLOGY_INDICATORS: AstrologyIndicators = {
 }
 
 export async function generateCompleteTestReport() {
-  console.log('\n╔════════════════════════════════════════════════════════════════════════════════╗')
+  console.log('\n========================================')
   console.log('║              COMPLETE ASTROI REPORT GENERATION TEST                             ║')
-  console.log('╚════════════════════════════════════════════════════════════════════════════════╝\n')
+  console.log('========================================\n')
 
   try {
     // STEP 1: NUMEROLOGY CALCULATION
     console.log('📊 STEP 1: Numerology22 Engine Calculation')
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+    console.log('========================================\n')
 
     const numerologyResult = calculateAndNormalize({
       fullName: TEST_PROFILE.fullName,
@@ -60,7 +60,7 @@ export async function generateCompleteTestReport() {
 
     // STEP 2: REASONING PLAN GENERATION
     console.log('\n\n🧠 STEP 2: Reasoning Engine - Signal Organization & Theme Detection')
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+    console.log('========================================\n')
 
     const reasoningPlan = await generateReasoningPlan({
       userProfile: { fullName: TEST_PROFILE.fullName, birthDate: TEST_PROFILE.birthDate },
@@ -79,7 +79,7 @@ export async function generateCompleteTestReport() {
 
     // STEP 3: ASTROLOGY CONTEXT
     console.log('\n\n🌟 STEP 3: Astrology Context Integration')
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+    console.log('========================================\n')
 
     console.log('Zodiac Profile:')
     console.log(`  ☀️ Sun: ${REAL_ASTROLOGY_INDICATORS.sunSign} (Core Identity, Ego)`)
@@ -98,7 +98,7 @@ export async function generateCompleteTestReport() {
 
     // STEP 4: CHAPTER GENERATION SIMULATION
     console.log('\n\n📖 STEP 4: Report Chapter Generation (Claude Integration Ready)')
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n')
+    console.log('========================================\n')
 
     const chapters = [
       {
@@ -160,9 +160,9 @@ export async function generateCompleteTestReport() {
     console.log(`\n✓ Total Report Length: ${totalWords.toLocaleString()} words`)
 
     // SUMMARY
-    console.log('\n\n╔════════════════════════════════════════════════════════════════════════════════╗')
+    console.log('\n\n========================================')
     console.log('║                         REPORT GENERATION SUMMARY                              ║')
-    console.log('╚════════════════════════════════════════════════════════════════════════════════╝\n')
+    console.log('========================================\n')
 
     console.log(`Profile: ${TEST_PROFILE.fullName}`)
     console.log(`Birth Date: ${TEST_PROFILE.birthDate}`)

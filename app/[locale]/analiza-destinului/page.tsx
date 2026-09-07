@@ -322,7 +322,7 @@ export default function DestinyAnalysisPage() {
             <Button variant="ghost" size="sm" asChild className="gap-2">
               <Link href="/">
                 <ArrowLeft className="h-4 w-4" />
-                ��napoi acasă
+                Înapoi acasă
               </Link>
             </Button>
           </motion.div>

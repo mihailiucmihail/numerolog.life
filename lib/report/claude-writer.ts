@@ -52,9 +52,9 @@ PORȚIUNI OBLIGATORII:
 
   const userPrompt = `⭐ SCRIE CAPITOLUL ${chapterIndex} - "${chapter.title}"
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+========================================
 CONTEXT PENTRU ${userProfile.fullName}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+========================================
 
 TEMĂ CAPITOLULUI: ${chapter.theme}
 Data nașterii: ${userProfile.birthDate}
@@ -65,14 +65,14 @@ ${indicators.map(ind => `• ${ind}`).join('\n')}
 KEY INSIGHTS DIN TEMA PROFILULUI:
 ${chapter.keyInsights.map(insight => `→ ${insight}`).join('\n')}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+========================================
 CUNOȘTINȚE ȘI CONTEXT (UTILIZEAZĂ INTEGRAL)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+========================================
 ${knowledgeContext}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+========================================
 CERINȚE OBLIGATORII
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+========================================
 
 LUNGIME: ${minWords}-${maxWords} cuvinte EXACT (Premium quality = plin de substanță)
 

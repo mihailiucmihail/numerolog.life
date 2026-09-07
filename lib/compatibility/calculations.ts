@@ -13,9 +13,9 @@ import {
   RelationshipType
 } from "./types"
 
-// ═══════════════════════════════════════════════════════════
+// ========================================
 // DATE PARSING UTILITY
-// ═══════════════════════════════════════════════════════════
+// ========================================
 
 /**
  * Parse date in multiple formats (ISO, European DD.MM.YYYY, US MM/DD/YYYY)
@@ -59,9 +59,9 @@ function parseDate(dateString: string): Date {
   return date
 }
 
-// ═══════════════════════════════════════════════════════════
+// ========================================
 // NUMEROLOGY CALCULATIONS FOR PERSONS
-// ═══════════════════════════════════════════════════════════
+// ========================================
 
 export function calculateLifePathNumber(birthDate: string): number {
   const date = parseDate(birthDate)
@@ -167,9 +167,9 @@ export function calculatePersonalYear(birthDate: string): number {
   return total
 }
 
-// ═══════════════════════════════════════════════════════════
+// ========================================
 // PERSON PROFILE CALCULATION
-// ═══════════════════════════════════════════════════════════
+// ========================================
 
 export function calculatePersonNumerology(person: PersonInput): PersonNumerology {
   const birthDate = parseDate(person.birthDate)
@@ -196,9 +196,9 @@ export function calculatePersonNumerology(person: PersonInput): PersonNumerology
   }
 }
 
-// ═══════════════════════════════════════════════════════════
+// ========================================
 // COMPATIBILITY CALCULATIONS
-// ═══════════════════════════════════════════════════════════
+// ========================================
 
 function getCompatibilityScore(num1: number, num2: number): number {
   // Reduce master numbers for lookup
@@ -398,9 +398,9 @@ export function calculateCompatibilityAspects(
   return aspects
 }
 
-// ═══════════════════════════════════════════════════════════
+// ========================================
 // CHART DATA GENERATION
-// ═══════════════════════════════════════════════════════════
+// ========================================
 
 export function generateCompatibilityCharts(
   person1: PersonNumerology,

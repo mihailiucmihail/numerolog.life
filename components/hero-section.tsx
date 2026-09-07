@@ -62,9 +62,9 @@ export function HeroSection() {
 
   return (
     <section className="relative min-h-0 flex flex-col items-center justify-center pt-16 pb-0 md:pt-20 md:pb-0 overflow-hidden">
-      {/* ═══════════════════════════════════════════════════════════════════════
+      {/* ========================================
           All background overlays removed - StarField provides the cosmic background
-      ═══════════════════════════════════════════════════════════════════════ */}
+      ======================================== */}
 
       {/* Zodiac wheel - subtle circular pattern */}
       <div 

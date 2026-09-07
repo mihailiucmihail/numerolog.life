@@ -319,16 +319,16 @@ async function generateFullReport(
     }, { status: 400 })
   }
 
-  // ══════════════════════════════════════════════════════════════════════════
+  // ========================================
   // FORCE FRESH REPORT GENERATION - CACHE DISABLED
   // IMPORTANT: Cached reports have been disabled to ensure accurate astrology
   // calculations. Every report is now recalculated from fresh natal chart data.
   // This prevents stale zodiac combinations from being returned.
-  // ══════════════════════════════════════════════════════════════════════════
+  // ========================================
 
-  // ══════════════════════════════════════════════════════════════════════════
+  // ========================================
   // NO CACHE - Generate new report
-  // ══════════════════════════════════════════════════════════════════════════
+  // ========================================
   const currentTransits = calculateCurrentTransits()
 
   // Calculate personal numerology cycles for today / this month / this year
@@ -432,7 +432,7 @@ ${numerologyContext}
 ${cyclesContext}
 ${dateContext}
 
-═══ REGULI DE STIL OBLIGATORII ═══
+=== REGULI DE STIL OBLIGATORII ===
 
 1. FOLOSESTE DOAR datele astrologice furnizate - NU inventa pozitii sau aspecte. Interpreteaza-le, nu le inventa.
 
@@ -476,9 +476,9 @@ Genereaza analiza completa respectand structura ceruta, cu profunzime psihologic
 
     const interpretation = result.output
 
-    // ══════════════════════════════════════════════════════════════════════════
+    // ========================================
     // SAVE TO CACHE for future requests
-    // ══════════════════════════════════════════════════════════════════════════
+    // ========================================
     const { error: cacheError } = await supabase
       .from("ai_reports")
       .upsert({

@@ -63,9 +63,9 @@ export const ROMANIAN_LETTER_MAP: Record<string, string> = {
   'ţ': 't'
 }
 
-// ═══════════════════════════════════════════════════════════
+// ========================================
 // API CONTRACT TYPES - For external numerology engine integration
-// ═══════════════════════════════════════════════════════════
+// ========================================
 
 export interface NumerologyInput {
   firstName: string
