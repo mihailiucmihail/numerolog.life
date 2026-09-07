@@ -90,7 +90,7 @@ rep("""  padding:9px 14px;cursor:pointer;transition:all .2s ease;border-radius:1
 _mail_re = re.compile(
     r'      <div class="full">\n        <label>Электронная почта</label>\n        <input id="pMail"[^\n]*\n        <p class="note"[^\n]*\n      </div>\n')
 assert len(_mail_re.findall(s)) == 1, 'blocul email (pMail) al uploadului nu a fost găsit exact o dată'
-s = _mail_re.sub("""      <div class="full" id="emailField" hidden style="display:none;">
+s = _mail_re.sub("""      <div class="full" id="emailField">
         <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(на него придёт постоянная ссылка на твой разбор)</span></label>
         <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="" required>
       </div>
@@ -115,6 +115,36 @@ rep("  const mailCheck = readMail();\n",
 rep("  try{ localStorage.setItem('crystal_last_email', mailCheck.value); }catch(e){}\n",
     "  try{ if(mailCheck.value) localStorage.setItem('crystal_last_email', mailCheck.value); }catch(e){}\n")
 assert "getElementById('pMail')" not in s, 'a rămas o referință la pMail'
+
+# Formular simplificat: data nașterii apare prima; patronimicul, alfabetul, sexul și nota explicativă
+# rămân în HTML/JS pentru rapoartele existente, dar nu aglomerează etapa inițială.
+_date_label = s.find('<label>Дата рождения</label>')
+assert _date_label >= 0, 'blocul data nașterii nu a fost găsit'
+_date_start = s.rfind('<div class="full">', 0, _date_label)
+_date_end = s.find('<div class="full">', _date_label)
+assert _date_start >= 0 and _date_end > _date_start, 'finalul blocului data nașterii nu a fost găsit'
+_date_block = s[_date_start:_date_end]
+s = s[:_date_start] + s[_date_end:]
+_name_label = s.find('<label>Фамилия')
+_name_marker = s.rfind('<div>', 0, _name_label)
+assert _name_marker >= 0, 'blocul numelui nu a fost găsit pentru reordonare'
+s = s[:_name_marker] + _date_block + s[_name_marker:]
+
+_middle_re = re.compile(r'<div class="full">\s*<label>Отчество.*?</div>', re.S)
+s, _middle_count = _middle_re.subn(lambda m: m.group(0).replace('<div class="full">', '<div class="full" hidden style="display:none;">', 1), s, count=1)
+assert _middle_count == 1, 'blocul patronimic nu a fost găsit'
+
+_alpha_re = re.compile(r'<div class="full">\s*<label>Алфавит имени.*?</div>', re.S)
+s, _alpha_count = _alpha_re.subn(lambda m: m.group(0).replace('<div class="full">', '<div class="full" hidden style="display:none;">', 1), s, count=1)
+assert _alpha_count == 1, 'blocul alfabetului nu a fost găsit'
+
+_gender_re = re.compile(r'<div class="full">\s*>?\s*<label>Пол</label>.*?</div>\s*</div>', re.S)
+s, _gender_count = _gender_re.subn(lambda m: m.group(0).replace('<div class="full">', '<div class="full" hidden style="display:none;">', 1), s, count=1)
+assert _gender_count == 1, 'blocul sexului nu a fost găsit'
+
+_hint_re = re.compile(r'<div class="hint">Выбери алфавит, соответствующий языку имени.*?</div>', re.S)
+s, _hint_count = _hint_re.subn(lambda m: m.group(0).replace('<div class="hint">', '<div class="hint" hidden style="display:none;">', 1), s, count=1)
+assert _hint_count == 1, 'nota despre alfabet nu a fost găsită'
 
 # 3a. Hero: glow-ul cristalului (top:-40px) ieșea peste marginea de sus a iframe-ului → tăiat brusc („ruptură”).
 #     Dăm hero-ului padding-top ca glow-ul să rămână complet în iframe (React nu mai adaugă padding sus).

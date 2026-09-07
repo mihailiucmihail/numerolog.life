@@ -674,6 +674,23 @@ select option{color:#1a1420;background:#fff;}
   <div class="card" id="inputFormCard">
     <div class="section-title">Ваши данные</div>
     <div class="form-grid">
+      <div class="full">
+        <label>Дата рождения</label>
+        <div class="date-row">
+          <input id="day" type="number" min="1" max="31" placeholder="День" value="">
+          <input id="month" type="number" min="1" max="12" placeholder="Месяц" value="">
+          <input id="year" type="number" min="1900" max="2100" placeholder="Год" value="">
+        </div>
+      </div>
+      <div class="full" id="emailField">
+        <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(на него придёт постоянная ссылка на твой разбор)</span></label>
+        <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="" required>
+      </div>
+      <div class="full" id="promoField" hidden style="display:none;">
+        <label>Промокод <span style="opacity:.5;text-transform:none;letter-spacing:0;">(необязательно — скидка 15 %, действует один раз)</span></label>
+        <input id="promoCode" type="text" placeholder="CRISTAL15-XXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" value="" style="text-transform:uppercase;letter-spacing:.08em;">
+        <div id="promoMsg" style="display:none;margin-top:8px;font-size:13px;line-height:1.5;"></div>
+      </div>
       <div>
         <label>Фамилия <span style="opacity:.5;text-transform:none;letter-spacing:0;">(для замужних женщин — рекомендуем девичью фамилию)</span></label>
         <input id="lastName" type="text" placeholder="ex: Иванов" autocomplete="off" value="">
@@ -682,11 +699,11 @@ select option{color:#1a1420;background:#fff;}
         <label>Имя</label>
         <input id="firstName" type="text" placeholder="ex: Михаил" autocomplete="off" value="">
       </div>
-      <div class="full">
+      <div class="full" hidden style="display:none;">
         <label>Отчество <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(необязательно, но рекомендуем — для более полного и точного разбора)</span></label>
         <input id="middleName" type="text" placeholder="ex: Петрович" autocomplete="off" value="">
       </div>
-      <div class="full">
+      <div class="full" hidden style="display:none;">
         <label>Алфавит имени <span style="opacity:.5;text-transform:none;letter-spacing:0;">(язык/письменность, на которой записано имя)</span></label>
         <select id="nameAlphabetSelect" style="width:100%;padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:6px;color:var(--parchment);font-family:inherit;font-size:15px;">
           <option value="ru" selected>Русский</option>
@@ -714,24 +731,7 @@ select option{color:#1a1420;background:#fff;}
           <option value="he">עברית</option>
         </select>
       </div>
-      <div class="full">
-        <label>Дата рождения</label>
-        <div class="date-row">
-          <input id="day" type="number" min="1" max="31" placeholder="День" value="">
-          <input id="month" type="number" min="1" max="12" placeholder="Месяц" value="">
-          <input id="year" type="number" min="1900" max="2100" placeholder="Год" value="">
-        </div>
-      </div>
-      <div class="full" id="emailField" hidden style="display:none;">
-        <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(на него придёт постоянная ссылка на твой разбор)</span></label>
-        <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="" required>
-      </div>
-      <div class="full" id="promoField" hidden style="display:none;">
-        <label>Промокод <span style="opacity:.5;text-transform:none;letter-spacing:0;">(необязательно — скидка 15 %, действует один раз)</span></label>
-        <input id="promoCode" type="text" placeholder="CRISTAL15-XXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" value="" style="text-transform:uppercase;letter-spacing:.08em;">
-        <div id="promoMsg" style="display:none;margin-top:8px;font-size:13px;line-height:1.5;"></div>
-      </div>
-      <div class="full">
+      <div class="full" hidden style="display:none;">
         <label>Пол</label>
         <div class="genderpick" id="pGender">
           <button type="button" data-g="f" onclick="setGender('f')">Женщина</button>
@@ -755,7 +755,7 @@ select option{color:#1a1420;background:#fff;}
       });
     </script>
     <div class="err" id="errMsg"></div>
-    <div class="hint">Выбери алфавит, соответствующий языку имени — Карта Имени и связанные с ней расчёты используют значения букв именно этого алфавита. Классическое правило: базовым считается имя именно так, как оно записано в свидетельстве о рождении, на языке того документа — это основной, «корневой» расчёт. Если имя позже официально менялось (новые документы, смена гражданства, замужество), эту более позднюю форму можно посчитать отдельно как дополнительный слой — но она не заменяет базовый расчёт по свидетельству о рождении.</div>
+    <div class="hint" hidden style="display:none;">Выбери алфавит, соответствующий языку имени — Карта Имени и связанные с ней расчёты используют значения букв именно этого алфавита. Классическое правило: базовым считается имя именно так, как оно записано в свидетельстве о рождении, на языке того документа — это основной, «корневой» расчёт. Если имя позже официально менялось (новые документы, смена гражданства, замужество), эту более позднюю форму можно посчитать отдельно как дополнительный слой — но она не заменяет базовый расчёт по свидетельству о рождении.</div>
   </div>
 
   <div id="results">
