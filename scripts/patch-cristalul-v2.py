@@ -136,10 +136,10 @@ _email_match = _email_block_re.search(s)
 assert _email_match, 'blocul email nu a fost găsit pentru reordonare'
 _email_block = _email_match.group(0)
 s = s[:_email_match.start()] + s[_email_match.end():]
-_family_input_re = re.compile(r'(<input id="lastName"[^\n]*\n\s*</div>)')
-_family_match = _family_input_re.search(s)
-assert _family_match, 'blocul familiei nu a fost găsit pentru email'
-s = s[:_family_match.end()] + '\n' + _email_block + s[_family_match.end():]
+_first_input_re = re.compile(r'(<input id="firstName"[^\n]*\n\s*</div>)')
+_first_match = _first_input_re.search(s)
+assert _first_match, 'blocul prenumelui nu a fost găsit pentru email'
+s = s[:_first_match.end()] + '\n' + _email_block + s[_first_match.end():]
 
 _middle_re = re.compile(r'<div class="full">\s*<label>Отчество.*?</div>', re.S)
 s, _middle_count = _middle_re.subn(lambda m: m.group(0).replace('<div class="full">', '<div class="full" hidden style="display:none;">', 1), s, count=1)
@@ -203,7 +203,7 @@ rep('<div class="card" id="inputFormCard">',
     '      </div>\n'
     '    </div>\n', 1)
 rep('</head>', """<style>
-.card#inputFormCard{overflow:hidden;border-radius:18px;padding:0 22px 22px;}.card#inputFormCard>.section-title{margin-top:20px;}.numerology-intro{position:relative;isolation:isolate;max-width:none;min-height:250px;margin:0 -22px 8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:0;border-bottom:1px solid rgba(212,175,55,.28);border-radius:18px 18px 0 0;background:radial-gradient(circle at center,rgba(212,175,55,.12),transparent 40%),linear-gradient(135deg,rgba(12,10,30,.92),rgba(35,18,51,.78));box-shadow:0 20px 55px rgba(2,3,15,.34),inset 0 1px rgba(255,255,255,.08);}
+.card#inputFormCard{position:relative;overflow:hidden;border-radius:18px;padding:0 22px 22px;background:radial-gradient(circle at 50% 8%,rgba(212,175,55,.12),transparent 26%),radial-gradient(circle at 15% 70%,rgba(116,62,112,.18),transparent 34%),linear-gradient(145deg,rgba(12,10,30,.96),rgba(35,18,51,.92));box-shadow:0 20px 55px rgba(2,3,15,.34),inset 0 1px rgba(255,255,255,.08);}.card#inputFormCard>.section-title{position:relative;z-index:4;margin-top:20px;}.card#inputFormCard>form,.card#inputFormCard>div:not(.numerology-intro){position:relative;z-index:3;}.numerology-intro{position:relative;isolation:isolate;max-width:none;min-height:250px;margin:0 -22px 8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:0;border-bottom:1px solid rgba(212,175,55,.28);border-radius:18px 18px 0 0;background:transparent;box-shadow:none;}}
 .numerology-copy{position:relative;z-index:3;width:min(90%,530px);padding:28px 22px;text-align:center;animation:numerologyReveal .9s cubic-bezier(.2,.8,.2,1) both;}
 .numerology-kicker{display:block;margin-bottom:8px;color:rgba(212,175,55,.76);font:600 10px/1.4 Arial,sans-serif;letter-spacing:.28em;}
 .numerology-copy h2{margin:0;color:#f5edd6;font:500 clamp(24px,4vw,42px)/1.1 Georgia,serif;letter-spacing:.02em;text-shadow:0 0 24px rgba(212,175,55,.22);}
