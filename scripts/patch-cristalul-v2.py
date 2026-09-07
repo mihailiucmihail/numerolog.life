@@ -130,6 +130,17 @@ _name_marker = s.rfind('<div>', 0, _name_label)
 assert _name_marker >= 0, 'blocul numelui nu a fost găsit pentru reordonare'
 s = s[:_name_marker] + _date_block + s[_name_marker:]
 
+# Emailul vine imediat după numele de familie, înainte de prenume.
+_email_block_re = re.compile(r'<div class="full" id="emailField">.*?</div>\s*', re.S)
+_email_match = _email_block_re.search(s)
+assert _email_match, 'blocul email nu a fost găsit pentru reordonare'
+_email_block = _email_match.group(0)
+s = s[:_email_match.start()] + s[_email_match.end():]
+_family_input_re = re.compile(r'(<input id="lastName"[^\n]*\n\s*</div>)')
+_family_match = _family_input_re.search(s)
+assert _family_match, 'blocul familiei nu a fost găsit pentru email'
+s = s[:_family_match.end()] + '\n' + _email_block + s[_family_match.end():]
+
 _middle_re = re.compile(r'<div class="full">\s*<label>Отчество.*?</div>', re.S)
 s, _middle_count = _middle_re.subn(lambda m: m.group(0).replace('<div class="full">', '<div class="full" hidden style="display:none;">', 1), s, count=1)
 assert _middle_count == 1, 'blocul patronimic nu a fost găsit'
