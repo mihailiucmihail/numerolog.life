@@ -11,7 +11,7 @@
   --cdp-plum:rgba(40,24,62,.72);
   --cdp-navy:rgba(13,13,35,.9);
   --cdp-serif:'Cormorant Garamond','EB Garamond',Georgia,serif;
-  --cdp-body:'EB Garamond','Cormorant Garamond',Georgia,serif;
+  --cdp-body:'Inter',system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   --cdp-sans:'Inter',system-ui,sans-serif;
   counter-reset:cdp-section;
 }
@@ -61,6 +61,7 @@
 /* ---- Titlul de sectiune: eyebrow numerotat + display serif ---- */
 #results .card .section-title{
   counter-increment:cdp-section;
+  text-rendering:optimizeLegibility;
   display:block;
   margin:0 0 22px;
   padding-bottom:18px;
@@ -94,8 +95,9 @@
 /* ---- Corpul textului: serif de lectura, contrast calibrat ---- */
 #results .card,#results .card .hint,#results .card p{
   font-family:var(--cdp-body);
-  font-size:clamp(16.5px,1.05vw,18.5px);
-  line-height:1.62;
+  font-size:clamp(15px,.95vw,17px);
+  line-height:1.72;
+  letter-spacing:.005em;
   color:var(--cdp-ink-dim);
 }
 #results .card .hint{margin-top:10px;}
@@ -106,7 +108,7 @@
 #results .card div[style*="font-size:14px"]:not([class]),
 #results .card p[style*="font-size:13px"],
 #results .card p[style*="font-size:13.5px"],
-#results .card p[style*="font-size:14px"]{font-size:clamp(16px,1vw,17.5px)!important;line-height:1.62!important;}
+#results .card p[style*="font-size:14px"]{font-family:var(--cdp-body)!important;font-size:clamp(15px,.95vw,17px)!important;line-height:1.72!important;letter-spacing:.005em;}
 /* Badge-uri inline in titlul de sectiune */
 #results .card .section-title .opv-badge,
 #results .card .section-title .tag,
