@@ -223,7 +223,7 @@ rep('<div class="card" id="inputFormCard">',
     '      <div class="numerology-numbers" aria-hidden="true"><span>3</span><span>7</span><span>11</span><span>17</span><span>22</span></div>\n'
     '      <div class="numerology-copy">\n'
     '        <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>\n'
-    '        <h2 id="numerology-intro-title">Введи свои данные</h2>\n'
+    '        <h2 id="numerology-intro-title">Узнай, что скрывает твоя дата рождения</h2>\n'
     '        <p>Введите данные — и получите персональный разбор, созданный именно для вас.</p>\n'
     '      </div>\n'
     '    </div>\n', 1)
