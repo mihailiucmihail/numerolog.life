@@ -79,8 +79,8 @@
         err.style.display = 'block';
         return;
       }
-      if(document.getElementById('emailAddr') && (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))){
-        err.textContent = 'Введи корректный email, чтобы получить отчёт.';
+      if(email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        err.textContent = 'Проверь адрес почты — похоже, в нём опечатка.';
         err.style.display = 'block';
         return;
       }

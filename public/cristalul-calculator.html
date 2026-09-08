@@ -975,9 +975,10 @@ select option{color:#1a1420;background:#fff;}
         <label>Фамилия <span class="cd-field-hint">Если меняли фамилию — укажите девичью</span></label>
         <input id="lastName" type="text" placeholder="" autocomplete="off" value="">
       </div>
-<div class="full" id="emailField" hidden style="display:none;">
-        <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(на него придёт постоянная ссылка на твой разбор)</span></label>
-        <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="" required>
+<div class="full" id="emailField">
+        <label>Email <span style="opacity:.55;text-transform:none;letter-spacing:0;">(необязательно)</span></label>
+        <input id="emailAddr" type="email" placeholder="name@email.com" autocomplete="email" inputmode="email" value="">
+        <p class="note" style="margin-top:6px;font-size:12.5px;line-height:1.5;opacity:.75;">Используется только для отправки ссылки на твой разбор.</p>
       </div>
 
       
@@ -1889,7 +1890,7 @@ function autoGender(){
 function readMail(){
   const el = document.getElementById('emailAddr');
   const v = el ? el.value.trim() : '';
-  if(v === '') return {ok:false, msg:'Укажи email — на него придёт постоянная ссылка на твой разбор.'};
+  if(v === '') return {ok:true, value:''}; // email opțional — se folosește doar pentru linkul către raport
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return {ok:false, msg:'Проверь адрес почты — похоже, в нём опечатка.'};
   return {ok:true, value:v};
 }
@@ -6508,8 +6509,8 @@ function startPdfExport(){
         err.style.display = 'block';
         return;
       }
-      if(document.getElementById('emailAddr') && (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))){
-        err.textContent = 'Введи корректный email, чтобы получить отчёт.';
+      if(email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        err.textContent = 'Проверь адрес почты — похоже, в нём опечатка.';
         err.style.display = 'block';
         return;
       }
@@ -6906,7 +6907,8 @@ function startPdfExport(){
       });
     }
     async function __cdPreviewCalculate(){
-      window.__cdSkipMail = true; // emailul se introduce la etapa de plată, după previzualizarea blurată
+      // Emailul din formular e OPȚIONAL: gol → trece; completat greșit → readMail() afișează eroarea.
+      window.__cdSkipMail = false;
       window.__cdPreviewMode = true;
       window.__cdLastResult = null;
       const err = document.getElementById('errMsg');

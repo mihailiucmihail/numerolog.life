@@ -283,7 +283,8 @@
       });
     }
     async function __cdPreviewCalculate(){
-      window.__cdSkipMail = true; // emailul se introduce la etapa de plată, după previzualizarea blurată
+      // Emailul din formular e OPȚIONAL: gol → trece; completat greșit → readMail() afișează eroarea.
+      window.__cdSkipMail = false;
       window.__cdPreviewMode = true;
       window.__cdLastResult = null;
       const err = document.getElementById('errMsg');

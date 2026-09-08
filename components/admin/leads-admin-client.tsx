@@ -16,9 +16,15 @@ import {
 import { countryFlag } from "@/lib/currency"
 import { resolveChargeablePrice } from "@/lib/country-pricing"
 
-/** Steag + cod ISO + prețul fix pe care îl va primi în ofertă; „—” când geolocația nu a fost disponibilă. */
-function CountryBadge({ country }: { country: string | null; currency: string }) {
+/**
+ * Steag + cod ISO + prețul pe care îl va primi în ofertă; „—” când geolocația nu a fost disponibilă.
+ * Prețul se ia din țară; dacă lead-ul a fost salvat cu ALTĂ monedă decât cea a țării (vizitatorul a văzut
+ * efectiv alt preț — ex. geolocație instabilă), o semnalăm ca să nu pară că panoul afișează greșit.
+ */
+function CountryBadge({ country, currency }: { country: string | null; currency: string }) {
   const price = resolveChargeablePrice(country)
+  const seenCurrency = currency?.toUpperCase()
+  const mismatch = Boolean(seenCurrency && price.currency && seenCurrency !== price.currency.toUpperCase())
   if (!country) {
     return (
       <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground" title="Страна не определена">
@@ -27,10 +33,18 @@ function CountryBadge({ country }: { country: string | null; currency: string })
     )
   }
   return (
-    <span className="inline-flex items-center gap-1.5 text-[12px] text-foreground/90" title={`Страна: ${country} · цена: ${price.displayPrice}`}>
+    <span
+      className="inline-flex items-center gap-1.5 text-[12px] text-foreground/90"
+      title={`Страна: ${country} · цена: ${price.displayPrice}${mismatch ? ` · при визите видел цену в ${seenCurrency}` : ''}`}
+    >
       <span className="text-base leading-none" aria-hidden="true">{countryFlag(country)}</span>
       <span className="font-mono tracking-wide">{country}</span>
       <span className="text-muted-foreground">· {price.displayPrice}</span>
+      {mismatch && (
+        <span className="rounded bg-amber-400/15 px-1 font-mono text-[10px] text-amber-300" title={`Видел цену в ${seenCurrency}`}>
+          {seenCurrency}
+        </span>
+      )}
     </span>
   )
 }
