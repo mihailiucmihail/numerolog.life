@@ -165,6 +165,7 @@ export default function CristalFunnel() {
         }
         setPreviewReady(true)
         trackFunnel('free_result_viewed', { mode: 'blurred_report' })
+        trackFunnel('numerology_free_result_view', { product: 'full_crystal', country: country || undefined, currency: cristal.currency, language: locale })
         // Derularea la raport se face când dispare ecranul de formare (vezi onDone).
       }
 
@@ -173,7 +174,7 @@ export default function CristalFunnel() {
         setForming(false)
       }
 
-      // Butonul „Смотреть полный разбор” de pe cardurile blurate → derulăm la plată.
+      // Butonul „Открыть полный разбор” de pe cardurile blurate → derulăm la plată.
       if (d.type === 'unlockRequested') {
         trackFunnel('sticky_unlock_clicked', { source: 'card_cta' })
         document.getElementById(PAYWALL_ID)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -283,6 +284,7 @@ export default function CristalFunnel() {
         await Promise.race([attachLeadEmail(reportData, email), new Promise((r) => setTimeout(r, 1500))])
         const url = await startNumerologieCheckout(email, locale, reportData, promoCode || offer?.code || discountCode)
         trackFunnel('stripe_checkout_started', { currency: cristal.currency, value: cristal.amount })
+        trackFunnel('numerology_checkout_start', { product: 'full_crystal', country: country || undefined, currency: cristal.currency, price: cristal.amount, language: locale })
         window.location.href = url
       } catch (err) {
         localStorage.removeItem(CHECKOUT_STORAGE_KEY)
@@ -293,7 +295,7 @@ export default function CristalFunnel() {
         postToFrame({ type: 'paymentCancelled' })
       }
     },
-    [form, locale, discountCode, offer?.code, cristal, t, postToFrame],
+    [form, locale, discountCode, offer?.code, cristal, country, t, postToFrame],
   )
   const handleCheckoutRef = useRef(handleCheckout)
   useEffect(() => {

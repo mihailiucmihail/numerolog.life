@@ -17,6 +17,12 @@ export type FunnelEvent =
   | 'offer_link_opened'
   | 'stripe_checkout_started'
   | 'purchase_completed'
+  // Pâlnia standard (cerută pentru rapoarte): Free Result → Paywall View → Unlock Click → Checkout → Purchase.
+  | 'numerology_free_result_view'
+  | 'numerology_paywall_view'
+  | 'numerology_unlock_click'
+  | 'numerology_checkout_start'
+  | 'numerology_purchase'
 
 type Params = Record<string, string | number | boolean | undefined>
 
@@ -24,6 +30,8 @@ const ONCE_PER_SESSION: ReadonlySet<FunnelEvent> = new Set([
   'numerology_landing_view',
   'free_result_viewed',
   'full_report_offer_viewed',
+  'numerology_free_result_view',
+  'numerology_paywall_view',
 ])
 
 const STORAGE_PREFIX = 'nl_funnel_evt:'
@@ -92,4 +100,5 @@ export function trackPurchase(args: { transactionId: string; valueMinor: number;
     items_name: 'Кристалл Судьбы',
   })
   trackFunnel('purchase_completed', { value, currency: currency.toUpperCase() }, transactionId)
+  trackFunnel('numerology_purchase', { product: 'full_crystal', value, currency: currency.toUpperCase() }, transactionId)
 }

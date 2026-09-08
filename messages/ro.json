@@ -349,16 +349,16 @@
     "previewSubtitle": "Mai jos este raportul tău real. Ziua nașterii și prima Arcană a numelui sunt deschise; interpretările-cheie și viitorul din grafice sunt încețoșate până la deblocare.",
     "previewLegend": "Trecutul este vizibil · viitorul și interpretările — în raportul complet",
     "previewFrameTitle": "Cristalul Destinului — previzualizare",
-    "stickyTitle": "Deschide raportul complet",
-    "stickyCta": "Deblochează →",
-    "paywallTitle": "Deschide-ți Cristalul complet",
-    "paywallSubtitle": "Toate calculele, graficele și interpretările personale — într-un singur raport complet.",
+    "stickyTitle": "Analiza continuă",
+    "stickyCta": "Deschide analiza completă",
+    "paywallTitle": "Analiza ta personală continuă",
+    "paywallSubtitle": "Ai văzut deja o parte din „Cristalul Destinului” tău.",
     "paywallEmail": "Email pentru linkul permanent al raportului",
     "paywallEmailPlaceholder": "nume@email.com",
     "paywallPromo": "Ai un cod promoțional?",
     "paywallPromoPlaceholder": "CRISTAL15-XXXXXX",
-    "paywallCta": "Deschide întregul Cristal →",
-    "paywallNote": "Plată unică · acces complet la raportul tău",
+    "paywallCta": "Deschide analiza completă",
+    "paywallNote": "Plată unică · acces permanent la analiza ta",
     "paywallProcessing": "Trecem la plată…",
     "errorEmail": "Introdu un email valid — pe el primești linkul permanent al raportului.",
     "errorCheckout": "Nu am putut deschide plata. Încearcă din nou.",
@@ -392,7 +392,18 @@
     "offerApplied": "Reducere −{percent} % aplicată",
     "offerUsed": "Acest cod promoțional a fost deja folosit — raportul e disponibil la prețul obișnuit.",
     "offerExpired": "Reducerea ta personală a expirat — raportul e disponibil la prețul obișnuit.",
-    "offerInvalid": "Codul din link nu a fost recunoscut — raportul e disponibil la prețul obișnuit."
+    "offerInvalid": "Codul din link nu a fost recunoscut — raportul e disponibil la prețul obișnuit.",
+    "paywallBody": "Urmează — relațiile, realizarea, punctele forte, graficele personale și perioadele importante ale vieții tale.",
+    "paywallInvite": "Dacă ceea ce ai aflat deja despre tine îți rezonează, deschide analiza completă.",
+    "paywallIncludesTitle": "În analiza completă",
+    "paywallIncludes": [
+      "Relațiile și viața personală",
+      "Realizarea și cariera",
+      "Punctele forte",
+      "Graficele personale",
+      "Perioadele importante din trecut și viitor"
+    ],
+    "paywallPriceLine": "{price} · întregul „Cristal al Destinului” imediat după plată"
   },
   "language": "Limba"
 }

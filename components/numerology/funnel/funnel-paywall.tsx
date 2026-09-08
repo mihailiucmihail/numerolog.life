@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState, type FormEvent } from 'react'
-import { useTranslations } from 'next-intl'
-import { Loader2 } from 'lucide-react'
+import { useLocale, useTranslations } from 'next-intl'
+import { Loader2, Heart, Compass, Sparkles, ChartLine, CalendarRange } from 'lucide-react'
 import { useCurrency } from '@/components/providers/currency-provider'
 import { checkPromoCode } from '@/app/actions/promo'
 import { trackFunnel } from '@/lib/funnel-analytics'
@@ -32,15 +32,19 @@ const inputCls =
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+// Aceleași pictograme premium folosite pe restul site-ului (lucide), în ordinea listei din i18n.
+const INCLUDE_ICONS = [Heart, Compass, Sparkles, ChartLine, CalendarRange]
+
 export function FunnelPaywall({ id, initialEmail = '', initialPromo, appliedOffer, busy, error, onCheckout }: PaywallProps) {
   const t = useTranslations('funnel')
-  const { cristal } = useCurrency()
+  const locale = useLocale()
+  const { cristal, country } = useCurrency()
   const [email, setEmail] = useState(initialEmail)
   // Emailul din formular e afișat ca text („Ссылка придёт на: …”); editarea se deschide doar la cerere.
   const [editingEmail, setEditingEmail] = useState(!EMAIL_RE.test(initialEmail))
   const [promo, setPromo] = useState(initialPromo ?? '')
   const [showPromo, setShowPromo] = useState(Boolean(initialPromo))
-  const [promoInfo, setPromoInfo] = useState<{ ok: boolean; text: string } | null>(null)
+  const [promoInfo, setPromoInfo] = useState<{ ok: boolean; text: string; finalPrice?: string } | null>(null)
   const [localError, setLocalError] = useState('')
   const ref = useRef<HTMLElement>(null)
 
@@ -50,19 +54,26 @@ export function FunnelPaywall({ id, initialEmail = '', initialPromo, appliedOffe
     setEditingEmail(!EMAIL_RE.test(initialEmail))
   }, [initialEmail])
 
-  // full_report_offer_viewed — o singură dată, când oferta intră în viewport.
+  // paywall_view — o singură dată, DOAR când oferta intră efectiv în viewport-ul utilizatorului.
   useEffect(() => {
     const el = ref.current
     if (!el) return
     const io = new IntersectionObserver((entries) => {
       if (entries.some((e) => e.isIntersecting)) {
         trackFunnel('full_report_offer_viewed', { currency: cristal.currency, value: cristal.amount })
+        trackFunnel('numerology_paywall_view', {
+          product: 'full_crystal',
+          country: country || undefined,
+          currency: cristal.currency,
+          price: cristal.amount,
+          language: locale,
+        })
         io.disconnect()
       }
     }, { threshold: 0.35 })
     io.observe(el)
     return () => io.disconnect()
-  }, [cristal])
+  }, [cristal, country, locale])
 
   const validatePromo = async () => {
     const code = promo.trim().toUpperCase().replace(/\s+/g, '')
@@ -71,7 +82,7 @@ export function FunnelPaywall({ id, initialEmail = '', initialPromo, appliedOffe
     try {
       const r = await checkPromoCode(code)
       setPromoInfo(r.valid
-        ? { ok: true, text: `−${r.percent}% · ${r.finalPrice}` }
+        ? { ok: true, text: `−${r.percent}%`, finalPrice: r.finalPrice }
         : { ok: false, text: '✕' })
     } catch {
       setPromoInfo(null)
@@ -86,37 +97,59 @@ export function FunnelPaywall({ id, initialEmail = '', initialPromo, appliedOffe
       return setLocalError(t('errorEmail'))
     }
     setLocalError('')
+    trackFunnel('numerology_unlock_click', {
+      product: 'full_crystal',
+      country: country || undefined,
+      currency: cristal.currency,
+      price: cristal.amount,
+      language: locale,
+    })
     // Oferta din link are prioritate; câmpul manual contează doar când e activat.
     const manual = PROMO_ENABLED ? promo.trim().toUpperCase().replace(/\s+/g, '') : ''
     onCheckout(v, appliedOffer?.code || manual || undefined)
   }
 
+  // Prețul afișat = exact cel decis pe server pentru țara vizitatorului (sau prețul redus, validat pe server).
+  const currentPrice = appliedOffer?.finalPrice ?? promoInfo?.finalPrice ?? cristal.displayPrice
+  const strikePrice = appliedOffer ? appliedOffer.basePrice : promoInfo?.finalPrice ? cristal.displayPrice : null
+  const includes = t.raw('paywallIncludes') as string[]
+
   return (
     <section id={id} ref={ref} aria-labelledby="funnel-paywall-title" className="mx-auto w-full max-w-2xl scroll-mt-24">
-      <div className="rounded-2xl border border-primary/30 bg-card/60 p-6 sm:p-10">
+      <div className="relative overflow-hidden rounded-2xl border border-primary/30 bg-card/60 p-5 sm:p-10">
+        {/* Linia aurie de sus — aceeași semnătură ca pe cardurile raportului. */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/70 to-transparent" />
+
         <div className="text-center">
           <h2 id="funnel-paywall-title" className="font-serif text-3xl font-light text-foreground sm:text-4xl text-balance">
             {t('paywallTitle')}
           </h2>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted-foreground/80 text-pretty">{t('paywallSubtitle')}</p>
-          {appliedOffer ? (
-            <div className="mt-6 flex flex-col items-center gap-2">
-              <span className="rounded-full border border-primary/40 bg-primary/10 px-3 py-1 font-mono text-[10.5px] uppercase tracking-[0.2em] text-primary">
-                {t('offerApplied', { percent: appliedOffer.percent })}
-              </span>
-              <p className="font-serif text-5xl font-light text-primary">{appliedOffer.finalPrice}</p>
-              <p className="text-sm text-muted-foreground">
-                <span className="line-through">{appliedOffer.basePrice}</span>
-              </p>
-            </div>
-          ) : (
-            <p className="mt-6 font-serif text-5xl font-light text-primary">
-              {promoInfo?.ok ? promoInfo.text.split(' · ')[1] : cristal.displayPrice}
-            </p>
-          )}
+          <div className="mx-auto mt-3 flex max-w-md flex-col gap-2 text-[15px] leading-relaxed text-muted-foreground/90 text-pretty sm:text-base">
+            <p>{t('paywallSubtitle')}</p>
+            <p>{t('paywallBody')}</p>
+            <p className="text-foreground/90">{t('paywallInvite')}</p>
+          </div>
         </div>
 
-        <form onSubmit={submit} noValidate className="mt-8 flex flex-col gap-4">
+        {/* Ce conține continuarea — compact, fără a transforma paywall-ul într-o pagină de vânzare. */}
+        <div className="mt-5 rounded-xl border border-border/50 bg-background/30 px-4 py-3.5 sm:mt-7 sm:px-5 sm:py-4">
+          <p className="font-mono text-[10.5px] uppercase tracking-[0.2em] text-primary/80">{t('paywallIncludesTitle')}</p>
+          <ul className="mt-2.5 grid gap-2 sm:grid-cols-2">
+            {includes.map((item, i) => {
+              const Icon = INCLUDE_ICONS[i % INCLUDE_ICONS.length]
+              return (
+                <li key={item} className="flex items-center gap-3 text-sm text-foreground/90">
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full border border-primary/30 bg-primary/10 text-primary">
+                    <Icon className="size-3.5" aria-hidden="true" />
+                  </span>
+                  <span className="leading-snug">{item}</span>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+
+        <form onSubmit={submit} noValidate className="mt-5 flex flex-col gap-3 sm:mt-7 sm:gap-4">
           {editingEmail ? (
             <div>
               <label htmlFor="fn-email" className="mb-2 block font-mono text-[10.5px] uppercase tracking-[0.18em] text-primary/80">
@@ -182,11 +215,21 @@ export function FunnelPaywall({ id, initialEmail = '', initialPromo, appliedOffe
           <button
             type="submit"
             disabled={busy}
-            className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-8 py-4 text-sm font-medium tracking-wide text-primary-foreground shadow-xl shadow-primary/20 transition-all hover:bg-primary/90 active:scale-[0.99] disabled:opacity-70"
+            className="mt-1 flex min-h-14 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-4 text-sm font-semibold uppercase tracking-[0.08em] text-primary-foreground sm:px-8 sm:tracking-[0.14em] shadow-xl shadow-primary/20 transition-all hover:bg-primary/90 active:scale-[0.99] disabled:opacity-70"
           >
             {busy && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
             {busy ? t('paywallProcessing') : t('paywallCta')}
           </button>
+
+          <p className="text-center text-sm text-foreground/85">
+            {appliedOffer && (
+              <span className="mr-2 rounded-full border border-primary/40 bg-primary/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.16em] text-primary">
+                {t('offerApplied', { percent: appliedOffer.percent })}
+              </span>
+            )}
+            {strikePrice && <span className="mr-1.5 text-muted-foreground line-through">{strikePrice}</span>}
+            {t('paywallPriceLine', { price: currentPrice })}
+          </p>
           <p className="text-center text-xs text-muted-foreground/60">{t('paywallNote')}</p>
         </form>
       </div>
