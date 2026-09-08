@@ -32,6 +32,27 @@ export interface LeadRow {
   offer_sent_count: number
   offer_code: string | null
   unsubscribed_at: string | null
+  /** Câte ori a apăsat butonul de plată (apeluri startNumerologieCheckout). */
+  checkout_clicks: number
+  last_checkout_at: string | null
+}
+
+export interface CheckoutAttemptRow {
+  id: string
+  email: string | null
+  first_name: string | null
+  last_name: string | null
+  country: string | null
+  currency: string | null
+  amount: number | null
+  display_price: string | null
+  promo_code: string | null
+  locale: string | null
+  status: 'started' | 'failed'
+  error: string | null
+  created_at: string
+  /** Lead-ul a plătit (oricând) — încercarea s-a încheiat cu succes. */
+  paid: boolean
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
@@ -181,7 +202,20 @@ export async function unsubscribeLeadByToken(token: string): Promise<{ ok: boole
   }
 }
 
-export type LeadFilter = 'unpaid' | 'paid' | 'all'
+export type LeadFilter = 'unpaid' | 'attempted' | 'paid' | 'all'
+
+export interface LeadStats {
+  total: number
+  unpaid: number
+  paid: number
+  withLink: number
+  /** Lead-uri neplătite care au apăsat cel puțin o dată butonul de plată. */
+  attempted: number
+  /** Toate clickurile pe butonul de plată (inclusiv ale celor care au plătit apoi). */
+  attemptsTotal: number
+  /** Clickuri pe butonul de plată în ultimele 24 h. */
+  attempts24h: number
+}
 
 function checkPassword(password: string): boolean {
   const expected = process.env.NEWSLETTER_ADMIN_PASSWORD
@@ -199,37 +233,69 @@ function serialize(row: any): LeadRow {
     permanent_created_at: toIso(row.permanent_created_at),
     offer_sent_at: toIso(row.offer_sent_at),
     unsubscribed_at: toIso(row.unsubscribed_at),
+    last_checkout_at: toIso(row.last_checkout_at),
+    checkout_clicks: Number(row.checkout_clicks) || 0,
   }
 }
 
 export async function getLeads(
   password: string,
   filter: LeadFilter = 'unpaid',
-): Promise<{ ok: boolean; leads?: LeadRow[]; stats?: { total: number; unpaid: number; paid: number; withLink: number } }> {
+): Promise<{ ok: boolean; leads?: LeadRow[]; stats?: LeadStats; attempts?: CheckoutAttemptRow[] }> {
   if (!checkPassword(password)) return { ok: false }
   try {
     const where =
-      filter === 'unpaid' ? db`WHERE paid_at IS NULL` : filter === 'paid' ? db`WHERE paid_at IS NOT NULL` : db``
+      filter === 'unpaid' ? db`WHERE paid_at IS NULL`
+      : filter === 'attempted' ? db`WHERE paid_at IS NULL AND checkout_clicks > 0`
+      : filter === 'paid' ? db`WHERE paid_at IS NOT NULL`
+      : db``
+    // În filtrul „au apăsat plata” ordonăm după ultima încercare — cei mai „calzi” primii.
+    const order = filter === 'attempted' ? db`ORDER BY last_checkout_at DESC NULLS LAST` : db`ORDER BY last_seen_at DESC`
     const rows = await db`
       SELECT id, email, first_name, last_name, birth_day, birth_month, birth_year, locale, currency, country, views,
              created_at, last_seen_at, paid_at, paid_token, permanent_token, permanent_created_at,
-             offer_sent_at, offer_sent_count, offer_code, unsubscribed_at
+             offer_sent_at, offer_sent_count, offer_code, unsubscribed_at, checkout_clicks, last_checkout_at
       FROM cristalul_previews
       ${where}
-      ORDER BY last_seen_at DESC
+      ${order}
       LIMIT 500
     `
-    const [s] = await db<{ total: number; unpaid: number; paid: number; with_link: number }[]>`
+    const [s] = await db<{ total: number; unpaid: number; paid: number; with_link: number; attempted: number }[]>`
       SELECT count(*)::int AS total,
              count(*) FILTER (WHERE paid_at IS NULL)::int AS unpaid,
              count(*) FILTER (WHERE paid_at IS NOT NULL)::int AS paid,
-             count(*) FILTER (WHERE permanent_token IS NOT NULL)::int AS with_link
+             count(*) FILTER (WHERE permanent_token IS NOT NULL)::int AS with_link,
+             count(*) FILTER (WHERE paid_at IS NULL AND checkout_clicks > 0)::int AS attempted
       FROM cristalul_previews
     `
+    const [a] = await db<{ total: number; last24h: number }[]>`
+      SELECT count(*)::int AS total,
+             count(*) FILTER (WHERE created_at > now() - interval '24 hours')::int AS last24h
+      FROM cristalul_checkout_attempts
+    `
+    const attemptRows = await db`
+      SELECT a.id, a.email, a.first_name, a.last_name, a.country, a.currency, a.amount, a.display_price,
+             a.promo_code, a.locale, a.status, a.error, a.created_at,
+             (p.paid_at IS NOT NULL) AS paid
+      FROM cristalul_checkout_attempts a
+      LEFT JOIN cristalul_previews p ON p.id = a.lead_id
+      ORDER BY a.created_at DESC
+      LIMIT 30
+    `
+    const toIso = (v: any) => (v instanceof Date ? v.toISOString() : v ?? null)
     return {
       ok: true,
       leads: rows.map(serialize),
-      stats: { total: s.total, unpaid: s.unpaid, paid: s.paid, withLink: s.with_link },
+      stats: {
+        total: s.total, unpaid: s.unpaid, paid: s.paid, withLink: s.with_link,
+        attempted: s.attempted, attemptsTotal: a.total, attempts24h: a.last24h,
+      },
+      attempts: attemptRows.map((r: any) => ({
+        ...r,
+        amount: r.amount == null ? null : Number(r.amount),
+        paid: Boolean(r.paid),
+        created_at: toIso(r.created_at),
+      })) as CheckoutAttemptRow[],
     }
   } catch (err) {
     console.error('[v0] getLeads error:', err)

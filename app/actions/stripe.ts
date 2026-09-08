@@ -6,7 +6,8 @@ import { createClient } from "@/lib/supabase/server"
 import { validatePromoCodeServer, normalizePromoCode } from "@/lib/promo"
 import { getRequestCristalPrice, getRequestCurrency } from "@/lib/currency-server"
 import { getGraniPriceMinor, graniCurrency } from "@/lib/currency"
-import { toStripeMinor } from "@/lib/country-pricing"
+import { fromStripeMinor, toStripeMinor } from "@/lib/country-pricing"
+import { recordCheckoutAttempt } from "@/lib/checkout-attempts"
 
 const PROMO_ERRORS = {
   ro: {
@@ -38,20 +39,38 @@ export async function startNumerologieCheckout(
   // Prețul FIX al țării vizitatorului (lib/country-pricing.ts) — decis EXCLUSIV pe server, din geolocație.
   // Browser-ul nu trimite sume, monede sau prețuri afișate; primim doar produsul și eventualul cod promo.
   const price = await getRequestCristalPrice()
-  if (!price.stripeSupported) {
-    throw new Error(isRu
-      ? 'Оплата в вашем регионе пока недоступна.'
-      : 'Plata nu este disponibilă momentan în regiunea ta.')
-  }
   const currency = price.currency.toLowerCase()
   let unitAmount = toStripeMinor(price.amount, price.currency)
   let appliedPromo: string | null = null
   let appliedPercent = 0
+
+  // Fiecare click pe butonul de plată ajunge aici: îl consemnăm (reușit sau eșuat) pentru panoul admin.
+  const attempt = (status: 'started' | 'failed', sessionId: string | null, error?: string) =>
+    recordCheckoutAttempt({
+      email: email ?? null,
+      formData,
+      country: price.countryCode === 'XX' ? null : price.countryCode,
+      currency,
+      amount: fromStripeMinor(unitAmount, price.currency),
+      displayPrice: price.displayPrice,
+      promoCode: appliedPromo,
+      locale,
+      sessionId,
+      status,
+      error,
+    })
+
+  if (!price.stripeSupported) {
+    const msg = isRu ? 'Оплата в вашем регионе пока недоступна.' : 'Plata nu este disponibilă momentan în regiunea ta.'
+    await attempt('failed', null, `unsupported_market:${price.countryCode}`)
+    throw new Error(msg)
+  }
   if (normalizePromoCode(discountCode)) {
     const promo = await validatePromoCodeServer(discountCode, price)
     if (!promo.valid) {
       const msgs = PROMO_ERRORS[isRu ? 'ru' : 'ro']
       // Nu facturăm în tăcere prețul întreg — utilizatorul trebuie să afle că codul nu e valid.
+      await attempt('failed', null, `promo_${promo.reason}`)
       throw new Error(promo.reason === 'empty' ? msgs.format : msgs[promo.reason])
     }
     unitAmount = promo.finalMinor
@@ -62,7 +81,23 @@ export async function startNumerologieCheckout(
   const productName = isRu ? 'Кристалл Судьбы' : product.name
 
   const stripe = getStripe()
-  const session = await stripe.checkout.sessions.create({
+  let session: Awaited<ReturnType<typeof stripe.checkout.sessions.create>>
+  try {
+    session = await createCristalSession()
+  } catch (err) {
+    await attempt('failed', null, err instanceof Error ? err.message : String(err))
+    throw err
+  }
+
+  if (!session.url) {
+    await attempt('failed', session.id, 'no_session_url')
+    throw new Error('Nu s-a putut genera URL-ul de plată.')
+  }
+  await attempt('started', session.id)
+  return session.url
+
+  function createCristalSession() {
+    return stripe.checkout.sessions.create({
     line_items: [
       {
         price_data: {
@@ -87,10 +122,8 @@ export async function startNumerologieCheckout(
     },
     success_url: `${baseUrl}/${locale}/numerologie?payment=success&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/${locale}/numerologie?payment=cancelled`,
-  })
-
-  if (!session.url) throw new Error('Nu s-a putut genera URL-ul de plată.')
-  return session.url
+    })
+  }
 }
 
 export async function startGraniCheckout(

@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { Loader2, Lock, Link2, Copy, Check, Mail, Send, RefreshCw, ExternalLink, Percent, Eye, X } from "lucide-react"
+import { Loader2, Lock, Link2, Copy, Check, Mail, Send, RefreshCw, ExternalLink, Percent, Eye, X, CreditCard, ChevronDown } from "lucide-react"
 import {
   getLeads,
   createPermanentLink,
@@ -10,6 +10,8 @@ import {
   previewDiscountOffer,
   type LeadRow,
   type LeadFilter,
+  type LeadStats,
+  type CheckoutAttemptRow,
 } from "@/app/actions/leads-admin"
 import { countryFlag } from "@/lib/currency"
 import { resolveChargeablePrice } from "@/lib/country-pricing"
@@ -63,7 +65,9 @@ export function LeadsAdminClient() {
 
   const [filter, setFilter] = useState<LeadFilter>("unpaid")
   const [leads, setLeads] = useState<LeadRow[]>([])
-  const [stats, setStats] = useState<{ total: number; unpaid: number; paid: number; withLink: number } | null>(null)
+  const [stats, setStats] = useState<LeadStats | null>(null)
+  const [attempts, setAttempts] = useState<CheckoutAttemptRow[]>([])
+  const [showAttempts, setShowAttempts] = useState(false)
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [busyId, setBusyId] = useState<string | null>(null)
   const [links, setLinks] = useState<Record<string, string>>({})
@@ -86,6 +90,7 @@ export function LeadsAdminClient() {
     if (!res.ok) return false
     setLeads(res.leads ?? [])
     setStats(res.stats ?? null)
+    setAttempts(res.attempts ?? [])
     setSelected(new Set())
     return true
   }
@@ -240,16 +245,22 @@ export function LeadsAdminClient() {
           </p>
         </div>
         {stats && (
-          <dl className="grid grid-cols-4 gap-3 text-center sm:gap-4">
+          <dl className="grid grid-cols-3 gap-3 text-center sm:grid-cols-5 sm:gap-4">
             {[
-              ["Всего", stats.total],
-              ["Без оплаты", stats.unpaid],
-              ["Оплатили", stats.paid],
-              ["Со ссылкой", stats.withLink],
-            ].map(([k, v]) => (
-              <div key={k as string} className="rounded-lg border border-primary/15 bg-background/30 px-3 py-2">
+              ["Всего", stats.total, null],
+              ["Без оплаты", stats.unpaid, null],
+              ["Нажали оплатить", stats.attempted, `${stats.attemptsTotal} нажатий · ${stats.attempts24h} за 24 ч`],
+              ["Оплатили", stats.paid, null],
+              ["Со ссылкой", stats.withLink, null],
+            ].map(([k, v, sub]) => (
+              <div
+                key={k as string}
+                className={`rounded-lg border px-3 py-2 ${k === "Нажали оплатить" ? "border-amber-400/40 bg-amber-400/10" : "border-primary/15 bg-background/30"}`}
+                title={k === "Нажали оплатить" ? "Неоплаченные лиды, которые хотя бы раз нажали «Открыть полный разбор» и дошли до Stripe" : undefined}
+              >
                 <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">{k}</dt>
-                <dd className="font-serif text-xl text-primary">{v}</dd>
+                <dd className={`font-serif text-xl ${k === "Нажали оплатить" ? "text-amber-300" : "text-primary"}`}>{v}</dd>
+                {sub && <dd className="text-[10px] leading-tight text-muted-foreground">{sub}</dd>}
               </div>
             ))}
           </dl>
@@ -261,6 +272,7 @@ export function LeadsAdminClient() {
           {(
             [
               ["unpaid", "Без оплаты"],
+              ["attempted", "Нажали оплатить"],
               ["paid", "Оплатили"],
               ["all", "Все"],
             ] as [LeadFilter, string][]
@@ -310,6 +322,74 @@ export function LeadsAdminClient() {
         <p role="status" className="mb-4 rounded-lg border border-primary/25 bg-primary/10 px-4 py-3 text-sm text-foreground">
           {notice}
         </p>
+      )}
+
+      {attempts.length > 0 && (
+        <section className="mb-6 rounded-xl border border-amber-400/25 bg-amber-400/5">
+          <button
+            type="button"
+            onClick={() => setShowAttempts((v) => !v)}
+            aria-expanded={showAttempts}
+            className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left"
+          >
+            <span className="flex items-center gap-2 text-sm font-medium text-foreground">
+              <CreditCard className="size-4 text-amber-300" aria-hidden="true" />
+              Последние нажатия «Оплатить»
+              <span className="text-muted-foreground">· {attempts.length} последних</span>
+            </span>
+            <ChevronDown className={`size-4 text-muted-foreground transition-transform ${showAttempts ? "rotate-180" : ""}`} aria-hidden="true" />
+          </button>
+          {showAttempts && (
+            <div className="overflow-x-auto border-t border-amber-400/15">
+              <table className="w-full min-w-[820px] text-sm">
+                <thead className="text-left text-[11px] uppercase tracking-wide text-muted-foreground">
+                  <tr>
+                    <th className="px-4 py-2">Когда</th>
+                    <th className="px-3 py-2">Клиент</th>
+                    <th className="px-3 py-2">Страна · цена</th>
+                    <th className="px-3 py-2">Промокод</th>
+                    <th className="px-3 py-2">Результат</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-amber-400/10">
+                  {attempts.map((a) => (
+                    <tr key={a.id} className="align-top">
+                      <td className="whitespace-nowrap px-4 py-2 text-muted-foreground">{fmtDate(a.created_at)}</td>
+                      <td className="px-3 py-2">
+                        <div className="text-foreground">{[a.first_name, a.last_name].filter(Boolean).join(" ") || "—"}</div>
+                        <div className="text-[12px] text-primary/90">{a.email ?? "без email"}</div>
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-2">
+                        {a.country ? (
+                          <span className="inline-flex items-center gap-1.5">
+                            <span aria-hidden="true">{countryFlag(a.country)}</span>
+                            <span className="font-mono text-[12px]">{a.country}</span>
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">—</span>
+                        )}
+                        <span className="text-muted-foreground"> · {a.display_price ?? `${a.amount ?? ""} ${a.currency ?? ""}`}</span>
+                      </td>
+                      <td className="px-3 py-2 font-mono text-[12px] text-primary/80">{a.promo_code ?? "—"}</td>
+                      <td className="px-3 py-2">
+                        {a.paid ? (
+                          <span className="inline-flex rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-medium text-emerald-300">Оплатил</span>
+                        ) : a.status === "failed" ? (
+                          <span className="inline-flex flex-col gap-0.5">
+                            <span className="inline-flex w-fit rounded-full bg-destructive/15 px-2 py-0.5 text-[11px] font-medium text-destructive">Ошибка</span>
+                            {a.error && <span className="max-w-[260px] truncate text-[11px] text-muted-foreground" title={a.error}>{a.error}</span>}
+                          </span>
+                        ) : (
+                          <span className="inline-flex rounded-full bg-amber-400/15 px-2 py-0.5 text-[11px] font-medium text-amber-300">Перешёл в Stripe, не оплатил</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
       )}
 
       {preview && (
@@ -382,6 +462,7 @@ export function LeadsAdminClient() {
                 <th className="px-3 py-3">Первый визит</th>
                 <th className="px-3 py-3">Последний</th>
                 <th className="px-3 py-3 text-center">Просм.</th>
+                <th className="px-3 py-3 text-center" title="Сколько раз нажал кнопку оплаты">Оплатить</th>
                 <th className="px-3 py-3">Статус</th>
                 <th className="px-3 py-3 text-right">Действия</th>
               </tr>
@@ -413,6 +494,18 @@ export function LeadsAdminClient() {
                     <td className="px-3 py-3 whitespace-nowrap text-muted-foreground">{fmtDate(l.created_at)}</td>
                     <td className="px-3 py-3 whitespace-nowrap text-muted-foreground">{fmtDate(l.last_seen_at)}</td>
                     <td className="px-3 py-3 text-center">{l.views}</td>
+                    <td className="px-3 py-3 text-center">
+                      {l.checkout_clicks > 0 ? (
+                        <div className="flex flex-col items-center gap-0.5" title={`Последнее нажатие: ${fmtDate(l.last_checkout_at)}`}>
+                          <span className={`inline-flex min-w-7 justify-center rounded-full px-2 py-0.5 text-[12px] font-semibold ${l.paid_at ? "bg-emerald-500/15 text-emerald-300" : "bg-amber-400/20 text-amber-300"}`}>
+                            {l.checkout_clicks}
+                          </span>
+                          <span className="whitespace-nowrap text-[10px] text-muted-foreground">{fmtDate(l.last_checkout_at)}</span>
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </td>
                     <td className="px-3 py-3">
                       <div className="flex flex-col gap-1">
                         {l.paid_at ? (
