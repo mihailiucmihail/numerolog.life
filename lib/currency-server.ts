@@ -1,7 +1,8 @@
 import 'server-only'
 import { cookies, headers } from 'next/headers'
 import { COUNTRY_HEADER, CURRENCY_COOKIE, CURRENCY_HEADER, currencyFromCountry, parseCurrency, type Currency } from '@/lib/currency'
-import { resolveChargeablePrice, type CountryPrice } from '@/lib/country-pricing'
+import { isNativelyPriced, resolveChargeablePrice, type CountryPrice } from '@/lib/country-pricing'
+import { COUNTRY_COOKIE, readCountryCookie } from '@/lib/country-cookie'
 
 /**
  * Prețul FIX al Cristalului pentru cererea curentă, decis exclusiv pe server din țara vizitatorului
@@ -11,15 +12,30 @@ export async function getRequestCristalPrice(): Promise<CountryPrice> {
   return resolveChargeablePrice(await getRequestCountry())
 }
 
-/** Țara vizitatorului (ISO alpha-2) sau null: header-ul intern din proxy, altfel x-vercel-ip-country. */
+/**
+ * Țara EFECTIVĂ a vizitatorului (ISO alpha-2) sau null — aceeași logică ca în proxy, ca prețul afișat și
+ * cel facturat să coincidă și în Server Actions (unde header-ul intern din proxy poate lipsi):
+ *  1) header-ul intern x-country (proxy);
+ *  2) geolocația x-vercel-ip-country, dacă indică o țară cu preț propriu;
+ *  3) cookie-ul semnat NEXT_COUNTRY (ultima țară cu preț propriu văzută pentru acest browser);
+ *  4) geolocația brută (→ rezerva $9.99) sau null.
+ */
 export async function getRequestCountry(): Promise<string | null> {
+  let geo: string | null = null
   try {
     const h = await headers()
-    const c = h.get(COUNTRY_HEADER) || h.get('x-vercel-ip-country')
-    return c && /^[A-Za-z]{2}$/.test(c) ? c.toUpperCase() : null
-  } catch {
-    return null
-  }
+    const fromProxy = h.get(COUNTRY_HEADER)
+    if (fromProxy && /^[A-Za-z]{2}$/.test(fromProxy)) return fromProxy.toUpperCase()
+    const raw = h.get('x-vercel-ip-country')
+    geo = raw && /^[A-Za-z]{2}$/.test(raw) ? raw.toUpperCase() : null
+    if (geo && isNativelyPriced(geo)) return geo
+  } catch {}
+  try {
+    const cookieStore = await cookies()
+    const sticky = await readCountryCookie(cookieStore.get(COUNTRY_COOKIE)?.value)
+    if (sticky) return sticky
+  } catch {}
+  return geo
 }
 
 /**
