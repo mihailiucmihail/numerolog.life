@@ -226,9 +226,8 @@ rep('<div class="card" id="inputFormCard">',
     '      <div class="numerology-crystal" aria-hidden="true"><span>22</span></div>\n'
     '      <div class="numerology-numbers" aria-hidden="true"><span>3</span><span>7</span><span>11</span><span>17</span><span>22</span></div>\n'
     '      <div class="numerology-copy">\n'
-    '        <span class="numerology-kicker">КРИСТАЛЛ СУДЬБЫ</span>\n'
-    '        <h2 id="numerology-intro-title">Открой код своей даты рождения</h2>\n'
-    '        <p class="numerology-intro-lead">Персональный нумерологический разбор</p>\n'
+    '        <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>\n'
+    '        <h2 id="numerology-intro-title">Введи свои данные — и открой свой персональный нумерологический разбор «Кристалл Судьбы».</h2>\n'
     '      </div>\n'
     '    </div>\n', 1)
 rep('</head>', """<style>
