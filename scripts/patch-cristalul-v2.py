@@ -94,8 +94,9 @@ _mail_re = re.compile(
     r'      <div class="full">\n        <label>Электронная почта</label>\n        <input id="pMail"[^\n]*\n        <p class="note"[^\n]*\n      </div>\n')
 assert len(_mail_re.findall(s)) == 1, 'blocul email (pMail) al uploadului nu a fost găsit exact o dată'
 s = _mail_re.sub("""      <div class="full" id="emailField">
-        <label>Email <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(на него придёт постоянная ссылка на твой разбор)</span></label>
-        <input id="emailAddr" type="email" placeholder="ex: name@email.com" autocomplete="email" value="" required>
+        <label>Email <span style="opacity:.55;text-transform:none;letter-spacing:0;">(необязательно)</span></label>
+        <input id="emailAddr" type="email" placeholder="name@email.com" autocomplete="email" inputmode="email" value="">
+        <p class="note" style="margin-top:6px;font-size:12.5px;line-height:1.5;opacity:.75;">Используется только для отправки ссылки на твой разбор.</p>
       </div>
       <div class="full" id="promoField" hidden style="display:none;">
         <label>Промокод <span style="opacity:.5;text-transform:none;letter-spacing:0;">(необязательно — скидка 15 %, действует один раз)</span></label>
@@ -103,16 +104,16 @@ s = _mail_re.sub("""      <div class="full" id="emailField">
         <div id="promoMsg" style="display:none;margin-top:8px;font-size:13px;line-height:1.5;"></div>
       </div>
 """, s)
-# readMail() al uploadului citește #pMail → îl redirecționăm la #emailAddr. Emailul este OBLIGATORIU în
-# formular (butonul principal îl validează); doar în modurile din link (auto=1 / preview=1, unde datele vin
-# din query) `__cdSkipMail` ocolește validarea. Promocodul (#promoField) este ASCUNS (păstrat pentru viitor).
+# readMail() al uploadului citește #pMail → îl redirecționăm la #emailAddr. Emailul este OPȚIONAL (sept. 2026):
+# gol → trece; completat greșit → eroare. Se folosește doar pentru trimiterea linkului către raport (paywall-ul
+# îl cere obligatoriu la plată). Promocodul (#promoField) este ASCUNS (păstrat pentru viitor).
 rep("""function readMail(){
   const el = document.getElementById('pMail');
   const v = el.value.trim();""", """function readMail(){
   const el = document.getElementById('emailAddr');
   const v = el ? el.value.trim() : '';""")
-rep("Укажи электронную почту — она нужна нам, чтобы присылать тебе новости и полезные разборы.",
-    "Укажи email — на него придёт постоянная ссылка на твой разбор.")
+rep("""  if(v === '') return {ok:false, msg:'Укажи электронную почту — она нужна нам, чтобы присылать тебе новости и полезные разборы.'};""",
+    """  if(v === '') return {ok:true, value:''}; // email opțional — se folosește doar pentru linkul către raport""")
 rep("  const mailCheck = readMail();\n",
     "  const mailCheck = window.__cdSkipMail ? {ok:true, value:''} : readMail();\n")
 rep("  try{ localStorage.setItem('crystal_last_email', mailCheck.value); }catch(e){}\n",
@@ -142,7 +143,6 @@ _email_block_re = re.compile(r'<div class="full" id="emailField">.*?</div>\s*', 
 _email_match = _email_block_re.search(s)
 assert _email_match, 'blocul email nu a fost găsit pentru reordonare'
 _email_block = _email_match.group(0)
-_email_block = _email_block.replace('<div class="full" id="emailField">', '<div class="full" id="emailField" hidden style="display:none;">', 1)
 s = s[:_email_match.start()] + s[_email_match.end():]
 _first_input_re = re.compile(r'(<div>\s*<label>Имя</label>.*?</div>)', re.S)
 _first_match = _first_input_re.search(s)
@@ -153,15 +153,15 @@ _family_input_re = re.compile(r'(<div>\s*<label>Фамилия.*?</div>)', re.S)
 _family_match = _family_input_re.search(s)
 assert _family_match, 'blocul familiei nu a fost găsit pentru reordonare'
 s = s[:_family_match.start()] + _first_block + '\n' + s[_family_match.start():]
-# Emailul rămâne ascuns în DOM pentru etapa de achiziție, după nume și familie.
+# Emailul (opțional, vizibil) vine după nume și familie.
 _family_end = s.find('</div>', _family_match.start()) + len('</div>')
 s = s[:_family_end] + '\n' + _email_block + s[_family_end:]
-# Reordonare finală robustă: prenume, familie, apoi email ascuns.
+# Reordonare finală robustă: prenume, familie, apoi email.
 _blocks = {}
 for _key, _pattern in {
     'first': r'<div>\s*<label>Имя</label>.*?</div>',
     'family': r'<div>\s*<label>Фамилия.*?</div>',
-    'email': r'<div class="full" id="emailField" hidden style="display:none;">.*?</div>',
+    'email': r'<div class="full" id="emailField">.*?</div>',
 }.items():
     _m = re.search(_pattern, s, re.S)
     assert _m, f'blocul {_key} nu a fost găsit pentru ordonare'
@@ -228,7 +228,7 @@ rep('<div class="card" id="inputFormCard">',
     '      <div class="numerology-copy">\n'
     '        <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>\n'
     '        <h2 id="numerology-intro-title">Узнай, что скрывает твоя дата рождения</h2>\n'
-    '        <p>Введи свои данные — и узнай, что твоя дата рождения и имя могут рассказать именно о тебе.</p>\n'
+    '        <p>Введи свои данные — и открой свой персональный нумерологический разбор «Кристалл Судьбы».</p>\n'
     '      </div>\n'
     '    </div>\n', 1)
 rep('</head>', """<style>
