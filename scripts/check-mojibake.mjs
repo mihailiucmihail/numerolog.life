@@ -5,7 +5,8 @@
 // Utilizare manuală: node scripts/check-mojibake.mjs [--fix-separators]
 
 import { execSync } from "node:child_process"
-import { readFileSync, writeFileSync } from "node:fs"
+import { readFileSync, writeFileSync, readdirSync } from "node:fs"
+import { join, relative } from "node:path"
 
 const TEXT_EXT = /\.(tsx?|jsx?|mjs|cjs|json|css|scss|html|md|mdx|py|sql|txt|yml|yaml|svg)$/i
 const IGNORE = [
@@ -19,9 +20,28 @@ const IGNORE = [
 const REPLACEMENT = "\uFFFD"
 const BOX_DRAWING = /[\u2500-\u257F]{3,}/g
 
-const files = execSync("git ls-files", { encoding: "utf8" })
-  .split("\n")
-  .filter((f) => f && TEXT_EXT.test(f) && !IGNORE.some((re) => re.test(f)))
+// `vercel deploy` din CLI încarcă fișierele FĂRĂ directorul .git → `git ls-files` eșuează.
+// În acest caz parcurgem sistemul de fișiere (aceleași reguli de excludere).
+const SKIP_DIRS = new Set(["node_modules", ".next", ".git", ".vercel", "data", "v0_memories", "v0_plans"])
+function walk(dir, out = []) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      if (!SKIP_DIRS.has(entry.name)) walk(join(dir, entry.name), out)
+    } else if (entry.isFile()) {
+      out.push(relative(process.cwd(), join(dir, entry.name)))
+    }
+  }
+  return out
+}
+function listFiles() {
+  try {
+    return execSync("git ls-files", { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).split("\n")
+  } catch {
+    return walk(process.cwd())
+  }
+}
+
+const files = listFiles().filter((f) => f && TEXT_EXT.test(f) && !IGNORE.some((re) => re.test(f)))
 
 const fixSeparators = process.argv.includes("--fix-separators")
 const problems = []

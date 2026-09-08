@@ -22,7 +22,7 @@ export type CountryPrice = {
   /** Contul Stripe actual poate factura această monedă din această țară. */
   stripeSupported: boolean
   /**
-   * Piață cu restricții (sancțiuni / Stripe indisponibil): RU, BY, CU, SY, KP… Codul rămâne pregătit
+   * Piață cu restricții (sancțiuni / Stripe indisponibil): RU, CU, SY, KP… Codul rămâne pregătit
    * pentru un alt procesator; până atunci checkout-ul folosește prețul global de rezervă (vezi resolveCheckoutPrice).
    */
   paymentRestricted?: boolean
@@ -67,7 +67,9 @@ const STRIPE_CURRENCIES = new Set([
 ])
 
 /** Piețe pe care Stripe nu poate încasa (sancțiuni / restricții), indiferent de monedă. */
-const RESTRICTED_MARKETS = new Set(['RU', 'BY', 'CU', 'SY', 'KP', 'IR', 'AF', 'MM', 'VE', 'SD', 'SS', 'YE', 'SO', 'LY'])
+// BY (Belarus) NU este aici: decizie explicită — afișăm și încasăm 29 BYN (Stripe acceptă BYN; verificat live).
+// Cardurile emise în Belarus pot fi totuși refuzate de bănci — riscul e la finalizarea plății, nu la afișare.
+const RESTRICTED_MARKETS = new Set(['RU', 'CU', 'SY', 'KP', 'IR', 'AF', 'MM', 'VE', 'SD', 'SS', 'YE', 'SO', 'LY'])
 
 type Row = [code: string, name: string, currency: string, amount: number, display: string]
 
