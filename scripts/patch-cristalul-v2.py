@@ -131,7 +131,6 @@ _date_start = s.rfind('<div class="full">', 0, _date_label)
 _date_end = s.find('<div class="full">', _date_label)
 assert _date_start >= 0 and _date_end > _date_start, 'finalul blocului data nașterii nu a fost găsit'
 _date_block = s[_date_start:_date_end]
-_date_block = _date_block.replace('<label>Дата рождения</label>', '<label>Дата рождения</label><p class="numerology-action-hint">Введите данные для персонального расчёта</p>', 1)
 s = s[:_date_start] + s[_date_end:]
 _name_label = s.find('<label>Фамилия')
 _name_marker = s.rfind('<div>', 0, _name_label)
