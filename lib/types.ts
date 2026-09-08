@@ -161,9 +161,4 @@ export const HOUSES = [
   { number: 12, name: "Casa XII", theme: "Subconstient si spiritualitate" }
 ]
 
-// Price configuration
-export const REPORT_PRICE = {
-  amount: 1900, // 19 EUR in cents
-  currency: "eur",
-  displayPrice: "19,00 €"
-}
+// Prețul Cristalului este FIX per țară: vezi lib/country-pricing.ts (nu mai există o constantă globală în EUR).
