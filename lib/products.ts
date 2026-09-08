@@ -11,7 +11,9 @@ export const PRODUCTS: Product[] = [
     id: 'cristalul-destinului',
     name: 'Cristalul Destinului',
     description: 'Raport numerologic complet — Metoda Ayren și Julie Po cu 22 Arcane, metacicle de viată, grafice și Pătrul lui Pitagora.',
-    priceInCents: 1900, // 19 EUR
+    // Doar nume/descriere pentru Stripe. Prețul REAL este fix per țară — lib/country-pricing.ts
+    // (startNumerologieCheckout ignoră aceste două câmpuri).
+    priceInCents: 1900,
     currency: 'eur',
   },
   {
