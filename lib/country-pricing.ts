@@ -311,6 +311,18 @@ export function getCountryPrice(country: string | null | undefined): CountryPric
  *   - monedă/piață pe care Stripe nu o poate încasa → rezerva globală configurată explicit (FALLBACK_PRICE),
  *     fără să inventăm suport pentru moneda locală. Când apare un alt procesator, aici se ramifică.
  */
+/**
+ * Țara are un preț PROPRIU (nu rezerva $9.99): cunoscută în tabel și încasabilă în moneda ei (sau KP, dezactivat).
+ * Folosit de proxy ca să „lipească” țara într-un cookie semnat — geolocația IP-urilor de VPN/mobil oscilează
+ * (BY → uneori RU/necunoscut) și fără memorie vizitatorul ar vedea alternativ 29 BYN și $9.99.
+ */
+export function isNativelyPriced(country: string | null | undefined): boolean {
+  const code = country?.trim().toUpperCase()
+  if (!code || !(code in COUNTRY_PRICING)) return false
+  const cp = COUNTRY_PRICING[code]
+  return cp.stripeSupported || Boolean(cp.paymentDisabled)
+}
+
 export function resolveChargeablePrice(country: string | null | undefined): CountryPrice {
   const cp = getCountryPrice(country)
   if (cp.stripeSupported || cp.paymentDisabled) return cp
