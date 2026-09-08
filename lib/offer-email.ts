@@ -1,4 +1,4 @@
-import { applyDiscountMinor, formatPrice, PRICES, type Currency } from '@/lib/currency'
+import { formatDiscounted, type CountryPrice } from '@/lib/country-pricing'
 
 /**
  * Emailul „revino cu −20 %” pentru lead-urile care au văzut Cristalul blurat dar nu au plătit.
@@ -15,7 +15,8 @@ export interface OfferEmailInput {
   firstName: string | null | undefined
   email: string
   birthDay: number | null | undefined
-  currency: Currency
+  /** Prețul fix al țării lead-ului (lib/country-pricing.ts). */
+  price: CountryPrice
   percent: number
   code: string
   expiresAt: Date
@@ -128,9 +129,8 @@ export function buildOfferEmail(input: OfferEmailInput): { subject: string; html
   const name = (input.firstName || '').trim() || c.fallbackName
   const arcanaNo = birthArcana(input.birthDay)
   const arcana = arcanaNo ? `${arcanaNo} — ${ARCANA_NAMES[input.locale][arcanaNo - 1]}` : null
-  const baseMinor = PRICES[input.currency].cristal
-  const basePrice = formatPrice(baseMinor, input.currency)
-  const finalPrice = formatPrice(applyDiscountMinor(baseMinor, input.percent, input.currency), input.currency)
+  const basePrice = input.price.displayPrice
+  const finalPrice = formatDiscounted(input.price, input.percent)
   const deadline = fmtDeadline(input.expiresAt, input.locale)
   const crystalImg = `${input.baseUrl}/images/email/cristal-offer.png`
   const subject = c.subject(name, input.percent)

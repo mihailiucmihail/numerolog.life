@@ -2,6 +2,7 @@ import createMiddleware from 'next-intl/middleware'
 import { NextRequest, NextResponse } from 'next/server'
 import { routing } from './i18n/routing'
 import { COUNTRY_HEADER, CURRENCY_COOKIE, CURRENCY_HEADER, currencyFromCountry, parseCurrency, type Currency } from './lib/currency'
+import { isCountryOverrideAllowed } from './lib/country-pricing'
 
 const handleI18nRouting = createMiddleware(routing)
 
@@ -18,16 +19,25 @@ const CURRENCY_COOKIE_MAX_AGE = 60 * 60 * 24 * 30 // 30 de zile
  * pentru override-ul explicit și ca rezervă când header-ul de țară lipsește.
  */
 function resolveCurrency(request: NextRequest): { currency: Currency; persist: boolean } {
-  const fromQuery = parseCurrency(request.nextUrl.searchParams.get('currency'))
+  // Override-urile din URL (?currency=, ?country=) sunt permise doar în development/preview — în producție
+  // prețul nu poate fi manipulat din URL; contează exclusiv geolocația.
+  const fromQuery = isCountryOverrideAllowed() ? parseCurrency(request.nextUrl.searchParams.get('currency')) : null
   if (fromQuery) return { currency: fromQuery, persist: true }
   const fromCookie = parseCurrency(request.cookies.get(CURRENCY_COOKIE)?.value)
-  const country = request.headers.get('x-vercel-ip-country')
+  const country = resolveCountry(request)
   if (country) {
     const fromCountry = currencyFromCountry(country)
     return { currency: fromCountry, persist: fromCountry !== fromCookie }
   }
   if (fromCookie) return { currency: fromCookie, persist: false }
   return { currency: currencyFromCountry(null), persist: true }
+}
+
+/** Țara vizitatorului (ISO alpha-2): geolocația Vercel; ?country=XX doar în development/preview. */
+function resolveCountry(request: NextRequest): string | null {
+  const override = isCountryOverrideAllowed() ? request.nextUrl.searchParams.get('country') : null
+  const raw = override || request.headers.get('x-vercel-ip-country')
+  return raw && /^[A-Za-z]{2}$/.test(raw) ? raw.toUpperCase() : null
 }
 
 function withCurrencyCookie(response: NextResponse | Response, request: NextRequest): NextResponse | Response {
@@ -57,9 +67,9 @@ export default function proxy(request: NextRequest) {
     const { currency } = resolveCurrency(request)
     const headers = new Headers(request.headers)
     headers.set(CURRENCY_HEADER, currency)
-    // Țara (pentru alfabetul numelui preselectat etc.); ?country=XX permite testarea fără VPN.
-    const country = request.nextUrl.searchParams.get('country') || request.headers.get('x-vercel-ip-country')
-    if (country && /^[A-Za-z]{2}$/.test(country)) headers.set(COUNTRY_HEADER, country.toUpperCase())
+    // Țara (prețul fix al Cristalului, alfabetul numelui); ?country=XX permite testarea fără VPN doar în dev/preview.
+    const country = resolveCountry(request)
+    if (country) headers.set(COUNTRY_HEADER, country)
     const forwarded = new NextRequest(request, { headers })
     return withCurrencyCookie(handleI18nRouting(forwarded), request)
   }

@@ -24,9 +24,9 @@ const SECTION_I18N = {
 export function ReportPreviewSection() {
   const t = useTranslations("reportPreview")
   const locale = useLocale()
-  const { prices, format } = useCurrency()
+  const { cristal } = useCurrency()
   const base = SECTION_I18N[locale as keyof typeof SECTION_I18N] ?? SECTION_I18N.ru
-  const S = { ...base, price: base.price.replace('{price}', format(prices.cristal)) }
+  const S = { ...base, price: base.price.replace('{price}', cristal.displayPrice) }
 
   return (
     <section className="relative overflow-hidden pt-4 pb-12 sm:pt-6 sm:pb-16">

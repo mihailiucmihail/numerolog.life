@@ -1,11 +1,9 @@
 import 'server-only'
 import crypto from 'crypto'
 import { db } from '@/lib/db'
-import { PRICES, applyDiscountMinor, formatPrice, type Currency } from '@/lib/currency'
+import { FALLBACK_PRICE, discountedMinor, formatLikeDisplay, fromStripeMinor, toStripeMinor, type CountryPrice } from '@/lib/country-pricing'
 
-// Prețul de bază al raportului „Cristalul Destinului" (în cenți EUR) și reducerea standard.
-// Pentru alte monede vezi PRICES din lib/currency.ts.
-export const CRISTAL_PRICE_CENTS = PRICES.eur.cristal // 19,00 EUR
+// Prețul Cristalului este FIX per țară (lib/country-pricing.ts); aici doar reducerile standard.
 export const PROMO_PERCENT = 15
 
 /** Reducerea ofertei „revino” trimise lead-urilor neplătite din panoul admin, și valabilitatea ei. */
@@ -25,10 +23,6 @@ export function normalizePromoCode(raw: string | undefined | null): string | nul
 
 export function applyPercentDiscount(cents: number, percent: number): number {
   return Math.round(cents * (100 - percent) / 100)
-}
-
-export function formatEur(cents: number): string {
-  return (cents / 100).toFixed(2).replace('.', ',') + ' €'
 }
 
 function randomSuffix(length = 6): string {
@@ -99,14 +93,14 @@ export async function getOrCreateOfferCode(
 export type PromoReason = 'empty' | 'format' | 'not_found' | 'used' | 'expired'
 
 export type PromoValidation =
-  | { valid: true; code: string; percent: number; currency: Currency; baseMinor: number; finalMinor: number }
+  | { valid: true; code: string; percent: number; currency: string; baseMinor: number; finalMinor: number; finalPrice: string }
   | { valid: false; code: string | null; reason: PromoReason }
 
 /**
  * Validare fără efecte secundare — folosită pentru feedback în formular și la crearea checkout-ului.
- * Suma finală este calculată în moneda vizitatorului (EUR sau KZT).
+ * Suma finală pornește de la prețul FIX al țării vizitatorului (unități minime Stripe ale monedei lui).
  */
-export async function validatePromoCodeServer(raw: string | undefined | null, currency: Currency = 'eur'): Promise<PromoValidation> {
+export async function validatePromoCodeServer(raw: string | undefined | null, price: CountryPrice = FALLBACK_PRICE): Promise<PromoValidation> {
   const code = normalizePromoCode(raw)
   if (!code) return { valid: false, code: null, reason: 'empty' }
   if (!CODE_RE.test(code)) return { valid: false, code, reason: 'format' }
@@ -119,16 +113,23 @@ export async function validatePromoCodeServer(raw: string | undefined | null, cu
   if (rows[0].expires_at && new Date(rows[0].expires_at).getTime() < Date.now()) return { valid: false, code, reason: 'expired' }
 
   const percent = rows[0].percent
-  const baseMinor = PRICES[currency].cristal
-  return { valid: true, code, percent, currency, baseMinor, finalMinor: applyDiscountMinor(baseMinor, percent, currency) }
+  const finalMinor = discountedMinor(price, percent)
+  return {
+    valid: true,
+    code,
+    percent,
+    currency: price.currency,
+    baseMinor: toStripeMinor(price.amount, price.currency),
+    finalMinor,
+    finalPrice: formatLikeDisplay(fromStripeMinor(finalMinor, price.currency), price),
+  }
 }
 
-/** Prețul Cristalului (întreg și redus) formatat în moneda dată. */
-export function cristalPriceLabels(currency: Currency, percent = PROMO_PERCENT): { base: string; discounted: string } {
-  const baseMinor = PRICES[currency].cristal
+/** Prețul Cristalului (întreg și redus) formatat exact ca displayPrice al țării. */
+export function cristalPriceLabels(price: CountryPrice, percent = PROMO_PERCENT): { base: string; discounted: string } {
   return {
-    base: formatPrice(baseMinor, currency),
-    discounted: formatPrice(applyDiscountMinor(baseMinor, percent, currency), currency),
+    base: price.displayPrice,
+    discounted: formatLikeDisplay(fromStripeMinor(discountedMinor(price, percent), price.currency), price),
   }
 }
 

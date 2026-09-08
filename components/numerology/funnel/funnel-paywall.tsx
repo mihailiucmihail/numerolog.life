@@ -34,7 +34,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export function FunnelPaywall({ id, initialEmail = '', initialPromo, appliedOffer, busy, error, onCheckout }: PaywallProps) {
   const t = useTranslations('funnel')
-  const { prices, format, currency } = useCurrency()
+  const { cristal } = useCurrency()
   const [email, setEmail] = useState(initialEmail)
   // Emailul din formular e afișat ca text („Ссылка придёт на: …”); editarea se deschide doar la cerere.
   const [editingEmail, setEditingEmail] = useState(!EMAIL_RE.test(initialEmail))
@@ -56,13 +56,13 @@ export function FunnelPaywall({ id, initialEmail = '', initialPromo, appliedOffe
     if (!el) return
     const io = new IntersectionObserver((entries) => {
       if (entries.some((e) => e.isIntersecting)) {
-        trackFunnel('full_report_offer_viewed', { currency, value: prices.cristal / 100 })
+        trackFunnel('full_report_offer_viewed', { currency: cristal.currency, value: cristal.amount })
         io.disconnect()
       }
     }, { threshold: 0.35 })
     io.observe(el)
     return () => io.disconnect()
-  }, [currency, prices.cristal])
+  }, [cristal])
 
   const validatePromo = async () => {
     const code = promo.trim().toUpperCase().replace(/\s+/g, '')
@@ -111,7 +111,7 @@ export function FunnelPaywall({ id, initialEmail = '', initialPromo, appliedOffe
             </div>
           ) : (
             <p className="mt-6 font-serif text-5xl font-light text-primary">
-              {promoInfo?.ok ? promoInfo.text.split(' · ')[1] : format(prices.cristal)}
+              {promoInfo?.ok ? promoInfo.text.split(' · ')[1] : cristal.displayPrice}
             </p>
           )}
         </div>

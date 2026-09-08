@@ -11,25 +11,24 @@ import {
   type LeadRow,
   type LeadFilter,
 } from "@/app/actions/leads-admin"
-import { countryFlag, currencyFromCountry } from "@/lib/currency"
+import { countryFlag } from "@/lib/currency"
+import { resolveChargeablePrice } from "@/lib/country-pricing"
 
-const CURRENCY_LABEL: Record<string, string> = { eur: "€", kzt: "₸", mdl: "MDL" }
-
-/** Steag + cod ISO + moneda în care va primi oferta; „—” când geolocația nu a fost disponibilă. */
-function CountryBadge({ country, currency }: { country: string | null; currency: string }) {
-  const cur = country ? currencyFromCountry(country) : currency
+/** Steag + cod ISO + prețul fix pe care îl va primi în ofertă; „—” când geolocația nu a fost disponibilă. */
+function CountryBadge({ country }: { country: string | null; currency: string }) {
+  const price = resolveChargeablePrice(country)
   if (!country) {
     return (
       <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground" title="Страна не определена">
-        <span aria-hidden="true">🌐</span> — · {CURRENCY_LABEL[cur] ?? cur.toUpperCase()}
+        <span aria-hidden="true">🌐</span> — · {price.displayPrice}
       </span>
     )
   }
   return (
-    <span className="inline-flex items-center gap-1.5 text-[12px] text-foreground/90" title={`Страна: ${country} · валюта: ${cur.toUpperCase()}`}>
+    <span className="inline-flex items-center gap-1.5 text-[12px] text-foreground/90" title={`Страна: ${country} · цена: ${price.displayPrice}`}>
       <span className="text-base leading-none" aria-hidden="true">{countryFlag(country)}</span>
       <span className="font-mono tracking-wide">{country}</span>
-      <span className="text-muted-foreground">· {CURRENCY_LABEL[cur] ?? cur.toUpperCase()}</span>
+      <span className="text-muted-foreground">· {price.displayPrice}</span>
     </span>
   )
 }

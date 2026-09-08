@@ -6,7 +6,7 @@ import { db } from '@/lib/db'
 import { buildRaportUrl, sendRaportEmail } from '@/lib/raport-email'
 import { buildOfferEmail, type OfferLocale } from '@/lib/offer-email'
 import { getOrCreateOfferCode, OFFER_PERCENT } from '@/lib/promo'
-import { currencyFromCountry, parseCurrency, type Currency } from '@/lib/currency'
+import { resolveChargeablePrice } from '@/lib/country-pricing'
 
 export interface LeadRow {
   id: string
@@ -35,15 +35,6 @@ export interface LeadRow {
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
-
-/**
- * Moneda în care primește oferta un lead: cea a țării lui (geolocație), altfel cea salvată la previzualizare.
- * Așa lead-urile vechi (salvate înainte să reținem țara) și cele cu cookie învechit primesc totuși prețul local.
- */
-function leadCurrency(lead: { country: string | null; currency: string | null }): Currency {
-  if (lead.country) return currencyFromCountry(lead.country)
-  return parseCurrency(lead.currency) ?? 'eur'
-}
 
 /** Tokenul de dezabonare al unui lead (creat la prima trimitere; stabil după aceea). */
 async function ensureUnsubscribeToken(leadId: string): Promise<string> {
@@ -79,16 +70,17 @@ async function composeOffer(lead: OfferLeadRow) {
   if (!lead.email) throw new Error('lead_without_email')
   const { code, expiresAt } = await getOrCreateOfferCode(lead.email)
   const unsubToken = await ensureUnsubscribeToken(lead.id)
-  const currency = leadCurrency(lead)
-  // `currency=` în link fixează aceeași monedă ca în email și dacă persoana deschide linkul de pe alt IP/VPN.
-  const offerUrl = `${BASE_URL}/${locale}/numerologie?discount=${encodeURIComponent(code)}&email=${encodeURIComponent(lead.email)}&currency=${currency}`
+  // Prețul fix al țării lead-ului (geolocație la previzualizare); fără țară → rezerva globală.
+  // Pe site prețul vine tot din geolocație (override-ul din URL nu e permis în producție).
+  const price = resolveChargeablePrice(lead.country)
+  const offerUrl = `${BASE_URL}/${locale}/numerologie?discount=${encodeURIComponent(code)}&email=${encodeURIComponent(lead.email)}`
   const unsub = unsubscribeUrl(unsubToken, locale)
   const mail = buildOfferEmail({
     locale,
     firstName: lead.first_name,
     email: lead.email,
     birthDay: lead.birth_day,
-    currency,
+    price,
     percent: OFFER_PERCENT,
     code,
     expiresAt,

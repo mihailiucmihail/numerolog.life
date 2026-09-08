@@ -4,7 +4,7 @@ import crypto from 'crypto'
 import { db } from '@/lib/db'
 import { Resend } from 'resend'
 import { getOrCreatePromoCodeForEmail, PROMO_PERCENT, cristalPriceLabels } from '@/lib/promo'
-import { getRequestCurrency } from '@/lib/currency-server'
+import { getRequestCristalPrice } from '@/lib/currency-server'
 
 interface SubscribeInput {
   email: string
@@ -102,9 +102,9 @@ async function sendDiscountEmail(email: string, firstName: string | null, locale
     const fromDomain = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
     const t = copy[locale]
     const name = firstName ? `, ${firstName}` : ''
-    // Prețurile în moneda vizitatorului (KZ -> tenge, altfel euro).
-    const currency = await getRequestCurrency()
-    const { base: basePrice, discounted: finalPrice } = cristalPriceLabels(currency, PROMO_PERCENT)
+    // Prețul fix al țării vizitatorului (lib/country-pricing.ts).
+    const price = await getRequestCristalPrice()
+    const { base: basePrice, discounted: finalPrice } = cristalPriceLabels(price, PROMO_PERCENT)
     const priceLine = locale === 'ru'
       ? `Цена со скидкой: <strong style="color:#D4AF37;">${finalPrice}</strong> вместо ${basePrice}. Код действует один раз.`
       : `Preț cu reducere: <strong style="color:#D4AF37;">${finalPrice}</strong> în loc de ${basePrice}. Codul este valabil o singură dată.`

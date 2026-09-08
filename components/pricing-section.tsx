@@ -10,8 +10,8 @@ import { useCurrency } from "@/components/providers/currency-provider"
 
 export function PricingSection() {
   const t = useTranslations("pricing")
-  const { prices, format } = useCurrency()
-  const price = format(prices.cristal)
+  const { cristal } = useCurrency()
+  const price = cristal.displayPrice
   const features = [
     t("feature1"),
     t("feature2"),

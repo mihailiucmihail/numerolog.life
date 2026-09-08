@@ -13,8 +13,8 @@ import { useCurrency } from "@/components/providers/currency-provider"
 
 export function FAQSection() {
   const t = useTranslations("faq")
-  const { prices, format } = useCurrency()
-  const price = format(prices.cristal)
+  const { cristal } = useCurrency()
+  const price = cristal.displayPrice
   const faqs = [
     { question: t("q1"), answer: t("a1") },
     { question: t("q2"), answer: t("a2") },

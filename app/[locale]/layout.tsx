@@ -7,7 +7,7 @@ import { notFound } from 'next/navigation'
 import '../globals.css'
 import { RootLayoutClient } from '../layout-client'
 import { routing } from '@/i18n/routing'
-import { getRequestCountry, getRequestCurrency } from '@/lib/currency-server'
+import { getRequestCountry, getRequestCristalPrice, getRequestCurrency } from '@/lib/currency-server'
 import { CurrencyProvider } from '@/components/providers/currency-provider'
 
 const inter = Inter({ 
@@ -67,16 +67,17 @@ export default async function LocaleLayout({
   setRequestLocale(locale)
 
   const messages = await getMessages()
-  // Moneda vizitatorului (KZ -> tenge, altfel euro) — decisă pe server, fără flash la hidratare.
+  // Moneda Grani (EUR / KZT / MDL) — decisă pe server, fără flash la hidratare.
   const currency = await getRequestCurrency()
-  // Țara (geolocație) — pentru alfabetul numelui preselectat în calculator.
+  // Țara (geolocație) — prețul fix al Cristalului + alfabetul numelui preselectat. Independentă de limbă.
   const country = await getRequestCountry()
+  const cristal = await getRequestCristalPrice()
 
   return (
     <html lang={locale} className={`${inter.variable} ${cormorant.variable} bg-background`} suppressHydrationWarning>
       <body className="font-sans antialiased bg-background">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <CurrencyProvider currency={currency} country={country}>
+          <CurrencyProvider currency={currency} country={country} cristal={cristal}>
             <RootLayoutClient>
               {children}
             </RootLayoutClient>

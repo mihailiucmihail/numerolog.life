@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server'
 import { buildOfferEmail, type OfferLocale } from '@/lib/offer-email'
 import { OFFER_PERCENT, OFFER_TTL_HOURS } from '@/lib/promo'
-import { parseCurrency, type Currency } from '@/lib/currency'
+import { resolveChargeablePrice } from '@/lib/country-pricing'
 
 export const dynamic = 'force-dynamic'
 
 /**
  * Previzualizarea șablonului ofertei −20 % cu date fictive (fără DB, fără trimitere).
- * Protejată cu parola panoului admin: /api/admin/offer-preview?pw=...&locale=ru|ro&currency=eur|kzt|mdl
+ * Protejată cu parola panoului admin: /api/admin/offer-preview?pw=...&locale=ru|ro&country=RO|DE|US|KZ…
  */
 export async function GET(req: Request) {
   const url = new URL(req.url)
@@ -16,7 +16,7 @@ export async function GET(req: Request) {
     return new NextResponse('Unauthorized', { status: 401 })
   }
   const locale: OfferLocale = url.searchParams.get('locale') === 'ro' ? 'ro' : 'ru'
-  const currency: Currency = parseCurrency(url.searchParams.get('currency')) ?? 'eur'
+  const price = resolveChargeablePrice(url.searchParams.get('country'))
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
   const code = `CRISTAL${OFFER_PERCENT}-PREVIEW`
   const mail = buildOfferEmail({
@@ -24,7 +24,7 @@ export async function GET(req: Request) {
     firstName: locale === 'ro' ? 'Ana' : 'Анна',
     email: 'preview@example.com',
     birthDay: 27,
-    currency,
+    price,
     percent: OFFER_PERCENT,
     code,
     expiresAt: new Date(Date.now() + OFFER_TTL_HOURS * 3600 * 1000),
