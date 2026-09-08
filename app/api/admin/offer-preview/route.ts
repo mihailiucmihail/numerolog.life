@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { buildOfferEmail, type OfferLocale } from '@/lib/offer-email'
 import { OFFER_PERCENT, OFFER_TTL_HOURS } from '@/lib/promo'
-import type { Currency } from '@/lib/currency'
+import { parseCurrency, type Currency } from '@/lib/currency'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,8 +16,7 @@ export async function GET(req: Request) {
     return new NextResponse('Unauthorized', { status: 401 })
   }
   const locale: OfferLocale = url.searchParams.get('locale') === 'ro' ? 'ro' : 'ru'
-  const cur = url.searchParams.get('currency')
-  const currency: Currency = cur === 'kzt' || cur === 'mdl' ? cur : 'eur'
+  const currency: Currency = parseCurrency(url.searchParams.get('currency')) ?? 'eur'
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
   const code = `CRISTAL${OFFER_PERCENT}-PREVIEW`
   const mail = buildOfferEmail({

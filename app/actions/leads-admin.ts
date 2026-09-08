@@ -6,7 +6,7 @@ import { db } from '@/lib/db'
 import { buildRaportUrl, sendRaportEmail } from '@/lib/raport-email'
 import { buildOfferEmail, type OfferLocale } from '@/lib/offer-email'
 import { getOrCreateOfferCode, OFFER_PERCENT } from '@/lib/promo'
-import { currencyFromCountry, type Currency } from '@/lib/currency'
+import { currencyFromCountry, parseCurrency, type Currency } from '@/lib/currency'
 
 export interface LeadRow {
   id: string
@@ -42,8 +42,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
  */
 function leadCurrency(lead: { country: string | null; currency: string | null }): Currency {
   if (lead.country) return currencyFromCountry(lead.country)
-  const v = lead.currency
-  return v === 'kzt' || v === 'mdl' ? v : 'eur'
+  return parseCurrency(lead.currency) ?? 'eur'
 }
 
 /** Tokenul de dezabonare al unui lead (creat la prima trimitere; stabil după aceea). */
