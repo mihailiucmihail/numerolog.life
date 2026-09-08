@@ -1,21 +1,51 @@
 // Sursa unică de adevăr pentru monede și prețuri.
-// Vizitatorii din Kazahstan văd și plătesc în tenge (KZT), cei din Republica Moldova în lei (MDL);
-// toți ceilalți în euro (EUR).
-// Prețurile sunt FIXE per monedă (nu se convertesc la curs) și sunt stabilite după reguli de
-// marketing (praguri psihologice: 399 în loc de 382, 99 în loc de 100 etc.). Serverul recalculează
-// mereu suma din id-ul produsului + monedă; clientul nu trimite niciodată prețul.
+// Raportul „Cristalul Destinului" este localizat în moneda țării vizitatorului (geolocație Vercel).
+// Prețul de bază este 19 EUR; prețul local este FIX per monedă (nu se convertește la curs în timp real)
+// și este ales după reguli de marketing: echivalentul în moneda locală rotunjit în jos la un prag
+// psihologic (x9 / x,99 / x90), cu cel mult 20 % sub echivalentul exact al celor 19 EUR.
+// Serverul recalculează mereu suma din id-ul produsului + monedă; clientul nu trimite niciodată prețul.
+// Grani Судьбы NU este localizat: rămâne în EUR / KZT / MDL (vezi GRANI_CURRENCIES).
 
-export type Currency = 'eur' | 'kzt' | 'mdl'
+export const CURRENCIES = [
+  'eur', 'usd', 'gbp', 'chf', 'cad', 'aud',
+  'pln', 'czk', 'ron', 'huf', 'sek', 'nok', 'dkk',
+  'uah', 'try', 'gel', 'amd', 'azn', 'kzt', 'uzs', 'kgs', 'mdl',
+  'ils', 'aed',
+] as const
+
+export type Currency = (typeof CURRENCIES)[number]
 
 export const DEFAULT_CURRENCY: Currency = 'eur'
 export const CURRENCY_COOKIE = 'NEXT_CURRENCY'
 /** Header intern setat de proxy, ca prima randare să cunoască moneda înainte să existe cookie-ul. */
 export const CURRENCY_HEADER = 'x-currency'
 
-// Țară (ISO 3166-1 alpha-2, din header-ul Vercel x-vercel-ip-country) -> monedă
+// Țară (ISO 3166-1 alpha-2, din header-ul Vercel x-vercel-ip-country) -> monedă.
+// Țările fără intrare (zona euro, Rusia, Belarus, restul lumii) plătesc în EUR.
 const COUNTRY_CURRENCY: Record<string, Currency> = {
+  US: 'usd', PR: 'usd',
+  GB: 'gbp',
+  CH: 'chf', LI: 'chf',
+  CA: 'cad',
+  AU: 'aud',
+  PL: 'pln',
+  CZ: 'czk',
+  RO: 'ron',
+  HU: 'huf',
+  SE: 'sek',
+  NO: 'nok',
+  DK: 'dkk',
+  UA: 'uah',
+  TR: 'try',
+  GE: 'gel',
+  AM: 'amd',
+  AZ: 'azn',
   KZ: 'kzt',
+  UZ: 'uzs',
+  KG: 'kgs',
   MD: 'mdl',
+  IL: 'ils',
+  AE: 'aed',
 }
 
 /** Header intern setat de proxy cu țara vizitatorului (ISO alpha-2), pentru localizări dependente de țară. */
@@ -77,21 +107,87 @@ type CurrencyConfig = {
 
 const CONFIG: Record<Currency, CurrencyConfig> = {
   eur: { symbol: '€', wholeUnits: false },
+  usd: { symbol: '$', wholeUnits: false },
+  gbp: { symbol: '£', wholeUnits: false },
+  chf: { symbol: 'CHF', wholeUnits: false },
+  cad: { symbol: 'CA$', wholeUnits: false },
+  aud: { symbol: 'A$', wholeUnits: false },
+  pln: { symbol: 'zł', wholeUnits: true },
+  czk: { symbol: 'Kč', wholeUnits: true },
+  ron: { symbol: 'lei', wholeUnits: true },
+  huf: { symbol: 'Ft', wholeUnits: true },
+  sek: { symbol: 'kr', wholeUnits: true },
+  nok: { symbol: 'kr', wholeUnits: true },
+  dkk: { symbol: 'kr', wholeUnits: true },
+  uah: { symbol: '₴', wholeUnits: true },
+  try: { symbol: '₺', wholeUnits: true },
+  gel: { symbol: '₾', wholeUnits: true },
+  amd: { symbol: '֏', wholeUnits: true },
+  azn: { symbol: '₼', wholeUnits: false },
   kzt: { symbol: '₸', wholeUnits: true },
+  uzs: { symbol: 'сум', wholeUnits: true },
+  kgs: { symbol: 'сом', wholeUnits: true },
   mdl: { symbol: 'lei', wholeUnits: true },
+  ils: { symbol: '₪', wholeUnits: false },
+  aed: { symbol: 'AED', wholeUnits: true },
 }
 
-// Sume în unitatea minimă a monedei (cenți / tiyn / bani).
-// Curs orientativ la stabilire: 1 EUR ≈ 527 KZT, 1 EUR ≈ 20,12 MDL.
-export const PRICES: Record<Currency, { cristal: number; graniStandard: number; graniGraph: number }> = {
-  eur: { cristal: 1900, graniStandard: 199, graniGraph: 499 }, // 19,00 € / 1,99 € / 4,99 €
-  kzt: { cristal: 699000, graniStandard: 105000, graniGraph: 265000 }, // 6 990 ₸ / 1 050 ₸ / 2 650 ₸
-  mdl: { cristal: 19900, graniStandard: 3900, graniGraph: 9900 }, // 199 lei / 39 lei / 99 lei
+/**
+ * Prețul raportului „Cristalul Destinului" în unitatea minimă a monedei (cenți, bani, tiyn…).
+ * În comentariu: echivalentul exact al celor 19 EUR la cursul orientativ de la stabilire și reducerea rezultată
+ * (mereu între 0 % și 20 %). Prețurile sunt fixe — se revizuiesc manual dacă cursul se mișcă mult.
+ */
+export const CRISTAL_PRICES: Record<Currency, number> = {
+  eur: 1900,      // 19,00 € — prețul de bază
+  usd: 1799,      // ≈ 22,20 $ → 17,99 $ (−19 %) — sub pragul de 18 $
+  gbp: 1399,      // ≈ 16,50 £ → 13,99 £ (−15 %) — sub pragul de 14 £
+  chf: 1490,      // ≈ 17,90 CHF → 14,90 CHF (−17 %) — sub pragul de 15 CHF
+  cad: 2499,      // ≈ 30,40 CA$ → 24,99 CA$ (−18 %) — sub pragul de 25 CA$
+  aud: 2799,      // ≈ 33,80 A$ → 27,99 A$ (−17 %)
+  pln: 6900,      // ≈ 81 zł → 69 zł (−15 %)
+  czk: 37900,     // ≈ 465 Kč → 379 Kč (−18 %)
+  ron: 7900,      // ≈ 96 lei → 79 lei (−18 %) — sub pragul de 80 lei
+  huf: 649000,    // ≈ 7 500 Ft → 6 490 Ft (−13 %); 5 990 Ft ar depăși −20 %
+  sek: 16900,     // ≈ 209 kr → 169 kr (−19 %)
+  nok: 17900,     // ≈ 222 kr → 179 kr (−19 %)
+  dkk: 11900,     // ≈ 142 kr → 119 kr (−16 %)
+  uah: 74900,     // ≈ 921 ₴ → 749 ₴ (−19 %)
+  try: 74900,     // ≈ 912 ₺ → 749 ₺ (−18 %)
+  gel: 4900,      // ≈ 60 ₾ → 49 ₾ (−18 %)
+  amd: 699000,    // ≈ 8 550 ֏ → 6 990 ֏ (−18 %)
+  azn: 3099,      // ≈ 38,00 ₼ → 30,99 ₼ (−18 %)
+  kzt: 799000,    // ≈ 10 000 ₸ → 7 990 ₸ (−20 %)
+  uzs: 22900000,  // ≈ 279 000 сум → 229 000 сум (−18 %)
+  kgs: 159000,    // ≈ 1 940 сом → 1 590 сом (−18 %)
+  mdl: 30900,     // ≈ 382 lei → 309 lei (−19 %)
+  ils: 5990,      // ≈ 74,00 ₪ → 59,90 ₪ (−19 %)
+  aed: 6900,      // ≈ 82 AED → 69 AED (−16 %)
 }
+
+/** Grani nu este localizat: doar aceste monede au prețuri proprii, restul vizitatorilor plătesc Grani în EUR. */
+export const GRANI_CURRENCIES = ['eur', 'kzt', 'mdl'] as const satisfies readonly Currency[]
+export type GraniCurrency = (typeof GRANI_CURRENCIES)[number]
+
+const GRANI_PRICES: Record<GraniCurrency, { graniStandard: number; graniGraph: number }> = {
+  eur: { graniStandard: 199, graniGraph: 499 }, // 1,99 € / 4,99 €
+  kzt: { graniStandard: 105000, graniGraph: 265000 }, // 1 050 ₸ / 2 650 ₸
+  mdl: { graniStandard: 3900, graniGraph: 9900 }, // 39 lei / 99 lei
+}
+
+/** Moneda în care se afișează și se facturează Grani pentru un vizitator cu moneda `currency`. */
+export function graniCurrency(currency: Currency): GraniCurrency {
+  return (GRANI_CURRENCIES as readonly string[]).includes(currency) ? (currency as GraniCurrency) : 'eur'
+}
+
+/** Prețurile tuturor produselor per monedă; Grani cade pe EUR în monedele nelocalizate (vezi graniCurrency). */
+export const PRICES: Record<Currency, { cristal: number; graniStandard: number; graniGraph: number }> =
+  Object.fromEntries(
+    CURRENCIES.map((c) => [c, { cristal: CRISTAL_PRICES[c], ...GRANI_PRICES[graniCurrency(c)] }]),
+  ) as Record<Currency, { cristal: number; graniStandard: number; graniGraph: number }>
 
 export function parseCurrency(value: string | null | undefined): Currency | null {
   const v = value?.trim().toLowerCase()
-  return v === 'eur' || v === 'kzt' || v === 'mdl' ? v : null
+  return v && (CURRENCIES as readonly string[]).includes(v) ? (v as Currency) : null
 }
 
 export function currencyFromCountry(country: string | null | undefined): Currency {
@@ -99,7 +195,7 @@ export function currencyFromCountry(country: string | null | undefined): Currenc
   return COUNTRY_CURRENCY[country.toUpperCase()] ?? DEFAULT_CURRENCY
 }
 
-/** Formatare pentru afișare: „19,00 €", „9 990 ₸" sau „399 lei" (tenge și lei fără zecimale). */
+/** Formatare pentru afișare: „19,00 €", „7 990 ₸" sau „79 lei" (monedele „întregi" fără zecimale). */
 export function formatPrice(minor: number, currency: Currency): string {
   const { symbol, wholeUnits } = CONFIG[currency]
   if (wholeUnits) {
@@ -110,7 +206,7 @@ export function formatPrice(minor: number, currency: Currency): string {
   return (minor / 100).toFixed(2).replace('.', ',') + `\u00a0${symbol}`
 }
 
-/** Reducere procentuală; pentru monedele „întregi" (tenge, lei) rotunjim la unitatea întreagă. */
+/** Reducere procentuală; pentru monedele „întregi" rotunjim la unitatea întreagă. */
 export function applyDiscountMinor(minor: number, percent: number, currency: Currency): number {
   const raw = minor * (100 - percent) / 100
   if (CONFIG[currency].wholeUnits) return Math.round(raw / 100) * 100
@@ -118,6 +214,6 @@ export function applyDiscountMinor(minor: number, percent: number, currency: Cur
 }
 
 export function getGraniPriceMinor(facet: string, currency: Currency, graphFacets: ReadonlySet<string>): number {
-  const p = PRICES[currency]
+  const p = GRANI_PRICES[graniCurrency(currency)]
   return graphFacets.has(facet) ? p.graniGraph : p.graniStandard
 }

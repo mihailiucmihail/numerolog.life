@@ -11,9 +11,9 @@ const HIDE_KEY = "nl_discount_popup_hidden_until_v3"
 
 export function NewsletterPopup() {
   const t = useTranslations("newsletter")
-  const { prices, format, formatDiscounted } = useCurrency()
-  const basePrice = format(prices.cristal)
-  const discountedPrice = formatDiscounted(prices.cristal, 15)
+  const { cristal, cristalDiscounted } = useCurrency()
+  const basePrice = cristal.displayPrice
+  const discountedPrice = cristalDiscounted(15)
   const [open, setOpen] = useState(false)
   const triggered = useRef(false)
 

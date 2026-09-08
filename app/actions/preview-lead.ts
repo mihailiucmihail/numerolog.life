@@ -60,7 +60,8 @@ export async function savePreviewLead(
   country: string | null = null,
 ): Promise<{ ok: boolean }> {
   try {
-    const safeCurrency = ['eur', 'kzt', 'mdl'].includes(currency) ? currency : 'eur'
+    // Cod ISO 4217 (prețul fix al țării vizitatorului); orice altceva → rezerva globală USD.
+    const safeCurrency = /^[a-z]{3}$/i.test(currency) ? currency.toLowerCase() : 'usd'
     const safeCountry = normalizeCountry(country)
     const email = normalizeEmail(form.email)
     const id = readIdentity(form)

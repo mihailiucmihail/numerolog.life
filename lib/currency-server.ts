@@ -1,6 +1,15 @@
 import 'server-only'
 import { cookies, headers } from 'next/headers'
 import { COUNTRY_HEADER, CURRENCY_COOKIE, CURRENCY_HEADER, currencyFromCountry, parseCurrency, type Currency } from '@/lib/currency'
+import { resolveChargeablePrice, type CountryPrice } from '@/lib/country-pricing'
+
+/**
+ * Prețul FIX al Cristalului pentru cererea curentă, decis exclusiv pe server din țara vizitatorului
+ * (COUNTRY_PRICING). Este și ce se afișează, și ce se facturează — niciodată din browser.
+ */
+export async function getRequestCristalPrice(): Promise<CountryPrice> {
+  return resolveChargeablePrice(await getRequestCountry())
+}
 
 /** Țara vizitatorului (ISO alpha-2) sau null: header-ul intern din proxy, altfel x-vercel-ip-country. */
 export async function getRequestCountry(): Promise<string | null> {

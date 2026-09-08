@@ -1,8 +1,7 @@
 "use server"
 
 import { validatePromoCodeServer, cristalPriceLabels, PROMO_PERCENT, type PromoReason } from '@/lib/promo'
-import { getRequestCurrency } from '@/lib/currency-server'
-import { formatPrice } from '@/lib/currency'
+import { getRequestCristalPrice } from '@/lib/currency-server'
 
 export interface PromoCheckResult {
   valid: boolean
@@ -12,14 +11,14 @@ export interface PromoCheckResult {
   basePrice: string
 }
 
-/** Verificare fără efecte secundare, apelată din formularul Cristalul înainte de plată. Prețurile sunt în moneda vizitatorului. */
+/** Verificare fără efecte secundare, apelată din formularul Cristalul înainte de plată. Prețurile sunt cele fixe ale țării vizitatorului. */
 export async function checkPromoCode(code: string): Promise<PromoCheckResult> {
-  const currency = await getRequestCurrency()
-  const basePrice = cristalPriceLabels(currency, PROMO_PERCENT).base
+  const price = await getRequestCristalPrice()
+  const basePrice = cristalPriceLabels(price, PROMO_PERCENT).base
   try {
-    const result = await validatePromoCodeServer(code, currency)
+    const result = await validatePromoCodeServer(code, price)
     if (result.valid) {
-      return { valid: true, percent: result.percent, finalPrice: formatPrice(result.finalMinor, currency), basePrice }
+      return { valid: true, percent: result.percent, finalPrice: result.finalPrice, basePrice }
     }
     return { valid: false, reason: result.reason, basePrice }
   } catch (err) {

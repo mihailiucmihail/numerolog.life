@@ -10,8 +10,8 @@ import { useCurrency } from "@/components/providers/currency-provider"
 
 export function PricingSection() {
   const t = useTranslations("pricing")
-  const { prices, format } = useCurrency()
-  const price = format(prices.cristal)
+  const { cristal } = useCurrency()
+  const price = cristal.displayPrice
   const features = [
     t("feature1"),
     t("feature2"),
@@ -60,8 +60,7 @@ export function PricingSection() {
               <span className="block mt-2">{t("cardValue")}</span>
             </CardDescription>
             <div className="mt-8 flex items-baseline justify-center">
-              <span className="font-serif text-7xl font-light text-gradient">19,00</span>
-              <span className="text-xl text-muted-foreground/60 ml-2">€</span>
+              <span className="font-serif text-6xl font-light text-gradient sm:text-7xl">{price}</span>
             </div>
             <p className="text-sm text-muted-foreground/50 mt-3">{t("noSubscription")}</p>
           </CardHeader>

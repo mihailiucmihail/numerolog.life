@@ -14,7 +14,7 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 
 // ==== Ecranul de prezentare produs ====
 function ProductPresentation({ onStart }: { onStart: () => void }) {
-  const { prices, format } = useCurrency()
+  const { cristal } = useCurrency()
   const features = [
     '3 Numere cheie — Destinul, Karma, OPV',
     'Metacicle de viată — etapele destinului tău',
@@ -72,7 +72,7 @@ function ProductPresentation({ onStart }: { onStart: () => void }) {
         <div className="flex items-center justify-between border-t pt-6" style={{ borderColor: 'rgba(212,175,55,0.15)' }}>
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-widest mb-1">Preț</p>
-            <p className="font-serif text-3xl font-light text-foreground">{format(prices.cristal)}</p>
+            <p className="font-serif text-3xl font-light text-foreground">{cristal.displayPrice}</p>
             <p className="text-xs text-muted-foreground mt-1">Plată unică — acces permanent</p>
           </div>
 

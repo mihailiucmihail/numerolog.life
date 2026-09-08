@@ -69,7 +69,7 @@ export default function CristalFunnel() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const locale = pathname?.split('/')[1] || 'ro'
-  const { currency, country, prices, format, alphabet } = useCurrency()
+  const { country, cristal, alphabet } = useCurrency()
 
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const didUnlock = useRef(false)
@@ -161,7 +161,7 @@ export default function CristalFunnel() {
           trackFunnel('birth_data_submitted', { has_middle: Boolean(values.middle), alphabet: values.nameAlphabetKey })
           // Lead pentru panoul admin (/admin/leads): previzualizare blurată, neplătită. Fire-and-forget.
           // Emailul se cere abia la paywall, deci lead-ul se salvează și fără el (attachLeadEmail îl completează).
-          void savePreviewLead({ ...values, email: p.email || undefined }, locale, currency, country)
+          void savePreviewLead({ ...values, email: p.email || undefined }, locale, cristal.currency.toLowerCase(), country)
         }
         setPreviewReady(true)
         trackFunnel('free_result_viewed', { mode: 'blurred_report' })
@@ -193,7 +193,7 @@ export default function CristalFunnel() {
     }
     window.addEventListener('message', onMessage)
     return () => window.removeEventListener('message', onMessage)
-  }, [postToFrame, locale, currency, country])
+  }, [postToFrame, locale, cristal.currency, country])
 
   // Restaurare după întoarcere de la Stripe (anulat): raport blurat direct, fără re-completare.
   useEffect(() => {
@@ -229,7 +229,7 @@ export default function CristalFunnel() {
         } catch {}
 
         // purchase — DOAR după confirmarea plății, deduplicat pe session_id.
-        trackPurchase({ transactionId: sessionId, valueMinor: prices.cristal, currency })
+        trackPurchase({ transactionId: sessionId, valueMinor: Math.round(cristal.amount * 100), currency: cristal.currency })
 
         setPaidOverlay(true)
         try {
@@ -264,7 +264,7 @@ export default function CristalFunnel() {
       if (!form) return
       setCheckoutError('')
       setCheckoutBusy(true)
-      trackFunnel('full_report_checkout_clicked', { currency, value: prices.cristal / 100, has_promo: Boolean(promoCode) })
+      trackFunnel('full_report_checkout_clicked', { currency: cristal.currency, value: cristal.amount, has_promo: Boolean(promoCode) })
       const reportData = {
         last: form.last,
         first: form.first,
@@ -282,7 +282,7 @@ export default function CristalFunnel() {
         // Lead-ul anonim din previzualizare primește emailul acum; așteptăm scurt ca redirectul să nu-l anuleze.
         await Promise.race([attachLeadEmail(reportData, email), new Promise((r) => setTimeout(r, 1500))])
         const url = await startNumerologieCheckout(email, locale, reportData, promoCode || offer?.code || discountCode)
-        trackFunnel('stripe_checkout_started', { currency, value: prices.cristal / 100 })
+        trackFunnel('stripe_checkout_started', { currency: cristal.currency, value: cristal.amount })
         window.location.href = url
       } catch (err) {
         localStorage.removeItem(CHECKOUT_STORAGE_KEY)
@@ -293,7 +293,7 @@ export default function CristalFunnel() {
         postToFrame({ type: 'paymentCancelled' })
       }
     },
-    [form, locale, discountCode, offer?.code, currency, prices.cristal, t, postToFrame],
+    [form, locale, discountCode, offer?.code, cristal, t, postToFrame],
   )
   const handleCheckoutRef = useRef(handleCheckout)
   useEffect(() => {
@@ -317,7 +317,7 @@ export default function CristalFunnel() {
   }
 
   const scrollToPaywall = () => {
-    trackFunnel('sticky_unlock_clicked', { currency })
+    trackFunnel('sticky_unlock_clicked', { currency: cristal.currency })
     document.getElementById(PAYWALL_ID)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
@@ -411,7 +411,7 @@ export default function CristalFunnel() {
                       {offer.finalPrice} <span className="text-muted-foreground line-through">{offer.basePrice}</span>
                     </>
                   ) : (
-                    format(prices.cristal)
+                    cristal.displayPrice
                   )}
                 </p>
               </div>

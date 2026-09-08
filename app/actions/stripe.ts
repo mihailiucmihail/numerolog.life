@@ -4,8 +4,9 @@ import { getStripe } from "@/lib/stripe"
 import { getPlan, getProduct, GRANI_GRAPH_FACETS } from "@/lib/products"
 import { createClient } from "@/lib/supabase/server"
 import { validatePromoCodeServer, normalizePromoCode } from "@/lib/promo"
-import { getRequestCurrency } from "@/lib/currency-server"
-import { PRICES, getGraniPriceMinor } from "@/lib/currency"
+import { getRequestCristalPrice, getRequestCurrency } from "@/lib/currency-server"
+import { getGraniPriceMinor, graniCurrency } from "@/lib/currency"
+import { toStripeMinor } from "@/lib/country-pricing"
 
 const PROMO_ERRORS = {
   ro: {
@@ -34,14 +35,20 @@ export async function startNumerologieCheckout(
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
   const isRu = locale === 'ru'
 
-  // Moneda vizitatorului (KZ -> tenge, altfel euro) și prețul — decise EXCLUSIV pe server:
-  // prețul de listă sau, cu un cod valid și nefolosit, prețul de listă − 15 %.
-  const currency = await getRequestCurrency()
-  let unitAmount = PRICES[currency].cristal
+  // Prețul FIX al țării vizitatorului (lib/country-pricing.ts) — decis EXCLUSIV pe server, din geolocație.
+  // Browser-ul nu trimite sume, monede sau prețuri afișate; primim doar produsul și eventualul cod promo.
+  const price = await getRequestCristalPrice()
+  if (!price.stripeSupported) {
+    throw new Error(isRu
+      ? 'Оплата в вашем регионе пока недоступна.'
+      : 'Plata nu este disponibilă momentan în regiunea ta.')
+  }
+  const currency = price.currency.toLowerCase()
+  let unitAmount = toStripeMinor(price.amount, price.currency)
   let appliedPromo: string | null = null
   let appliedPercent = 0
   if (normalizePromoCode(discountCode)) {
-    const promo = await validatePromoCodeServer(discountCode, currency)
+    const promo = await validatePromoCodeServer(discountCode, price)
     if (!promo.valid) {
       const msgs = PROMO_ERRORS[isRu ? 'ru' : 'ro']
       // Nu facturăm în tăcere prețul întreg — utilizatorul trebuie să afle că codul nu e valid.
@@ -73,6 +80,8 @@ export async function startNumerologieCheckout(
     ...(email ? { customer_email: email } : {}),
     metadata: {
       currency,
+      country: price.countryCode,
+      displayPrice: price.displayPrice,
       ...(formData ? { formData: JSON.stringify(formData) } : {}),
       ...(appliedPromo ? { promoCode: appliedPromo } : {}),
     },
@@ -99,8 +108,8 @@ export async function startGraniCheckout(
   const isRu = locale === 'ru'
   const productName = isRu ? 'Грани Судьбы — индивидуальный расчёт' : product.name
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://numerolog.life'
-  // Moneda vizitatorului (KZ -> tenge, altfel euro); prețul per fațetă e decis pe server.
-  const currency = await getRequestCurrency()
+  // Grani NU este localizat: doar EUR / KZT / MDL; vizitatorii din alte țări plătesc Grani în euro.
+  const currency = graniCurrency(await getRequestCurrency())
   const session = await getStripe().checkout.sessions.create({
     mode: 'payment',
     line_items: [{
