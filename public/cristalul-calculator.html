@@ -6649,10 +6649,20 @@ function startPdfExport(){
     .cd-report-part{position:relative;user-select:none;-webkit-user-select:none;}
     .cd-part{position:relative;user-select:none;-webkit-user-select:none;}
     .cd-part > *:not(.section-title):not(.cd-unlock){pointer-events:none;}
-    .cd-preview .cd-blur-1,
-    .cd-preview .cd-blur-2,
-    .cd-preview .cd-blur-3,
-    .cd-preview .cd-blur-4{filter:blur(8px) saturate(.78);opacity:.48;}
+    /* Tranziție PROGRESIVĂ: text lizibil → blur ușor → blur mediu → blur puternic → zonă închisă. */
+    .cd-preview .cd-blur-1{filter:blur(3px) saturate(.9);opacity:.72;}
+    .cd-preview .cd-blur-2{filter:blur(5px) saturate(.85);opacity:.6;}
+    .cd-preview .cd-blur-3{filter:blur(7px) saturate(.8);opacity:.5;}
+    .cd-preview .cd-blur-4{filter:blur(9px) saturate(.75);opacity:.42;}
+    /* SECURITATE: sub linia de 30 % textul premium NU există în DOM — este înlocuit cu schelete (contururi de
+       paragrafe/grafice) de aceeași înălțime. Scoaterea blur-ului din DevTools arată doar aceste forme. */
+    .cd-skel{display:flex !important;flex-direction:column;justify-content:flex-start;gap:9px;
+      box-sizing:border-box;overflow:hidden;padding-top:4px;padding-bottom:4px;}
+    .cd-skel i{display:block;flex:none;height:11px;border-radius:6px;
+      background:linear-gradient(90deg,rgba(217,169,79,.22),rgba(241,230,207,.12) 70%,rgba(217,169,79,.16));}
+    .cd-skel i.cd-skel-block{height:auto;flex:1 1 auto;min-height:38px;border-radius:12px;
+      background:linear-gradient(180deg,rgba(217,169,79,.14),rgba(241,230,207,.06));border:1px solid rgba(217,169,79,.18);}
+    .cd-skel i.cd-skel-head{height:15px;width:46% !important;background:linear-gradient(90deg,rgba(217,169,79,.34),rgba(217,169,79,.16));}
     /* Tab-urile graficelor (Карьера / Личная жизнь / …) rămân interactive şi în preview,
        deasupra straturilor de blur — utilizatorul poate comuta graficele înainte de plată. */
     .cd-preview .cd-part .chart-tabs,
@@ -6724,7 +6734,7 @@ function startPdfExport(){
       let ni = -1;
       items.forEach(function(el, i){ if(isNow(el)) ni = i; });
       if(ni < 0) return;
-      items.forEach(function(el, i){ if(i > ni) el.classList.add('cd-lock'); });
+      items.forEach(function(el, i){ if(i > ni){ el.classList.add('cd-lock'); if(el instanceof SVGElement) el.remove(); } });
     }
     function __cdMaskFuture(stage){
       if(!stage) return;
@@ -6780,13 +6790,13 @@ function startPdfExport(){
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'cd-unlock-btn';
-      b.textContent = 'Смотреть полный разбор';
+      b.textContent = 'Открыть полный разбор';
       b.addEventListener('click', __cdRequestUnlock);
       wrap.appendChild(t); wrap.appendChild(b);
       card.appendChild(wrap);
     }
     // Elemente cu propria mască (grafice: trecut clar / viitor blurat) sau interactive — NU primesc blur de card.
-    const __CD_BLUR_SKIP = '.section-title, .cd-unlock';
+    const __CD_BLUR_SKIP = '.section-title, .cd-unlock, .cd-skel';
     // Blur progresiv pe ELEMENTE (nu backdrop-filter): tot ce e sub linia de 30 % a cardului devine blurat,
     // din ce în ce mai puternic spre capătul cardului. Elementele care traversează linia (sau sunt foarte
     // înalte) sunt descompuse în copii, ca zona de sus să rămână clară şi straturile GPU să fie mici.
@@ -6812,8 +6822,46 @@ function startPdfExport(){
         if((spans || r.height > 900) && kids.length){ kids.forEach(walk); return; }
         el.classList.remove('cd-blur-1','cd-blur-2','cd-blur-3','cd-blur-4');
         el.classList.add('cd-blur-' + level(el));
+        // Paragraful care traversează chiar linia de 30 % rămâne text real (blurat) ca partea lui de sus să se citească;
+        // tot ce e complet sub linie devine schelet.
+        if(!spans) __cdSkeletonize(el, r.height);
       }
       Array.from(card.children).forEach(walk);
+    }
+    // Înlocuiește conținutul REAL al unui element de sub linia de 30 % cu un schelet vizual de aceeași
+    // înălțime: textul premium este eliminat din DOM (nu doar blurat), dar conturul „continuării” rămâne.
+    const __CD_SKEL_WIDTHS = [100, 94, 88, 97, 72, 100, 91, 63, 96, 84];
+    function __cdSkeletonize(el, height){
+      if(el.classList.contains('cd-skel') || el.closest('.cd-skel')) return;
+      if(el.closest('.chart-tabs')) return; // tab-urile graficelor rămân interactive
+      const h = Math.max(14, Math.round(height || el.getBoundingClientRect().height));
+      const isChart = h > 200 || !!el.querySelector('svg, canvas');
+      const frag = document.createDocumentFragment();
+      if(isChart){
+        const head = document.createElement('i'); head.className = 'cd-skel-head'; frag.appendChild(head);
+        const block = document.createElement('i'); block.className = 'cd-skel-block'; frag.appendChild(block);
+        const tail = Math.min(3, Math.floor((h - 90) / 22));
+        for(let i = 0; i < tail; i++){ const l = document.createElement('i'); l.style.width = __CD_SKEL_WIDTHS[i % 10] + '%'; frag.appendChild(l); }
+      }else{
+        const n = Math.max(1, Math.min(40, Math.round((h - 8) / 20)));
+        for(let i = 0; i < n; i++){
+          const l = document.createElement('i');
+          l.style.width = __CD_SKEL_WIDTHS[i % 10] + '%';
+          frag.appendChild(l);
+        }
+      }
+      // Elementele SVG/canvas nu pot găzdui <i>: le înlocuim cu un <div> de aceeași dimensiune.
+      let host = el;
+      if(el instanceof SVGElement || el.tagName === 'CANVAS' || el.tagName === 'TABLE' || el.tagName === 'UL' || el.tagName === 'OL'){
+        host = document.createElement('div');
+        host.className = el.getAttribute('class') || '';
+        el.replaceWith(host);
+      }else{
+        host.textContent = '';
+      }
+      host.classList.add('cd-skel');
+      host.style.height = h + 'px';
+      host.appendChild(frag);
     }
     function __cdApplyPreviewLock(){
       document.body.classList.add('cd-preview');
