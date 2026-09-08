@@ -226,8 +226,10 @@ rep('<div class="card" id="inputFormCard">',
     '      <div class="numerology-crystal" aria-hidden="true"><span>22</span></div>\n'
     '      <div class="numerology-numbers" aria-hidden="true"><span>3</span><span>7</span><span>11</span><span>17</span><span>22</span></div>\n'
     '      <div class="numerology-copy">\n'
-    '        <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>\n'
-    '        <h2 id="numerology-intro-title">Введи свои данные — и открой свой персональный нумерологический разбор «Кристалл Судьбы».</h2>\n'
+'        <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>\n'
+  '        <h2 id="numerology-intro-title">Твой «Кристалл судьбы»</h2>\n'
+  '        <p class="numerology-intro-lead">Введи свои данные — на их основе создаётся твой персональный нумерологический разбор.</p>\n'
+  '        <p class="numerology-intro-detail">Характер, отношения, предназначение, реализация и важные периоды жизни — всё, что числа могут рассказать именно о тебе.</p>\n'
     '      </div>\n'
     '    </div>\n', 1)
 rep('</head>', """<style>
@@ -235,7 +237,7 @@ rep('</head>', """<style>
 .numerology-copy{position:relative;z-index:3;width:min(90%,530px);padding:28px 22px;text-align:center;animation:numerologyReveal .9s cubic-bezier(.2,.8,.2,1) both;}
 .numerology-kicker{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px;color:#efca69;font:700 10px/1.4 Arial,sans-serif;letter-spacing:.34em;text-transform:uppercase;text-shadow:0 0 18px rgba(239,202,105,.35);}.numerology-kicker:before,.numerology-kicker:after{content:"";display:block;width:30px;height:1px;background:linear-gradient(90deg,transparent,#efca69);opacity:.8;}.numerology-kicker:after{transform:rotate(180deg);}
 .numerology-copy h2{max-width:700px;margin:0;color:#fff8e8;font:600 clamp(31px,5vw,56px)/1.02 Georgia,serif;letter-spacing:-.025em;text-wrap:balance;text-shadow:0 2px 0 rgba(0,0,0,.2),0 0 30px rgba(212,175,55,.28);}.numerology-copy h2::first-line{color:#fff8e8;}
-.numerology-copy p{max-width:470px;margin:14px auto 0;color:#efca69;font:600 clamp(12px,1.5vw,14px)/1.4 Arial,sans-serif;letter-spacing:.18em;text-transform:uppercase;text-shadow:0 0 16px rgba(239,202,105,.25);}
+.numerology-copy p{max-width:520px;margin:14px auto 0;color:rgba(245,237,214,.82);font:400 clamp(14px,1.8vw,17px)/1.55 Arial,sans-serif;letter-spacing:.01em;}.numerology-copy .numerology-intro-lead{margin-top:18px;color:#efca69;font-weight:600;}.numerology-copy .numerology-intro-detail{margin-top:8px;color:rgba(245,237,214,.64);font-size:clamp(13px,1.6vw,15px);}.numerology-copy h2{max-width:620px;}
 .numerology-copy .numerology-action-hint{max-width:none;margin:22px auto 0;color:rgba(245,237,214,.56);font:500 12px/1.4 Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;}
 #inputFormCard .numerology-action-hint{margin:-3px 0 10px;color:rgba(245,237,214,.56);font:400 12px/1.4 Arial,sans-serif;letter-spacing:.01em;text-transform:none;}
 .numerology-crystal{position:absolute;z-index:2;width:76px;height:76px;display:grid;place-items:center;border:1px solid rgba(239,202,105,.8);transform:rotate(45deg);box-shadow:0 0 22px rgba(212,175,55,.4),inset 0 0 24px rgba(212,175,55,.18);animation:numerologyPulse 3.4s ease-in-out infinite;}
