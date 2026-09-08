@@ -611,9 +611,9 @@ select option{color:#1a1420;background:#fff;}
 <style>
 .card#inputFormCard{box-sizing:border-box;position:relative;width:100%;max-width:none;overflow:hidden;border-radius:2rem;padding:0 22px 22px;background:linear-gradient(145deg,rgba(40,24,62,.72),rgba(13,13,35,.9));box-shadow:none!important;}.card#inputFormCard>.section-title{display:none!important;}.card#inputFormCard .section-title{display:none!important;}.card#inputFormCard>form,.card#inputFormCard>div:not(.numerology-intro){position:relative;z-index:3;}.numerology-intro{position:relative;isolation:isolate;max-width:none;min-height:250px;margin:0 -22px 8px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:0!important;border-bottom:0!important;border-radius:2rem 2rem 0 0;background:transparent;box-shadow:none!important;}}
 .numerology-copy{position:relative;z-index:3;width:min(90%,530px);padding:28px 22px;text-align:center;animation:numerologyReveal .9s cubic-bezier(.2,.8,.2,1) both;}
-.numerology-kicker{display:block;margin-bottom:8px;color:rgba(212,175,55,.76);font:600 10px/1.4 Arial,sans-serif;letter-spacing:.28em;}
-.numerology-copy h2{margin:0;color:#f5edd6;font:500 clamp(24px,4vw,42px)/1.1 Georgia,serif;letter-spacing:.02em;text-shadow:0 0 24px rgba(212,175,55,.22);}
-.numerology-copy p{max-width:470px;margin:14px auto 0;color:rgba(245,237,214,.78);font:400 clamp(14px,1.8vw,17px)/1.55 Arial,sans-serif;letter-spacing:.01em;}
+.numerology-kicker{display:inline-flex;align-items:center;gap:10px;margin-bottom:14px;color:#efca69;font:700 10px/1.4 Arial,sans-serif;letter-spacing:.34em;text-transform:uppercase;text-shadow:0 0 18px rgba(239,202,105,.35);}.numerology-kicker:before,.numerology-kicker:after{content:"";display:block;width:30px;height:1px;background:linear-gradient(90deg,transparent,#efca69);opacity:.8;}.numerology-kicker:after{transform:rotate(180deg);}
+.numerology-copy h2{max-width:700px;margin:0;color:#fff8e8;font:600 clamp(31px,5vw,56px)/1.02 Georgia,serif;letter-spacing:-.025em;text-wrap:balance;text-shadow:0 2px 0 rgba(0,0,0,.2),0 0 30px rgba(212,175,55,.28);}.numerology-copy h2::first-line{color:#fff8e8;}
+.numerology-copy p{max-width:520px;margin:14px auto 0;color:rgba(245,237,214,.82);font:400 clamp(14px,1.8vw,17px)/1.55 Arial,sans-serif;letter-spacing:.01em;}.numerology-copy .numerology-intro-lead{margin-top:18px;color:#efca69;font-weight:600;}.numerology-copy .numerology-intro-detail{margin-top:8px;color:rgba(245,237,214,.64);font-size:clamp(13px,1.6vw,15px);}.numerology-copy h2{max-width:620px;}
 .numerology-copy .numerology-action-hint{max-width:none;margin:22px auto 0;color:rgba(245,237,214,.56);font:500 12px/1.4 Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;}
 #inputFormCard .numerology-action-hint{margin:-3px 0 10px;color:rgba(245,237,214,.56);font:400 12px/1.4 Arial,sans-serif;letter-spacing:.01em;text-transform:none;}
 .numerology-crystal{position:absolute;z-index:2;width:76px;height:76px;display:grid;place-items:center;border:1px solid rgba(239,202,105,.8);transform:rotate(45deg);box-shadow:0 0 22px rgba(212,175,55,.4),inset 0 0 24px rgba(212,175,55,.18);animation:numerologyPulse 3.4s ease-in-out infinite;}
@@ -645,7 +645,7 @@ select option{color:#1a1420;background:#fff;}
   #inputFormCard .cd-field-hint{display:inline-block;margin-left:.45rem;color:rgba(245,237,214,.58);font-size:.78em;font-weight:400;letter-spacing:0;text-transform:none;}
   #inputFormCard label{display:block;margin:22px 0 9px;color:rgba(239,202,105,.86);font:600 11px/1.3 Arial,sans-serif;letter-spacing:.2em;text-transform:uppercase;}
   #inputFormCard .numerology-intro{min-height:330px;margin-inline:-28px;padding-inline:20px;border-bottom:1px solid rgba(212,175,55,.1);background:linear-gradient(145deg,rgba(40,24,62,.28),rgba(13,13,35,.3));}
-  #inputFormCard .numerology-copy{width:min(100%,680px);padding:48px 12px;text-align:left;}#inputFormCard .numerology-copy h2{max-width:680px;font-size:clamp(30px,6vw,54px);line-height:1.02;}#inputFormCard .numerology-copy p{max-width:560px;margin-top:20px;font-size:16px;line-height:1.6;}#inputFormCard .numerology-kicker{margin-bottom:16px;}
+  #inputFormCard .numerology-copy{width:min(100%,760px);padding:48px 12px;text-align:left;}#inputFormCard .numerology-copy h2{max-width:720px;font-size:clamp(31px,6vw,58px);line-height:1.02;letter-spacing:-.02em;}#inputFormCard .numerology-copy p{max-width:560px;margin-top:20px;font-size:16px;line-height:1.6;}#inputFormCard .numerology-kicker{margin-bottom:18px;}
   #inputFormCard .btn,#inputFormCard button{min-height:58px;border:1px solid rgba(212,175,55,.4);border-radius:1rem;background:linear-gradient(145deg,rgba(40,24,62,.72),rgba(13,13,35,.9));color:#f5edd6;box-shadow:0 0 28px -18px rgba(212,175,55,.7);font:600 13px/1 Arial,sans-serif;letter-spacing:.22em;text-transform:uppercase;transition:transform .2s,box-shadow .2s,filter .2s;}#inputFormCard .btn:hover,#inputFormCard button:hover{filter:brightness(1.08);border-color:rgba(212,175,55,.4);box-shadow:0 0 45px -18px rgba(212,175,55,.8);}#inputFormCard .btn:active,#inputFormCard button:active{transform:translateY(1px);}
   @media (max-width:600px){#inputFormCard{width:calc(100% - 2rem);margin-top:12px;padding:0 12px 14px!important;border-radius:2rem;}#inputFormCard .numerology-intro{min-height:230px;margin-inline:-12px;padding-inline:14px;}#inputFormCard .numerology-copy{padding:24px 4px;text-align:left;}#inputFormCard .numerology-copy h2{font-size:clamp(25px,7.4vw,34px);line-height:1.08;}#inputFormCard .numerology-copy p{margin-top:12px;font-size:14px;line-height:1.45;}#inputFormCard .numerology-kicker{margin-bottom:10px;font-size:8px;}#inputFormCard input{min-height:46px;font-size:16px;padding-inline:12px;}#inputFormCard label{margin-top:14px;margin-bottom:6px;font-size:9px;letter-spacing:.12em;}#inputFormCard .btn,#inputFormCard button{width:100%;min-height:48px;font-size:11px;letter-spacing:.12em;}}
   #inputFormCard,#inputFormCard:hover{box-shadow:none!important;}
@@ -947,15 +947,15 @@ select option{color:#1a1420;background:#fff;}
       <div class="numerology-crystal" aria-hidden="true"><span>22</span></div>
       <div class="numerology-numbers" aria-hidden="true"><span>3</span><span>7</span><span>11</span><span>17</span><span>22</span></div>
       <div class="numerology-copy">
-        <span class="numerology-kicker">PERSONAL NUMEROLOGY</span>
-        <h2 id="numerology-intro-title">Узнай, что скрывает твоя дата рождения</h2>
-        <p>Введи свои данные — и открой свой персональный нумерологический разбор «Кристалл Судьбы».</p>
+        <h2 id="numerology-intro-title">Твой «Кристалл судьбы»</h2>
+        <p class="numerology-intro-lead">Введи свои данные — на их основе создаётся твой персональный нумерологический разбор.</p>
+        <p class="numerology-intro-detail">Характер, отношения, предназначение, реализация и важные периоды жизни — всё, что числа могут рассказать именно о тебе.</p>
       </div>
     </div>
 
     <div class="form-grid">
       <div class="full">
-        <label>Дата рождения</label><p class="numerology-action-hint">Введите данные для персонального расчёта</p>
+        <label>Дата рождения</label>
         <div class="date-row">
           <input id="day" type="number" min="1" max="31" placeholder="День" value="">
           <input id="month" type="number" min="1" max="12" placeholder="Месяц" value="">
@@ -1029,8 +1029,8 @@ select option{color:#1a1420;background:#fff;}
         </select>
       </div>
     </div>
-    <button id="mainCalcBtn" class="btn cd-main-cta" onclick="cdMainAction()">УЗНАТЬ СВОЙ РЕЗУЛЬТАТ</button>
-      <p class="cd-main-cta-note">Расчёт займёт меньше минуты</p>
+    <button id="mainCalcBtn" class="btn cd-main-cta" onclick="cdMainAction()">РАССЧИТАТЬ МОЙ РАЗБОР</button>
+      <p class="cd-main-cta-note">Часть персонального разбора доступна бесплатно</p>
     <script>
       document.addEventListener('DOMContentLoaded', function(){
         paintGender();
