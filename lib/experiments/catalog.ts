@@ -41,6 +41,9 @@ export const FORM_VARIANTS: VariantDef[] = [
   { id: 'form-profession-match', kind: 'form', label: 'Profession Match', hypothesis: 'Alegerea dilemei profesionale înainte de calcul face direcția de realizare mai convingătoare.', angle: 'potrivire profesională', motion: 2, active: false, weight: 1 },
   { id: 'form-relationship-needs', kind: 'form', label: 'Relationship Needs', hypothesis: 'Nevoia relațională calculată răspunde direct intenției și deschide întrebări apropiate.', angle: 'nevoi relaționale', motion: 2, active: false, weight: 1 },
   { id: 'form-life-timeline', kind: 'form', label: 'Life Timeline', hypothesis: 'Poziționarea pe etapa actuală a vieții transformă graficul într-o poveste personală.', angle: 'cronologia vieții', motion: 2, active: false, weight: 1 },
+  { id: 'form-career-future-v1', kind: 'form', label: 'Career Future', hypothesis: 'Un rezultat profesional real obținut doar din data nașterii motivează completarea identității pentru următoarea etapă.', angle: 'viitor profesional', motion: 2, active: false, weight: 0 },
+  { id: 'form-relationship-future-v1', kind: 'form', label: 'Relationship Future', hypothesis: 'Poziția relațională actuală creează suficientă relevanță pentru aprofundarea personală ulterioară.', angle: 'viitor relațional', motion: 2, active: false, weight: 0 },
+  { id: 'form-money-future-v1', kind: 'form', label: 'Money Future', hypothesis: 'Direcția financiară actuală, calculată înaintea numelui, deschide natural întrebarea următorului prag.', angle: 'viitor financiar', motion: 2, active: false, weight: 0 },
 ]
 
 export const PREVIEW_VARIANTS: VariantDef[] = [
@@ -54,6 +57,9 @@ export const PREVIEW_VARIANTS: VariantDef[] = [
   { id: 'preview-profession-match', kind: 'preview', label: 'Profession Match', hypothesis: 'Direcția calculată oferă validare, iar celelalte sfere și perioade susțin continuarea.', angle: 'potrivire profesională', motion: 2, active: false, weight: 1 },
   { id: 'preview-relationship-needs', kind: 'preview', label: 'Relationship Needs', hypothesis: 'Răspunsul despre nevoia relațională deschide natural scenariile și perioadele complete.', angle: 'nevoi relaționale', motion: 2, active: false, weight: 1 },
   { id: 'preview-life-timeline', kind: 'preview', label: 'Life Timeline', hypothesis: 'Punctul actual vizibil și viitorul mascat maximizează curiozitatea fără promisiuni inventate.', angle: 'cronologia vieții', motion: 2, active: false, weight: 1 },
+  { id: 'preview-career-future-v1', kind: 'preview', label: 'Career Future', hypothesis: 'Graficul carierei arată trecutul și punctul actual, păstrând următoarea schimbare pentru continuare.', angle: 'viitor profesional', motion: 2, active: false, weight: 0 },
+  { id: 'preview-relationship-future-v1', kind: 'preview', label: 'Relationship Future', hypothesis: 'Graficul relațional oferă o concluzie prezentă reală fără a dezvălui următoarea fază.', angle: 'viitor relațional', motion: 2, active: false, weight: 0 },
+  { id: 'preview-money-future-v1', kind: 'preview', label: 'Money Future', hypothesis: 'Graficul financiar arată sensul actual al liniei și maschează vârsta următorului viraj.', angle: 'viitor financiar', motion: 2, active: false, weight: 0 },
 ]
 
 export const ALL_VARIANTS: VariantDef[] = [...FORM_VARIANTS, ...PREVIEW_VARIANTS]

@@ -19,6 +19,12 @@
 .cd-context-next li{display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border-radius:12px;background:rgba(255,255,255,.035);color:var(--parchment-dim,#c9bda3);font-size:13.5px;line-height:1.45}
 .cd-context-next li:before{content:"";width:7px;height:7px;flex:0 0 7px;margin-top:6px;border:1px solid var(--brass-bright,#d9a94f);border-radius:50%}
 .cd-context-lock{margin:12px 0 0;color:var(--brass-bright,#d9a94f);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.cd-context-cue{padding:18px 20px;border:1px solid rgba(217,169,79,.3);border-radius:18px;background:rgba(217,169,79,.08);text-align:center}
+.cd-context-cue strong{display:block;color:var(--parchment,#fff3d6);font-family:var(--font-display,serif);font-size:20px}
+.cd-context-cue span{display:block;margin-top:6px;color:var(--parchment-dim,#c9bda3);font-size:13px;line-height:1.5}
+.cd-context-paywall-intro{padding:4px 4px 0;text-align:center}
+.cd-context-paywall-intro h3{margin:0;color:var(--parchment,#fff3d6);font-family:var(--font-display,serif);font-size:24px}
+.cd-context-paywall-intro p{margin:7px auto 0;max-width:520px;color:var(--parchment-dim,#c9bda3);font-size:14px;line-height:1.6}
 @media(max-width:560px){.cd-context-head,.cd-context-answer{padding:17px 14px}.cd-context-preview{gap:12px}}
 </style>
 <script>
@@ -26,95 +32,114 @@
   'use strict';
   var params = new URLSearchParams(location.search);
   var preview = params.get('pv') || 'preview-control';
-  var allowed = ['preview-control','preview-birthday-first','preview-love-graph','preview-career-graph','preview-life-now','preview-content-first','preview-money-flow','preview-profession-match','preview-relationship-needs','preview-life-timeline'];
+  var stage = params.get('stage') || 'full';
+  var lang = params.get('lang') === 'ro' ? 'ro' : 'ru';
+  var allowed = ['preview-control','preview-birthday-first','preview-love-graph','preview-career-graph','preview-life-now','preview-content-first','preview-money-flow','preview-profession-match','preview-relationship-needs','preview-life-timeline','preview-career-future-v1','preview-relationship-future-v1','preview-money-future-v1'];
   if(allowed.indexOf(preview) < 0 || preview === 'preview-control' || preview === 'preview-birthday-first') return;
   document.documentElement.setAttribute('data-cd-preview', preview);
   document.documentElement.setAttribute('data-cd-form', params.get('fv') || 'form-control');
 
   var intent = params.get('intent') || '';
   var baseRenderPreview = window.renderPreview || renderPreview;
+  var isFuture = /-(career|relationship|money)-future-v1$/.test(preview);
+  var topic = preview.indexOf('relationship') >= 0 || preview.indexOf('love') >= 0 ? 'love' : preview.indexOf('money') >= 0 ? 'money' : preview.indexOf('career') >= 0 || preview.indexOf('profession') >= 0 ? 'career' : preview.indexOf('life') >= 0 ? 'life' : 'report';
 
-  var QUESTIONS = {
-    'preview-love-graph': ['Почему в отношениях повторяется один сценарий?','Какой партнёр подходит тебе по внутренним потребностям?','Что чаще всего мешает близости?'],
-    'preview-career-graph': ['В чём твоё сильное профессиональное направление?','Почему сейчас может ощущаться застой?','Что важно знать перед сменой работы?'],
-    'preview-life-now': ['Что сейчас происходит в отношениях?','Что сейчас происходит в финансовой сфере?','Что сейчас происходит в карьере?','Что говорит твой текущий жизненный этап?'],
-    'preview-money-flow': ['Что происходит с деньгами сейчас?','Есть ли впереди новый период финансового роста?','Где искать причину замедления финансового потока?'],
-    'preview-profession-match': ['Какое профессиональное направление тебе подходит?','Какой тип роли использует твои сильные стороны?','Почему работа может не давать ощущения реализации?'],
-    'preview-relationship-needs': ['Что создаёт для тебя чувство опоры в отношениях?','Что помогает тебе чувствовать близость и понимание?','Сколько свободы и движения тебе нужно в паре?'],
-    'preview-life-timeline': ['Где ты находишься на линии жизни сейчас?','Что меняется на следующем отрезке?','Какая тема сильнее проявлена в текущем периоде?'],
-    'preview-content-first': ['Что уже видно в твоём расчёте?']
+  var COPY = {
+    ru: {
+      birthKicker:'Бесплатный результат по дате рождения', birthTitle:{career:'Твоя текущая точка в карьере',love:'Твоя текущая точка в отношениях',money:'Твоя текущая финансовая точка'},
+      current:'Что видно сейчас', graphNow:'сейчас', graphNote:'Показан пройденный отрезок и твоя текущая точка. Следующая часть линии намеренно скрыта.',
+      proof:'Вывод построен по твоему реальному графику и текущему возрасту.', questionsTitle:'Твой график открывает следующий вопрос',
+      questions:{career:['Когда начинается следующая профессиональная смена?','Подходит ли этот период для новой работы?','Твоё естественное направление — управление или исполнение?'],love:['Когда личная линия входит в новую фазу?','Какой сценарий повторяется в отношениях?','Какая форма близости подходит тебе сильнее?'],money:['Когда линия денег меняет направление?','Где начинается следующий период роста?','Какие качества усиливают или замедляют доход?']},
+      continueTitle:'Текущая точка уже рассчитана', continueText:'Добавь имя ниже, чтобы связать график с личными качествами и получить углублённый результат.',
+      answerKicker:'Ответ по твоему Кристаллу', partial:'Углублённый результат', fullTitle:{career:'Твоя профессиональная линия становится личной',love:'Твоя линия отношений становится личной',money:'Твоя финансовая линия становится личной'},
+      nextTitle:'В полном разборе продолжаются вопросы', lock:'Ответы продолжаются в полном разборе', paywallTitle:'График продолжается', paywallText:'Открой следующие периоды, точные переходы и весь «Кристалл судьбы» сразу после оплаты.'
+    },
+    ro: {
+      birthKicker:'Rezultat gratuit din data nașterii', birthTitle:{career:'Punctul tău actual în carieră',love:'Punctul tău actual în relații',money:'Punctul tău financiar actual'},
+      current:'Ce se vede acum', graphNow:'acum', graphNote:'Sunt afișate traseul parcurs și punctul tău actual. Următoarea parte a liniei este ascunsă intenționat.',
+      proof:'Concluzia este construită din graficul tău real și vârsta actuală.', questionsTitle:'Graficul tău deschide următoarea întrebare',
+      questions:{career:['Când începe următoarea schimbare profesională?','Este această perioadă potrivită pentru un job nou?','Direcția ta naturală este conducerea sau execuția?'],love:['Când intră linia personală într-o fază nouă?','Ce scenariu se repetă în relații?','Ce formă de apropiere ți se potrivește?'],money:['Când își schimbă direcția linia banilor?','Unde începe următoarea perioadă de creștere?','Ce trăsături susțin sau încetinesc veniturile?']},
+      continueTitle:'Punctul actual este deja calculat', continueText:'Adaugă numele mai jos pentru a conecta graficul cu trăsăturile tale și a primi rezultatul aprofundat.',
+      answerKicker:'Răspuns din Cristalul tău', partial:'Rezultat aprofundat', fullTitle:{career:'Linia profesională devine personală',love:'Linia relațiilor devine personală',money:'Linia financiară devine personală'},
+      nextTitle:'Analiza completă continuă cu aceste întrebări', lock:'Răspunsurile continuă în analiza completă', paywallTitle:'Graficul tău continuă', paywallText:'Deschide perioadele următoare, tranzițiile exacte și întregul „Cristal al Destinului” imediat după plată.'
+    }
   };
-  var NEXT = {
-    love: ['Как меняется личная линия по возрастам?','Какой повторяющийся сценарий требует внимания?','В какой период отношения входят в новую фазу?'],
-    money: ['В каком возрасте меняется финансовая самостоятельность?','Где линия денег разворачивается вверх?','Какие качества усиливают или тормозят доход?'],
-    career: ['Какие ещё сферы подходят тебе по расчёту?','Когда профессиональная линия входит в сильный период?','Что отличает призвание от просто подходящей работы?'],
-    life: ['Какая сфера станет следующей активной темой?','Где находятся ключевые переходы твоей линии?','Как связаны текущий период и твои сильные качества?'],
-    report: ['Какие качества помогают тебе сейчас?','Что показывает линия отношений, денег и реализации?','Где находятся ближайшие возрастные переходы?']
+  var c = COPY[lang];
+  var legacyQuestions = {
+    'preview-love-graph':['Почему в отношениях повторяется один сценарий?','Какой партнёр подходит тебе по внутренним потребностям?','Что чаще всего мешает близости?'],
+    'preview-career-graph':['В чём твоё сильное профессиональное направление?','Почему сейчас может ощущаться застой?','Что важно знать перед сменой работы?'],
+    'preview-life-now':['Что сейчас происходит в отношениях?','Что сейчас происходит в финансовой сфере?','Что сейчас происходит в карьере?','Что говорит твой текущий жизненный этап?'],
+    'preview-money-flow':['Что происходит с деньгами сейчас?','Есть ли впереди новый период финансового роста?','Где искать причину замедления финансового потока?'],
+    'preview-profession-match':['Какое профессиональное направление тебе подходит?','Какой тип роли использует твои сильные стороны?','Почему работа может не давать ощущения реализации?'],
+    'preview-relationship-needs':['Что создаёт для тебя чувство опоры в отношениях?','Что помогает тебе чувствовать близость и понимание?','Сколько свободы и движения тебе нужно в паре?'],
+    'preview-life-timeline':['Где ты находишься на линии жизни сейчас?','Что меняется на следующем отрезке?','Какая тема сильнее проявлена в текущем периоде?'],
+    'preview-content-first':['Что уже видно в твоём расчёте?']
+  };
+  var legacyNext = {
+    love:['Как меняется личная линия по возрастам?','Какой повторяющийся сценарий требует внимания?','В какой период отношения входят в новую фазу?'],
+    money:['В каком возрасте меняется финансовая самостоятельность?','Где линия денег разворачивается вверх?','Какие качества усиливают или тормозят доход?'],
+    career:['Какие ещё сферы подходят тебе по расчёту?','Когда профессиональная линия входит в сильный период?','Что отличает призвание от просто подходящей работы?'],
+    life:['Какая сфера станет следующей активной темой?','Где находятся ключевые переходы твоей линии?','Как связаны текущий период и твои сильные качества?'],
+    report:['Какие качества помогают тебе сейчас?','Что показывает линия отношений, денег и реализации?','Где находятся ближайшие возрастные переходы?']
   };
 
-  function indexFromIntent(){
-    var match = intent.match(/:(\d+)$/);
-    return match ? Math.max(0, Math.min(3, Number(match[1]))) : 0;
-  }
-  function questionFor(){
-    var list = QUESTIONS[preview] || QUESTIONS['preview-content-first'];
-    return list[indexFromIntent()] || list[0];
+  function indexFromIntent(){ var match = intent.match(/:(\d+)$/); return match ? Math.max(0,Math.min(3,Number(match[1]))) : 0; }
+  function escapeHtml(value){ return String(value == null ? '' : value).replace(/[&<>"']/g,function(ch){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]; }); }
+  function trend(model){
+    var g=model.graph; if(!g) return lang==='ro'?'Graficul personal a fost calculat.':'Персональный график рассчитан.';
+    var points=g.points||[], last=points[points.length-1], prev=points[points.length-2];
+    var delta=last&&prev?last.level-prev.level:0;
+    if(lang==='ro') return delta>0.35?'Linia urcă în perioada actuală: energia acestei sfere este în creștere.':delta<-.35?'Linia coboară în perioada actuală: este o etapă de reevaluare și ajustare.':'Linia este relativ stabilă acum: perioada cere consolidare înaintea următoarei schimbări.';
+    return g.state || 'Текущая точка рассчитана по твоему возрасту и личному графику.';
   }
   function careerAnswer(model){
-    if(model.career && model.career.sphere){
-      if(model.career.sphereFuture) return 'В твоём расчёте направление «' + model.career.sphere + '» раскрывается сильнее примерно к ' + model.career.sphereAge + ' годам.';
-      return 'Среди рассчитанных направлений сильнее всего выделяется: ' + model.career.sphere + '.';
-    }
-    if(model.career && model.career.line) return model.career.line;
-    return model.wow && model.wow[0] ? model.wow[0].text : 'Расчёт уже выделил профессиональную тему, связанную с твоими сильными качествами.';
-  }
-  function loveAnswer(model){
-    return model.love && model.love.line ? model.love.line : (model.wow && model.wow[0] ? model.wow[0].text : 'Твой расчёт выделяет личную потребность, от которой зависит ощущение близости.');
-  }
-  function moneyAnswer(model){
-    if(model.graph && model.graph.state) return model.graph.state;
-    if(model.money && model.money.hasIndependenceAge) return 'На финансовой линии есть рассчитанный переход к большей самостоятельности.';
-    return 'Финансовая линия развивается постепенно, без резкого перехода в рассчитанном диапазоне.';
-  }
-  function proofFor(model){
-    if(preview.indexOf('love') >= 0 || preview.indexOf('relationship') >= 0) return model.love && model.love.hasFutureChange ? 'На личном графике есть будущая смена периода. Точный переход раскрывается в полном разборе.' : 'Ответ сопоставлен с твоей целью партнёрства и личной линией.';
-    if(preview.indexOf('money') >= 0) return model.money && model.money.hasFutureUp ? 'На графике есть будущий разворот вверх. Его возраст и трактовка остаются в полном разборе.' : 'Вывод построен по текущему уровню и направлению финансовой линии.';
-    if(preview.indexOf('career') >= 0 || preview.indexOf('profession') >= 0) return model.career && model.career.hasOtherSpheres ? 'Расчёт нашёл и другие подходящие сферы. Здесь показана только самая сильная.' : 'Вывод сопоставлен с самой сильной точкой графика реализации.';
-    return model.graph ? 'Это положение рассчитано для твоего текущего возраста — ' + model.identity.age + '.' : 'Это один из персональных выводов полного расчёта.';
-  }
-  function topicFor(){
-    if(preview.indexOf('love') >= 0 || preview.indexOf('relationship') >= 0) return 'love';
-    if(preview.indexOf('money') >= 0) return 'money';
-    if(preview.indexOf('career') >= 0 || preview.indexOf('profession') >= 0) return 'career';
-    if(preview.indexOf('life') >= 0) return 'life';
-    return 'report';
+    if(lang==='ro') return trend(model);
+    if(model.career&&model.career.sphere){ if(model.career.sphereFuture) return 'В твоём расчёте направление «'+model.career.sphere+'» раскрывается сильнее примерно к '+model.career.sphereAge+' годам.'; return 'Среди рассчитанных направлений сильнее всего выделяется: '+model.career.sphere+'.'; }
+    return model.career&&model.career.line?model.career.line:trend(model);
   }
   function answerFor(model){
-    if(preview.indexOf('love') >= 0 || preview.indexOf('relationship') >= 0) return loveAnswer(model);
-    if(preview.indexOf('money') >= 0) return moneyAnswer(model);
-    if(preview.indexOf('career') >= 0 || preview.indexOf('profession') >= 0) return careerAnswer(model);
-    if(preview === 'preview-life-now' || preview === 'preview-life-timeline') return model.graph && model.graph.state ? model.graph.state : (model.wow[0] && model.wow[0].text);
-    return model.wow && model.wow[0] ? model.wow[0].text : loveAnswer(model);
+    if(lang==='ro') return trend(model);
+    if(topic==='love') return model.love&&model.love.line?model.love.line:trend(model);
+    if(topic==='money') return model.graph&&model.graph.state?model.graph.state:trend(model);
+    if(topic==='career') return careerAnswer(model);
+    return model.graph&&model.graph.state?model.graph.state:model.wow&&model.wow[0]?model.wow[0].text:trend(model);
+  }
+  function proofFor(model){
+    if(isFuture) return c.proof;
+    if(topic==='love') return model.love&&model.love.hasFutureChange?'На личном графике есть будущая смена периода. Точный переход раскрывается в полном разборе.':'Ответ сопоставлен с твоей целью партнёрства и личной линией.';
+    if(topic==='money') return model.money&&model.money.hasFutureUp?'На графике есть будущий разворот вверх. Его возраст и трактовка остаются в полном разборе.':'Вывод построен по текущему уровню и направлению финансовой линии.';
+    if(topic==='career') return model.career&&model.career.hasOtherSpheres?'Расчёт нашёл и другие подходящие сферы. Здесь показана только самая сильная.':'Вывод сопоставлен с самой сильной точкой графика реализации.';
+    return model.graph?'Это положение рассчитано для твоего текущего возраста — '+model.identity.age+'.':'Это один из персональных выводов полного расчёта.';
   }
   function graphHtml(model){
-    var g = model.graph;
-    if(!g) return '';
-    return '<section class="cd-context-graph"><h3>' + g.title + ' · сейчас</h3><p>Показан пройденный отрезок и твоя текущая точка. Будущее намеренно не раскрыто.</p>' + previewChartSvg(g) + '</section>';
+    var g=model.graph; if(!g) return '';
+    var title=isFuture?(c.birthTitle[topic]||g.title):g.title;
+    return '<section class="cd-context-graph"><h3>'+escapeHtml(title)+' · '+c.graphNow+'</h3><p>'+c.graphNote+'</p>'+previewChartSvg(g).replace('🔒','')+'</section>';
   }
-  function nextHtml(topic){
-    return '<section class="cd-context-next"><h3>Этот ответ ведёт к следующим вопросам</h3><ul>' + NEXT[topic].map(function(q){ return '<li>' + q + '</li>'; }).join('') + '</ul><p class="cd-context-lock">Ответы продолжаются в полном разборе</p></section>';
-  }
+  function listHtml(items){ return '<ul>'+items.map(function(q){ return '<li>'+escapeHtml(q)+'</li>'; }).join('')+'</ul>'; }
+  function nextHtml(items,title){ return '<section class="cd-context-next"><h3>'+escapeHtml(title)+'</h3>'+listHtml(items)+'<p class="cd-context-lock">'+c.lock+'</p></section>'; }
+  function legacyQuestion(){ var list=legacyQuestions[preview]||legacyQuestions['preview-content-first']; return list[indexFromIntent()]||list[0]; }
 
   window.renderPreview = renderPreview = function(model){
     baseRenderPreview(model);
-    var layer = document.getElementById('previewLayer');
-    if(!layer || model.birthday) return;
-    var name = model.identity.name || 'Твой разбор';
-    var graph = (preview === 'preview-content-first') ? '' : graphHtml(model);
-    layer.innerHTML = '<div class="pv-screen cd-context-preview pv-reveal">' +
-      '<header class="cd-context-head"><p class="cd-context-kicker">Ответ по твоему Кристаллу</p><h2>' + name + '</h2><p class="cd-context-meta">' + model.identity.date + ' · ' + model.identity.age + ' ' + yearsWord(model.identity.age) + '</p></header>' +
-      '<section class="cd-context-answer"><span class="cd-context-label">Частичный ответ</span><h3>' + questionFor() + '</h3><p>' + answerFor(model) + '</p><p class="cd-context-proof">' + proofFor(model) + '</p></section>' +
-      graph + nextHtml(topicFor()) + renderPaywall(model) + '</div>';
+    var layer=document.getElementById('previewLayer');
+    if(!layer||model.birthday) return;
+    if(isFuture&&stage==='birth'){
+      layer.innerHTML='<div class="pv-screen cd-context-preview pv-reveal">'+
+        '<header class="cd-context-head"><p class="cd-context-kicker">'+c.birthKicker+'</p><h2>'+escapeHtml(c.birthTitle[topic])+'</h2><p class="cd-context-meta">'+escapeHtml(model.identity.date)+' · '+escapeHtml(model.identity.age)+(lang==='ro'?' ani':' '+yearsWord(model.identity.age))+'</p></header>'+
+        '<section class="cd-context-answer"><span class="cd-context-label">'+c.current+'</span><h3>'+escapeHtml(c.birthTitle[topic])+'</h3><p>'+escapeHtml(trend(model))+'</p><p class="cd-context-proof">'+c.proof+'</p></section>'+
+        graphHtml(model)+nextHtml(c.questions[topic],c.questionsTitle)+
+        '<section class="cd-context-cue"><strong>'+c.continueTitle+'</strong><span>'+c.continueText+'</span></section></div>';
+      return;
+    }
+    var name=model.identity.name||model.identity.first||'';
+    var question=isFuture?c.fullTitle[topic]:legacyQuestion();
+    var questions=isFuture?c.questions[topic]:(legacyNext[topic]||legacyNext.report);
+    var paywallIntro=isFuture?'<section class="cd-context-paywall-intro"><h3>'+c.paywallTitle+'</h3><p>'+c.paywallText+'</p></section>':'';
+    layer.innerHTML='<div class="pv-screen cd-context-preview pv-reveal">'+
+      '<header class="cd-context-head"><p class="cd-context-kicker">'+c.answerKicker+'</p><h2>'+escapeHtml(name)+'</h2><p class="cd-context-meta">'+escapeHtml(model.identity.date)+' · '+escapeHtml(model.identity.age)+(lang==='ro'?' ani':' '+yearsWord(model.identity.age))+'</p></header>'+
+      '<section class="cd-context-answer"><span class="cd-context-label">'+c.partial+'</span><h3>'+escapeHtml(question)+'</h3><p>'+escapeHtml(answerFor(model))+'</p><p class="cd-context-proof">'+escapeHtml(proofFor(model))+'</p></section>'+
+      (preview==='preview-content-first'?'':graphHtml(model))+nextHtml(questions,c.nextTitle)+paywallIntro+renderPaywall(model)+'</div>';
   };
 })();
 </script>

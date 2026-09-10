@@ -63,9 +63,14 @@ const PREVIEW_ENGINE_VARIANTS: Record<string, string> = {
   'preview-profession-match': 'preview-profession-match',
   'preview-relationship-needs': 'preview-relationship-needs',
   'preview-life-timeline': 'preview-life-timeline',
+  'preview-career-future-v1': 'preview-career-future-v1',
+  'preview-relationship-future-v1': 'preview-relationship-future-v1',
+  'preview-money-future-v1': 'preview-money-future-v1',
 }
 
-function buildPreviewSrc(v: FormValues, variants?: { form: string; preview: string }): string {
+type FutureStage = 'date' | 'birth-result' | 'full-result'
+
+function buildPreviewSrc(v: FormValues, variants?: { form: string; preview: string }, options?: { stage?: 'birth' | 'full'; locale?: string }): string {
   const params = new URLSearchParams({
     preview: '1',
     last: v.last,
@@ -79,6 +84,8 @@ function buildPreviewSrc(v: FormValues, variants?: { form: string; preview: stri
   })
   if (v.entry) params.set('entry', v.entry)
   if (v.intent) params.set('intent', v.intent)
+  if (options?.stage) params.set('stage', options.stage)
+  if (options?.locale) params.set('lang', options.locale)
   // Varianta de PREVIEW din experiment: fără ea iframe-ul ar randa mereu baseline-ul, iar panoul de admin
   // ar arăta același ecran pentru toate variantele.
   if (variants) {
@@ -116,7 +123,10 @@ export default function CristalFunnel() {
   // Experimentul FORM/PREVIEW: varianta e stabilită de proxy înainte de randare; aici doar o
   // transmitem formularului (?fv=/?pv=) și raportăm parcursul.
   const exp = useLandingView(entry)
-  const formSrc = `${CALCULATOR_SRC}?alpha=${alphabet}&country=${country || ''}${emailParam ? `&email=${encodeURIComponent(emailParam)}` : ''}${entry ? `&entry=${entry}` : ''}&fv=${exp.form}&pv=${exp.preview}`
+  const futureTopic = exp.form === 'form-career-future-v1' ? 'career' : exp.form === 'form-relationship-future-v1' ? 'love' : exp.form === 'form-money-future-v1' ? 'money' : ''
+  const isFutureFunnel = Boolean(futureTopic)
+  const formSrc = `${CALCULATOR_SRC}?alpha=${alphabet}&country=${country || ''}${emailParam ? `&email=${encodeURIComponent(emailParam)}` : ''}${entry ? `&entry=${entry}` : ''}&lang=${locale}&fv=${exp.form}&pv=${exp.preview}`
+  const [futureStage, setFutureStage] = useState<FutureStage>('date')
   const [frameSrc, setFrameSrc] = useState<string>(formSrc)
   // Înălțime de pornire ≥ formular complet (titlu + video 3:4 + câmpuri + buton), ca nimic să nu fie
   // tăiat până sosește prima măsurătoare `resize` din iframe.
@@ -147,7 +157,8 @@ export default function CristalFunnel() {
   // În Admin Experiments, tabul „Preview rezultat” pornește calculatorul cu o identitate demonstrativă.
   // Linkul este deja semnat și marcat intern, deci nu creează lead-uri și nu afectează statisticile reale.
   useEffect(() => {
-    if (searchParams.get('adminPreview') !== 'result' || demoPreviewStarted.current) return
+    const adminStage = searchParams.get('adminPreview')
+    if ((adminStage !== 'birth' && adminStage !== 'result') || demoPreviewStarted.current) return
     demoPreviewStarted.current = true
     const variantEntry = exp.form.includes('love') || exp.form.includes('relationship')
       ? 'love'
@@ -160,25 +171,22 @@ export default function CristalFunnel() {
             : exp.form.includes('birthday')
               ? 'birthday'
               : entry
-    const demoIntent = exp.form.replace(/^form-/, '') + ':0'
+    const isBirthDemo = adminStage === 'birth' && isFutureFunnel
     const demo: FormValues = {
-      first: locale === 'ro' ? 'Ana' : 'Анна',
-      last: locale === 'ro' ? 'Popescu' : 'Иванова',
-      middle: '',
-      day: 10,
-      month: 9,
-      year: 1990,
-      gender: 'f',
+      first: isBirthDemo ? (locale === 'ro' ? 'Calcul' : 'Расчёт') : (locale === 'ro' ? 'Ana' : 'Анна'),
+      last: isBirthDemo ? (locale === 'ro' ? 'Personal' : 'Личный') : (locale === 'ro' ? 'Popescu' : 'Иванова'),
+      middle: '', day: 10, month: 9, year: 1990, gender: 'f',
       nameAlphabetKey: locale === 'ro' ? 'ro' : 'ru',
-      intent: demoIntent,
+      intent: exp.form.replace(/^form-/, '') + ':0',
       ...(variantEntry ? { entry: variantEntry } : {}),
     }
     formRef.current = demo
     setForm(demo)
+    setFutureStage(isBirthDemo ? 'birth-result' : 'full-result')
     setPreviewRequested(true)
     setForming(true)
-    setFrameSrc(buildPreviewSrc(demo, { form: exp.form, preview: exp.preview }))
-  }, [entry, exp.form, exp.preview, locale, searchParams])
+    setFrameSrc(buildPreviewSrc(demo, { form: exp.form, preview: exp.preview }, { stage: isBirthDemo ? 'birth' : 'full', locale }))
+  }, [entry, exp.form, exp.preview, isFutureFunnel, locale, searchParams])
 
   // Oferta din link, verificată pe server: preț redus afișat înainte de formular, în paywall și în bara sticky.
   const [offer, setOffer] = useState<AppliedOffer | null>(null)
@@ -278,6 +286,14 @@ export default function CristalFunnel() {
       }
 
       if (d.type === 'previewRendered') {
+        if (isFutureFunnel && futureStage === 'birth-result') {
+          setPreviewReady(true)
+          setNativePreview(true)
+          exp.track({ event: 'calculation_complete', dedupSuffix: 'birth-result' })
+          exp.track({ event: 'preview_impression', meta: { native: true, stage: 'birth', motion: exp.previewMotion }, dedupSuffix: 'birth-result' })
+          trackFunnel('free_result_viewed', { mode: 'birth_only_graph', entry: futureTopic })
+          return
+        }
         const p = d.data as PreviewData | undefined
         if (p && p.first && p.last && p.day && p.month && p.year) {
           const resolvedEntry = p.entry || entry
@@ -324,7 +340,7 @@ export default function CristalFunnel() {
         const saved = formRef.current
         if (saved && !previewRetried.current) {
           previewRetried.current = true
-          setFrameSrc(`${buildPreviewSrc(saved, { form: exp.form, preview: exp.preview })}&k=${Date.now()}`)
+          setFrameSrc(`${buildPreviewSrc(saved, { form: exp.form, preview: exp.preview }, { stage: futureStage === 'birth-result' ? 'birth' : 'full', locale })}&k=${Date.now()}`)
           return
         }
         setPreviewRequested(false)
@@ -357,7 +373,7 @@ export default function CristalFunnel() {
     }
     window.addEventListener('message', onMessage)
     return () => window.removeEventListener('message', onMessage)
-  }, [postToFrame, pricingMessage, locale, cristal.currency, cristal.amount, country, entry, exp])
+  }, [postToFrame, pricingMessage, locale, cristal.currency, cristal.amount, country, entry, exp, futureStage, futureTopic, isFutureFunnel])
 
   // Restaurare după întoarcere de la Stripe (anulat): raport blurat direct, fără re-completare.
   useEffect(() => {
@@ -490,6 +506,7 @@ export default function CristalFunnel() {
     setPreviewRequested(false)
     setForming(false)
     setNativePreview(false)
+    setFutureStage('date')
     setCheckoutError('')
     setCancelledNotice(false)
     setFrameSrc(`${formSrc}&k=${Date.now()}`)
@@ -556,16 +573,35 @@ export default function CristalFunnel() {
           initialValues={form || undefined}
           locale={locale}
           variant={exp.form}
-          onSubmit={(values) => {
-            const nextValues: FormValues = {
-              ...values,
-              gender: values.gender === 'm' ? 'm' : 'f',
-              nameAlphabetKey: values.nameAlphabetKey || alphabet,
-              ...(values.entry || entry ? { entry: values.entry || entry } : {}),
+          futureStage="date"
+          onBirthSubmit={({ day, month, year }) => {
+            const birthValues: FormValues = {
+              first: locale === 'ro' ? 'Calcul' : 'Расчёт',
+              last: locale === 'ro' ? 'Personal' : 'Личный',
+              middle: '', day, month, year, gender: 'f',
+              nameAlphabetKey: locale === 'ro' ? 'ro' : 'ru',
+              entry: futureTopic,
+              intent: `${futureTopic}-future-v1:0`,
             }
+            formRef.current = birthValues
+            setForm(birthValues)
+            setFutureStage('birth-result')
+            setPreviewReady(false)
+            setNativePreview(false)
+            setFrameSrc(`${buildPreviewSrc(birthValues, { form: exp.form, preview: exp.preview }, { stage: 'birth', locale })}&k=${Date.now()}`)
+            setPreviewRequested(true)
+            setForming(true)
+            exp.track({ event: 'form_submit', dedupSuffix: 'birth-date' })
+            exp.track({ event: 'calculation_start', dedupSuffix: 'birth-date' })
+            window.scrollTo({ top: 0 })
+            trackFunnel('birth_data_submitted', { stage: 'birth_only' })
+          }}
+          onSubmit={(values) => {
+            const nextValues: FormValues = { ...values, gender: values.gender === 'm' ? 'm' : 'f', nameAlphabetKey: values.nameAlphabetKey || alphabet, ...(values.entry || entry ? { entry: values.entry || entry } : {}) }
             formRef.current = nextValues
             setForm(nextValues)
-            setFrameSrc(`${buildPreviewSrc(nextValues, { form: exp.form, preview: exp.preview })}&k=${Date.now()}`)
+            setFutureStage('full-result')
+            setFrameSrc(`${buildPreviewSrc(nextValues, { form: exp.form, preview: exp.preview }, { stage: 'full', locale })}&k=${Date.now()}`)
             setPreviewRequested(true)
             setForming(true)
             exp.track({ event: 'form_submit' })
@@ -587,8 +623,39 @@ export default function CristalFunnel() {
         />
       )}
 
+      {isFutureFunnel && futureStage === 'birth-result' && previewReady && form && (
+        <div className="mx-auto mt-6 max-w-2xl scroll-mt-24 sm:mt-8">
+          <CrystalReactForm
+            initialEmail={emailParam}
+            initialValues={{ ...form, first: '', last: '', middle: '', gender: '' }}
+            locale={locale}
+            variant={exp.form}
+            futureStage="identity"
+            onSubmit={(values) => {
+              const nextValues: FormValues = {
+                ...values,
+                gender: values.gender === 'm' ? 'm' : 'f',
+                nameAlphabetKey: values.nameAlphabetKey || alphabet,
+                entry: futureTopic,
+                intent: `${futureTopic}-future-v1:0`,
+              }
+              formRef.current = nextValues
+              setForm(nextValues)
+              setFutureStage('full-result')
+              setPreviewReady(false)
+              setNativePreview(false)
+              setFrameSrc(`${buildPreviewSrc(nextValues, { form: exp.form, preview: exp.preview }, { stage: 'full', locale })}&k=${Date.now()}`)
+              setForming(true)
+              exp.track({ event: 'form_step_complete', meta: { step: 2 }, dedupSuffix: 'identity' })
+              exp.track({ event: 'calculation_start', dedupSuffix: 'full-result' })
+              window.scrollTo({ top: 0 })
+            }}
+          />
+        </div>
+      )}
+
       <AnimatePresence>
-        {previewReady && form && (
+        {previewReady && form && (!isFutureFunnel || futureStage === 'full-result') && (
           <motion.div
             key="paywall"
             initial={{ opacity: 0, y: 12 }}

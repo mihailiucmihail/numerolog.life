@@ -114,10 +114,37 @@ const FUNNELS = [
     form: "form-life-timeline",
     preview: "preview-life-timeline",
   },
+  {
+    key: "career-future-v1",
+    label: "Career Future",
+    eyebrow: "Funnel progresiv privat",
+    summary: "Data nașterii produce gratuit punctul actual din carieră; numele deschide rezultatul aprofundat.",
+    flow: ["Data nașterii", "Grafic gratuit", "Nume", "Rezultat aprofundat", "Plată"],
+    form: "form-career-future-v1",
+    preview: "preview-career-future-v1",
+  },
+  {
+    key: "relationship-future-v1",
+    label: "Relationship Future",
+    eyebrow: "Funnel progresiv privat",
+    summary: "Linia actuală a relațiilor apare înaintea identității, iar următoarea fază rămâne în analiza completă.",
+    flow: ["Data nașterii", "Linie gratuită", "Nume", "Rezultat aprofundat", "Plată"],
+    form: "form-relationship-future-v1",
+    preview: "preview-relationship-future-v1",
+  },
+  {
+    key: "money-future-v1",
+    label: "Money Future",
+    eyebrow: "Funnel progresiv privat",
+    summary: "Direcția financiară actuală este gratuită; pragul următor și factorii personali continuă după nume.",
+    flow: ["Data nașterii", "Grafic gratuit", "Nume", "Rezultat aprofundat", "Plată"],
+    form: "form-money-future-v1",
+    preview: "preview-money-future-v1",
+  },
 ] as const
 
 type FunnelKey = (typeof FUNNELS)[number]["key"]
-type PreviewStage = "start" | "result"
+type PreviewStage = "start" | "birth" | "result"
 type PreviewLocale = "ru" | "ro"
 type Device = "desktop" | "mobile"
 type TrafficDraft = Record<FunnelKey, { active: boolean; percentage: number }>
@@ -137,7 +164,7 @@ function localizedUrl(path: string | undefined, locale: PreviewLocale, stage: Pr
   if (!path) return ""
   const localized = path.replace(/^\/ru\//, `/${locale}/`)
   const separator = localized.includes("?") ? "&" : "?"
-  return stage === "result" ? `${localized}${separator}adminPreview=result` : localized
+  return stage === "start" ? localized : `${localized}${separator}adminPreview=${stage}`
 }
 
 function Metric({ label, value }: { label: string; value: string | number }) {
@@ -212,6 +239,7 @@ export function ExperimentsAdminClient() {
   const [trafficError, setTrafficError] = useState("")
 
   const funnel = FUNNELS.find((item) => item.key === selected) || FUNNELS[0]
+  const isProgressiveFuture = selected.endsWith('-future-v1')
   const row = report?.form.find((item) => item.id === funnel.form)
   const baseUrl = links?.funnel?.[funnel.key]
   const previewUrl = useMemo(() => localizedUrl(baseUrl, locale, stage), [baseUrl, locale, stage])
@@ -309,7 +337,7 @@ export function ExperimentsAdminClient() {
             <FlaskConical className="size-5 text-primary" />
             <h1 className="text-xl font-semibold">Laboratorul funnelurilor</h1>
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">Activează, distribuie și previzualizează cele 10 trasee fără să editezi codul.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Activează, distribuie și previzualizează cele 13 trasee fără să editezi codul.</p>
         </div>
         <button onClick={() => load()} disabled={loading} className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-foreground transition hover:bg-muted disabled:opacity-50">
           {loading ? <Loader2 className="size-4 animate-spin" /> : <RefreshCw className="size-4" />}
@@ -394,8 +422,9 @@ export function ExperimentsAdminClient() {
 
           <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
             <div className="flex rounded-lg border border-border bg-background/35 p-1">
-              <button type="button" onClick={() => setStage("start")} className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm ${stage === "start" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}><Eye className="size-4" />Începutul formularului</button>
-              <button type="button" onClick={() => setStage("result")} className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm ${stage === "result" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}><BarChart3 className="size-4" />Preview rezultat</button>
+              <button type="button" onClick={() => setStage("start")} className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm ${stage === "start" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}><Eye className="size-4" />Început</button>
+              {isProgressiveFuture && <button type="button" onClick={() => setStage("birth")} className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm ${stage === "birth" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}><BarChart3 className="size-4" />Rezultat gratuit</button>}
+              <button type="button" onClick={() => setStage("result")} className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm ${stage === "result" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}><BarChart3 className="size-4" />Rezultat aprofundat</button>
             </div>
             <div className="flex items-center gap-2">
               <div className="flex rounded-lg border border-border p-1">
@@ -413,7 +442,7 @@ export function ExperimentsAdminClient() {
               {previewUrl ? <iframe key={previewUrl} src={previewUrl} title={`Preview ${funnel.label}`} className="h-[720px] w-full border-0" /> : <div className="flex h-[720px] items-center justify-center text-sm text-muted-foreground"><Loader2 className="mr-2 size-4 animate-spin" />Se pregătește preview-ul</div>}
             </div>
           </div>
-          {stage === "result" && <p className="mt-3 text-xs leading-5 text-muted-foreground">Preview-ul este calculat cu date demonstrative. Așteaptă finalizarea animației „Cristalul se formează”; calculele și designul sunt aceleași ca în fluxul real.</p>}
+          {stage !== "start" && <p className="mt-3 text-xs leading-5 text-muted-foreground">Rezultatul este calculat cu date demonstrative. Așteaptă finalizarea animației „Cristalul se formează”; calculele și designul sunt aceleași ca în fluxul real.</p>}
 
           <div className="mt-4"><FunnelMetrics row={row} /></div>
         </section>
