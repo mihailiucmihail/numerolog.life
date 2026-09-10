@@ -68,8 +68,6 @@ export async function syncVariantRegistry(): Promise<{ upserted: number; retired
             hypothesis = EXCLUDED.hypothesis,
             angle = EXCLUDED.angle,
             motion = EXCLUDED.motion,
-            active = EXCLUDED.active,
-            weight = EXCLUDED.weight,
             retired_at = NULL,
             launched_at = COALESCE(experiment_variants.launched_at, ${v.active ? db`now()` : null}),
             updated_at = now()`

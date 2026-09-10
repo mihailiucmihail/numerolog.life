@@ -2,7 +2,7 @@
  * Atribuirea „sticky” a variantelor de formular și previzualizare.
  *
  * Cerințe din brief:
- * - FORM și PREVIEW se atribuie INDEPENDENT (două experimente paralele, nu 36 de combinații fixe);
+ * - FORM și PREVIEW se atribuie ca o pereche coerentă, configurată din Admin Studio;
  * - atribuirea se face ÎNAINTE de randare și rămâne aceeași la refresh, revenire sau navigare;
  * - vizitatorul nu poate alege o variantă convenabilă: valoarea e semnată HMAC și verificată pe server
  *   (folosim același mecanism ca la cookie-ul de țară, compatibil edge + Node);
@@ -12,12 +12,11 @@
  * este cea care protejează atribuirea — orice valoare modificată în browser este respinsă la verificare.
  */
 import {
-  activeVariants,
   DEFAULT_FORM_VARIANT,
   DEFAULT_PREVIEW_VARIANT,
   isKnownVariant,
-  type ExperimentKind,
 } from './catalog'
+import type { RuntimeFunnel } from './runtime-config'
 
 export const EXPERIMENT_COOKIE = 'cristal_exp'
 export const EXPERIMENT_COOKIE_MAX_AGE = 60 * 60 * 24 * 90 // 90 de zile
@@ -30,13 +29,17 @@ export interface Assignment {
   assignedAt: number
 }
 
+const ASSIGNMENT_VERSION = 'v2'
+
 function secret(): string {
-  return (
+  const base = (
     process.env.EXPERIMENT_COOKIE_SECRET ||
     process.env.NEWSLETTER_ADMIN_PASSWORD ||
     process.env.STRIPE_SECRET_KEY ||
     'numerolog-experiments'
   )
+  // Versiunea invalidează o singură dată cookie-urile create când Control era atribuit prematur.
+  return `${base}:${ASSIGNMENT_VERSION}`
 }
 
 export async function experimentHmac(value: string): Promise<string> {
@@ -51,22 +54,20 @@ function newVisitorId(): string {
   return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('')
 }
 
-/** Alegere ponderată pe variantele active ale experimentului (distribuție fixă în Round 1). */
-function pick(kind: ExperimentKind): string {
-  const variants = activeVariants(kind)
-  const total = variants.reduce((sum, v) => sum + Math.max(0, v.weight), 0)
-  if (total <= 0) return variants[0].id
+/** Alegere ponderată a unui funnel complet: formularul și preview-ul nu se mai pot combina greșit. */
+function pickFunnel(funnels: RuntimeFunnel[]): RuntimeFunnel {
+  const available = funnels.length ? funnels : [{ form: DEFAULT_FORM_VARIANT, preview: DEFAULT_PREVIEW_VARIANT, weight: 100 }]
+  const total = available.reduce((sum, funnel) => sum + Math.max(0, funnel.weight), 0)
+  if (total <= 0) return available[0]
   const bytes = new Uint8Array(4)
   crypto.getRandomValues(bytes)
-  // `>>> 0` este obligatoriu: operatorii pe biți din JavaScript produc un întreg cu semn, deci
-  // fără el jumătate din valori ieșeau negative și cădeau mereu pe prima variantă.
-  const r = ((((bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3]) >>> 0) / 0x100000000)
-  let acc = 0
-  for (const v of variants) {
-    acc += Math.max(0, v.weight) / total
-    if (r < acc) return v.id
+  const random = ((((bytes[0] << 24) | (bytes[1] << 16) | (bytes[2] << 8) | bytes[3]) >>> 0) / 0x100000000)
+  let accumulated = 0
+  for (const funnel of available) {
+    accumulated += Math.max(0, funnel.weight) / total
+    if (random < accumulated) return funnel
   }
-  return variants[variants.length - 1].id
+  return available[available.length - 1]
 }
 
 function serialize(a: Assignment): string {
@@ -98,11 +99,22 @@ export async function readAssignment(raw: string | undefined | null): Promise<As
  * Atribuirea curentă: o păstrează dacă e validă, altfel creează una nouă.
  * `changed` spune apelantului dacă trebuie rescris cookie-ul.
  */
-export async function resolveAssignment(raw: string | undefined | null): Promise<{ assignment: Assignment; changed: boolean }> {
+export async function resolveAssignment(
+  raw: string | undefined | null,
+  funnels?: RuntimeFunnel[],
+): Promise<{ assignment: Assignment; changed: boolean }> {
   const existing = await readAssignment(raw)
-  if (existing) return { assignment: existing, changed: false }
+  if (existing && (!funnels || funnels.some((funnel) => funnel.form === existing.form && funnel.preview === existing.preview))) {
+    return { assignment: existing, changed: false }
+  }
+  const selected = pickFunnel(funnels || [{ form: DEFAULT_FORM_VARIANT, preview: DEFAULT_PREVIEW_VARIANT, weight: 100 }])
   return {
-    assignment: { visitorId: newVisitorId(), form: pick('form'), preview: pick('preview'), assignedAt: Date.now() },
+    assignment: {
+      visitorId: existing?.visitorId || newVisitorId(),
+      form: selected.form,
+      preview: selected.preview,
+      assignedAt: Date.now(),
+    },
     changed: true,
   }
 }

@@ -18,24 +18,32 @@ export interface CrystalFormValues {
   discountCode?: string
 }
 
+export interface CrystalBirthValues {
+  day: number
+  month: number
+  year: number
+}
+
 interface CrystalReactFormProps {
   initialEmail?: string
   initialValues?: Partial<CrystalFormValues>
   locale?: string
   variant?: string
+  futureStage?: 'date' | 'identity'
+  onBirthSubmit?: (values: CrystalBirthValues) => void
   onSubmit: (values: CrystalFormValues) => void
 }
 
-type FunnelMode = 'control' | 'birthday-first' | 'love-graph' | 'career-graph' | 'life-now' | 'content-first' | 'money-flow' | 'profession-match' | 'relationship-needs' | 'life-timeline'
+type FunnelMode = 'control' | 'birthday-first' | 'love-graph' | 'career-graph' | 'life-now' | 'content-first' | 'money-flow' | 'profession-match' | 'relationship-needs' | 'life-timeline' | 'career-future' | 'relationship-future' | 'money-future'
+
+type FutureTopic = 'career' | 'relationship' | 'money'
 
 const COPY = {
   ru: {
-    eyebrow: 'Персональный расчёт',
-    title: 'Собери свой Кристалл Судьбы',
-    body: 'Имя и дата рождения создают персональную карту из 22 арканов.',
-    first: 'Имя', last: 'Фамилия', middle: 'Отчество', optional: 'необязательно', date: 'Дата рождения',
+    eyebrow: 'Персональный расчёт', title: 'Собери свой Кристалл Судьбы', body: 'Имя и дата рождения создают персональную карту из 22 арканов.',
+    first: 'Имя', last: 'Фамилия', middle: 'Отчество', optional: 'необязательно', date: 'Дата рождения', gender: 'Пол', female: 'Женский', male: 'Мужской',
     day: 'День', month: 'Месяц', year: 'Год', next: 'Продолжить', back: 'Назад', submit: 'Показать мой результат',
-    nameError: 'Заполни имя и фамилию.', dateError: 'Проверь дату рождения.', privacy: 'Данные используются только для персонального расчёта',
+    nameError: 'Заполни имя и фамилию.', dateError: 'Проверь дату рождения.', genderError: 'Выбери пол.', privacy: 'Данные используются только для персонального расчёта',
     birthdayTitle: 'Начнём с твоей даты рождения', birthdayBody: 'Первый слой Кристалла можно рассчитать без имени. На следующем шаге мы уточним персональную карту.',
     loveTitle: 'Что сейчас важнее понять в отношениях?', loveOptions: ['Почему повторяется один сценарий', 'Какой партнёр мне подходит', 'Что мешает близости'],
     careerTitle: 'Какой вопрос о реализации волнует тебя сейчас?', careerOptions: ['Моё сильное направление', 'Почему я застрял(а)', 'Когда лучше менять работу'],
@@ -48,12 +56,10 @@ const COPY = {
     step: 'Шаг 1 из 2', chosen: 'Выбери один вариант, чтобы продолжить',
   },
   ro: {
-    eyebrow: 'Calcul personal',
-    title: 'Construiește-ți Cristalul Destinului',
-    body: 'Numele și data nașterii formează o hartă personală din 22 de arcane.',
-    first: 'Prenume', last: 'Nume', middle: 'Al doilea prenume', optional: 'opțional', date: 'Data nașterii',
+    eyebrow: 'Calcul personal', title: 'Construiește-ți Cristalul Destinului', body: 'Numele și data nașterii formează o hartă personală din 22 de arcane.',
+    first: 'Prenume', last: 'Nume', middle: 'Al doilea prenume', optional: 'opțional', date: 'Data nașterii', gender: 'Gen', female: 'Feminin', male: 'Masculin',
     day: 'Zi', month: 'Lună', year: 'An', next: 'Continuă', back: 'Înapoi', submit: 'Arată-mi rezultatul',
-    nameError: 'Completează prenumele și numele.', dateError: 'Verifică data nașterii.', privacy: 'Datele sunt folosite doar pentru calculul personal',
+    nameError: 'Completează prenumele și numele.', dateError: 'Verifică data nașterii.', genderError: 'Alege genul.', privacy: 'Datele sunt folosite doar pentru calculul personal',
     birthdayTitle: 'Începem cu data ta de naștere', birthdayBody: 'Primul strat al Cristalului poate fi calculat fără nume. La pasul următor personalizăm harta.',
     loveTitle: 'Ce vrei să înțelegi acum în relații?', loveOptions: ['De ce se repetă același scenariu', 'Ce partener mi se potrivește', 'Ce blochează apropierea'],
     careerTitle: 'Ce întrebare despre carieră te preocupă acum?', careerOptions: ['Direcția mea puternică', 'De ce simt că stagnez', 'Când este potrivit să schimb jobul'],
@@ -67,17 +73,24 @@ const COPY = {
   },
 }
 
+const FUTURE_COPY = {
+  ru: {
+    career: { title: 'Где ты находишься сейчас в карьере?', body: 'Дата рождения покажет текущую точку на твоём графике реализации. Имя пока не нужно.', cta: 'Построить мой график', identityTitle: 'Уточним твою профессиональную карту', identityBody: 'Текущая точка уже рассчитана. Имя соединит график с личными качествами и направлениями реализации.', submit: 'Показать углублённый результат' },
+    relationship: { title: 'Какой этап сейчас проходит твоя личная жизнь?', body: 'Сначала покажем текущую точку на линии отношений — только по дате рождения.', cta: 'Показать мою линию', identityTitle: 'Уточним твою личную карту', identityBody: 'Линия настоящего уже видна. Имя добавит личные потребности, сценарии и подходящие формы близости.', submit: 'Показать углублённый результат' },
+    money: { title: 'Куда сейчас движется твоя финансовая линия?', body: 'Дата рождения покажет направление текущего периода. Имя на первом шаге не требуется.', cta: 'Построить денежный график', identityTitle: 'Уточним твою финансовую карту', identityBody: 'Направление линии уже рассчитано. Имя свяжет его с качествами, которые усиливают или замедляют доход.', submit: 'Показать углублённый результат' },
+  },
+  ro: {
+    career: { title: 'Unde te afli acum în carieră?', body: 'Data nașterii îți arată punctul actual pe graficul realizării. Numele nu este necesar încă.', cta: 'Construiește graficul meu', identityTitle: 'Personalizăm harta ta profesională', identityBody: 'Punctul actual este deja calculat. Numele conectează graficul cu trăsăturile și direcțiile tale de realizare.', submit: 'Arată-mi rezultatul aprofundat' },
+    relationship: { title: 'Prin ce etapă trece acum viața ta relațională?', body: 'Mai întâi îți arătăm punctul actual pe linia relațiilor, folosind doar data nașterii.', cta: 'Arată-mi linia mea', identityTitle: 'Personalizăm harta ta relațională', identityBody: 'Linia prezentului este deja vizibilă. Numele adaugă nevoile personale, scenariile și formele potrivite de apropiere.', submit: 'Arată-mi rezultatul aprofundat' },
+    money: { title: 'În ce direcție merge acum linia ta financiară?', body: 'Data nașterii arată sensul perioadei actuale. Numele nu este necesar la primul pas.', cta: 'Construiește graficul banilor', identityTitle: 'Personalizăm harta ta financiară', identityBody: 'Direcția liniei este deja calculată. Numele o conectează cu trăsăturile care susțin sau încetinesc veniturile.', submit: 'Arată-mi rezultatul aprofundat' },
+  },
+}
+
 const MODE_BY_VARIANT: Record<string, FunnelMode> = {
-  'form-control': 'control',
-  'form-birthday-first': 'birthday-first',
-  'form-love-graph': 'love-graph',
-  'form-career-graph': 'career-graph',
-  'form-life-now': 'life-now',
-  'form-content-first': 'content-first',
-  'form-money-flow': 'money-flow',
-  'form-profession-match': 'profession-match',
-  'form-relationship-needs': 'relationship-needs',
-  'form-life-timeline': 'life-timeline',
+  'form-control': 'control', 'form-birthday-first': 'birthday-first', 'form-love-graph': 'love-graph', 'form-career-graph': 'career-graph',
+  'form-life-now': 'life-now', 'form-content-first': 'content-first', 'form-money-flow': 'money-flow', 'form-profession-match': 'profession-match',
+  'form-relationship-needs': 'relationship-needs', 'form-life-timeline': 'life-timeline', 'form-career-future-v1': 'career-future',
+  'form-relationship-future-v1': 'relationship-future', 'form-money-future-v1': 'money-future',
 }
 
 function detectAlphabet(name: string, current: string): string {
@@ -93,15 +106,17 @@ function detectAlphabet(name: string, current: string): string {
 
 const inputClass = 'h-12 w-full rounded-xl border border-border bg-background/40 px-3.5 text-[16px] text-foreground outline-none transition placeholder:text-muted-foreground/50 focus:border-primary/60 focus:ring-4 focus:ring-primary/10 sm:text-sm'
 
-export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'ru', variant = 'form-control', onSubmit }: CrystalReactFormProps) {
+export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'ru', variant = 'form-control', futureStage = 'date', onBirthSubmit, onSubmit }: CrystalReactFormProps) {
   const c = locale === 'ro' ? COPY.ro : COPY.ru
   const mode = MODE_BY_VARIANT[variant] || 'control'
+  const futureTopic: FutureTopic | null = mode === 'career-future' ? 'career' : mode === 'relationship-future' ? 'relationship' : mode === 'money-future' ? 'money' : null
+  const futureCopy = futureTopic ? FUTURE_COPY[locale === 'ro' ? 'ro' : 'ru'][futureTopic] : null
   const [step, setStep] = useState(mode === 'birthday-first' ? 0 : 1)
   const [intent, setIntent] = useState('')
   const [values, setValues] = useState({
     last: initialValues?.last || '', first: initialValues?.first || '', middle: initialValues?.middle || '',
     day: initialValues?.day ? String(initialValues.day) : '', month: initialValues?.month ? String(initialValues.month) : '', year: initialValues?.year ? String(initialValues.year) : '',
-    email: initialValues?.email || initialEmail, gender: initialValues?.gender || '', nameAlphabetKey: initialValues?.nameAlphabetKey || 'ru',
+    email: initialValues?.email || initialEmail, gender: initialValues?.gender || '', nameAlphabetKey: initialValues?.nameAlphabetKey || (locale === 'ro' ? 'ro' : 'ru'),
   })
   const [error, setError] = useState('')
   const dateRefs = useRef<Array<HTMLInputElement | null>>([])
@@ -121,16 +136,18 @@ export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'r
   }
 
   const options = mode === 'love-graph' ? c.loveOptions : mode === 'career-graph' ? c.careerOptions : mode === 'life-now' ? c.lifeOptions : mode === 'money-flow' ? c.moneyOptions : mode === 'profession-match' ? c.professionOptions : mode === 'relationship-needs' ? c.needsOptions : mode === 'life-timeline' ? c.timelineOptions : []
-  const title = mode === 'birthday-first' ? c.birthdayTitle : mode === 'love-graph' ? c.loveTitle : mode === 'career-graph' ? c.careerTitle : mode === 'life-now' ? c.lifeTitle : mode === 'content-first' ? c.contentTitle : mode === 'money-flow' ? c.moneyTitle : mode === 'profession-match' ? c.professionTitle : mode === 'relationship-needs' ? c.needsTitle : mode === 'life-timeline' ? c.timelineTitle : c.title
-  const body = mode === 'birthday-first' ? c.birthdayBody : mode === 'content-first' ? c.contentBody : c.body
-  const Icon = mode === 'love-graph' || mode === 'relationship-needs' ? Heart : mode === 'career-graph' || mode === 'profession-match' ? BriefcaseBusiness : mode === 'content-first' ? Layers3 : mode === 'money-flow' ? CircleDollarSign : mode === 'life-timeline' ? Route : mode === 'life-now' ? Sparkles : UserRound
+  const standardTitle = mode === 'birthday-first' ? c.birthdayTitle : mode === 'love-graph' ? c.loveTitle : mode === 'career-graph' ? c.careerTitle : mode === 'life-now' ? c.lifeTitle : mode === 'content-first' ? c.contentTitle : mode === 'money-flow' ? c.moneyTitle : mode === 'profession-match' ? c.professionTitle : mode === 'relationship-needs' ? c.needsTitle : mode === 'life-timeline' ? c.timelineTitle : c.title
+  const standardBody = mode === 'birthday-first' ? c.birthdayBody : mode === 'content-first' ? c.contentBody : c.body
+  const title = futureCopy ? (futureStage === 'date' ? futureCopy.title : futureCopy.identityTitle) : standardTitle
+  const body = futureCopy ? (futureStage === 'date' ? futureCopy.body : futureCopy.identityBody) : standardBody
+  const Icon = mode === 'love-graph' || mode === 'relationship-needs' || mode === 'relationship-future' ? Heart : mode === 'career-graph' || mode === 'profession-match' || mode === 'career-future' ? BriefcaseBusiness : mode === 'content-first' ? Layers3 : mode === 'money-flow' || mode === 'money-future' ? CircleDollarSign : mode === 'life-timeline' ? Route : mode === 'life-now' ? Sparkles : UserRound
 
   const dateFields = (
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-2 text-xs text-muted-foreground"><CalendarDays className="size-4 text-primary" /><span className="font-mono uppercase tracking-[0.14em]">{c.date}</span></div>
       <div className="grid min-w-0 grid-cols-[minmax(0,.8fr)_minmax(0,.8fr)_minmax(0,1.4fr)] gap-2 sm:gap-3">
         {([['day', c.day, '05', 2], ['month', c.month, '10', 2], ['year', c.year, '1992', 4]] as const).map(([key, label, placeholder, max], index) => (
-          <label key={key} className="flex min-w-0 flex-col gap-2 text-xs text-muted-foreground"><span className="font-mono uppercase tracking-[0.12em]">{label}</span><input ref={(el) => { dateRefs.current[index] = el }} className={`${inputClass} min-w-0 px-2 text-center tabular-nums`} value={values[key]} onChange={(e) => updateDate(index, key, e.target.value, max)} placeholder={placeholder} inputMode="numeric" aria-label={label} /></label>
+          <label key={key} className="flex min-w-0 flex-col gap-2 text-xs text-muted-foreground"><span className="font-mono uppercase tracking-[0.12em]">{label}</span><input ref={(el) => { dateRefs.current[index] = el }} className={`${inputClass} min-w-0 px-2 text-center tabular-nums`} value={values[key]} onChange={(event) => updateDate(index, key, event.target.value, max)} placeholder={placeholder} inputMode="numeric" aria-label={label} /></label>
         ))}
       </div>
     </div>
@@ -138,33 +155,37 @@ export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'r
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (futureTopic && futureStage === 'date') {
+      if (!dateValid) return setError(c.dateError)
+      setError('')
+      onBirthSubmit?.({ day: Number(values.day), month: Number(values.month), year: Number(values.year) })
+      return
+    }
     if (mode === 'birthday-first' && step === 0) { if (!dateValid) return setError(c.dateError); setError(''); setStep(1); return }
     if (!values.first.trim() || !values.last.trim()) return setError(c.nameError)
     if (!dateValid) return setError(c.dateError)
+    if (futureTopic && !values.gender) return setError(c.genderError)
     if (options.length && !intent) return setError(c.chosen)
     setError('')
     const intentIndex = options.indexOf(intent)
-    const entry = mode === 'love-graph' || mode === 'relationship-needs' ? 'love'
-      : mode === 'career-graph' || mode === 'profession-match' ? 'career'
-        : mode === 'money-flow' ? 'money'
-          : mode === 'life-timeline' ? 'relationships'
-            : mode === 'life-now' ? (['love', 'money', 'career', 'relationships'][intentIndex] || 'relationships')
-              : mode === 'birthday-first' ? 'birthday' : undefined
-    onSubmit({ ...values, nameAlphabetKey: detectAlphabet(`${values.last}${values.first}${values.middle}`, values.nameAlphabetKey), day: Number(values.day), month: Number(values.month), year: Number(values.year), entry, ...(intentIndex >= 0 ? { intent: `${mode}:${intentIndex}` } : {}) })
+    const entry = futureTopic === 'relationship' ? 'love' : futureTopic || (mode === 'love-graph' || mode === 'relationship-needs' ? 'love' : mode === 'career-graph' || mode === 'profession-match' ? 'career' : mode === 'money-flow' ? 'money' : mode === 'life-timeline' ? 'relationships' : mode === 'life-now' ? (['love', 'money', 'career', 'relationships'][intentIndex] || 'relationships') : mode === 'birthday-first' ? 'birthday' : undefined)
+    onSubmit({ ...values, nameAlphabetKey: detectAlphabet(`${values.last}${values.first}${values.middle}`, values.nameAlphabetKey), day: Number(values.day), month: Number(values.month), year: Number(values.year), entry, ...(intentIndex >= 0 ? { intent: `${mode}:${intentIndex}` } : futureTopic ? { intent: `${futureTopic}-future-v1:0` } : {}) })
   }
+
+  const identityFields = <><div className="grid gap-4 sm:grid-cols-2"><label className="flex flex-col gap-2 text-xs text-muted-foreground"><span className="font-mono uppercase tracking-[0.14em]">{c.first}</span><input className={inputClass} value={values.first} onChange={(event) => update('first', event.target.value)} autoComplete="given-name" /></label><label className="flex flex-col gap-2 text-xs text-muted-foreground"><span className="font-mono uppercase tracking-[0.14em]">{c.last}</span><input className={inputClass} value={values.last} onChange={(event) => update('last', event.target.value)} autoComplete="family-name" /></label></div><label className="flex flex-col gap-2 text-xs text-muted-foreground"><span className="font-mono uppercase tracking-[0.14em]">{c.middle} <span className="normal-case tracking-normal opacity-60">({c.optional})</span></span><input className={inputClass} value={values.middle} onChange={(event) => update('middle', event.target.value)} /></label></>
 
   return (
     <section className="min-w-0 w-full overflow-hidden rounded-2xl border border-border bg-card/60 shadow-2xl shadow-background/40">
       <header className="flex flex-col gap-4 border-b border-border bg-card/70 px-5 py-6 sm:px-8">
-        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-primary"><span className="size-1.5 rounded-full bg-primary" />{mode === 'birthday-first' ? c.step : c.eyebrow}</div>
+        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-primary"><span className="size-1.5 rounded-full bg-primary" />{futureTopic ? (futureStage === 'date' ? (locale === 'ro' ? 'Rezultat gratuit' : 'Бесплатный результат') : (locale === 'ro' ? 'Pasul 2 din 2' : 'Шаг 2 из 2')) : mode === 'birthday-first' ? c.step : c.eyebrow}</div>
         <div className="flex items-start gap-4"><div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-background/30 text-primary"><Icon className="size-5" /></div><div><h2 className="text-balance text-xl font-semibold tracking-tight text-foreground">{title}</h2><p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">{body}</p></div></div>
-        {mode === 'content-first' && <div className="grid grid-cols-3 gap-2 pt-1">{['22', '3', '1'].map((value, i) => <div key={value} className="rounded-xl border border-border bg-background/30 p-3 text-center"><strong className="font-mono text-lg text-primary">{value}</strong><p className="mt-1 text-[10px] leading-4 text-muted-foreground">{locale === 'ro' ? (i === 0 ? 'arcane' : i === 1 ? 'hărți' : 'fir personal') : (i === 0 ? 'аркана' : i === 1 ? 'карты' : 'личный путь')}</p></div>)}</div>}
+        {mode === 'content-first' && <div className="grid grid-cols-3 gap-2 pt-1">{['22', '3', '1'].map((value, index) => <div key={value} className="rounded-xl border border-border bg-background/30 p-3 text-center"><strong className="font-mono text-lg text-primary">{value}</strong><p className="mt-1 text-[10px] leading-4 text-muted-foreground">{locale === 'ro' ? (index === 0 ? 'arcane' : index === 1 ? 'hărți' : 'fir personal') : (index === 0 ? 'аркана' : index === 1 ? 'карты' : 'личный путь')}</p></div>)}</div>}
       </header>
       <form onSubmit={submit} className="flex flex-col gap-6 p-5 sm:p-8">
         {options.length > 0 && <fieldset className="flex flex-col gap-3"><legend className="sr-only">{title}</legend>{options.map((option) => <button key={option} type="button" onClick={() => { setIntent(option); setError('') }} aria-pressed={intent === option} className={`flex min-h-12 items-center justify-between rounded-xl border px-4 py-3 text-left text-sm transition ${intent === option ? 'border-primary bg-primary/10 text-foreground' : 'border-border bg-background/30 text-muted-foreground hover:border-primary/40 hover:text-foreground'}`}><span>{option}</span>{intent === option && <Check className="size-4 text-primary" />}</button>)}</fieldset>}
-        {mode === 'birthday-first' && step === 0 ? dateFields : <><div className="grid gap-4 sm:grid-cols-2"><label className="flex flex-col gap-2 text-xs text-muted-foreground"><span className="font-mono uppercase tracking-[0.14em]">{c.first}</span><input className={inputClass} value={values.first} onChange={(e) => update('first', e.target.value)} autoComplete="given-name" /></label><label className="flex flex-col gap-2 text-xs text-muted-foreground"><span className="font-mono uppercase tracking-[0.14em]">{c.last}</span><input className={inputClass} value={values.last} onChange={(e) => update('last', e.target.value)} autoComplete="family-name" /></label></div><label className="flex flex-col gap-2 text-xs text-muted-foreground"><span className="font-mono uppercase tracking-[0.14em]">{c.middle} <span className="normal-case tracking-normal opacity-60">({c.optional})</span></span><input className={inputClass} value={values.middle} onChange={(e) => update('middle', e.target.value)} /></label>{mode !== 'birthday-first' && dateFields}</>}
+        {futureTopic ? (futureStage === 'date' ? dateFields : <>{identityFields}<fieldset className="flex flex-col gap-3"><legend className="font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">{c.gender}</legend><div className="grid grid-cols-2 gap-3">{([['f', c.female], ['m', c.male]] as const).map(([value, label]) => <button key={value} type="button" onClick={() => update('gender', value)} aria-pressed={values.gender === value} className={`h-12 rounded-xl border text-sm transition ${values.gender === value ? 'border-primary bg-primary/10 text-foreground' : 'border-border bg-background/30 text-muted-foreground hover:border-primary/40 hover:text-foreground'}`}>{label}</button>)}</div></fieldset></>) : mode === 'birthday-first' && step === 0 ? dateFields : <>{identityFields}{mode !== 'birthday-first' && dateFields}</>}
         {error && <p role="alert" className="rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2.5 text-sm text-destructive">{error}</p>}
-        <div className="flex gap-3">{mode === 'birthday-first' && step === 1 && <button type="button" onClick={() => setStep(0)} className="h-12 rounded-xl border border-border px-4 text-sm text-muted-foreground hover:text-foreground">{c.back}</button>}<button type="submit" disabled={mode === 'birthday-first' && step === 0 ? !dateValid : false} className="group flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40">{mode === 'birthday-first' && step === 0 ? c.next : c.submit}<ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></button></div>
+        <div className="flex gap-3">{mode === 'birthday-first' && step === 1 && <button type="button" onClick={() => setStep(0)} className="h-12 rounded-xl border border-border px-4 text-sm text-muted-foreground hover:text-foreground">{c.back}</button>}<button type="submit" disabled={(futureTopic && futureStage === 'date') || (mode === 'birthday-first' && step === 0) ? !dateValid : false} className="group flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40">{futureCopy ? (futureStage === 'date' ? futureCopy.cta : futureCopy.submit) : mode === 'birthday-first' && step === 0 ? c.next : c.submit}<ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></button></div>
         <p className="text-center font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground/60">{c.privacy}</p>
       </form>
     </section>

@@ -12,6 +12,7 @@ import {
   type Assignment,
 } from './lib/experiments/assignment'
 import { PREVIEW_TOKEN_PARAM, verifyPreviewToken } from './lib/experiments/preview-token'
+import { getRuntimeFunnels } from './lib/experiments/runtime-config'
 
 const handleI18nRouting = createMiddleware(routing)
 
@@ -130,14 +131,23 @@ export default async function proxy(request: NextRequest) {
       }
     }
 
-    // Variantele de experiment se stabilesc ÎNAINTE de randare, ca prima pagină să fie deja
-    // varianta finală (fără schimbare vizibilă) și să rămână aceeași la refresh sau revenire.
-    const experiment = await resolveAssignment(request.cookies.get(EXPERIMENT_COOKIE)?.value)
-    headers.set('x-exp-visitor', experiment.assignment.visitorId)
-    headers.set('x-exp-form', experiment.assignment.form)
-    headers.set('x-exp-preview', experiment.assignment.preview)
-    const forwarded = new NextRequest(request, { headers })
-    return withGeoCookies(handleI18nRouting(forwarded), request, resolved, experiment)
+    // Funnelul se atribuie exclusiv la intrarea în calculator. Dacă l-am atribui pe homepage sau
+    // pe altă rută, fallback-ul Control s-ar fixa în cookie înainte ca distribuția live să fie citită.
+    // Atribuirea rămâne tot înainte de randarea calculatorului, deci nu există schimbare vizibilă.
+    const isNumerologyEntry = /^\/ru\/numerologie\/?$/.test(pathname)
+    if (isNumerologyEntry) {
+      const experiment = await resolveAssignment(
+        request.cookies.get(EXPERIMENT_COOKIE)?.value,
+        await getRuntimeFunnels(),
+      )
+      headers.set('x-exp-visitor', experiment.assignment.visitorId)
+      headers.set('x-exp-form', experiment.assignment.form)
+      headers.set('x-exp-preview', experiment.assignment.preview)
+      const forwarded = new NextRequest(request, { headers })
+      return withGeoCookies(handleI18nRouting(forwarded), request, resolved, experiment)
+    }
+
+    return withGeoCookies(handleI18nRouting(new NextRequest(request, { headers })), request, resolved)
   }
 
   // Orice rută publică este redirecționată către versiunea rusă.

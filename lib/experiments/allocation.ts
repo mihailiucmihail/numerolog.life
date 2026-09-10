@@ -158,7 +158,7 @@ export interface ChallengerSuggestion {
 /**
  * Sugerează schimbări de challengeri: dacă o variantă activă are destule încercări și o probabilitate
  * de a fi cea mai bună foarte mică, iar există challengeri neporniți, o propune pentru înlocuire.
- * Doar SUGESTIE — promovarea rămâne o decizie manuală (schimbare de `active` în catalog).
+ * Doar SUGESTIE — promovarea rămâne o decizie manuală în Admin Studio.
  */
 export function suggestChallengers(
   active: VariantStat[],
