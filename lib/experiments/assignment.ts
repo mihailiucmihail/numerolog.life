@@ -39,7 +39,7 @@ function secret(): string {
   )
 }
 
-async function hmac(value: string): Promise<string> {
+export async function experimentHmac(value: string): Promise<string> {
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret()), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
   const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(value))
   return Array.from(new Uint8Array(sig).slice(0, 12), (b) => b.toString(16).padStart(2, '0')).join('')
@@ -75,7 +75,7 @@ function serialize(a: Assignment): string {
 
 export async function signAssignment(a: Assignment): Promise<string> {
   const payload = serialize(a)
-  return `${payload}.${await hmac(payload)}`
+  return `${payload}.${await experimentHmac(payload)}`
 }
 
 /** Atribuirea din cookie dacă semnătura e validă ȘI variantele mai există; altfel null. */
@@ -85,7 +85,7 @@ export async function readAssignment(raw: string | undefined | null): Promise<As
   if (dot <= 0) return null
   const payload = raw.slice(0, dot)
   const sig = raw.slice(dot + 1)
-  if ((await hmac(payload)) !== sig) return null
+  if ((await experimentHmac(payload)) !== sig) return null
 
   const [visitorId, form, preview, assignedAt] = payload.split(':')
   if (!visitorId || !/^[0-9a-f]{32}$/.test(visitorId)) return null

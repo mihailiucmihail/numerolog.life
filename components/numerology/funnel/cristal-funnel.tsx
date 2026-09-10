@@ -230,7 +230,10 @@ export default function CristalFunnel() {
           trackFunnel('birth_data_submitted', { has_middle: Boolean(values.middle), alphabet: values.nameAlphabetKey })
           // Lead pentru panoul admin (/admin/leads): previzualizare blurată, neplătită. Fire-and-forget.
           // Emailul se cere abia la paywall, deci lead-ul se salvează și fără el (attachLeadEmail îl completează).
-          void savePreviewLead({ ...values, email: p.email || undefined }, locale, cristal.currency.toLowerCase(), country)
+          // În previzualizarea de admin nu salvăm nimic: ar apărea lead-uri false în panou.
+          if (!exp.previewMode) {
+            void savePreviewLead({ ...values, email: p.email || undefined }, locale, cristal.currency.toLowerCase(), country)
+          }
         }
         setPreviewReady(true)
         setNativePreview(d.native === true)
@@ -416,6 +419,16 @@ export default function CristalFunnel() {
 
   return (
     <div className="relative [&>iframe]:mb-0">
+      {/* Previzualizare din panoul de admin: nimic nu se înregistrează (fără evenimente, fără lead-uri). */}
+      {exp.previewMode && (
+        <div className="mx-auto mb-6 flex max-w-xl flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-xl border border-amber-300/30 bg-amber-300/10 px-4 py-2.5 text-center">
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber-200">Предпросмотр</span>
+          <span className="font-mono text-[11px] text-foreground/80">форма: {exp.form}</span>
+          <span className="font-mono text-[11px] text-foreground/80">превью: {exp.preview}</span>
+          <span className="text-[11px] text-muted-foreground">статистика не пишется</span>
+        </div>
+      )}
+
       {cancelledNotice && (
         <p role="status" className="mx-auto mb-6 max-w-md rounded-lg border border-primary/30 bg-primary/5 px-4 py-3 text-center text-sm text-foreground">
           {t('cancelledNotice')}

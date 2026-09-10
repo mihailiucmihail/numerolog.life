@@ -2,7 +2,15 @@
 
 import { db } from "@/lib/db"
 import { syncVariantRegistry } from "@/lib/experiments/server"
-import { FORM_VARIANTS, PREVIEW_VARIANTS, variantsFor, type ExperimentKind } from "@/lib/experiments/catalog"
+import {
+  FORM_VARIANTS,
+  PREVIEW_VARIANTS,
+  variantsFor,
+  DEFAULT_FORM_VARIANT,
+  DEFAULT_PREVIEW_VARIANT,
+  type ExperimentKind,
+} from "@/lib/experiments/catalog"
+import { PREVIEW_TOKEN_PARAM, signPreviewToken } from "@/lib/experiments/preview-token"
 import { minorToMajor } from "@/lib/experiments/money"
 import {
   computeAllocation,
@@ -281,6 +289,38 @@ export async function getAllocationRecommendation(
     console.error("[v0] getAllocationRecommendation error:", err)
     return { ok: false }
   }
+}
+
+export interface VariantPreviewLinks {
+  form: Record<string, string>
+  preview: Record<string, string>
+}
+
+/**
+ * Linkuri semnate care deschid SITE-UL REAL (`/ru/numerologie`) cu varianta forțată.
+ * Semnătura e obligatorie: fără ea proxy-ul elimină `fv`/`pv`, deci varianta nu poate fi
+ * aleasă din browser. Vizita nu produce evenimente și nu salvează lead-uri.
+ */
+export async function getVariantPreviewLinks(
+  password: string,
+): Promise<{ ok: boolean; links?: VariantPreviewLinks }> {
+  if (!checkPassword(password)) return { ok: false }
+  const build = async (kind: ExperimentKind, id: string): Promise<string> => {
+    const fv = kind === "form" ? id : DEFAULT_FORM_VARIANT
+    const pv = kind === "preview" ? id : DEFAULT_PREVIEW_VARIANT
+    const params = new URLSearchParams({ fv, pv, [PREVIEW_TOKEN_PARAM]: await signPreviewToken(fv, pv) })
+    return `/ru/numerologie?${params.toString()}`
+  }
+  const links: VariantPreviewLinks = { form: {}, preview: {} }
+  await Promise.all([
+    ...FORM_VARIANTS.map(async (v) => {
+      links.form[v.id] = await build("form", v.id)
+    }),
+    ...PREVIEW_VARIANTS.map(async (v) => {
+      links.preview[v.id] = await build("preview", v.id)
+    }),
+  ])
+  return { ok: true, links }
 }
 
 /** Sincronizează registrul de variante din cod în DB (idempotent). */
