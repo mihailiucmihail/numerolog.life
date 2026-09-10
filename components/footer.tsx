@@ -11,8 +11,8 @@ export function Footer() {
   const legalHref = (path: string) => `/${locale}${path}`
 
   return (
-    <footer className="relative z-10 border-t border-primary/10 pt-8 pb-10 bg-transparent">
-      <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
+    <footer className="relative z-10 border-t border-primary/10 bg-transparent px-3 pb-10 pt-8 md:px-6">
+      <div className="mx-auto w-full max-w-6xl px-0">
         <div className="overflow-hidden rounded-[2rem] border border-primary/15 bg-[linear-gradient(145deg,rgba(40,24,62,.72),rgba(13,13,35,.9))] shadow-[0_24px_80px_-40px_rgba(212,175,55,.35)]">
           <div className="grid gap-0 lg:grid-cols-[1.05fr_1.35fr_1fr]">
             <div className="flex flex-col justify-between gap-10 border-b border-primary/10 p-7 sm:p-9 lg:border-b-0 lg:border-r">
