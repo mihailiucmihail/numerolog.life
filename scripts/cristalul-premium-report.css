@@ -420,3 +420,20 @@
 @media (min-width:900px){.report-chapter-nav{justify-content:center;}.report-insight-grid{gap:16px;}}
 @media (max-width:760px){#results{padding-inline:14px!important;}.report-hero{margin-inline:-14px;padding-inline:18px;}.report-chapter-nav{margin-inline:-14px;padding-inline:14px;}.report-insights{border-radius:22px;padding:24px 18px;}.report-insight-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.report-insight-card:last-child{grid-column:1/-1;}}
 @media print{.report-chapter-nav,.report-pdf-link{display:none!important;}.report-hero{padding-top:20px;background:none;}.report-insights{break-inside:avoid;}}
+
+/* ==== Final report layout: original content, wide Admin Experiments surfaces ==== */
+#results{width:min(100%,1440px)!important;max-width:1440px!important;margin:0 auto!important;padding:0 clamp(18px,4vw,64px) 96px!important;}
+#results>.card{display:block!important;width:100%!important;max-width:none!important;margin:0 0 34px!important;padding:clamp(28px,4vw,58px)!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:12px!important;background:rgba(255,255,255,.02)!important;box-shadow:none!important;backdrop-filter:none!important;scroll-margin-top:78px;animation:reportCardReveal .45s ease both;}
+#results>.card:hover{background:rgba(255,255,255,.045)!important;border-color:rgba(251,191,36,.35)!important;transform:none!important;}
+#results>.card .section-title{max-width:none!important;margin:0 0 24px!important;padding-bottom:16px!important;color:#f4f4f5!important;font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-size:clamp(24px,3vw,42px)!important;line-height:1.12!important;font-weight:650!important;letter-spacing:-.025em!important;}
+#results>.card .section-title::before{font-size:10px!important;color:#fbbf24!important;}
+#results>.card p,#results>.card li,#results>.card .hint{max-width:none!important;color:#a1a1aa!important;font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-size:clamp(15px,.95vw,17px)!important;line-height:1.7!important;}
+#results>.card b,#results>.card strong,#results>.card i,#results>.card em{color:#f4f4f5!important;}
+#results>.card div[style*="border-left"],#results>.card div[style*="border-top"]{max-width:none!important;}
+.report-start-anchor,.report-full-anchor{height:1px;scroll-margin-top:78px;}
+.report-hero-mark{width:76px;height:76px;margin:0 auto 22px;display:grid;place-items:center;border:1px solid rgba(251,191,36,.6);transform:rotate(45deg);animation:reportMarkFloat 4s ease-in-out infinite;}
+.report-hero-mark span{width:30px;height:30px;border:1px solid #fbbf24;background:rgba(251,191,36,.16);}
+@keyframes reportMarkFloat{0%,100%{transform:translateY(0) rotate(45deg);box-shadow:0 0 0 rgba(251,191,36,0)}50%{transform:translateY(-8px) rotate(45deg);box-shadow:0 0 34px rgba(251,191,36,.22)}}
+@keyframes reportCardReveal{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){#results>.card{animation:none!important;}.report-hero-mark{animation:none!important;}}
+@media (max-width:760px){#results{padding-inline:14px!important;}#results>.card{margin-bottom:22px!important;padding:24px 18px!important;}#results>.card .section-title{font-size:24px!important;}.report-hero-mark{width:58px;height:58px;}.report-hero-mark span{width:24px;height:24px;}}
