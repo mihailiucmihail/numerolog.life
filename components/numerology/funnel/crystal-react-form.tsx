@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent, useMemo, useState } from 'react'
+import { FormEvent, useMemo, useRef, useState } from 'react'
 import { ArrowRight, CalendarDays, Check, UserRound } from 'lucide-react'
 
 export interface CrystalFormValues {
@@ -24,7 +24,7 @@ interface CrystalReactFormProps {
 }
 
 const inputClass =
-  'h-12 w-full rounded-xl border border-white/10 bg-white/[0.02] px-3.5 text-sm text-foreground outline-none transition placeholder:text-muted-foreground/50 focus:border-sky-400/60 focus:bg-white/[0.04] focus:ring-4 focus:ring-sky-400/10'
+  'h-12 w-full rounded-xl border border-white/10 bg-white/[0.02] px-3.5 text-[16px] text-foreground outline-none transition placeholder:text-muted-foreground/50 focus:border-sky-400/60 focus:bg-white/[0.04] focus:ring-4 focus:ring-sky-400/10 sm:text-sm'
 
 export function CrystalReactForm({ initialEmail = '', initialValues, onSubmit }: CrystalReactFormProps) {
   const [values, setValues] = useState({
@@ -39,6 +39,7 @@ export function CrystalReactForm({ initialEmail = '', initialValues, onSubmit }:
     nameAlphabetKey: initialValues?.nameAlphabetKey || 'ru',
   })
   const [error, setError] = useState('')
+  const dateRefs = useRef<Array<HTMLInputElement | null>>([])
 
   const dateValid = useMemo(() => {
     const day = Number(values.day)
@@ -51,6 +52,12 @@ export function CrystalReactForm({ initialEmail = '', initialValues, onSubmit }:
 
   const update = (key: keyof typeof values, value: string) => setValues((current) => ({ ...current, [key]: value }))
 
+  const updateDate = (index: number, key: 'day' | 'month' | 'year', rawValue: string, maxLength: number) => {
+    const value = rawValue.replace(/\D/g, '').slice(0, maxLength)
+    update(key, value)
+    if (value.length === maxLength && index < 2) dateRefs.current[index + 1]?.focus()
+  }
+
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!values.first.trim() || !values.last.trim()) return setError('Заполни имя и фамилию.')
@@ -60,7 +67,7 @@ export function CrystalReactForm({ initialEmail = '', initialValues, onSubmit }:
   }
 
   return (
-    <section className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+    <section className="min-w-0 w-full max-w-full overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
       <header className="border-b border-white/10 bg-white/[0.02] px-5 py-6 sm:px-8">
         <div className="mb-3 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-amber-300">
           <span className="size-1.5 rounded-full bg-amber-300" />
@@ -96,11 +103,20 @@ export function CrystalReactForm({ initialEmail = '', initialValues, onSubmit }:
 
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-xs text-muted-foreground"><CalendarDays className="size-4 text-sky-300" /><span className="font-mono uppercase tracking-[0.14em]">Дата рождения</span></div>
-          <div className="grid grid-cols-[.8fr_.8fr_1.4fr] gap-3">
-            {([['day', 'День', '05', 2], ['month', 'Месяц', '10', 2], ['year', 'Год', '1992', 4]] as const).map(([key, label, placeholder, maxLength]) => (
-              <label key={key} className="space-y-2 text-xs text-muted-foreground">
+            <div className="grid min-w-0 grid-cols-[minmax(0,.8fr)_minmax(0,.8fr)_minmax(0,1.4fr)] gap-2 sm:gap-3">
+            {([['day', 'День', '05', 2], ['month', 'Месяц', '10', 2], ['year', 'Год', '1992', 4]] as const).map(([key, label, placeholder, maxLength], index) => (
+              <label key={key} className="min-w-0 space-y-2 text-xs text-muted-foreground">
                 <span className="font-mono uppercase tracking-[0.12em]">{label}</span>
-                <input className={`${inputClass} text-center tabular-nums`} value={values[key]} onChange={(e) => update(key, e.target.value.replace(/\D/g, '').slice(0, maxLength))} placeholder={placeholder} inputMode="numeric" />
+                <input
+                  ref={(element) => { dateRefs.current[index] = element }}
+                  className={`${inputClass} min-w-0 px-2 text-center text-[16px] tabular-nums sm:px-3.5 sm:text-sm`}
+                  value={values[key]}
+                  onChange={(e) => updateDate(index, key, e.target.value, maxLength)}
+                  onKeyDown={(e) => { if (e.key === 'Backspace' && !e.currentTarget.value && index > 0) dateRefs.current[index - 1]?.focus() }}
+                  placeholder={placeholder}
+                  inputMode="numeric"
+                  aria-label={label}
+                />
               </label>
             ))}
           </div>
