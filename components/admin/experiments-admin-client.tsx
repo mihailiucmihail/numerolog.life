@@ -22,6 +22,51 @@ function pct(num: number, den: number): string {
 
 type Kind = "form" | "preview"
 
+const FUNNELS = [
+  { key: "control", label: "Control", intent: "Эталонный путь", form: "form-control" },
+  { key: "birthday-first", label: "Birthday First", intent: "Дата рождения → имя → персональная карта", form: "form-birthday-first" },
+  { key: "love-graph", label: "Love Graph", intent: "Вопрос об отношениях → тематический график", form: "form-love-graph" },
+  { key: "career-graph", label: "Career Graph", intent: "Вопрос о реализации → график карьеры", form: "form-career-graph" },
+  { key: "life-now", label: "Life Now", intent: "Текущая неопределённость → один сильный вывод", form: "form-life-now" },
+  { key: "content-first", label: "Content First", intent: "Ценность отчёта → короткая форма → карта разделов", form: "form-content-first" },
+] as const
+
+function FunnelLibrary({ report, links }: { report: ExperimentReport | null; links: VariantPreviewLinks | null }) {
+  return (
+    <section className="mb-5 rounded-2xl border border-border bg-card/50 p-4 sm:p-5">
+      <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">Механики в сборке</p>
+          <h2 className="mt-1 text-lg font-semibold text-foreground">6 готовых funnel-сценариев</h2>
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">Новые сценарии доступны только по подписанным ссылкам администратора. Реальный трафик остаётся на Control.</p>
+        </div>
+        <span className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-primary">Admin only</span>
+      </div>
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        {FUNNELS.map((funnel, index) => {
+          const row = report?.form.find((item) => item.id === funnel.form)
+          const href = links?.funnel?.[funnel.key]
+          return (
+            <article key={funnel.key} className="flex min-h-48 flex-col rounded-xl border border-border bg-background/30 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div><p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Funnel {index + 1}</p><h3 className="mt-1 font-semibold text-foreground">{funnel.label}</h3></div>
+                <span className={`rounded px-2 py-1 text-[10px] ${index === 0 ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>{index === 0 ? "Control live" : "Только тест"}</span>
+              </div>
+              <p className="mt-3 flex-1 text-sm leading-6 text-muted-foreground">{funnel.intent}</p>
+              <div className="mt-4 grid grid-cols-3 gap-2 border-t border-border pt-3 text-center">
+                <div><p className="font-mono text-sm text-foreground">{row?.submits ?? 0}</p><p className="text-[10px] text-muted-foreground">submit</p></div>
+                <div><p className="font-mono text-sm text-foreground">{row?.checkouts ?? 0}</p><p className="text-[10px] text-muted-foreground">checkout</p></div>
+                <div><p className="font-mono text-sm text-primary">{pct(row?.purchases ?? 0, row?.assigned || row?.visitors || 0)}</p><p className="text-[10px] text-muted-foreground">CR</p></div>
+              </div>
+              {href && <a href={href} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-primary/30 bg-primary/10 text-sm font-medium text-primary transition hover:bg-primary/15"><ExternalLink className="size-4" />Протестировать путь</a>}
+            </article>
+          )
+        })}
+      </div>
+    </section>
+  )
+}
+
 /**
  * Linkul de inspecție al unei variante: deschide SITE-UL REAL (`/ru/numerologie`) — cu navbar,
  * fundal cosmic și formularul în iframe — cu varianta forțată.
@@ -361,6 +406,8 @@ export function ExperimentsAdminClient() {
           {notice}
         </p>
       )}
+
+      <FunnelLibrary report={report} links={links} />
 
       {t && (
         <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-3">

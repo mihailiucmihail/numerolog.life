@@ -51,6 +51,15 @@ function readSaved(): FormValues | null {
 }
 
 /** Întoarcere de la Stripe (anulat): re-deschidem direct raportul blurat cu datele salvate. */
+const PREVIEW_ENGINE_VARIANTS: Record<string, string> = {
+  'preview-control': 'preview-baseline',
+  'preview-birthday-first': 'preview-card-personal',
+  'preview-love-graph': 'preview-theme-answer',
+  'preview-career-graph': 'preview-theme-answer',
+  'preview-life-now': 'preview-single-insight',
+  'preview-content-first': 'preview-structure-map',
+}
+
 function buildPreviewSrc(v: FormValues, variants?: { form: string; preview: string }): string {
   const params = new URLSearchParams({
     preview: '1',
@@ -68,7 +77,7 @@ function buildPreviewSrc(v: FormValues, variants?: { form: string; preview: stri
   // ar arăta același ecran pentru toate variantele.
   if (variants) {
     params.set('fv', variants.form)
-    params.set('pv', variants.preview)
+    params.set('pv', PREVIEW_ENGINE_VARIANTS[variants.preview] || 'preview-baseline')
   }
   return `${CALCULATOR_SRC}?${params.toString()}`
 }
@@ -228,6 +237,7 @@ export default function CristalFunnel() {
       if (d.type === 'previewRendered') {
         const p = d.data as PreviewData | undefined
         if (p && p.first && p.last && p.day && p.month && p.year) {
+          const resolvedEntry = p.entry || entry
           const values: FormValues = {
             first: p.first,
             last: p.last,
@@ -237,7 +247,7 @@ export default function CristalFunnel() {
             year: p.year,
             gender: (p.gender === 'm' ? 'm' : 'f') as FormValues['gender'],
             nameAlphabetKey: p.nameAlphabetKey || 'ru',
-            ...(entry ? { entry } : {}),
+            ...(resolvedEntry ? { entry: resolvedEntry } : {}),
           }
           setForm(values)
           if (typeof p.email === 'string') setFormEmail(p.email.trim())
@@ -499,12 +509,14 @@ export default function CristalFunnel() {
         <CrystalReactForm
           initialEmail={emailParam}
           initialValues={form || undefined}
+          locale={locale}
+          variant={exp.form}
           onSubmit={(values) => {
             const nextValues: FormValues = {
               ...values,
               gender: values.gender === 'm' ? 'm' : 'f',
               nameAlphabetKey: values.nameAlphabetKey || alphabet,
-              ...(entry ? { entry } : {}),
+              ...(values.entry || entry ? { entry: values.entry || entry } : {}),
             }
             setForm(nextValues)
             setFrameSrc(`${buildPreviewSrc(nextValues, { form: exp.form, preview: exp.preview })}&k=${Date.now()}`)

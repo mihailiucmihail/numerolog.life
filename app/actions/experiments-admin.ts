@@ -294,6 +294,7 @@ export async function getAllocationRecommendation(
 export interface VariantPreviewLinks {
   form: Record<string, string>
   preview: Record<string, string>
+  funnel: Record<string, string>
 }
 
 /**
@@ -311,13 +312,23 @@ export async function getVariantPreviewLinks(
     const params = new URLSearchParams({ fv, pv, [PREVIEW_TOKEN_PARAM]: await signPreviewToken(fv, pv) })
     return `/ru/numerologie?${params.toString()}`
   }
-  const links: VariantPreviewLinks = { form: {}, preview: {} }
+  const links: VariantPreviewLinks = { form: {}, preview: {}, funnel: {} }
   await Promise.all([
     ...FORM_VARIANTS.map(async (v) => {
       links.form[v.id] = await build("form", v.id)
     }),
     ...PREVIEW_VARIANTS.map(async (v) => {
       links.preview[v.id] = await build("preview", v.id)
+    }),
+    ...FORM_VARIANTS.map(async (formVariant, index) => {
+      const previewVariant = PREVIEW_VARIANTS[index] || PREVIEW_VARIANTS[0]
+      const key = formVariant.id.replace("form-", "")
+      const params = new URLSearchParams({
+        fv: formVariant.id,
+        pv: previewVariant.id,
+        [PREVIEW_TOKEN_PARAM]: await signPreviewToken(formVariant.id, previewVariant.id),
+      })
+      links.funnel[key] = `/ru/numerologie?${params.toString()}`
     }),
   ])
   return { ok: true, links }
