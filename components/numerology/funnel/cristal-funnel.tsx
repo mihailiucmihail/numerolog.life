@@ -106,6 +106,11 @@ export default function CristalFunnel() {
   const [previewReady, setPreviewReady] = useState(false)
   // Formularul React a fost trimis: iframe-ul cu previzualizarea e montat, dar raportul nu e încă randat.
   const [previewRequested, setPreviewRequested] = useState(false)
+  // O singură reîncercare a previzualizării: pe rețele lente iframe-ul poate raporta eșec înainte de a
+  // termina randarea, iar întoarcerea la formular ar șterge datele deja introduse.
+  const previewRetried = useRef(false)
+  // Datele curente, citibile din handlerul de mesaje (care nu se re-creează la fiecare schimbare de stare).
+  const formRef = useRef<FormValues | null>(null)
   // v3: HTML-ul își randează propria previzualizare tematică + paywall (cu preț de la aplicație). Atunci
   // paywall-ul și bara sticky React nu se mai afișează (ar fi un al doilea CTA identic).
   const [nativePreview, setNativePreview] = useState(false)
@@ -140,6 +145,10 @@ export default function CristalFunnel() {
   useEffect(() => {
     trackFunnel('numerology_landing_view', { locale })
   }, [locale])
+
+  useEffect(() => {
+    formRef.current = form
+  }, [form])
 
   const postToFrame = useCallback((msg: Record<string, unknown>) => {
     iframeRef.current?.contentWindow?.postMessage(msg, '*')
@@ -249,6 +258,14 @@ export default function CristalFunnel() {
 
       if (d.type === 'previewFailed') {
         setPreviewReady(false)
+        // Prima dată reîncărcăm iframe-ul cu aceleași date; abia dacă și a doua încercare eșuează
+        // revenim la formular (altfel utilizatorul pierde datele după doar o secundă de animație).
+        const saved = formRef.current
+        if (saved && !previewRetried.current) {
+          previewRetried.current = true
+          setFrameSrc(`${buildPreviewSrc(saved)}&k=${Date.now()}`)
+          return
+        }
         setPreviewRequested(false)
         setForming(false)
       }
@@ -407,6 +424,7 @@ export default function CristalFunnel() {
   }, [])
 
   const resetToForm = () => {
+    previewRetried.current = false
     setPreviewReady(false)
     setPreviewRequested(false)
     setForming(false)

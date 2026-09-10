@@ -8342,6 +8342,19 @@ function startPdfExport(){
       };
     }
 
+    // Randarea previzualizarii poate intarzia (baza de date inline, dispozitive lente): reverificam
+    // in loc sa raportam imediat eroare, altfel utilizatorul e trimis inapoi la formular fara motiv.
+    function __cdWaitForPreviewRender(timeout){
+      return new Promise(function(resolve){
+        var started = Date.now();
+        (function check(){
+          var ok = !!(window.__cdLastResult && document.getElementById('previewLayer'));
+          if(ok || Date.now() - started >= timeout){ resolve(ok); return; }
+          setTimeout(check, 100);
+        })();
+      });
+    }
+
     function __cdWaitForReportData(timeout){
       return new Promise(function(resolve){
         var started = Date.now();
@@ -8374,14 +8387,14 @@ function startPdfExport(){
       if(err) err.style.display = 'none';
       document.body.classList.add('cd-forming');
       window.parent.postMessage({ type: 'previewStarted' }, '*');
-      var dataReady = await __cdWaitForReportData(5000);
+      var dataReady = await __cdWaitForReportData(15000);
       if(!dataReady){
         document.body.classList.remove('cd-forming');
         window.parent.postMessage({ type: 'previewFailed' }, '*');
         return;
       }
       if(typeof calculate === 'function') calculate();
-      var ok = !!(window.__cdLastResult && document.getElementById('previewLayer'));
+      var ok = await __cdWaitForPreviewRender(6000);
       if(!ok){
         document.body.classList.remove('cd-forming');
         window.parent.postMessage({ type: 'previewFailed' }, '*');
@@ -8452,9 +8465,9 @@ function startPdfExport(){
         var alpha = params.get('alpha');
         if(alpha && document.getElementById('nameAlphabetSelect')) document.getElementById('nameAlphabetSelect').value = alpha;
         document.body.classList.add('cd-preview');
-        await __cdWaitForReportData(5000);
+        await __cdWaitForReportData(15000);
         if(typeof calculate === 'function') calculate();
-        var ok = !!(window.__cdLastResult && document.getElementById('previewLayer'));
+        var ok = await __cdWaitForPreviewRender(8000);
         if(ok && typeof window.__cdApplyPricing === 'function') window.__cdApplyPricing();
         setTimeout(function(){
           if(ok) __cdHardenPreview();
