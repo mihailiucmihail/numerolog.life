@@ -1,7 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { AdminExperimentsHeader, AdminExperimentsSurface } from './admin-experiments-surface'
+import { AdminExperimentsHeader } from './admin-experiments-surface'
 
 // Funnel-ul Cristalului (formular original din HTML → raport blurat → plată). Include și gestionarea
 // întoarcerii de la Stripe (?payment=success&session_id=). Calculatorul HTML rămâne sursa unică a
@@ -12,9 +12,7 @@ export default function NumerologieClient() {
   return (
     <div className="w-full">
       <AdminExperimentsHeader eyebrow="Numerolog / Experiment surface" title="Cristalul Destinului" />
-      <AdminExperimentsSurface className="w-full overflow-hidden p-0">
-        <CristalFunnel />
-      </AdminExperimentsSurface>
+      <CristalFunnel />
     </div>
   )
 }
