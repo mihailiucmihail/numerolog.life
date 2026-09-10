@@ -96,6 +96,7 @@
       if (!group || !group.content.children.length) return
       const details = document.createElement('details')
       details.className = 'report-details'
+      details.open = false
       details.innerHTML = `<summary>${id === 'chapter-deep' ? 'Открыть глубокий разбор' : 'Подробнее'}</summary>`
       const visibleLimit = id === 'chapter-personality' || id === 'chapter-relationships' || id === 'chapter-realization' ? 2 : 0
       while (group.content.children.length > visibleLimit) details.append(group.content.lastElementChild)
