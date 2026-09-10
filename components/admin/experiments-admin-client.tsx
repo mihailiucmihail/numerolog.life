@@ -76,6 +76,42 @@ const FUNNELS = [
     form: "form-content-first",
     preview: "preview-content-first",
   },
+  {
+    key: "money-flow",
+    label: "Money Flow",
+    eyebrow: "Intenție: bani",
+    summary: "Răspunde parțial la întrebarea financiară și ascunde următoarele schimbări ale graficului.",
+    flow: ["Întrebare financiară", "Date", "Starea fluxului"],
+    form: "form-money-flow",
+    preview: "preview-money-flow",
+  },
+  {
+    key: "profession-match",
+    label: "Profession Match",
+    eyebrow: "Potrivire profesională",
+    summary: "Leagă dilema profesională de direcția reală calculată pentru realizare.",
+    flow: ["Dilemă profesională", "Date", "Direcție calculată"],
+    form: "form-profession-match",
+    preview: "preview-profession-match",
+  },
+  {
+    key: "relationship-needs",
+    label: "Relationship Needs",
+    eyebrow: "Nevoia din relație",
+    summary: "Arată nevoia personală calculată și deschide întrebările apropiate din raportul complet.",
+    flow: ["Nevoie relațională", "Date", "Răspuns personal"],
+    form: "form-relationship-needs",
+    preview: "preview-relationship-needs",
+  },
+  {
+    key: "life-timeline",
+    label: "Life Timeline",
+    eyebrow: "Cronologia vieții",
+    summary: "Poziționează vizitatorul pe graficul său actual și păstrează următorul punct ascuns.",
+    flow: ["Etapa vieții", "Date", "Acum pe grafic"],
+    form: "form-life-timeline",
+    preview: "preview-life-timeline",
+  },
 ] as const
 
 type FunnelKey = (typeof FUNNELS)[number]["key"]

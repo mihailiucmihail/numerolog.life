@@ -12,6 +12,8 @@ export interface FunnelForm {
   nameAlphabetKey: string
   /** Tema de intrare din link (?entry=birthday|love|money|career…): adaptează previzualizarea și cardul deschis în raport. */
   entry?: string
+  /** Alegerea internă din întrebarea funnelului; personalizează răspunsul parțial fără a modifica formulele. */
+  intent?: string
 }
 
 export const FUNNEL_STORAGE_KEY = 'cristal_funnel_v1'
