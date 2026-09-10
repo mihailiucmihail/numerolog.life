@@ -31,12 +31,6 @@ BRIDGE = ROOT / 'scripts/cristalul-bridge-snippet.html'
 PREVIEW = ROOT / 'scripts/cristalul-native-preview-snippet.html'
 VARIANTS = ROOT / 'scripts/cristalul-variants-snippet.html'
 PREMIUM_CSS = ROOT / 'scripts/cristalul-premium-report.css'
-REPORT_REDESIGN = ROOT / 'scripts/cristalul-report-redesign.js'
-
-assert REPORT_REDESIGN.exists(), 'lipsește stratul de redesign al raportului'
-REPORT_REDESIGN_JS = re.sub(r'(?m)^([ \\t]*)> ', r'\\1', REPORT_REDESIGN.read_text(encoding='utf-8'))
-assert 'report-chapter-nav' in REPORT_REDESIGN_JS and 'report-insights' in REPORT_REDESIGN_JS
-assert REPORT_REDESIGN_JS.count('\\ufffd') == 0, 'redesignul raportului conține U+FFFD'
 
 s = SRC.read_text(encoding='utf-8')
 # Unele uploaduri au primit accidental prefixul `> ` la începutul liniilor; îl eliminăm înainte de orice inserare.
@@ -433,8 +427,7 @@ assert 'CrystalReport' in preview and "params.get('preview')" in preview
 variants = re.sub(r'(?m)^([ \t]*)> ', r'\1', VARIANTS.read_text(encoding='utf-8'))
 assert 'data-cd-form' in variants and "params.get('fv')" in variants
 assert variants.count('\ufffd') == 0, 'stratul de variante contine U+FFFD'
-rep('</body>', bridge.rstrip('\n') + '\n' + preview.rstrip('\n') + '\n' + variants.rstrip('\n') + '\n<script>\n' + REPORT_REDESIGN_JS.rstrip('\n') + '\n</script>\n</body>')
-assert 'report-chapter-nav' in s and 'Главное о Вас' in s
+rep('</body>', bridge.rstrip('\n') + '\n' + preview.rstrip('\n') + '\n' + variants.rstrip('\n') + '\n</body>')
 
 # 6. Fără surse/autori în text vizibil -------------------------------------------------------------
 rep("Сравнение Карта Рождения ↔ Карта Имени (метод Айрэн По / Джули По) — где цифры отличаются:",
