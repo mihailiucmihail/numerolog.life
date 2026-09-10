@@ -325,7 +325,17 @@ export function ExperimentsAdminClient() {
           <FlaskConical className="h-5 w-5 text-amber-300" />
           <h1 className="text-xl font-semibold">Эксперименты</h1>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <a
+            href="/ru/admin/experiments/report-preview"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1.5 rounded-lg border border-amber-300/25 bg-amber-300/5 px-3 py-1.5 text-[13px] text-amber-200 transition hover:bg-amber-300/10"
+            title="Открыть страницу отчёта с демо-данными"
+          >
+            <ExternalLink className="h-4 w-4" />
+            Превью отчёта
+          </a>
           <button
             onClick={() => load()}
             disabled={loading}
