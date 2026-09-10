@@ -29,6 +29,14 @@ interface PreviewData {
   gender: string
   nameAlphabetKey?: string
   discountCode?: string
+  entry?: string
+}
+
+/** Temele de intrare recunoscute de HTML (ENTRY_LANDING_COPY / ENTRY_GRAPH_MAP). Orice altă valoare = intrare generică. */
+const ENTRY_THEMES = new Set(['birthday', 'love', 'relationships', 'money', 'finance', 'career', 'work', 'vocation', 'realization'])
+function normalizeEntry(raw: string | null): string {
+  const v = (raw || '').trim().toLowerCase()
+  return ENTRY_THEMES.has(v) ? v : ''
 }
 
 function readSaved(): FormValues | null {
@@ -53,6 +61,7 @@ function buildPreviewSrc(v: FormValues): string {
     gender: v.gender,
     alpha: v.nameAlphabetKey,
   })
+  if (v.entry) params.set('entry', v.entry)
   return `${CALCULATOR_SRC}?${params.toString()}`
 }
 
@@ -77,9 +86,11 @@ export default function CristalFunnel() {
   // Linkul din emailul de ofertă: ?discount=COD (aplicat automat, fără introducere manuală) + ?email= (precompletat).
   const discountCode = searchParams.get('discount') || undefined
   const emailParam = searchParams.get('email') || ''
+  // Tema din link (Reels): ?entry=birthday|love|money|career → formular, previzualizare și raport adaptate.
+  const entry = normalizeEntry(searchParams.get('entry'))
 
   // Formularul se deschide cu alfabetul numelui preselectat după țara vizitatorului (HTML-ul citește ?alpha=).
-  const formSrc = `${CALCULATOR_SRC}?alpha=${alphabet}&country=${country || ''}${emailParam ? `&email=${encodeURIComponent(emailParam)}` : ''}`
+  const formSrc = `${CALCULATOR_SRC}?alpha=${alphabet}&country=${country || ''}${emailParam ? `&email=${encodeURIComponent(emailParam)}` : ''}${entry ? `&entry=${entry}` : ''}`
   const [frameSrc, setFrameSrc] = useState<string>(formSrc)
   // Înălțime de pornire ≥ formular complet (titlu + video 3:4 + câmpuri + buton), ca nimic să nu fie
   // tăiat până sosește prima măsurătoare `resize` din iframe.
@@ -88,6 +99,9 @@ export default function CristalFunnel() {
   // Emailul introdus în formularul calculatorului (obligatoriu acolo) — la plată doar îl confirmăm.
   const [formEmail, setFormEmail] = useState('')
   const [previewReady, setPreviewReady] = useState(false)
+  // v3: HTML-ul își randează propria previzualizare tematică + paywall (cu preț de la aplicație). Atunci
+  // paywall-ul și bara sticky React nu se mai afișează (ar fi un al doilea CTA identic).
+  const [nativePreview, setNativePreview] = useState(false)
   // Ecranul „Cristalul se formează” (≈7 s) între formular și raportul blurat.
   const [forming, setForming] = useState(false)
   const [checkoutBusy, setCheckoutBusy] = useState(false)
@@ -124,6 +138,23 @@ export default function CristalFunnel() {
     iframeRef.current?.contentWindow?.postMessage(msg, '*')
   }, [])
 
+  // Prețul afișat în paywall-ul NATIV al raportului vine exclusiv de la aplicație (țară → preț fix, ofertă −%).
+  const pricingMessage = useCallback(
+    () => ({
+      type: 'setPricing',
+      pricing: {
+        price: offer ? undefined : cristal.amount,
+        currency: cristal.currency,
+        formattedPrice: offer ? offer.finalPrice : cristal.displayPrice,
+        country: country || null,
+      },
+    }),
+    [offer, cristal.amount, cristal.currency, cristal.displayPrice, country],
+  )
+  useEffect(() => {
+    postToFrame(pricingMessage())
+  }, [pricingMessage, postToFrame])
+
   // Mesaje din iframe: înălțime, raport blurat randat, validare promo din formularul original.
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
@@ -132,6 +163,20 @@ export default function CristalFunnel() {
 
       if ((d.type === 'resize' || d.type === 'reportRendered' || d.type === 'previewRendered') && typeof d.height === 'number') {
         setFrameHeight(Math.max(420, Math.ceil(d.height)))
+      }
+
+      // HTML-ul a instalat puntea CrystalReport → îi trimitem prețul (și la fiecare reîncărcare a iframe-ului).
+      if (d.type === 'cdReady') {
+        postToFrame(pricingMessage())
+      }
+
+      // Analitica stratului de prezentare (paywall_view, paywall_cta_click …) → GA4, cu aceleași etichete de produs.
+      if (d.type === 'cdTrack' && typeof d.event === 'string') {
+        const p = (d.params && typeof d.params === 'object' ? d.params : {}) as Record<string, unknown>
+        const base = { product: 'full_crystal', country: country || undefined, currency: cristal.currency, price: cristal.amount, language: locale, entry: entry || 'default' }
+        if (d.event === 'paywall_view') trackFunnel('numerology_paywall_view', base)
+        else if (d.event === 'paywall_cta_click') trackFunnel('numerology_unlock_click', { ...base, source: typeof p.source === 'string' ? p.source : undefined })
+        else if (d.event === 'report_preview_view') trackFunnel('full_report_offer_viewed', base)
       }
 
       if (d.type === 'previewStarted') {
@@ -151,6 +196,7 @@ export default function CristalFunnel() {
             year: p.year,
             gender: (p.gender === 'm' ? 'm' : 'f') as FormValues['gender'],
             nameAlphabetKey: p.nameAlphabetKey || 'ru',
+            ...(entry ? { entry } : {}),
           }
           setForm(values)
           if (typeof p.email === 'string') setFormEmail(p.email.trim())
@@ -164,7 +210,8 @@ export default function CristalFunnel() {
           void savePreviewLead({ ...values, email: p.email || undefined }, locale, cristal.currency.toLowerCase(), country)
         }
         setPreviewReady(true)
-        trackFunnel('free_result_viewed', { mode: 'blurred_report' })
+        setNativePreview(d.native === true)
+        trackFunnel('free_result_viewed', { mode: d.native === true ? 'native_preview' : 'blurred_report', entry: entry || 'default' })
         trackFunnel('numerology_free_result_view', { product: 'full_crystal', country: country || undefined, currency: cristal.currency, language: locale })
         // Derularea la raport se face când dispare ecranul de formare (vezi onDone).
       }
@@ -186,15 +233,21 @@ export default function CristalFunnel() {
           .catch(() => postToFrame({ type: 'promoResult', result: { valid: false, reason: 'not_found' } }))
       }
 
-      // Compatibilitate: dacă HTML-ul cere direct plata (după deblocare), folosim același checkout.
+      // Paywall-ul NATIV din raport („Открыть мой полный разбор”) → același checkout Stripe ca înainte.
+      // Emailul este validat deja în HTML (obligatoriu înainte de plată); îl reținem pentru lead + email raport.
       if (d.type === 'requestPayment' && d.data) {
         const p = d.data as PreviewData
-        void handleCheckoutRef.current(p.email || '', p.discountCode)
+        const email = (p.email || '').trim()
+        if (email) {
+          setFormEmail(email)
+          try { sessionStorage.setItem(`${FUNNEL_STORAGE_KEY}:email`, email) } catch {}
+        }
+        void handleCheckoutRef.current(email, p.discountCode)
       }
     }
     window.addEventListener('message', onMessage)
     return () => window.removeEventListener('message', onMessage)
-  }, [postToFrame, locale, cristal.currency, country])
+  }, [postToFrame, pricingMessage, locale, cristal.currency, cristal.amount, country, entry])
 
   // Restaurare după întoarcere de la Stripe (anulat): raport blurat direct, fără re-completare.
   useEffect(() => {
@@ -248,7 +301,7 @@ export default function CristalFunnel() {
 
   // Bara sticky „Deschide raportul complet” — vizibilă cât timp paywall-ul nu e în viewport.
   useEffect(() => {
-    if (!previewReady) {
+    if (!previewReady || nativePreview) {
       setShowSticky(false)
       return
     }
@@ -258,7 +311,7 @@ export default function CristalFunnel() {
     io.observe(el)
     setShowSticky(true)
     return () => io.disconnect()
-  }, [previewReady])
+  }, [previewReady, nativePreview])
 
   const handleCheckout = useCallback(
     async (email: string, promoCode?: string) => {
@@ -276,6 +329,8 @@ export default function CristalFunnel() {
         email,
         gender: form.gender,
         nameAlphabetKey: form.nameAlphabetKey,
+        // Persistă în raportul permanent: la deschidere, HTML-ul sare direct la cardul temei de intrare.
+        ...(form.entry ? { entry: form.entry } : {}),
       }
       try {
         // Aceeași cheie ca fluxul existent — citită la întoarcerea de la Stripe.
@@ -313,6 +368,8 @@ export default function CristalFunnel() {
 
   const resetToForm = () => {
     setPreviewReady(false)
+    setNativePreview(false)
+    setCheckoutError('')
     setCancelledNotice(false)
     setFrameSrc(`${formSrc}&k=${Date.now()}`)
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -384,7 +441,14 @@ export default function CristalFunnel() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="mt-6 flex flex-col gap-10 sm:mt-8"
           >
-            <FunnelPaywall id={PAYWALL_ID} initialEmail={formEmail} initialPromo={discountCode} appliedOffer={offer} busy={checkoutBusy} error={checkoutError} onCheckout={handleCheckout} />
+            {!nativePreview && (
+              <FunnelPaywall id={PAYWALL_ID} initialEmail={formEmail} initialPromo={discountCode} appliedOffer={offer} busy={checkoutBusy} error={checkoutError} onCheckout={handleCheckout} />
+            )}
+            {nativePreview && checkoutError && (
+              <p role="alert" className="mx-auto max-w-md rounded-lg border border-destructive/40 bg-destructive/10 px-4 py-3 text-center text-sm text-foreground">
+                {checkoutError}
+              </p>
+            )}
             <div className="text-center">
               <button type="button" onClick={resetToForm} className="text-xs text-muted-foreground/60 underline-offset-4 hover:text-foreground hover:underline">
                 {t('editData')}

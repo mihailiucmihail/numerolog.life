@@ -1,0 +1,216 @@
+<style>
+    /* ==== Preview NATIV (v3): HTML-ul isi randeaza singur previzualizarea tematica (?entry=) si paywall-ul.
+       Aplicatia React furnizeaza doar pretul (setPricing), plata (onCheckout -> Stripe) si analitica (onTrack). ==== */
+    .cd-preview .hero,
+    .cd-preview #inputFormCard,
+    .cd-preview #pdfDownloadCard{display:none !important;}
+    /* In timpul ecranului "Cristalul se formeaza" continutul iframe-ului este invizibil; la `previewReveal` apare cu fade. */
+    body.cd-forming > *{opacity:0 !important;transition:none !important;}
+    body > *{transition:opacity .7s ease;}
+    /* Copy-ul tematic de intrare (?entry=) se aplica pe antetul formularului (hero-ul original este ascuns). */
+    .numerology-intro-lead .hero-highlight{color:var(--brass-bright,#d9a94f);font-weight:600;}
+    /* Telefon: marginile minime, raportul cat mai lat. */
+    @media (max-width:560px){
+      body{padding:12px 4px 48px !important;}
+      .card{padding:14px 10px !important;margin-bottom:12px !important;}
+    }
+</style>
+<script>
+    // ==== Punte intre stratul de prezentare al raportului (window.CrystalReport) si aplicatia React ====
+    (function(){
+      var params = new URLSearchParams(window.location.search);
+      window.__cdEntry = (params.get('entry') || '').toLowerCase();
+      // Tara vine de la aplicatie (geolocatie pe server) — fara apel extern de geolocatie din iframe.
+      var country = params.get('country');
+      if(country){ try{ detectedCountry = country.toUpperCase(); }catch(e){} }
+      // Raport permanent (dupa plata): accesul complet este stabilit INAINTE de calculate(),
+      // astfel stratul de prezentare deschide direct cardul temei (?entry=) si nu monteaza paywall/sticky.
+      if(params.get('auto') === '1'){
+        try{ ENTITLED = true; ACCESS_LEVEL = 'full'; }catch(e){}
+        // Raport platit: stratul de previzualizare (cu paywall) nu are ce cauta in DOM.
+        document.addEventListener('DOMContentLoaded', function(){
+          setTimeout(function(){ ['previewLayer','stickyCta'].forEach(function(id){ var el = document.getElementById(id); if(el) el.remove(); }); }, 300);
+        });
+      }
+
+      var pricing = null;
+      function applyPricing(){
+        if(!pricing || !window.CrystalReport) return;
+        try{ window.CrystalReport.setPricing(pricing); }catch(e){}
+      }
+      window.addEventListener('message', function(ev){
+        var d = ev.data;
+        if(!d || typeof d !== 'object') return;
+        if(d.type === 'setPricing' && d.pricing){ pricing = d.pricing; applyPricing(); }
+        if(d.type === 'previewReveal'){ document.body.classList.remove('cd-forming'); }
+        // Pagina raportului permanent, dupa ecranul de deschidere: repozitionam pe cardul temei de intrare.
+        if(d.type === 'cdScrollToEntry'){ try{ if(typeof scrollToEntryChapter === 'function') scrollToEntryChapter(); }catch(e){} }
+      });
+      window.__cdApplyPricing = applyPricing;
+
+      if(window.CrystalReport){
+        window.CrystalReport.onCheckout(function(payload){
+          var data = __cdCollectForm();
+          if(payload && payload.email) data.email = payload.email;
+          window.parent.postMessage({ type: 'requestPayment', data: data, source: 'native_paywall', reportId: payload && payload.reportId }, '*');
+        });
+        window.CrystalReport.onTrack(function(event, p){
+          window.parent.postMessage({ type: 'cdTrack', event: String(event), params: p || {} }, '*');
+        });
+      }
+      window.parent.postMessage({ type: 'cdReady', entry: window.__cdEntry }, '*');
+
+      // Antetul formularului preia copy-ul temei de intrare (hero-ul original este ascuns de design).
+      document.addEventListener('DOMContentLoaded', function(){
+        try{
+          if(typeof ENTRY_LANDING_COPY === 'undefined') return;
+          var copy = ENTRY_LANDING_COPY[window.__cdEntry];
+          if(!copy) return;
+          var tmp = document.createElement('div');
+          tmp.innerHTML = copy.h1;
+          var lead = tmp.querySelector('.hero-lead'), caps = tmp.querySelector('.hero-caps');
+          var title = document.getElementById('numerology-intro-title');
+          if(title) title.textContent = [lead && lead.textContent, caps && caps.textContent].filter(Boolean).join(' ');
+          var p = document.querySelector('.numerology-intro-lead');
+          if(p) p.innerHTML = copy.p;
+          var detail = document.querySelector('.numerology-intro-detail');
+          if(detail) detail.style.display = 'none';
+        }catch(e){}
+      });
+    })();
+
+    // Datele formularului — trimise aplicatiei pentru checkout si pentru lead.
+    function __cdCollectForm(){
+      var g = function(id){ var el = document.getElementById(id); return el ? String(el.value || '').trim() : ''; };
+      return {
+        last: g('lastName'), first: g('firstName'), middle: g('middleName'),
+        day: Number(g('day')), month: Number(g('month')), year: Number(g('year')),
+        email: g('emailAddr'),
+        gender: g('gender'),
+        nameAlphabetKey: typeof getNameAlphabetKey === 'function' ? getNameAlphabetKey() : undefined,
+        discountCode: (g('promoCode') || '').toUpperCase().replace(/\s+/g, '') || undefined,
+        entry: window.__cdEntry || undefined
+      };
+    }
+
+    function __cdWaitForReportData(timeout){
+      return new Promise(function(resolve){
+        var started = Date.now();
+        (function check(){
+          if((typeof DB !== 'undefined' && DB) || Date.now() - started >= timeout){
+            resolve(typeof DB !== 'undefined' && !!DB);
+            return;
+          }
+          setTimeout(check, 40);
+        })();
+      });
+    }
+
+    // SECURITATE: in preview textul complet al raportului NU ramane in DOM (stratul de prezentare il ascundea
+    // doar prin CSS). Pastram exclusiv #previewLayer (previzualizare + paywall). Raportul complet se
+    // deschide oricum pe pagina permanenta, dupa plata.
+    function __cdHardenPreview(){
+      var results = document.getElementById('results');
+      if(!results) return;
+      Array.prototype.slice.call(results.children).forEach(function(el){
+        if(el.id !== 'previewLayer' && el.id !== 'devBarFull') el.remove();
+      });
+    }
+
+    async function __cdPreviewCalculate(){
+      window.__cdSkipMail = false;
+      window.__cdPreviewMode = true;
+      window.__cdLastResult = null;
+      var err = document.getElementById('errMsg');
+      if(err) err.style.display = 'none';
+      document.body.classList.add('cd-forming');
+      window.parent.postMessage({ type: 'previewStarted' }, '*');
+      var dataReady = await __cdWaitForReportData(5000);
+      if(!dataReady){
+        document.body.classList.remove('cd-forming');
+        window.parent.postMessage({ type: 'previewFailed' }, '*');
+        return;
+      }
+      if(typeof calculate === 'function') calculate();
+      var ok = !!(window.__cdLastResult && document.getElementById('previewLayer'));
+      if(!ok){
+        document.body.classList.remove('cd-forming');
+        window.parent.postMessage({ type: 'previewFailed' }, '*');
+        return;
+      }
+      document.body.classList.add('cd-preview');
+      if(typeof window.__cdApplyPricing === 'function') window.__cdApplyPricing();
+      window.scrollTo(0, 0);
+      window.parent.postMessage({ type: 'previewRendered', data: __cdCollectForm(), native: true, height: __cdContentHeight() }, '*');
+      setTimeout(function(){
+        __cdHardenPreview();
+        window.parent.postMessage({ type: 'resize', height: __cdContentHeight() }, '*');
+      }, 1500);
+    }
+
+    // Alfabetul se alege automat dupa literele introduse (RO/MD primesc 'ro' din geolocatie, dar multi scriu in chirilica).
+    function __cdAutoAlphabet(){
+      var sel = document.getElementById('nameAlphabetSelect');
+      if(!sel || typeof ALPHABETS === 'undefined') return;
+      var read = function(id){ var el = document.getElementById(id); return el ? el.value : ''; };
+      var name = (read('lastName') + read('firstName') + read('middleName')).toUpperCase().replace(/[^\p{L}]/gu, '');
+      if(!name) return;
+      var ratio = function(key){
+        var letters = ALPHABETS[key] && ALPHABETS[key].letters; if(!letters) return 0;
+        var hit = 0; for(var ch of name){ if(letters.indexOf(ch) >= 0) hit++; }
+        return hit / name.length;
+      };
+      if(ratio(sel.value) >= 0.5) return;
+      var preferred = ['ru', 'ro', 'en', 'uk', 'kk', 'be', 'bg', 'de', 'es', 'it'];
+      var keys = preferred.concat(Object.keys(ALPHABETS).filter(function(k){ return preferred.indexOf(k) < 0; }));
+      var best = sel.value, bestRatio = ratio(sel.value);
+      for(var k of keys){ var r = ratio(k); if(r > bestRatio){ best = k; bestRatio = r; } }
+      if(best !== sel.value && bestRatio >= 0.5){
+        sel.value = best;
+        sel.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }
+    function cdMainAction(){
+      __cdAutoAlphabet();
+      if(window.__paymentUnlocked){ if(typeof calculate === 'function') calculate(); return; }
+      void __cdPreviewCalculate();
+    }
+
+    // Mod preview din link (ex. intoarcere de la Stripe anulat): completeaza datele si recalculeaza previzualizarea.
+    (function(){
+      var params = new URLSearchParams(window.location.search);
+      if(params.get('preview') !== '1') return;
+      window.__cdSkipMail = true;
+      window.__cdPreviewMode = true;
+      window.addEventListener('DOMContentLoaded', async function(){
+        var values = {
+          lastName: params.get('last') || '',
+          firstName: params.get('first') || '',
+          middleName: params.get('middle') || '',
+          day: params.get('day') || '',
+          month: params.get('month') || '',
+          year: params.get('year') || '',
+        };
+        Object.keys(values).forEach(function(id){
+          var field = document.getElementById(id);
+          if(field) field.value = values[id];
+        });
+        var gender = params.get('gender');
+        if(gender && document.getElementById('gender')){
+          document.getElementById('gender').value = gender;
+          if(typeof paintGender === 'function') try{ paintGender(); }catch(e){}
+        }
+        var alpha = params.get('alpha');
+        if(alpha && document.getElementById('nameAlphabetSelect')) document.getElementById('nameAlphabetSelect').value = alpha;
+        document.body.classList.add('cd-preview');
+        await __cdWaitForReportData(5000);
+        if(typeof calculate === 'function') calculate();
+        var ok = !!(window.__cdLastResult && document.getElementById('previewLayer'));
+        if(ok && typeof window.__cdApplyPricing === 'function') window.__cdApplyPricing();
+        setTimeout(function(){
+          if(ok) __cdHardenPreview();
+          window.parent.postMessage({ type: ok ? 'previewRendered' : 'previewFailed', data: ok ? __cdCollectForm() : null, native: true, height: __cdContentHeight() }, '*');
+        }, 900);
+      });
+    })();
+</script>

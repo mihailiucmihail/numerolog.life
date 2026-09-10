@@ -16,6 +16,8 @@ interface FormData {
   email: string
   gender?: string
   nameAlphabetKey?: string
+  /** Tema de intrare (?entry=) — raportul complet se deschide pe cardul corespunzător. */
+  entry?: string
 }
 
 export async function saveRaportAndSendEmail(

@@ -25,10 +25,10 @@ import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-SRC = ROOT / 'public/cristalul-versions/cristalul-destinului-v2b-upload.html'
+SRC = ROOT / 'public/cristalul-versions/cristalul-destinului-v3-entry-upload.html'
 DST = ROOT / 'public/cristalul-calculator.html'
 BRIDGE = ROOT / 'scripts/cristalul-bridge-snippet.html'
-PREVIEW = ROOT / 'scripts/cristalul-preview-lock-snippet.html'
+PREVIEW = ROOT / 'scripts/cristalul-native-preview-snippet.html'
 PREMIUM_CSS = ROOT / 'scripts/cristalul-premium-report.css'
 
 s = SRC.read_text(encoding='utf-8')
@@ -91,7 +91,7 @@ rep("""  padding:9px 14px;cursor:pointer;transition:all .2s ease;border-radius:1
 
 # 3. Câmpuri Email + Промокод: înlocuim blocul „Электронная почта” (pMail) al uploadului -----------
 _mail_re = re.compile(
-    r'      <div class="full">\n        <label>Электронная почта</label>\n        <input id="pMail"[^\n]*\n        <p class="note"[^\n]*\n      </div>\n')
+    r'      <div class="full">\n        <label>EMAIL[^\n]*\n        <input id="pMail"[^\n]*\n(?:        <p class="note"[^\n]*\n)+      </div>\n')
 assert len(_mail_re.findall(s)) == 1, 'blocul email (pMail) al uploadului nu a fost găsit exact o dată'
 s = _mail_re.sub("""      <div class="full" id="emailField">
         <label>Email <span style="opacity:.55;text-transform:none;letter-spacing:0;">(необязательно)</span></label>
@@ -112,12 +112,8 @@ rep("""function readMail(){
   const v = el.value.trim();""", """function readMail(){
   const el = document.getElementById('emailAddr');
   const v = el ? el.value.trim() : '';""")
-rep("""  if(v === '') return {ok:false, msg:'Укажи электронную почту — она нужна нам, чтобы присылать тебе новости и полезные разборы.'};""",
-    """  if(v === '') return {ok:true, value:''}; // email opțional — se folosește doar pentru linkul către raport""")
 rep("  const mailCheck = readMail();\n",
     "  const mailCheck = window.__cdSkipMail ? {ok:true, value:''} : readMail();\n")
-rep("  try{ localStorage.setItem('crystal_last_email', mailCheck.value); }catch(e){}\n",
-    "  try{ if(mailCheck.value) localStorage.setItem('crystal_last_email', mailCheck.value); }catch(e){}\n")
 assert "getElementById('pMail')" not in s, 'a rămas o referință la pMail'
 
 # Titlul secțiunii este redundant: animația premium explică deja formularul.
@@ -128,7 +124,7 @@ s = re.sub(r'[ \t]*<div class="section-title">\s*ВАШИ ДАННЫЕ.*?</div>[
 _date_label = s.find('<label>Дата рождения</label>')
 assert _date_label >= 0, 'blocul data nașterii nu a fost găsit'
 _date_start = s.rfind('<div class="full">', 0, _date_label)
-_date_end = s.find('<div class="full">', _date_label)
+_date_end = s.find('<div class="full"', _date_label)
 assert _date_start >= 0 and _date_end > _date_start, 'finalul blocului data nașterii nu a fost găsit'
 _date_block = s[_date_start:_date_end]
 s = s[:_date_start] + s[_date_end:]
@@ -174,17 +170,17 @@ _middle_re = re.compile(r'<div class="full">\s*<label>Отчество.*?</div>'
 s, _middle_count = _middle_re.subn(lambda m: m.group(0).replace('<div class="full">', '<div class="full" hidden style="display:none;">', 1), s, count=1)
 assert _middle_count == 1, 'blocul patronimic nu a fost găsit'
 
-_alpha_re = re.compile(r'<div class="full">\s*<label>Алфавит имени.*?</div>', re.S)
-s, _alpha_count = _alpha_re.subn(lambda m: m.group(0).replace('<div class="full">', '<div class="full" hidden style="display:none;">', 1), s, count=1)
+_alpha_re = re.compile(r'<div class="full"[^>]*>\s*<label>Алфавит имени.*?</div>', re.S)
+s, _alpha_count = _alpha_re.subn(lambda m: re.sub(r'^<div class="full"[^>]*>', '<div class="full" hidden style="display:none;">', m.group(0), count=1), s, count=1)
 assert _alpha_count == 1, 'blocul alfabetului nu a fost găsit'
 
-_gender_re = re.compile(r'<div class="full">\s*>?\s*<label>Пол</label>.*?</div>\s*</div>', re.S)
-s, _gender_count = _gender_re.subn(lambda m: m.group(0).replace('<div class="full">', '<div class="full" hidden style="display:none;">', 1), s, count=1)
+_gender_re = re.compile(r'<div class="full"[^>]*>\s*>?\s*<label>Пол</label>.*?</div>\s*</div>', re.S)
+s, _gender_count = _gender_re.subn(lambda m: re.sub(r'^<div class="full"[^>]*>', '<div class="full" hidden style="display:none;">', m.group(0), count=1), s, count=1)
 assert _gender_count == 1, 'blocul sexului nu a fost găsit'
 
 _hint_re = re.compile(r'<div class="hint">Выбери алфавит, соответствующий языку имени.*?</div>', re.S)
 s, _hint_count = _hint_re.subn(lambda m: m.group(0).replace('<div class="hint">', '<div class="hint" hidden style="display:none;">', 1), s, count=1)
-assert _hint_count == 1, 'nota despre alfabet nu a fost găsită'
+assert _hint_count <= 1, 'nota despre alfabet apare de mai multe ori'
 
 # 3a. Hero: glow-ul cristalului (top:-40px) ieșea peste marginea de sus a iframe-ului → tăiat brusc („ruptură”).
 #     Dăm hero-ului padding-top ca glow-ul să rămână complet în iframe (React nu mai adaugă padding sus).
@@ -202,9 +198,9 @@ rep('<div class="hero-crystal" aria-hidden="true">◈</div>',
     '<path d="M12 7 17 12 12 17 7 12Z" fill="currentColor" fill-opacity=".55"/></svg></div>')
 
 # 3b. Textul hero (formular) — copy aprobat de utilizator; antetul React duplicat a fost eliminat.
-rep('<h1><span class="hero-lead">Твой</span><span class="hero-caps">Кристалл Судьбы</span></h1>',
-    '<h1 hidden aria-hidden="true"><span class="hero-lead">Открой свой</span><span class="hero-caps">Кристалл Судьбы</span></h1>')
-rep('<p>Твоё имя и дата рождения хранят ответы о характере, судьбе и жизненном пути — '
+rep('<h1 id="heroH1"><span class="hero-lead">Твой</span><span class="hero-caps">Кристалл Судьбы</span></h1>',
+    '<h1 id="heroH1" hidden aria-hidden="true"><span class="hero-lead">Открой свой</span><span class="hero-caps">Кристалл Судьбы</span></h1>')
+rep('<p id="heroP">Твоё имя и дата рождения хранят ответы о характере, судьбе и жизненном пути — '
     '<span class="hero-highlight">узнай, что скрыто именно в тебе</span>.</p>',
     '<div class="hero-video" aria-label="Видео о персональном разборе" hidden>\n'
     '      <div class="hero-video-frame">\n'
@@ -331,6 +327,10 @@ rep('<script id="data-blob"',
     'if(typeof ResizeObserver!=="undefined"&&document.body){new ResizeObserver(send).observe(document.body);}'
     '})();</script>\n<script id="data-blob"')
 
+# 4a2. Țara vine de la aplicație (?country=, geolocație pe server) → fără apel extern ipapi.co din iframe.
+rep("        try{ initCountryDetection(); }catch(e){ console.error('countryDetect', e); }",
+    "        try{ if(!detectedCountry) initCountryDetection(); }catch(e){ console.error('countryDetect', e); }")
+
 # 4b. Funnel (rezultat gratuit): expunem rezultatul determinist al ultimului calcul, ca aplicația
 #     React (același origin) să poată citi numerele reale fără să dubleze formulele.
 rep("  const r = computeAll(last, first, middle, day, month, year, nameAlphabetKey);\n",
@@ -341,7 +341,7 @@ rep("  const r = computeAll(last, first, middle, day, month, year, nameAlphabetK
 bridge = re.sub(r'(?m)^([ \t]*)> ', r'\1', BRIDGE.read_text(encoding='utf-8'))
 assert 'requestPayment' in bridge and 'reportRendered' in bridge
 preview = re.sub(r'(?m)^([ \t]*)> ', r'\1', PREVIEW.read_text(encoding='utf-8'))
-assert '__cdApplyPreviewLock' in preview and "params.get('preview')" in preview
+assert 'CrystalReport' in preview and "params.get('preview')" in preview
 rep('</body>', bridge.rstrip('\n') + '\n' + preview.rstrip('\n') + '\n</body>')
 
 # 6. Fără surse/autori în text vizibil -------------------------------------------------------------
@@ -360,7 +360,7 @@ s = re.sub(r'(?m)^([ \t]*)> ', r'\1', s)
 
 for marker in ('id="emailAddr"', 'id="promoCode"', 'id="mainCalcBtn"', 'function requestPayment',
                "params.get('auto')", 'reportRendered', 'validatePromo', 'paymentSuccess',
-               "params.get('preview')", '__cdApplyPreviewLock', 'previewRendered', 'window.__cdSkipMail',
+               "params.get('preview')", 'window.CrystalReport', 'previewRendered', 'window.__cdSkipMail', 'getEntryContext',
                'function cdMainAction', 'onclick="cdMainAction()"', 'cristalul-premium.mp4', 'hero-video',
                ':root{color-scheme:light;}', '.bg-anim{display:none !important;}'):
     assert marker in s, f'marker lipsă după patch: {marker}'
