@@ -27,7 +27,7 @@ interface FormData {
 interface RaportViewerProps {
   formData: FormData
   reportType?: 'cristal' | 'grani'
-  /** Arată ecranul „Deschidem Cristalul” (≈7 s) înainte de raport — folosit imediat după plată. */
+  /** Arată ecranul „Deschidem Cristalul” (≈5 s) înainte de raport — folosit imediat după plată. */
   reveal?: boolean
 }
 
@@ -129,7 +129,7 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
         scrolling="no"
       />
 
-      {/* După plată: cristalul animat ≈7 s, apoi raportul complet este dezvăluit. */}
+      {/* După plată: cristalul animat ≈5 s, apoi raportul complet este dezvăluit. */}
       <AnimatePresence>
         {opening && (
           <CristalLoading
@@ -137,7 +137,7 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
             eyebrow={t('loadingEyebrow')}
             title={t('loadingPaidTitle')}
             phrases={t.raw('loadingPaidPhrases') as string[]}
-            durationMs={7000}
+            durationMs={5000}
             ready={rendered}
             onDone={handleOpened}
           />
