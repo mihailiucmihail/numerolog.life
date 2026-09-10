@@ -318,7 +318,8 @@
 #results .card .namearc-list{gap:18px;}
 
 /* ==== Layout final: conținutul original, suprafețe largi în stilul Admin Experiments ==== */
-#results{width:min(100%,1360px)!important;max-width:1360px!important;margin:0 auto!important;padding:0 clamp(16px,3.5vw,56px) 88px!important;}
+/* Raportul ocupă exact lățimea conținutului din footer: anulăm padding-ul de 6px al <body>. */
+#results{width:calc(100% + 12px)!important;max-width:none!important;margin:0 -6px!important;padding:0 0 88px!important;}
 
 /* Un singur card mare per secțiune: fără rame interioare suprapuse. */
 #results>.card{
@@ -360,7 +361,6 @@
 @media (prefers-reduced-motion:reduce){#results>.card{animation:none!important;}}
 
 @media (max-width:760px){
-  #results{padding-inline:14px!important;}
   #results>.card{margin-bottom:18px!important;padding:22px 16px!important;border-radius:12px!important;}
   #results>.card .section-title{font-size:21px!important;}
 }

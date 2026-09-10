@@ -34,11 +34,9 @@ export default async function CristalulRaportPage({
             <span>NUMEROLOG</span>
             <span className="font-mono tracking-[0.12em] text-primary/70">CRISTALUL DESTINULUI · RAPORT</span>
           </div>
-          <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] shadow-[0_24px_80px_rgba(0,0,0,0.28)] backdrop-blur-sm md:rounded-3xl">
-            <Suspense fallback={null}>
-              <RaportViewer formData={formData} />
-            </Suspense>
-          </div>
+          <Suspense fallback={null}>
+            <RaportViewer formData={formData} />
+          </Suspense>
         </div>
       </div>
       <Footer />
