@@ -14,6 +14,7 @@ import { FunnelPaywall, type AppliedOffer } from './funnel-paywall'
 import { CristalLoading } from '@/components/numerology/cristal-loading'
 import { CHECKOUT_STORAGE_KEY, FUNNEL_STORAGE_KEY, type FunnelForm as FormValues } from './types'
 import { useLandingView } from '@/lib/experiments/use-experiment'
+import { CrystalReactForm } from './crystal-react-form'
 
 const PAYWALL_ID = 'funnel-paywall'
 const CALCULATOR_SRC = '/cristalul-calculator.html'
@@ -457,17 +458,36 @@ export default function CristalFunnel() {
         </p>
       )}
 
-      {/* Calculatorul ORIGINAL (formular identic cu fișierul încărcat). După calcul afișează raportul întreg, blurat. */}
-      <iframe
-        ref={iframeRef}
-        key={frameSrc}
-        src={frameSrc}
-        onLoad={handleFrameLoad}
-        title={t('previewFrameTitle')}
-        scrolling="no"
-        className="scroll-mt-20"
-        style={{ width: '100%', height: frameHeight, border: 'none', display: 'block', background: 'transparent', colorScheme: 'normal' }}
-      />
+      {!previewReady && !cancelledNotice ? (
+        <CrystalReactForm
+          initialEmail={emailParam}
+          initialValues={form || undefined}
+          onSubmit={(values) => {
+            const nextValues: FormValues = {
+              ...values,
+              gender: values.gender === 'm' ? 'm' : 'f',
+              nameAlphabetKey: values.nameAlphabetKey || alphabet,
+              ...(entry ? { entry } : {}),
+            }
+            setForm(nextValues)
+            setFrameSrc(buildPreviewSrc(nextValues))
+            setPreviewReady(true)
+            setForming(true)
+            trackFunnel('birth_data_submitted', { has_middle: Boolean(nextValues.middle), alphabet: nextValues.nameAlphabetKey })
+          }}
+        />
+      ) : (
+        <iframe
+          ref={iframeRef}
+          key={frameSrc}
+          src={frameSrc}
+          onLoad={handleFrameLoad}
+          title={t('previewFrameTitle')}
+          scrolling="no"
+          className="scroll-mt-20"
+          style={{ width: '100%', height: frameHeight, border: 'none', display: 'block', background: 'transparent', colorScheme: 'normal' }}
+        />
+      )}
 
       <AnimatePresence>
         {previewReady && form && (
