@@ -21,7 +21,7 @@ const PHRASE_MIN_MS = 1100
  * Ecran „se formează Cristalul” — folosit între formular și raportul blurat, și după plată înaintea raportului
  * complet. Un singur element-semnătură: cristalul auriu care pulsează; restul este liniștit.
  */
-export function CristalLoading({ eyebrow, title, phrases, durationMs = 7000, ready = true, onDone }: CristalLoadingProps) {
+export function CristalLoading({ eyebrow, title, phrases, durationMs = 5000, ready = true, onDone }: CristalLoadingProps) {
   const [index, setIndex] = useState(0)
   const [elapsed, setElapsed] = useState(false)
 

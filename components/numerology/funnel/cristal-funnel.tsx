@@ -114,7 +114,7 @@ export default function CristalFunnel() {
   // v3: HTML-ul își randează propria previzualizare tematică + paywall (cu preț de la aplicație). Atunci
   // paywall-ul și bara sticky React nu se mai afișează (ar fi un al doilea CTA identic).
   const [nativePreview, setNativePreview] = useState(false)
-  // Ecranul „Cristalul se formează” (≈7 s) între formular și raportul blurat.
+  // Ecranul „Cristalul se formează” (≈5 s) între formular și raportul blurat.
   const [forming, setForming] = useState(false)
   const [checkoutBusy, setCheckoutBusy] = useState(false)
   const [checkoutError, setCheckoutError] = useState('')
@@ -593,7 +593,7 @@ export default function CristalFunnel() {
             eyebrow={t('loadingEyebrow')}
             title={t('loadingPreviewTitle')}
             phrases={t.raw('loadingPreviewPhrases') as string[]}
-            durationMs={7000}
+            durationMs={5000}
             ready={previewReady}
             onDone={handleFormingDone}
           />
