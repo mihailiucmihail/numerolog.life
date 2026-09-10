@@ -29,13 +29,17 @@ export interface Assignment {
   assignedAt: number
 }
 
+const ASSIGNMENT_VERSION = 'v2'
+
 function secret(): string {
-  return (
+  const base = (
     process.env.EXPERIMENT_COOKIE_SECRET ||
     process.env.NEWSLETTER_ADMIN_PASSWORD ||
     process.env.STRIPE_SECRET_KEY ||
     'numerolog-experiments'
   )
+  // Versiunea invalidează o singură dată cookie-urile create când Control era atribuit prematur.
+  return `${base}:${ASSIGNMENT_VERSION}`
 }
 
 export async function experimentHmac(value: string): Promise<string> {
