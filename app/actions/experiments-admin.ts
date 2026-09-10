@@ -328,6 +328,11 @@ export async function getVariantPreviewLinks(
         pv: previewVariant.id,
         [PREVIEW_TOKEN_PARAM]: await signPreviewToken(formVariant.id, previewVariant.id),
       })
+      if (key === "love-graph" || key === "relationship-needs") params.set("entry", "love")
+      if (key === "career-graph" || key === "profession-match") params.set("entry", "career")
+      if (key === "money-flow") params.set("entry", "money")
+      if (key === "life-now" || key === "life-timeline") params.set("entry", "relationships")
+      if (key === "birthday-first") params.set("entry", "birthday")
       links.funnel[key] = `/ru/numerologie?${params.toString()}`
     }),
   ])

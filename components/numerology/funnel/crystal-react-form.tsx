@@ -1,7 +1,7 @@
 'use client'
 
 import { FormEvent, useMemo, useRef, useState } from 'react'
-import { ArrowRight, BriefcaseBusiness, CalendarDays, Check, Heart, Layers3, Sparkles, UserRound } from 'lucide-react'
+import { ArrowRight, BriefcaseBusiness, CalendarDays, Check, CircleDollarSign, Heart, Layers3, Route, Sparkles, UserRound } from 'lucide-react'
 
 export interface CrystalFormValues {
   last: string
@@ -14,6 +14,7 @@ export interface CrystalFormValues {
   gender?: string
   nameAlphabetKey?: string
   entry?: string
+  intent?: string
   discountCode?: string
 }
 
@@ -25,7 +26,7 @@ interface CrystalReactFormProps {
   onSubmit: (values: CrystalFormValues) => void
 }
 
-type FunnelMode = 'control' | 'birthday-first' | 'love-graph' | 'career-graph' | 'life-now' | 'content-first'
+type FunnelMode = 'control' | 'birthday-first' | 'love-graph' | 'career-graph' | 'life-now' | 'content-first' | 'money-flow' | 'profession-match' | 'relationship-needs' | 'life-timeline'
 
 const COPY = {
   ru: {
@@ -40,6 +41,10 @@ const COPY = {
     careerTitle: 'Какой вопрос о реализации волнует тебя сейчас?', careerOptions: ['Моё сильное направление', 'Почему я застрял(а)', 'Когда лучше менять работу'],
     lifeTitle: 'Где сейчас больше всего неопределённости?', lifeOptions: ['Отношения', 'Деньги', 'Карьера', 'Внутреннее состояние'],
     contentTitle: 'Сначала ты увидишь не обещание, а результат', contentBody: 'Расчёт покажет ключевую аркану, активную жизненную тему и структуру полного разбора. Никаких случайных текстов — всё строится по твоим данным.',
+    moneyTitle: 'Что ты хочешь понять о своих деньгах?', moneyOptions: ['Что происходит с деньгами сейчас', 'Где мой следующий период роста', 'Что тормозит мой финансовый поток'],
+    professionTitle: 'Какую профессиональную развилку ты проходишь?', professionOptions: ['Какое направление мне подходит', 'Какой тип роли использует мои сильные стороны', 'Почему работа не даёт ощущения реализации'],
+    needsTitle: 'Чего тебе сейчас не хватает в отношениях?', needsOptions: ['Безопасности и опоры', 'Близости и понимания', 'Свободы и движения'],
+    timelineTitle: 'Какой отрезок жизни хочется увидеть яснее?', timelineOptions: ['Где я нахожусь сейчас', 'Что меняется следующим', 'Какая сфера станет главной'],
     step: 'Шаг 1 из 2', chosen: 'Выбери один вариант, чтобы продолжить',
   },
   ro: {
@@ -54,6 +59,10 @@ const COPY = {
     careerTitle: 'Ce întrebare despre carieră te preocupă acum?', careerOptions: ['Direcția mea puternică', 'De ce simt că stagnez', 'Când este potrivit să schimb jobul'],
     lifeTitle: 'Unde simți acum cea mai mare neclaritate?', lifeOptions: ['Relații', 'Bani', 'Carieră', 'Stare interioară'],
     contentTitle: 'Mai întâi vezi valoarea, nu o promisiune', contentBody: 'Calculul îți arată arcana-cheie, tema activă a vieții și structura analizei complete. Totul este construit din datele tale.',
+    moneyTitle: 'Ce vrei să înțelegi despre banii tăi?', moneyOptions: ['Ce se întâmplă acum cu banii', 'Unde este următoarea perioadă de creștere', 'Ce îmi încetinește fluxul financiar'],
+    professionTitle: 'Prin ce răscruce profesională treci?', professionOptions: ['Ce direcție mi se potrivește', 'Ce tip de rol îmi folosește punctele forte', 'De ce munca nu îmi oferă împlinire'],
+    needsTitle: 'Ce îți lipsește acum într-o relație?', needsOptions: ['Siguranță și sprijin', 'Apropiere și înțelegere', 'Libertate și mișcare'],
+    timelineTitle: 'Ce etapă a vieții vrei să vezi mai clar?', timelineOptions: ['Unde mă aflu acum', 'Ce se schimbă în continuare', 'Ce domeniu va deveni principal'],
     step: 'Pasul 1 din 2', chosen: 'Alege o variantă pentru a continua',
   },
 }
@@ -65,6 +74,10 @@ const MODE_BY_VARIANT: Record<string, FunnelMode> = {
   'form-career-graph': 'career-graph',
   'form-life-now': 'life-now',
   'form-content-first': 'content-first',
+  'form-money-flow': 'money-flow',
+  'form-profession-match': 'profession-match',
+  'form-relationship-needs': 'relationship-needs',
+  'form-life-timeline': 'life-timeline',
 }
 
 function detectAlphabet(name: string, current: string): string {
@@ -107,10 +120,10 @@ export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'r
     if (value.length === max && index < 2) dateRefs.current[index + 1]?.focus()
   }
 
-  const options = mode === 'love-graph' ? c.loveOptions : mode === 'career-graph' ? c.careerOptions : mode === 'life-now' ? c.lifeOptions : []
-  const title = mode === 'birthday-first' ? c.birthdayTitle : mode === 'love-graph' ? c.loveTitle : mode === 'career-graph' ? c.careerTitle : mode === 'life-now' ? c.lifeTitle : mode === 'content-first' ? c.contentTitle : c.title
+  const options = mode === 'love-graph' ? c.loveOptions : mode === 'career-graph' ? c.careerOptions : mode === 'life-now' ? c.lifeOptions : mode === 'money-flow' ? c.moneyOptions : mode === 'profession-match' ? c.professionOptions : mode === 'relationship-needs' ? c.needsOptions : mode === 'life-timeline' ? c.timelineOptions : []
+  const title = mode === 'birthday-first' ? c.birthdayTitle : mode === 'love-graph' ? c.loveTitle : mode === 'career-graph' ? c.careerTitle : mode === 'life-now' ? c.lifeTitle : mode === 'content-first' ? c.contentTitle : mode === 'money-flow' ? c.moneyTitle : mode === 'profession-match' ? c.professionTitle : mode === 'relationship-needs' ? c.needsTitle : mode === 'life-timeline' ? c.timelineTitle : c.title
   const body = mode === 'birthday-first' ? c.birthdayBody : mode === 'content-first' ? c.contentBody : c.body
-  const Icon = mode === 'love-graph' ? Heart : mode === 'career-graph' ? BriefcaseBusiness : mode === 'content-first' ? Layers3 : mode === 'life-now' ? Sparkles : UserRound
+  const Icon = mode === 'love-graph' || mode === 'relationship-needs' ? Heart : mode === 'career-graph' || mode === 'profession-match' ? BriefcaseBusiness : mode === 'content-first' ? Layers3 : mode === 'money-flow' ? CircleDollarSign : mode === 'life-timeline' ? Route : mode === 'life-now' ? Sparkles : UserRound
 
   const dateFields = (
     <div className="flex flex-col gap-3">
@@ -130,8 +143,14 @@ export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'r
     if (!dateValid) return setError(c.dateError)
     if (options.length && !intent) return setError(c.chosen)
     setError('')
-    const entry = mode === 'love-graph' ? 'love' : mode === 'career-graph' ? 'career' : mode === 'birthday-first' ? 'birthday' : undefined
-    onSubmit({ ...values, nameAlphabetKey: detectAlphabet(`${values.last}${values.first}${values.middle}`, values.nameAlphabetKey), day: Number(values.day), month: Number(values.month), year: Number(values.year), entry })
+    const intentIndex = options.indexOf(intent)
+    const entry = mode === 'love-graph' || mode === 'relationship-needs' ? 'love'
+      : mode === 'career-graph' || mode === 'profession-match' ? 'career'
+        : mode === 'money-flow' ? 'money'
+          : mode === 'life-timeline' ? 'relationships'
+            : mode === 'life-now' ? (['love', 'money', 'career', 'relationships'][intentIndex] || 'relationships')
+              : mode === 'birthday-first' ? 'birthday' : undefined
+    onSubmit({ ...values, nameAlphabetKey: detectAlphabet(`${values.last}${values.first}${values.middle}`, values.nameAlphabetKey), day: Number(values.day), month: Number(values.month), year: Number(values.year), entry, ...(intentIndex >= 0 ? { intent: `${mode}:${intentIndex}` } : {}) })
   }
 
   return (

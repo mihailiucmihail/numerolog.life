@@ -32,6 +32,7 @@ interface PreviewData {
   nameAlphabetKey?: string
   discountCode?: string
   entry?: string
+  intent?: string
 }
 
 /** Temele de intrare recunoscute de HTML (ENTRY_LANDING_COPY / ENTRY_GRAPH_MAP). Orice altă valoare = intrare generică. */
@@ -52,12 +53,16 @@ function readSaved(): FormValues | null {
 
 /** Întoarcere de la Stripe (anulat): re-deschidem direct raportul blurat cu datele salvate. */
 const PREVIEW_ENGINE_VARIANTS: Record<string, string> = {
-  'preview-control': 'preview-baseline',
-  'preview-birthday-first': 'preview-card-personal',
-  'preview-love-graph': 'preview-theme-answer',
-  'preview-career-graph': 'preview-theme-answer',
-  'preview-life-now': 'preview-single-insight',
-  'preview-content-first': 'preview-structure-map',
+  'preview-control': 'preview-control',
+  'preview-birthday-first': 'preview-birthday-first',
+  'preview-love-graph': 'preview-love-graph',
+  'preview-career-graph': 'preview-career-graph',
+  'preview-life-now': 'preview-life-now',
+  'preview-content-first': 'preview-content-first',
+  'preview-money-flow': 'preview-money-flow',
+  'preview-profession-match': 'preview-profession-match',
+  'preview-relationship-needs': 'preview-relationship-needs',
+  'preview-life-timeline': 'preview-life-timeline',
 }
 
 function buildPreviewSrc(v: FormValues, variants?: { form: string; preview: string }): string {
@@ -73,6 +78,7 @@ function buildPreviewSrc(v: FormValues, variants?: { form: string; preview: stri
     alpha: v.nameAlphabetKey,
   })
   if (v.entry) params.set('entry', v.entry)
+  if (v.intent) params.set('intent', v.intent)
   // Varianta de PREVIEW din experiment: fără ea iframe-ul ar randa mereu baseline-ul, iar panoul de admin
   // ar arăta același ecran pentru toate variantele.
   if (variants) {
@@ -136,6 +142,43 @@ export default function CristalFunnel() {
   const [paidOverlay, setPaidOverlay] = useState(false)
   const [cancelledNotice, setCancelledNotice] = useState(false)
   const [showSticky, setShowSticky] = useState(false)
+  const demoPreviewStarted = useRef(false)
+
+  // În Admin Experiments, tabul „Preview rezultat” pornește calculatorul cu o identitate demonstrativă.
+  // Linkul este deja semnat și marcat intern, deci nu creează lead-uri și nu afectează statisticile reale.
+  useEffect(() => {
+    if (searchParams.get('adminPreview') !== 'result' || demoPreviewStarted.current) return
+    demoPreviewStarted.current = true
+    const variantEntry = exp.form.includes('love') || exp.form.includes('relationship')
+      ? 'love'
+      : exp.form.includes('career') || exp.form.includes('profession')
+        ? 'career'
+        : exp.form.includes('money')
+          ? 'money'
+          : exp.form.includes('timeline') || exp.form.includes('life-now')
+            ? 'relationships'
+            : exp.form.includes('birthday')
+              ? 'birthday'
+              : entry
+    const demoIntent = exp.form.replace(/^form-/, '') + ':0'
+    const demo: FormValues = {
+      first: locale === 'ro' ? 'Ana' : 'Анна',
+      last: locale === 'ro' ? 'Popescu' : 'Иванова',
+      middle: '',
+      day: 10,
+      month: 9,
+      year: 1990,
+      gender: 'f',
+      nameAlphabetKey: locale === 'ro' ? 'ro' : 'ru',
+      intent: demoIntent,
+      ...(variantEntry ? { entry: variantEntry } : {}),
+    }
+    formRef.current = demo
+    setForm(demo)
+    setPreviewRequested(true)
+    setForming(true)
+    setFrameSrc(buildPreviewSrc(demo, { form: exp.form, preview: exp.preview }))
+  }, [entry, exp.form, exp.preview, locale, searchParams])
 
   // Oferta din link, verificată pe server: preț redus afișat înainte de formular, în paywall și în bara sticky.
   const [offer, setOffer] = useState<AppliedOffer | null>(null)
@@ -247,8 +290,10 @@ export default function CristalFunnel() {
             year: p.year,
             gender: (p.gender === 'm' ? 'm' : 'f') as FormValues['gender'],
             nameAlphabetKey: p.nameAlphabetKey || 'ru',
+            ...(p.intent || formRef.current?.intent ? { intent: p.intent || formRef.current?.intent } : {}),
             ...(resolvedEntry ? { entry: resolvedEntry } : {}),
           }
+          formRef.current = values
           setForm(values)
           if (typeof p.email === 'string') setFormEmail(p.email.trim())
           try {
@@ -518,6 +563,7 @@ export default function CristalFunnel() {
               nameAlphabetKey: values.nameAlphabetKey || alphabet,
               ...(values.entry || entry ? { entry: values.entry || entry } : {}),
             }
+            formRef.current = nextValues
             setForm(nextValues)
             setFrameSrc(`${buildPreviewSrc(nextValues, { form: exp.form, preview: exp.preview })}&k=${Date.now()}`)
             setPreviewRequested(true)

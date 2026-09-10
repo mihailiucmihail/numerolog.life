@@ -8544,242 +8544,123 @@ function startPdfExport(){
     })();
 </script>
 <style id="cd-variants">
-/* Stratul de variante pentru experimentele FORM si PREVIEW.
-   Se activeaza DOAR prin ?fv= / ?pv= trimise de aplicatie din atribuirea semnata.
-   Fara parametri, fisierul se comporta exact ca inainte (varianta de referinta). */
-
-[data-cd-form="form-compact"] .cd-field-hint,
-[data-cd-form="form-compact"] .cd-main-cta-note,
-[data-cd-form="form-compact"] .numerology-intro { display: none !important; }
-[data-cd-form="form-compact"] #inputFormCard { padding-top: 10px !important; padding-bottom: 12px !important; }
-[data-cd-form="form-compact"] #inputFormCard label { margin-bottom: 2px; font-size: 10px; }
-[data-cd-form="form-compact"] #inputFormCard input,
-[data-cd-form="form-compact"] #inputFormCard select { padding-top: 8px; padding-bottom: 8px; }
-
-.cd-v-lead {
-  margin: 0 0 16px; padding: 14px 16px; border-radius: 14px;
-  /* Cardul are fundal inchis: un panou deschis ar lasa textul ilizibil. */
-  background: rgba(0,0,0,.22); border: 1px solid rgba(255,255,255,.10); color: inherit;
-}
-.cd-v-lead h3 { margin: 0 0 6px; font-size: 15px; line-height: 1.35; font-weight: 600; }
-.cd-v-lead p { margin: 0; font-size: 13.5px; line-height: 1.55; opacity: .85; }
-.cd-v-lead ul { margin: 6px 0 0; padding-left: 18px; font-size: 13.5px; line-height: 1.6; opacity: .88; }
-
-.cd-v-stepped { display: block !important; }
-.cd-v-step[hidden] { display: none !important; }
-.cd-v-nav { display: flex; gap: 10px; align-items: center; margin-top: 12px; }
-.cd-v-nav[hidden] { display: none !important; }
-.cd-v-nav button {
-  flex: 1; min-height: 44px; border-radius: 14px; border: 0; cursor: pointer;
-  font: inherit; font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
-}
-.cd-v-next { background: #1c1a2e; color: #fff; }
-.cd-v-nav .cd-v-back { flex: 0 0 auto; padding: 0 16px; background: transparent; color: inherit; opacity: .6; text-decoration: underline; }
-.cd-v-progress { display: flex; gap: 6px; margin: 0 0 12px; }
-.cd-v-progress i { flex: 1; height: 3px; border-radius: 3px; background: rgba(0,0,0,.12); }
-.cd-v-progress i.is-on { background: #1c1a2e; }
-.cd-v-progress-label { margin: 0 0 10px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; opacity: .55; }
-
-[data-cd-motion="2"] .cd-v-step, [data-cd-motion="3"] .cd-v-step { animation: cdStepIn .28s ease both; }
-[data-cd-motion="3"] .cd-v-step { animation-duration: .42s; }
-@keyframes cdStepIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) {
-  [data-cd-motion] .cd-v-step { animation: none !important; }
-}
-
-/* Preview variante - DOM real al previzualizarii native: #previewLayer > .pv-screen ... .pv-card / .pv-card-head. */
-[data-cd-preview="preview-single-insight"] #previewLayer .pv-card:nth-of-type(n+2) { display: none !important; }
-
-[data-cd-preview="preview-card-personal"] #previewLayer .pv-card:first-of-type {
-  border: 1px solid rgba(212,175,55,.40) !important;
-  box-shadow: 0 14px 46px rgba(0,0,0,.18) !important;
-}
-
-[data-cd-preview="preview-timeline"] #previewLayer .pv-card { position: relative; padding-left: 26px !important; }
-[data-cd-preview="preview-timeline"] #previewLayer .pv-card::before {
-  content: ""; position: absolute; left: 8px; top: 22px; bottom: -12px; width: 2px; background: rgba(255,255,255,.14);
-}
-[data-cd-preview="preview-timeline"] #previewLayer .pv-card::after {
-  content: ""; position: absolute; left: 3px; top: 18px; width: 11px; height: 11px; border-radius: 50%;
-  background: #d4af37; box-shadow: 0 0 0 3px rgba(212,175,55,.18);
-}
-[data-cd-preview="preview-timeline"] #previewLayer .pv-card:last-of-type::before { display: none; }
-
-[data-cd-preview="preview-theme-answer"] #previewLayer .pv-screen:not(.pv-themes) .pv-card { opacity: .78; }
-[data-cd-preview="preview-theme-answer"] #previewLayer .pv-themes .pv-card { box-shadow: 0 12px 44px rgba(0,0,0,.16); }
-
-[data-cd-preview="preview-structure-map"] #previewLayer .pv-card { padding: 12px 14px !important; margin-bottom: 8px !important; }
-[data-cd-preview="preview-structure-map"] #previewLayer .pv-card > *:not(.pv-card-head) { display: none !important; }
+/* Strat contextual pentru preview-urile experimentale. Formularul public si varianta Control raman neschimbate. */
+.cd-context-preview{display:flex;flex-direction:column;gap:16px}
+.cd-context-head{padding:22px 20px;border:1px solid rgba(217,169,79,.26);border-radius:18px;background:rgba(16,10,31,.72)}
+.cd-context-kicker{margin:0 0 8px;color:var(--brass-bright,#d9a94f);font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+.cd-context-head h2{margin:0;color:var(--parchment,#fff3d6);font-family:var(--font-display,serif);font-size:clamp(25px,5vw,38px);line-height:1.12}
+.cd-context-meta{margin:8px 0 0;color:var(--parchment-dim,#c9bda3);font-size:13px}
+.cd-context-answer{position:relative;padding:20px;border:1px solid rgba(217,169,79,.38);border-radius:18px;background:linear-gradient(145deg,rgba(217,169,79,.12),rgba(255,255,255,.035))}
+.cd-context-label{display:inline-flex;margin-bottom:11px;padding:5px 8px;border-radius:999px;background:rgba(217,169,79,.13);color:var(--brass-bright,#d9a94f);font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+.cd-context-answer h3{margin:0 0 10px;color:var(--parchment,#fff3d6);font-family:var(--font-display,serif);font-size:21px;line-height:1.25}
+.cd-context-answer p{margin:0;color:var(--parchment,#fff3d6);font-size:15px;line-height:1.65}
+.cd-context-proof{margin-top:13px!important;padding-top:13px;border-top:1px solid rgba(255,255,255,.1);color:var(--parchment-dim,#c9bda3)!important;font-size:13.5px!important}
+.cd-context-graph{padding:16px;border:1px solid rgba(255,255,255,.1);border-radius:18px;background:rgba(0,0,0,.16)}
+.cd-context-graph h3{margin:0 0 4px;color:var(--parchment,#fff3d6);font-size:15px}
+.cd-context-graph p{margin:0 0 8px;color:var(--parchment-dim,#c9bda3);font-size:13px;line-height:1.5}
+.cd-context-next{padding:18px;border:1px solid rgba(255,255,255,.1);border-radius:18px;background:rgba(0,0,0,.13)}
+.cd-context-next h3{margin:0 0 12px;color:var(--parchment,#fff3d6);font-family:var(--font-display,serif);font-size:20px}
+.cd-context-next ul{display:flex;flex-direction:column;gap:9px;margin:0;padding:0;list-style:none}
+.cd-context-next li{display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border-radius:12px;background:rgba(255,255,255,.035);color:var(--parchment-dim,#c9bda3);font-size:13.5px;line-height:1.45}
+.cd-context-next li:before{content:"";width:7px;height:7px;flex:0 0 7px;margin-top:6px;border:1px solid var(--brass-bright,#d9a94f);border-radius:50%}
+.cd-context-lock{margin:12px 0 0;color:var(--brass-bright,#d9a94f);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:560px){.cd-context-head,.cd-context-answer{padding:17px 14px}.cd-context-preview{gap:12px}}
 </style>
 <script>
-(function () {
+(function(){
   'use strict';
-  var FORMS = ['form-baseline','form-single-question','form-progressive','form-question-first','form-compact','form-proof-led',
-               'form-date-first','form-name-meaning','form-chat','form-visual-map','form-theme-led','form-minimal-dark'];
-  var PREVIEWS = ['preview-baseline','preview-single-insight','preview-card-personal','preview-timeline','preview-theme-answer',
-                  'preview-structure-map','preview-graph-led','preview-question-answer','preview-strength-risk',
-                  'preview-progressive-reveal','preview-compact-mobile','preview-report-sample'];
-  var MOTION = { 'form-compact': 0, 'form-baseline': 1, 'form-question-first': 1, 'form-proof-led': 1,
-                 'form-single-question': 2, 'form-progressive': 2 };
-
   var params = new URLSearchParams(location.search);
-  var fv = params.get('fv');
-  var pv = params.get('pv');
-  if (FORMS.indexOf(fv) < 0) fv = null;
-  if (PREVIEWS.indexOf(pv) < 0) pv = null;
-  if (!fv && !pv) return;
+  var preview = params.get('pv') || 'preview-control';
+  var allowed = ['preview-control','preview-birthday-first','preview-love-graph','preview-career-graph','preview-life-now','preview-content-first','preview-money-flow','preview-profession-match','preview-relationship-needs','preview-life-timeline'];
+  if(allowed.indexOf(preview) < 0 || preview === 'preview-control' || preview === 'preview-birthday-first') return;
+  document.documentElement.setAttribute('data-cd-preview', preview);
+  document.documentElement.setAttribute('data-cd-form', params.get('fv') || 'form-control');
 
-  var root = document.documentElement;
-  if (fv) root.setAttribute('data-cd-form', fv);
-  if (pv) root.setAttribute('data-cd-preview', pv);
-  root.setAttribute('data-cd-motion', String(MOTION[fv] == null ? 1 : MOTION[fv]));
+  var intent = params.get('intent') || '';
+  var baseRenderPreview = window.renderPreview || renderPreview;
 
-  var isReport = params.get('auto') === '1' || params.get('report') === '1';
-
-  function track(event, meta) {
-    try { window.parent.postMessage({ type: 'cdVariantEvent', event: event, meta: meta || null }, '*'); } catch (e) {}
-  }
-
-  var LEAD = {
-    'form-question-first': {
-      title: '\u0427\u0442\u043e \u0441\u0435\u0439\u0447\u0430\u0441 \u0432\u0430\u0436\u043d\u0435\u0435 \u0432\u0441\u0435\u0433\u043e \u043f\u043e\u043d\u044f\u0442\u044c \u043e \u0441\u0435\u0431\u0435?',
-      body: '\u0420\u0430\u0437\u0431\u043e\u0440 \u0441\u0442\u0440\u043e\u0438\u0442\u0441\u044f \u043f\u043e \u0434\u0430\u0442\u0435 \u0440\u043e\u0436\u0434\u0435\u043d\u0438\u044f \u0438 \u0438\u043c\u0435\u043d\u0438. \u0420\u0435\u0437\u0443\u043b\u044c\u0442\u0430\u0442 \u043f\u043e\u044f\u0432\u0438\u0442\u0441\u044f \u0441\u0440\u0430\u0437\u0443 \u043f\u043e\u0441\u043b\u0435 \u0440\u0430\u0441\u0447\u0451\u0442\u0430.'
-    },
-    'form-proof-led': {
-      title: '\u041a\u0430\u043a \u0441\u0447\u0438\u0442\u0430\u0435\u0442\u0441\u044f \u0442\u0432\u043e\u0439 \u041a\u0440\u0438\u0441\u0442\u0430\u043b\u043b',
-      list: ['\u0414\u0430\u0442\u0430 \u0440\u043e\u0436\u0434\u0435\u043d\u0438\u044f \u0437\u0430\u0434\u0430\u0451\u0442 \u043e\u0441\u043d\u043e\u0432\u043d\u044b\u0435 \u0447\u0438\u0441\u043b\u0430 \u0441\u0443\u0434\u044c\u0431\u044b.',
-             '\u0418\u043c\u044f \u0438 \u0444\u0430\u043c\u0438\u043b\u0438\u044f \u0434\u0430\u044e\u0442 \u0432\u0442\u043e\u0440\u0443\u044e \u043a\u0430\u0440\u0442\u0443 \u2014 \u0445\u0430\u0440\u0430\u043a\u0442\u0435\u0440 \u0438 \u043f\u0440\u043e\u044f\u0432\u043b\u0435\u043d\u0438\u0435.',
-             '\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u044f \u0438 \u0440\u0430\u0437\u043b\u0438\u0447\u0438\u044f \u043c\u0435\u0436\u0434\u0443 \u043d\u0438\u043c\u0438 \u0444\u043e\u0440\u043c\u0438\u0440\u0443\u044e\u0442 \u0440\u0430\u0437\u0431\u043e\u0440.']
-    }
+  var QUESTIONS = {
+    'preview-love-graph': ['Почему в отношениях повторяется один сценарий?','Какой партнёр подходит тебе по внутренним потребностям?','Что чаще всего мешает близости?'],
+    'preview-career-graph': ['В чём твоё сильное профессиональное направление?','Почему сейчас может ощущаться застой?','Что важно знать перед сменой работы?'],
+    'preview-life-now': ['Что сейчас происходит в отношениях?','Что сейчас происходит в финансовой сфере?','Что сейчас происходит в карьере?','Что говорит твой текущий жизненный этап?'],
+    'preview-money-flow': ['Что происходит с деньгами сейчас?','Есть ли впереди новый период финансового роста?','Где искать причину замедления финансового потока?'],
+    'preview-profession-match': ['Какое профессиональное направление тебе подходит?','Какой тип роли использует твои сильные стороны?','Почему работа может не давать ощущения реализации?'],
+    'preview-relationship-needs': ['Что создаёт для тебя чувство опоры в отношениях?','Что помогает тебе чувствовать близость и понимание?','Сколько свободы и движения тебе нужно в паре?'],
+    'preview-life-timeline': ['Где ты находишься на линии жизни сейчас?','Что меняется на следующем отрезке?','Какая тема сильнее проявлена в текущем периоде?'],
+    'preview-content-first': ['Что уже видно в твоём расчёте?']
+  };
+  var NEXT = {
+    love: ['Как меняется личная линия по возрастам?','Какой повторяющийся сценарий требует внимания?','В какой период отношения входят в новую фазу?'],
+    money: ['В каком возрасте меняется финансовая самостоятельность?','Где линия денег разворачивается вверх?','Какие качества усиливают или тормозят доход?'],
+    career: ['Какие ещё сферы подходят тебе по расчёту?','Когда профессиональная линия входит в сильный период?','Что отличает призвание от просто подходящей работы?'],
+    life: ['Какая сфера станет следующей активной темой?','Где находятся ключевые переходы твоей линии?','Как связаны текущий период и твои сильные качества?'],
+    report: ['Какие качества помогают тебе сейчас?','Что показывает линия отношений, денег и реализации?','Где находятся ближайшие возрастные переходы?']
   };
 
-  function insertLead(card) {
-    var spec = LEAD[fv];
-    if (!spec) return;
-    var box = document.createElement('div');
-    box.className = 'cd-v-lead';
-    var h = document.createElement('h3');
-    h.textContent = spec.title;
-    box.appendChild(h);
-    if (spec.body) { var p = document.createElement('p'); p.textContent = spec.body; box.appendChild(p); }
-    if (spec.list) {
-      var ul = document.createElement('ul');
-      spec.list.forEach(function (item) { var li = document.createElement('li'); li.textContent = item; ul.appendChild(li); });
-      box.appendChild(ul);
+  function indexFromIntent(){
+    var match = intent.match(/:(\d+)$/);
+    return match ? Math.max(0, Math.min(3, Number(match[1]))) : 0;
+  }
+  function questionFor(){
+    var list = QUESTIONS[preview] || QUESTIONS['preview-content-first'];
+    return list[indexFromIntent()] || list[0];
+  }
+  function careerAnswer(model){
+    if(model.career && model.career.sphere){
+      if(model.career.sphereFuture) return 'В твоём расчёте направление «' + model.career.sphere + '» раскрывается сильнее примерно к ' + model.career.sphereAge + ' годам.';
+      return 'Среди рассчитанных направлений сильнее всего выделяется: ' + model.career.sphere + '.';
     }
-    var fields = card.querySelector('.form-grid');
-    if (fields) card.insertBefore(box, fields);
-    else card.insertBefore(box, card.firstChild);
+    if(model.career && model.career.line) return model.career.line;
+    return model.wow && model.wow[0] ? model.wow[0].text : 'Расчёт уже выделил профессиональную тему, связанную с твоими сильными качествами.';
+  }
+  function loveAnswer(model){
+    return model.love && model.love.line ? model.love.line : (model.wow && model.wow[0] ? model.wow[0].text : 'Твой расчёт выделяет личную потребность, от которой зависит ощущение близости.');
+  }
+  function moneyAnswer(model){
+    if(model.graph && model.graph.state) return model.graph.state;
+    if(model.money && model.money.hasIndependenceAge) return 'На финансовой линии есть рассчитанный переход к большей самостоятельности.';
+    return 'Финансовая линия развивается постепенно, без резкого перехода в рассчитанном диапазоне.';
+  }
+  function proofFor(model){
+    if(preview.indexOf('love') >= 0 || preview.indexOf('relationship') >= 0) return model.love && model.love.hasFutureChange ? 'На личном графике есть будущая смена периода. Точный переход раскрывается в полном разборе.' : 'Ответ сопоставлен с твоей целью партнёрства и личной линией.';
+    if(preview.indexOf('money') >= 0) return model.money && model.money.hasFutureUp ? 'На графике есть будущий разворот вверх. Его возраст и трактовка остаются в полном разборе.' : 'Вывод построен по текущему уровню и направлению финансовой линии.';
+    if(preview.indexOf('career') >= 0 || preview.indexOf('profession') >= 0) return model.career && model.career.hasOtherSpheres ? 'Расчёт нашёл и другие подходящие сферы. Здесь показана только самая сильная.' : 'Вывод сопоставлен с самой сильной точкой графика реализации.';
+    return model.graph ? 'Это положение рассчитано для твоего текущего возраста — ' + model.identity.age + '.' : 'Это один из персональных выводов полного расчёта.';
+  }
+  function topicFor(){
+    if(preview.indexOf('love') >= 0 || preview.indexOf('relationship') >= 0) return 'love';
+    if(preview.indexOf('money') >= 0) return 'money';
+    if(preview.indexOf('career') >= 0 || preview.indexOf('profession') >= 0) return 'career';
+    if(preview.indexOf('life') >= 0) return 'life';
+    return 'report';
+  }
+  function answerFor(model){
+    if(preview.indexOf('love') >= 0 || preview.indexOf('relationship') >= 0) return loveAnswer(model);
+    if(preview.indexOf('money') >= 0) return moneyAnswer(model);
+    if(preview.indexOf('career') >= 0 || preview.indexOf('profession') >= 0) return careerAnswer(model);
+    if(preview === 'preview-life-now' || preview === 'preview-life-timeline') return model.graph && model.graph.state ? model.graph.state : (model.wow[0] && model.wow[0].text);
+    return model.wow && model.wow[0] ? model.wow[0].text : loveAnswer(model);
+  }
+  function graphHtml(model){
+    var g = model.graph;
+    if(!g) return '';
+    return '<section class="cd-context-graph"><h3>' + g.title + ' · сейчас</h3><p>Показан пройденный отрезок и твоя текущая точка. Будущее намеренно не раскрыто.</p>' + previewChartSvg(g) + '</section>';
+  }
+  function nextHtml(topic){
+    return '<section class="cd-context-next"><h3>Этот ответ ведёт к следующим вопросам</h3><ul>' + NEXT[topic].map(function(q){ return '<li>' + q + '</li>'; }).join('') + '</ul><p class="cd-context-lock">Ответы продолжаются в полном разборе</p></section>';
   }
 
-  function buildSteps(card, perStep) {
-    var btn = document.getElementById('mainCalcBtn');
-    if (!btn) return false;
-    // Campurile stau in .form-grid; daca structura se schimba, coborim in primul container
-    // care are cel putin doua blocuri cu campuri. Fara el, varianta cade pe formularul intreg.
-    var host = card.querySelector('.form-grid');
-    if (!host) {
-      host = card;
-      var single = null, found = 0;
-      Array.prototype.forEach.call(card.children, function (child) {
-        if (child.querySelector('input, select')) { found++; single = child; }
-      });
-      if (found === 1 && single) host = single;
-    }
-    var blocks = [];
-    Array.prototype.forEach.call(host.children, function (child) {
-      if (child.classList.contains('cd-v-lead')) return;
-      if (child === btn || child.contains(btn)) return;
-      // Doar campurile vizibile: alfabetul, promo si alte blocuri ascunse nu devin pasi goi.
-      if (child.hidden || child.offsetParent === null) return;
-      if (child.querySelector('input, select')) blocks.push(child);
-    });
-    if (blocks.length < 2) return false;
-    host.classList.add('cd-v-stepped');
-
-    var groups = [];
-    for (var i = 0; i < blocks.length; i += perStep) groups.push(blocks.slice(i, i + perStep));
-    if (groups.length < 2) return false;
-
-    var progress = document.createElement('div');
-    progress.className = 'cd-v-progress';
-    var label = document.createElement('p');
-    label.className = 'cd-v-progress-label';
-    groups.forEach(function () { progress.appendChild(document.createElement('i')); });
-
-    var steps = groups.map(function (group) {
-      var step = document.createElement('div');
-      step.className = 'cd-v-step';
-      group.forEach(function (block) { step.appendChild(block); });
-      return step;
-    });
-
-    steps.forEach(function (step) { host.appendChild(step); });
-    host.insertBefore(label, steps[0]);
-    host.insertBefore(progress, label);
-
-    var nav = document.createElement('div');
-    nav.className = 'cd-v-nav';
-    var back = document.createElement('button');
-    back.type = 'button'; back.className = 'cd-v-back';
-    back.textContent = '\u041d\u0430\u0437\u0430\u0434';
-    var next = document.createElement('button');
-    next.type = 'button'; next.className = 'cd-v-next';
-    next.textContent = '\u0414\u0430\u043b\u0435\u0435';
-    nav.appendChild(back); nav.appendChild(next);
-    host.appendChild(nav);
-
-    var current = 0;
-    function render() {
-      steps.forEach(function (step, i) { step.hidden = i !== current; });
-      Array.prototype.forEach.call(progress.children, function (dot, i) { dot.classList.toggle('is-on', i <= current); });
-      label.textContent = '\u0428\u0430\u0433 ' + (current + 1) + ' \u0438\u0437 ' + steps.length;
-      back.style.display = current === 0 ? 'none' : '';
-      var last = current === steps.length - 1;
-      nav.hidden = last;
-      btn.style.display = last ? '' : 'none';
-      var note = card.querySelector('.cd-main-cta-note');
-      if (note) note.style.display = last ? '' : 'none';
-      var focusable = steps[current].querySelector('input, select');
-      if (focusable && current > 0) focusable.focus({ preventScroll: true });
-    }
-    function go(delta) {
-      var target = current + delta;
-      if (target < 0 || target >= steps.length) return;
-      current = target;
-      render();
-      track('form_step_complete', { step: current });
-      try { window.parent.postMessage({ type: 'resize', height: document.documentElement.scrollHeight }, '*'); } catch (e) {}
-    }
-    next.addEventListener('click', function () { go(1); });
-    back.addEventListener('click', function () { go(-1); });
-    card.addEventListener('keydown', function (e) {
-      if (e.key !== 'Enter' || e.isComposing || e.keyCode === 229) return;
-      if (nav.hidden) return;
-      e.preventDefault();
-      go(1);
-    });
-    render();
-    return true;
-  }
-
-  function apply() {
-    var card = document.getElementById('inputFormCard');
-    if (!card || isReport) return;
-    insertLead(card);
-    if (fv === 'form-progressive') buildSteps(card, 2);
-    else if (fv === 'form-single-question') buildSteps(card, 1);
-
-    var interacted = false;
-    card.addEventListener('input', function () {
-      if (interacted) return;
-      interacted = true;
-      track('form_first_interaction');
-    });
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply);
-  else apply();
+  window.renderPreview = renderPreview = function(model){
+    baseRenderPreview(model);
+    var layer = document.getElementById('previewLayer');
+    if(!layer || model.birthday) return;
+    var name = model.identity.name || 'Твой разбор';
+    var graph = (preview === 'preview-content-first') ? '' : graphHtml(model);
+    layer.innerHTML = '<div class="pv-screen cd-context-preview pv-reveal">' +
+      '<header class="cd-context-head"><p class="cd-context-kicker">Ответ по твоему Кристаллу</p><h2>' + name + '</h2><p class="cd-context-meta">' + model.identity.date + ' · ' + model.identity.age + ' ' + yearsWord(model.identity.age) + '</p></header>' +
+      '<section class="cd-context-answer"><span class="cd-context-label">Частичный ответ</span><h3>' + questionFor() + '</h3><p>' + answerFor(model) + '</p><p class="cd-context-proof">' + proofFor(model) + '</p></section>' +
+      graph + nextHtml(topicFor()) + renderPaywall(model) + '</div>';
+  };
 })();
 </script>
 </body>
