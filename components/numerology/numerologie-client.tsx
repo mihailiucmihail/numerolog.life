@@ -1,7 +1,6 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import { AdminExperimentsHeader } from './admin-experiments-surface'
 
 // Funnel-ul Cristalului (formular original din HTML → raport blurat → plată). Include și gestionarea
 // întoarcerii de la Stripe (?payment=success&session_id=). Calculatorul HTML rămâne sursa unică a
@@ -11,7 +10,6 @@ const CristalFunnel = dynamic(() => import('./funnel/cristal-funnel'), { ssr: fa
 export default function NumerologieClient() {
   return (
     <div className="w-full">
-      <AdminExperimentsHeader eyebrow="Numerolog / Experiment surface" title="Cristalul Destinului" />
       <CristalFunnel />
     </div>
   )
