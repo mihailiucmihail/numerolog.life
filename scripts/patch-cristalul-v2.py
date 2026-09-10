@@ -313,6 +313,12 @@ rep('</head>', """<style>
   #inputFormCard #mainCalcBtn.cd-main-cta{background:var(--ae-amber)!important;color:#18181b!important;border:0!important;border-radius:var(--ae-radius)!important;box-shadow:0 10px 30px rgba(251,191,36,.14)!important;font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-weight:700!important;text-shadow:none!important;animation:aePulse 3s ease-in-out infinite!important;}
   #inputFormCard #mainCalcBtn.cd-main-cta::before{display:none!important;}
   #inputFormCard #mainCalcBtn.cd-main-cta:hover{background:#fcd34d!important;box-shadow:0 14px 34px rgba(251,191,36,.22)!important;}
+  /* Final cascade: remove opaque source gradients so the Admin Experiments surface shows through. */
+  html,body{background:transparent!important;background-color:transparent!important;}
+  .wrap,.card#inputFormCard,#inputFormCard,.card#inputFormCard::before,.card#inputFormCard::after{background:transparent!important;background-color:transparent!important;background-image:none!important;}
+  .card#inputFormCard{border:1px solid rgba(255,255,255,.1)!important;border-radius:12px!important;box-shadow:none!important;backdrop-filter:none!important;}
+  .card#inputFormCard .numerology-intro{background:rgba(255,255,255,.025)!important;background-image:none!important;border-bottom:1px solid rgba(255,255,255,.07)!important;border-radius:12px 12px 0 0!important;}
+  .card#inputFormCard form,.card#inputFormCard .form-section,.card#inputFormCard .date-row,.card#inputFormCard .field-group{background:transparent!important;background-image:none!important;}
   @keyframes aePulse{0%,100%{box-shadow:0 10px 30px rgba(251,191,36,.12)}50%{box-shadow:0 10px 38px rgba(251,191,36,.25)}}
   @media (prefers-reduced-motion:reduce){#inputFormCard #mainCalcBtn.cd-main-cta{animation:none!important;}}
   </style></head>""", 1)

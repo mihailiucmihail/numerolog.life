@@ -23,6 +23,14 @@
 #results .card{animation:aeCardReveal .45s ease both;}
 @media (prefers-reduced-motion:reduce){#results .card{animation:none!important;transform:none!important;}}
 
+/* Final cascade: exact Admin Experiments surfaces, without the legacy opaque report theme. */
+#results,#results::before,#results::after{background:transparent!important;background-color:transparent!important;background-image:none!important;}
+#results .card,#results .card::before,#results .card::after{background:rgba(255,255,255,.02)!important;background-image:none!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:12px!important;box-shadow:none!important;backdrop-filter:none!important;}
+#results .card:hover{background:rgba(255,255,255,.045)!important;border-color:rgba(251,191,36,.35)!important;box-shadow:0 0 28px rgba(251,191,36,.06)!important;}
+#results .card h1,#results .card h2,#results .card h3,#results .card h4,#results .card .section-title{color:#f4f4f5!important;font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;}
+#results .card p,#results .card span,#results .card li{color:#a1a1aa!important;font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;}
+#results .card .num,#results .card .label,.cd-report-eyebrow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace!important;}
+
 /* Scop: doar cardurile din #results. Formularul (#inputFormCard) NU este atins. */
 
 /* Butonul principal al formularului: vizibil, premium și animat discret. */
