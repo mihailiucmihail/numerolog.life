@@ -19,6 +19,8 @@ interface FormData {
   nameAlphabetKey?: string
   alpha?: string
   facet?: string
+  /** Tema cu care vizitatorul a intrat (?entry=): raportul complet se deschide pe cardul corespunzător. */
+  entry?: string
 }
 
 interface RaportViewerProps {
@@ -59,6 +61,7 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
     year: String(formData.year),
     ...(formData.gender ? { gender: formData.gender } : {}),
     ...((formData.nameAlphabetKey || formData.alpha) ? { alpha: (formData.nameAlphabetKey || formData.alpha) as string } : {}),
+    ...(reportType === 'cristal' && formData.entry ? { entry: formData.entry } : {}),
     ...(reportType === 'grani' ? { report: '1', email: formData.email || '', facet: formData.facet || 'professiya' } : {}),
   })
   const iframeSrc = reportType === 'grani'
@@ -85,6 +88,10 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
       sessionStorage.setItem(`${REVEAL_KEY}:${formData.first}${formData.day}${formData.year}`, '1')
     } catch {}
     window.scrollTo({ top: 0, behavior: 'smooth' })
+    // Tema de intrare: HTML-ul evidențiază cardul corespunzător și derulează la el (după ce ecranul a dispărut).
+    if (formData.entry) {
+      setTimeout(() => iframeRef.current?.contentWindow?.postMessage({ type: 'cdScrollToEntry' }, '*'), 400)
+    }
   }
 
   const numeFull = [formData.first, formData.last].filter(Boolean).join(' ')

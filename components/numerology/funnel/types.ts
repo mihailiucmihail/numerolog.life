@@ -10,6 +10,8 @@ export interface FunnelForm {
   gender: 'f' | 'm'
   /** Cheia alfabetului din calculator (ru / en …), detectată din literele numelui. */
   nameAlphabetKey: string
+  /** Tema de intrare din link (?entry=birthday|love|money|career…): adaptează previzualizarea și cardul deschis în raport. */
+  entry?: string
 }
 
 export const FUNNEL_STORAGE_KEY = 'cristal_funnel_v1'
