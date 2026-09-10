@@ -300,3 +300,33 @@
   #results .card div[style*="border-left:2px solid var(--brass-bright)"]{padding:18px 18px 18px 22px!important;border-radius:1rem;}
   #results .card .namearc-item{grid-template-columns:1fr;gap:12px;padding:16px;}
 }
+
+/* Un singur nivel vizual: raportul folosește doar cardurile mari ale secțiunilor. */
+#results .card div[style*="border-left:2px solid"],
+#results .card div[style*="border-left:3px solid"],
+#results .card .namearc-item,
+#results .card .medallion{
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#results .card div[style*="border-left:2px solid"],
+#results .card div[style*="border-left:3px solid"]{
+  padding:8px 0!important;
+  margin:18px 0!important;
+}
+#results .card div[style*="border-left:2px solid"]::before,
+#results .card div[style*="border-left:3px solid"]::before{
+  display:none!important;
+}
+#results .card .namearc-list{gap:10px;}
+#results .card [style*="border-left"],
+#results .card [style*="border-top"]{
+  border-left:0!important;
+  border-right:0!important;
+  border-bottom:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#results .card [style*="border-top"]{border-top:1px solid var(--cdp-gold-line)!important;}
