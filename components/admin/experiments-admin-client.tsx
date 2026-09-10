@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Loader2, Lock, RefreshCw, FlaskConical, TrendingUp, Sparkles } from "lucide-react"
+import { Loader2, Lock, RefreshCw, FlaskConical, TrendingUp, Sparkles, ExternalLink } from "lucide-react"
 import {
   getExperimentReport,
   getAllocationRecommendation,
@@ -16,6 +16,50 @@ import {
 function pct(num: number, den: number): string {
   if (!den) return "—"
   return `${((num / den) * 100).toFixed(1)}%`
+}
+
+type Kind = "form" | "preview"
+
+/** Date demo pentru linkurile de inspecție — nicio persoană reală, niciun lead salvat. */
+const DEMO = { first: "Анна", last: "Иванова", day: "14", month: "7", year: "1990" }
+
+/**
+ * Linkul de inspecție al unei variante.
+ *
+ * Deschide direct HTML-ul calculatorului, care citește `fv`/`pv` din URL. Deliberat NU folosim
+ * `/numerologie?fv=…`: atribuirea reală vine din cookie-ul semnat HMAC, iar un override pe pagina
+ * publică ar permite alegerea variantei din browser și ar amesteca vizitele de test în statistici.
+ * Fără părintele React, HTML-ul nu trimite evenimente și nu salvează lead-uri.
+ */
+function variantUrl(kind: Kind, id: string): string {
+  const p = new URLSearchParams()
+  p.set("fv", kind === "form" ? id : "form-baseline")
+  p.set("pv", kind === "preview" ? id : "preview-baseline")
+  if (kind === "preview") {
+    // `preview=1` completează datele și randează previzualizarea imediat, fără plată.
+    p.set("preview", "1")
+    p.set("first", DEMO.first)
+    p.set("last", DEMO.last)
+    p.set("day", DEMO.day)
+    p.set("month", DEMO.month)
+    p.set("year", DEMO.year)
+  }
+  return `/cristalul-calculator.html?${p.toString()}`
+}
+
+function VariantLink({ kind, id, className = "" }: { kind: Kind; id: string; className?: string }) {
+  return (
+    <a
+      href={variantUrl(kind, id)}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={kind === "form" ? "Открыть форму этого варианта" : "Открыть превью этого варианта (демо-данные)"}
+      className={`inline-flex items-center gap-1 rounded-md border border-white/10 px-2 py-1 text-[11px] text-foreground/75 transition hover:border-amber-300/40 hover:bg-white/5 hover:text-amber-200 ${className}`}
+    >
+      <ExternalLink className="h-3 w-3" />
+      Смотреть
+    </a>
+  )
 }
 
 function fmtMoney(r: RevenueByCurrency): string {
@@ -46,7 +90,7 @@ function RevenueCell({ revenue }: { revenue: RevenueByCurrency[] }) {
  * Un rând per variantă. Denominatorul ratelor este numărul de vizitatori atribuiți (assigned),
  * ca să nu supraestimăm conversia cu un eveniment care poate lipsi.
  */
-function VariantRow({ v }: { v: VariantReport }) {
+function VariantRow({ v, kind }: { v: VariantReport; kind: Kind }) {
   const denom = v.assigned || v.visitors
   return (
     <tr className={v.active ? "" : "opacity-55"}>
@@ -64,7 +108,10 @@ function VariantRow({ v }: { v: VariantReport }) {
             m{v.motion}
           </span>
         </div>
-        <div className="mt-0.5 font-mono text-[10px] text-muted-foreground">{v.id}</div>
+        <div className="mt-1 flex items-center gap-2">
+          <span className="font-mono text-[10px] text-muted-foreground">{v.id}</span>
+          <VariantLink kind={kind} id={v.id} />
+        </div>
       </td>
       <td className="py-2 px-2 text-right font-mono text-foreground/90">{v.assigned}</td>
       <td className="py-2 px-2 text-right font-mono text-foreground/70">{v.submits}</td>
@@ -81,7 +128,7 @@ function VariantRow({ v }: { v: VariantReport }) {
   )
 }
 
-function ExperimentTable({ title, rows }: { title: string; rows: VariantReport[] }) {
+function ExperimentTable({ title, rows, kind }: { title: string; rows: VariantReport[]; kind: Kind }) {
   const anyData = rows.some((r) => r.assigned || r.visitors || r.purchases)
   return (
     <section className="rounded-xl border border-white/10 bg-white/[0.02] p-4 sm:p-5">
@@ -112,7 +159,7 @@ function ExperimentTable({ title, rows }: { title: string; rows: VariantReport[]
           </thead>
           <tbody className="divide-y divide-white/5">
             {rows.map((v) => (
-              <VariantRow key={v.id} v={v} />
+              <VariantRow key={v.id} v={v} kind={kind} />
             ))}
           </tbody>
         </table>
@@ -158,6 +205,7 @@ function AllocationPanel({ rec }: { rec: AllocationRecommendation }) {
             >
               p{(r.probBest * 100).toFixed(0)}% · {r.trials}
             </span>
+            <VariantLink kind={rec.kind} id={r.id} className="shrink-0" />
           </div>
         ))}
       </div>
@@ -370,8 +418,8 @@ export function ExperimentsAdminClient() {
       </section>
 
       <div className="flex flex-col gap-5">
-        {report && <ExperimentTable title="Форма (12 концептов · 6 в Round 1)" rows={report.form} />}
-        {report && <ExperimentTable title="Превью (12 концептов · 6 в Round 1)" rows={report.preview} />}
+        {report && <ExperimentTable title="Форма (12 концептов · 6 в Round 1)" rows={report.form} kind="form" />}
+        {report && <ExperimentTable title="Превью (12 концептов · 6 в Round 1)" rows={report.preview} kind="preview" />}
       </div>
 
       {report && (
