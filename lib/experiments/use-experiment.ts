@@ -23,10 +23,27 @@ function readCookieAssignment(): { visitorId: string; form: string; preview: str
   return { visitorId, form, preview }
 }
 
+/**
+ * Previzualizare din panoul de admin: `?fv=&pv=&ap=<semnătură>`.
+ * Proxy-ul a verificat deja semnătura și a eliminat prin redirect orice override nesemnat, deci
+ * prezența parametrilor aici înseamnă link generat din admin.
+ */
+function readPreviewOverride(): { form: string; preview: string } | null {
+  if (typeof window === 'undefined') return null
+  const p = new URLSearchParams(window.location.search)
+  if (!p.get('ap')) return null
+  const form = p.get('fv')
+  const preview = p.get('pv')
+  if (!isKnownVariant('form', form) || !isKnownVariant('preview', preview)) return null
+  return { form: form as string, preview: preview as string }
+}
+
 export interface ExperimentContext {
   visitorId: string
   form: string
   preview: string
+  /** Previzualizare de admin: varianta e forțată din URL și NIMIC nu se înregistrează. */
+  previewMode: boolean
   formMotion: 0 | 1 | 2 | 3
   previewMotion: 0 | 1 | 2 | 3
   /** Trimite un eveniment de funnel; erorile nu ajung în interfață. */
@@ -34,23 +51,30 @@ export interface ExperimentContext {
 }
 
 export function useExperiment(entry?: string | null): ExperimentContext {
-  const assignment = useMemo(readCookieAssignment, [])
+  const override = useMemo(readPreviewOverride, [])
+  const assignment = useMemo(() => {
+    const base = readCookieAssignment()
+    return override ? { ...base, form: override.form, preview: override.preview } : base
+  }, [override])
   // Evităm dublurile în aceeași sesiune de pagină, înainte să ajungă la server
   // (deduplicarea finală rămâne în DB, pe `dedup_key`).
   const sent = useRef<Set<string>>(new Set())
 
   const track = useCallback(
     (input: ExperimentEventInput) => {
+      // Previzualizarea de admin nu trebuie să apară în rapoarte.
+      if (override) return
       const key = `${input.event}|${input.dedupSuffix ?? ''}`
       if (sent.current.has(key)) return
       sent.current.add(key)
       void recordExperimentEvent({ ...input, entry: input.entry ?? entry ?? null }).catch(() => {})
     },
-    [entry],
+    [entry, override],
   )
 
   return {
     ...assignment,
+    previewMode: Boolean(override),
     formMotion: motionLevel(assignment.form),
     previewMotion: motionLevel(assignment.preview),
     track,

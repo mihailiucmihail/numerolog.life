@@ -11,6 +11,7 @@ import {
   signAssignment,
   type Assignment,
 } from './lib/experiments/assignment'
+import { PREVIEW_TOKEN_PARAM, verifyPreviewToken } from './lib/experiments/preview-token'
 
 const handleI18nRouting = createMiddleware(routing)
 
@@ -112,6 +113,23 @@ export default async function proxy(request: NextRequest) {
     headers.set(CURRENCY_HEADER, currency)
     // Țara efectivă (prețul fix al Cristalului, alfabetul numelui); ?country=XX permite testarea fără VPN doar în dev/preview.
     if (resolved.country) headers.set(COUNTRY_HEADER, resolved.country)
+    // Previzualizarea unei variante din panoul de admin: `?fv=&pv=&ap=<semnătură>`.
+    // Fără semnătură validă parametrii sunt eliminați prin redirect, ca varianta să nu poată fi
+    // aleasă din browser (atribuirea reală rămâne cea din cookie-ul semnat).
+    const sp = request.nextUrl.searchParams
+    const previewToken = sp.get(PREVIEW_TOKEN_PARAM)
+    const fvParam = sp.get('fv')
+    const pvParam = sp.get('pv')
+    if (previewToken || fvParam || pvParam) {
+      if (!(await verifyPreviewToken(previewToken, fvParam, pvParam))) {
+        const clean = request.nextUrl.clone()
+        clean.searchParams.delete('fv')
+        clean.searchParams.delete('pv')
+        clean.searchParams.delete(PREVIEW_TOKEN_PARAM)
+        return withGeoCookies(NextResponse.redirect(clean), request, resolved)
+      }
+    }
+
     // Variantele de experiment se stabilesc ÎNAINTE de randare, ca prima pagină să fie deja
     // varianta finală (fără schimbare vizibilă) și să rămână aceeași la refresh sau revenire.
     const experiment = await resolveAssignment(request.cookies.get(EXPERIMENT_COOKIE)?.value)

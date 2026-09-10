@@ -5,12 +5,14 @@ import { Loader2, Lock, RefreshCw, FlaskConical, TrendingUp, Sparkles, ExternalL
 import {
   getExperimentReport,
   getAllocationRecommendation,
+  getVariantPreviewLinks,
   syncExperimentRegistry,
   type ExperimentReport,
   type VariantReport,
   type RevenueByCurrency,
   type AllocationReport,
   type AllocationRecommendation,
+  type VariantPreviewLinks,
 } from "@/app/actions/experiments-admin"
 
 function pct(num: number, den: number): string {
@@ -20,44 +22,37 @@ function pct(num: number, den: number): string {
 
 type Kind = "form" | "preview"
 
-/** Date demo pentru linkurile de inspecție — nicio persoană reală, niciun lead salvat. */
-const DEMO = { first: "Анна", last: "Иванова", day: "14", month: "7", year: "1990" }
-
 /**
- * Linkul de inspecție al unei variante.
+ * Linkul de inspecție al unei variante: deschide SITE-UL REAL (`/ru/numerologie`) — cu navbar,
+ * fundal cosmic și formularul în iframe — cu varianta forțată.
  *
- * Deschide direct HTML-ul calculatorului, care citește `fv`/`pv` din URL. Deliberat NU folosim
- * `/numerologie?fv=…`: atribuirea reală vine din cookie-ul semnat HMAC, iar un override pe pagina
- * publică ar permite alegerea variantei din browser și ar amesteca vizitele de test în statistici.
- * Fără părintele React, HTML-ul nu trimite evenimente și nu salvează lead-uri.
+ * URL-ul e generat pe server și semnat HMAC: proxy-ul respinge orice `fv`/`pv` nesemnat, deci
+ * varianta nu poate fi aleasă din browser, iar atribuirea reală rămâne cea din cookie. Vizita nu
+ * înregistrează evenimente și nu salvează lead-uri.
  */
-function variantUrl(kind: Kind, id: string): string {
-  const p = new URLSearchParams()
-  p.set("fv", kind === "form" ? id : "form-baseline")
-  p.set("pv", kind === "preview" ? id : "preview-baseline")
-  if (kind === "preview") {
-    // `preview=1` completează datele și randează previzualizarea imediat, fără plată.
-    p.set("preview", "1")
-    p.set("first", DEMO.first)
-    p.set("last", DEMO.last)
-    p.set("day", DEMO.day)
-    p.set("month", DEMO.month)
-    p.set("year", DEMO.year)
-  }
-  return `/cristalul-calculator.html?${p.toString()}`
-}
-
-function VariantLink({ kind, id, className = "" }: { kind: Kind; id: string; className?: string }) {
+function VariantLink({
+  kind,
+  id,
+  links,
+  className = "",
+}: {
+  kind: Kind
+  id: string
+  links: VariantPreviewLinks | null
+  className?: string
+}) {
+  const href = links?.[kind]?.[id]
+  if (!href) return null
   return (
     <a
-      href={variantUrl(kind, id)}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
-      title={kind === "form" ? "Открыть форму этого варианта" : "Открыть превью этого варианта (демо-данные)"}
+      title="Открыть на сайте с этим вариантом (статистика не пишется)"
       className={`inline-flex items-center gap-1 rounded-md border border-white/10 px-2 py-1 text-[11px] text-foreground/75 transition hover:border-amber-300/40 hover:bg-white/5 hover:text-amber-200 ${className}`}
     >
       <ExternalLink className="h-3 w-3" />
-      Смотреть
+      На сайте
     </a>
   )
 }
@@ -90,7 +85,7 @@ function RevenueCell({ revenue }: { revenue: RevenueByCurrency[] }) {
  * Un rând per variantă. Denominatorul ratelor este numărul de vizitatori atribuiți (assigned),
  * ca să nu supraestimăm conversia cu un eveniment care poate lipsi.
  */
-function VariantRow({ v, kind }: { v: VariantReport; kind: Kind }) {
+function VariantRow({ v, kind, links }: { v: VariantReport; kind: Kind; links: VariantPreviewLinks | null }) {
   const denom = v.assigned || v.visitors
   return (
     <tr className={v.active ? "" : "opacity-55"}>
@@ -110,7 +105,7 @@ function VariantRow({ v, kind }: { v: VariantReport; kind: Kind }) {
         </div>
         <div className="mt-1 flex items-center gap-2">
           <span className="font-mono text-[10px] text-muted-foreground">{v.id}</span>
-          <VariantLink kind={kind} id={v.id} />
+          <VariantLink kind={kind} id={v.id} links={links} />
         </div>
       </td>
       <td className="py-2 px-2 text-right font-mono text-foreground/90">{v.assigned}</td>
@@ -128,7 +123,17 @@ function VariantRow({ v, kind }: { v: VariantReport; kind: Kind }) {
   )
 }
 
-function ExperimentTable({ title, rows, kind }: { title: string; rows: VariantReport[]; kind: Kind }) {
+function ExperimentTable({
+  title,
+  rows,
+  kind,
+  links,
+}: {
+  title: string
+  rows: VariantReport[]
+  kind: Kind
+  links: VariantPreviewLinks | null
+}) {
   const anyData = rows.some((r) => r.assigned || r.visitors || r.purchases)
   return (
     <section className="rounded-xl border border-white/10 bg-white/[0.02] p-4 sm:p-5">
@@ -159,7 +164,7 @@ function ExperimentTable({ title, rows, kind }: { title: string; rows: VariantRe
           </thead>
           <tbody className="divide-y divide-white/5">
             {rows.map((v) => (
-              <VariantRow key={v.id} v={v} kind={kind} />
+              <VariantRow key={v.id} v={v} kind={kind} links={links} />
             ))}
           </tbody>
         </table>
@@ -168,7 +173,7 @@ function ExperimentTable({ title, rows, kind }: { title: string; rows: VariantRe
   )
 }
 
-function AllocationPanel({ rec }: { rec: AllocationRecommendation }) {
+function AllocationPanel({ rec, links }: { rec: AllocationRecommendation; links: VariantPreviewLinks | null }) {
   return (
     <div className="rounded-lg border border-white/10 bg-white/[0.02] p-4">
       <div className="mb-2 flex items-center justify-between gap-2">
@@ -205,7 +210,7 @@ function AllocationPanel({ rec }: { rec: AllocationRecommendation }) {
             >
               p{(r.probBest * 100).toFixed(0)}% · {r.trials}
             </span>
-            <VariantLink kind={rec.kind} id={r.id} className="shrink-0" />
+            <VariantLink kind={rec.kind} id={r.id} links={links} className="shrink-0" />
           </div>
         ))}
       </div>
@@ -231,6 +236,8 @@ export function ExperimentsAdminClient() {
   const [report, setReport] = useState<ExperimentReport | null>(null)
   const [allocation, setAllocation] = useState<AllocationReport | null>(null)
   const [allocLoading, setAllocLoading] = useState(false)
+  // Linkurile semnate spre site (generate pe server; fără semnătură varianta nu poate fi forțată).
+  const [links, setLinks] = useState<VariantPreviewLinks | null>(null)
   const [notice, setNotice] = useState("")
   const [syncing, setSyncing] = useState(false)
 
@@ -254,8 +261,13 @@ export function ExperimentsAdminClient() {
     e.preventDefault()
     setAuthError("")
     const ok = await load(password)
-    if (ok) setAuthed(true)
-    else setAuthError("Неверный пароль или база данных недоступна.")
+    if (ok) {
+      setAuthed(true)
+      const res = await getVariantPreviewLinks(password)
+      if (res.ok && res.links) setLinks(res.links)
+    } else {
+      setAuthError("Неверный пароль или база данных недоступна.")
+    }
   }
 
   async function handleSync() {
@@ -409,8 +421,8 @@ export function ExperimentsAdminClient() {
         </p>
         {allocation ? (
           <div className="grid gap-3 sm:grid-cols-2">
-            <AllocationPanel rec={allocation.form} />
-            <AllocationPanel rec={allocation.preview} />
+            <AllocationPanel rec={allocation.form} links={links} />
+            <AllocationPanel rec={allocation.preview} links={links} />
           </div>
         ) : (
           <p className="text-[12px] text-muted-foreground">Нажми «Рассчитать рекомендацию», чтобы увидеть предлагаемые веса.</p>
@@ -418,8 +430,17 @@ export function ExperimentsAdminClient() {
       </section>
 
       <div className="flex flex-col gap-5">
-        {report && <ExperimentTable title="Форма (12 концептов · 6 в Round 1)" rows={report.form} kind="form" />}
-        {report && <ExperimentTable title="Превью (12 концептов · 6 в Round 1)" rows={report.preview} kind="preview" />}
+        {report && (
+          <ExperimentTable title="Форма (12 концептов · 6 в Round 1)" rows={report.form} kind="form" links={links} />
+        )}
+        {report && (
+          <ExperimentTable
+            title="Превью (12 концептов · 6 в Round 1)"
+            rows={report.preview}
+            kind="preview"
+            links={links}
+          />
+        )}
       </div>
 
       {report && (
