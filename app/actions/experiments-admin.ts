@@ -328,6 +328,9 @@ export async function getVariantPreviewLinks(
         pv: previewVariant.id,
         [PREVIEW_TOKEN_PARAM]: await signPreviewToken(formVariant.id, previewVariant.id),
       })
+      if (key === "love-graph") params.set("entry", "love")
+      if (key === "career-graph") params.set("entry", "career")
+      if (key === "birthday-first") params.set("entry", "birthday")
       links.funnel[key] = `/ru/numerologie?${params.toString()}`
     }),
   ])

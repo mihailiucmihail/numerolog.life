@@ -136,6 +136,37 @@ export default function CristalFunnel() {
   const [paidOverlay, setPaidOverlay] = useState(false)
   const [cancelledNotice, setCancelledNotice] = useState(false)
   const [showSticky, setShowSticky] = useState(false)
+  const demoPreviewStarted = useRef(false)
+
+  // În Admin Experiments, tabul „Preview rezultat” pornește calculatorul cu o identitate demonstrativă.
+  // Linkul este deja semnat și marcat intern, deci nu creează lead-uri și nu afectează statisticile reale.
+  useEffect(() => {
+    if (searchParams.get('adminPreview') !== 'result' || demoPreviewStarted.current) return
+    demoPreviewStarted.current = true
+    const variantEntry = exp.form.includes('love')
+      ? 'love'
+      : exp.form.includes('career')
+        ? 'career'
+        : exp.form.includes('birthday')
+          ? 'birthday'
+          : entry
+    const demo: FormValues = {
+      first: locale === 'ro' ? 'Ana' : 'Анна',
+      last: locale === 'ro' ? 'Popescu' : 'Иванова',
+      middle: '',
+      day: 10,
+      month: 9,
+      year: 1990,
+      gender: 'f',
+      nameAlphabetKey: locale === 'ro' ? 'ro' : 'ru',
+      ...(variantEntry ? { entry: variantEntry } : {}),
+    }
+    formRef.current = demo
+    setForm(demo)
+    setPreviewRequested(true)
+    setForming(true)
+    setFrameSrc(buildPreviewSrc(demo, { form: exp.form, preview: exp.preview }))
+  }, [entry, exp.form, exp.preview, locale, searchParams])
 
   // Oferta din link, verificată pe server: preț redus afișat înainte de formular, în paywall și în bara sticky.
   const [offer, setOffer] = useState<AppliedOffer | null>(null)
