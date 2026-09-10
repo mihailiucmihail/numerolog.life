@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Mail } from 'lucide-react'
 import { CristalLoading } from '@/components/numerology/cristal-loading'
+import { AdminExperimentsSurface } from '@/components/numerology/admin-experiments-surface'
 
 interface FormData {
   last: string
@@ -97,7 +98,7 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
   const numeFull = [formData.first, formData.last].filter(Boolean).join(' ')
 
   return (
-    <div className="w-full px-0">
+    <AdminExperimentsSurface className="w-full overflow-hidden p-4 sm:p-5">
       {/* Banner informativ */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -142,6 +143,6 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
           />
         )}
       </AnimatePresence>
-    </div>
+    </AdminExperimentsSurface>
   )
 }
