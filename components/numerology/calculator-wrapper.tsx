@@ -134,7 +134,8 @@ export default function CalculatorWrapper() {
 
   return (
     <>
-      <div className="w-full">
+      <div className="relative w-full bg-transparent">
+        <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
         <iframe
           ref={iframeRef}
           src="/cristalul-calculator.html"
