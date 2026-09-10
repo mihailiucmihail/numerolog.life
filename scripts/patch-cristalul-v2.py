@@ -315,9 +315,13 @@ rep('</head>', """<style>
   #inputFormCard #mainCalcBtn.cd-main-cta:hover{background:#fcd34d!important;box-shadow:0 14px 34px rgba(251,191,36,.22)!important;}
   /* Final cascade: remove opaque source gradients so the Admin Experiments surface shows through. */
   html,body{background:transparent!important;background-color:transparent!important;}
-  .wrap,.card#inputFormCard,#inputFormCard,.card#inputFormCard::before,.card#inputFormCard::after{background:transparent!important;background-color:transparent!important;background-image:none!important;}
-  .card#inputFormCard{border:1px solid rgba(255,255,255,.1)!important;border-radius:12px!important;box-shadow:none!important;backdrop-filter:none!important;}
-  .card#inputFormCard .numerology-intro{background:rgba(255,255,255,.025)!important;background-image:none!important;border-bottom:1px solid rgba(255,255,255,.07)!important;border-radius:12px 12px 0 0!important;}
+  .wrap,.card#inputFormCard,.card#inputFormCard::before,.card#inputFormCard::after{background:transparent!important;background-color:transparent!important;background-image:none!important;}
+  .card#inputFormCard{border:1px solid rgba(255,255,255,.1)!important;border-radius:12px!important;background:rgba(255,255,255,.02)!important;box-shadow:none!important;backdrop-filter:none!important;padding:16px!important;}
+  .card#inputFormCard .numerology-intro{background:rgba(255,255,255,.02)!important;background-image:none!important;border-bottom:1px solid rgba(255,255,255,.1)!important;border-radius:12px 12px 0 0!important;}
+  .card#inputFormCard .numerology-copy h2{font-size:1.125rem!important;line-height:1.25!important;letter-spacing:0!important;font-weight:600!important;}
+  .card#inputFormCard .numerology-copy p{font-size:12px!important;line-height:1.625!important;}
+  .card#inputFormCard #mainCalcBtn.cd-main-cta{animation:none!important;}
+  .card#inputFormCard .btn:hover,.card#inputFormCard button:hover{transform:none!important;box-shadow:none!important;}
   .card#inputFormCard form,.card#inputFormCard .form-section,.card#inputFormCard .date-row,.card#inputFormCard .field-group{background:transparent!important;background-image:none!important;}
   @keyframes aePulse{0%,100%{box-shadow:0 10px 30px rgba(251,191,36,.12)}50%{box-shadow:0 10px 38px rgba(251,191,36,.25)}}
   @media (prefers-reduced-motion:reduce){#inputFormCard #mainCalcBtn.cd-main-cta{animation:none!important;}}
