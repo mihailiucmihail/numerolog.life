@@ -7,6 +7,7 @@
     results.style.display = 'block'
 
     const cards = [...results.children].filter((node) => node.classList?.contains('card'))
+    cards.filter((card) => !card.textContent.trim() && !card.querySelector('svg,canvas,img')).forEach((card) => card.remove())
     const summary = document.getElementById('personalDataSummary')
     const name = summary?.querySelector('#pds-name')?.textContent?.trim() || ''
     const date = summary?.querySelector('#pds-details')?.textContent?.trim() || ''
