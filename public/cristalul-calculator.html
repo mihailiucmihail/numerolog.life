@@ -8830,6 +8830,14 @@ function startPdfExport(){
     hero.querySelector('.report-name').textContent = name
     hero.querySelector('.report-meta').textContent = date
     results.prepend(hero)
+    const syncIdentity = () => {
+      const liveSummary = document.getElementById('personalDataSummary')
+      const liveName = liveSummary?.querySelector('#pds-name')?.textContent?.trim()
+      const liveDate = liveSummary?.querySelector('#pds-details')?.textContent?.trim()
+      if (liveName) hero.querySelector('.report-name').textContent = liveName
+      if (liveDate) hero.querySelector('.report-meta').textContent = liveDate
+    }
+    setTimeout(syncIdentity, 250)
 
     const nav = document.createElement('nav')
     nav.className = 'report-chapter-nav'
