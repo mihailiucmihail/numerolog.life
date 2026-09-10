@@ -104,6 +104,8 @@ export default function CristalFunnel() {
   // Emailul introdus în formularul calculatorului (obligatoriu acolo) — la plată doar îl confirmăm.
   const [formEmail, setFormEmail] = useState('')
   const [previewReady, setPreviewReady] = useState(false)
+  // Formularul React a fost trimis: iframe-ul cu previzualizarea e montat, dar raportul nu e încă randat.
+  const [previewRequested, setPreviewRequested] = useState(false)
   // v3: HTML-ul își randează propria previzualizare tematică + paywall (cu preț de la aplicație). Atunci
   // paywall-ul și bara sticky React nu se mai afișează (ar fi un al doilea CTA identic).
   const [nativePreview, setNativePreview] = useState(false)
@@ -247,6 +249,7 @@ export default function CristalFunnel() {
 
       if (d.type === 'previewFailed') {
         setPreviewReady(false)
+        setPreviewRequested(false)
         setForming(false)
       }
 
@@ -342,6 +345,14 @@ export default function CristalFunnel() {
     return () => io.disconnect()
   }, [previewReady, nativePreview])
 
+  // Plasă de siguranță: dacă iframe-ul nu confirmă raportul (rețea lentă, `previewRendered` pierdut),
+  // ecranul „Cristalul se formează” nu trebuie să rămână blocat — dezvăluim previzualizarea oricum.
+  useEffect(() => {
+    if (!forming || previewReady) return
+    const id = window.setTimeout(() => setPreviewReady(true), 15000)
+    return () => window.clearTimeout(id)
+  }, [forming, previewReady])
+
   const handleCheckout = useCallback(
     async (email: string, promoCode?: string) => {
       if (!form) return
@@ -397,6 +408,8 @@ export default function CristalFunnel() {
 
   const resetToForm = () => {
     setPreviewReady(false)
+    setPreviewRequested(false)
+    setForming(false)
     setNativePreview(false)
     setCheckoutError('')
     setCancelledNotice(false)
@@ -458,7 +471,7 @@ export default function CristalFunnel() {
         </p>
       )}
 
-      {!previewReady && !cancelledNotice ? (
+      {!previewRequested && !cancelledNotice ? (
         <CrystalReactForm
           initialEmail={emailParam}
           initialValues={form || undefined}
@@ -470,9 +483,12 @@ export default function CristalFunnel() {
               ...(entry ? { entry } : {}),
             }
             setForm(nextValues)
-            setFrameSrc(buildPreviewSrc(nextValues))
-            setPreviewReady(true)
+            setFrameSrc(`${buildPreviewSrc(nextValues)}&k=${Date.now()}`)
+            setPreviewRequested(true)
             setForming(true)
+            exp.track({ event: 'form_submit' })
+            exp.track({ event: 'calculation_start' })
+            window.scrollTo({ top: 0 })
             trackFunnel('birth_data_submitted', { has_middle: Boolean(nextValues.middle), alphabet: nextValues.nameAlphabetKey })
           }}
         />

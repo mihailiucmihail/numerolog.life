@@ -297,7 +297,7 @@ rep('</head>', """<style>
   @media (max-width:600px){#inputFormCard #mainCalcBtn.cd-main-cta{min-height:38px;padding:8px 12px;font-size:9px;letter-spacing:.08em;border-radius:12px;}#inputFormCard .cd-main-cta-note{margin-top:6px;font-size:10px;line-height:1.25;}}
 
   /* ==== Admin Experiments visual system: exact surface, tokens, motion and controls ==== */
-  :root{color-scheme:dark;--ae-bg:#0a0a14;--ae-surface:rgba(255,255,255,.025);--ae-surface-strong:rgba(255,255,255,.045);--ae-border:rgba(255,255,255,.1);--ae-border-soft:rgba(255,255,255,.07);--ae-text:#f4f4f5;--ae-muted:#a1a1aa;--ae-amber:#fbbf24;--ae-sky:#38bdf8;--ae-emerald:#34d399;--ae-radius:12px;}
+  :root{--ae-bg:#0a0a14;--ae-surface:rgba(255,255,255,.025);--ae-surface-strong:rgba(255,255,255,.045);--ae-border:rgba(255,255,255,.1);--ae-border-soft:rgba(255,255,255,.07);--ae-text:#f4f4f5;--ae-muted:#a1a1aa;--ae-amber:#fbbf24;--ae-sky:#38bdf8;--ae-emerald:#34d399;--ae-radius:12px;}
   html,body{background:var(--ae-bg)!important;color:var(--ae-text)!important;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;}
   #inputFormCard{border:1px solid var(--ae-border)!important;border-radius:var(--ae-radius)!important;background:var(--ae-surface)!important;box-shadow:0 24px 80px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.04)!important;backdrop-filter:blur(14px);}
   #inputFormCard .numerology-intro{border-bottom:1px solid var(--ae-border-soft)!important;background:linear-gradient(180deg,rgba(255,255,255,.035),transparent)!important;}
