@@ -330,3 +330,40 @@
   box-shadow:none!important;
 }
 #results .card [style*="border-top"]{border-top:1px solid var(--cdp-gold-line)!important;}
+
+/* Containerul exterior nu mai este un card separat: rămân suprafețe largi pentru conținut. */
+#results .card{
+  border:0!important;
+  border-radius:0!important;
+  padding:0!important;
+  margin:0 0 32px!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#results .card::before{display:none!important;}
+
+/* Blocurile de conținut primesc lățimea disponibilă și păstrează spațiu între ele și margini. */
+#results .card div[style*="border-left"],
+#results .card div[style*="border-top"],
+#results .card .namearc-item,
+#results .card .medallion{
+  width:100%;
+  max-width:none;
+  margin:0 0 24px!important;
+  padding:clamp(24px,3vw,42px)!important;
+  border:1px solid var(--cdp-gold-line)!important;
+  border-radius:1.5rem!important;
+  background:
+    radial-gradient(120% 90% at 100% 0%,rgba(217,169,79,.07),transparent 46%),
+    linear-gradient(145deg,var(--cdp-plum),var(--cdp-navy))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important;
+}
+#results .card .section-title{margin-bottom:24px!important;}
+#results .card .namearc-list{gap:0!important;}
+@media (max-width:600px){
+  #results .card{margin-bottom:22px!important;}
+  #results .card div[style*="border-left"],
+  #results .card div[style*="border-top"],
+  #results .card .namearc-item,
+  #results .card .medallion{padding:20px!important;margin-bottom:16px!important;border-radius:1.25rem!important;}
+}
