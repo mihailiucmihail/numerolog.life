@@ -1,4 +1,28 @@
 /* ==== Cristalul Destinului - strat de design premium pentru raport (injectat de patch-cristalul-v2.py) ==== */
+/* Admin Experiments visual system: same tokens, surfaces, typography and motion. */
+#results{--ae-bg:#0a0a14;--ae-surface:rgba(255,255,255,.025);--ae-surface-strong:rgba(255,255,255,.045);--ae-border:rgba(255,255,255,.1);--ae-border-soft:rgba(255,255,255,.07);--ae-text:#f4f4f5;--ae-muted:#a1a1aa;--ae-amber:#fbbf24;--ae-sky:#38bdf8;--ae-emerald:#34d399;--ae-radius:12px;}
+#results,#results *{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
+#results{background:transparent!important;color:var(--ae-text)!important;}
+#results .card{border:1px solid var(--ae-border)!important;border-radius:var(--ae-radius)!important;background:var(--ae-surface)!important;box-shadow:0 24px 80px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.04)!important;backdrop-filter:blur(14px);transition:border-color .2s ease,background .2s ease,transform .2s ease,box-shadow .2s ease;}
+#results .card::before{display:none!important;}
+#results .card:hover{border-color:rgba(251,191,36,.35)!important;background:var(--ae-surface-strong)!important;transform:translateY(-1px);box-shadow:0 28px 90px rgba(0,0,0,.34),0 0 28px rgba(251,191,36,.06)!important;}
+#results .card .section-title{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;color:var(--ae-text)!important;font-weight:650!important;letter-spacing:-.025em!important;border-bottom:1px solid var(--ae-border-soft)!important;}
+#results .card .section-title::before{font-family:ui-monospace,SFMono-Regular,Menlo,monospace!important;color:var(--ae-amber)!important;letter-spacing:.16em!important;}
+#results .card .section-title::after{background:linear-gradient(90deg,rgba(251,191,36,.55),rgba(255,255,255,.08),transparent)!important;}
+#results .card,#results .card p,#results .card .hint{color:var(--ae-muted)!important;line-height:1.65!important;}
+#results .card b,#results .card strong,#results .card i,#results .card em{color:var(--ae-text)!important;}
+#results .card div[style*="border-left:2px solid"],#results .card div[style*="border-left:3px solid"]{border:1px solid var(--ae-border-soft)!important;border-radius:var(--ae-radius)!important;background:rgba(255,255,255,.025)!important;box-shadow:none!important;}
+#results .card div[style*="border-left:2px solid"]::before,#results .card div[style*="border-left:3px solid"]::before{background:linear-gradient(180deg,transparent,var(--ae-amber),transparent)!important;}
+#results .card .medallion,#results .card .namearc-item{border:1px solid var(--ae-border)!important;border-radius:var(--ae-radius)!important;background:rgba(255,255,255,.025)!important;box-shadow:none!important;transition:border-color .2s ease,background .2s ease;}
+#results .card .medallion:hover,#results .card .namearc-item:hover{border-color:rgba(56,189,248,.5)!important;background:rgba(56,189,248,.06)!important;}
+#results .card .medallion .num,#results .card .num{font-family:ui-monospace,SFMono-Regular,Menlo,monospace!important;color:var(--ae-amber)!important;text-shadow:none!important;}
+#results .card .medallion .label,#results .card .label{font-family:ui-monospace,SFMono-Regular,Menlo,monospace!important;color:var(--ae-muted)!important;letter-spacing:.12em!important;}
+#results #personalDataSummary{background:linear-gradient(180deg,rgba(255,255,255,.035),transparent)!important;}
+#results #personalDataSummary [style*="font-size:22px"],#results #personalDataSummary [style*="font-size:24px"],#results #personalDataSummary [style*="font-size:26px"]{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;color:var(--ae-text)!important;font-weight:650!important;}
+@keyframes aeCardReveal{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#results .card{animation:aeCardReveal .45s ease both;}
+@media (prefers-reduced-motion:reduce){#results .card{animation:none!important;transform:none!important;}}
+
 /* Scop: doar cardurile din #results. Formularul (#inputFormCard) NU este atins. */
 
 /* Butonul principal al formularului: vizibil, premium și animat discret. */

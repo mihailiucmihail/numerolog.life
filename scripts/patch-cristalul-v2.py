@@ -295,6 +295,26 @@ rep('</head>', """<style>
   #inputFormCard #mainCalcBtn.cd-main-cta{min-height:44px;padding:10px 18px;font-size:11px;letter-spacing:.14em;border-radius:14px;}
   #inputFormCard .cd-main-cta-note{margin:7px auto 0;font-size:11px;line-height:1.3;letter-spacing:0;}
   @media (max-width:600px){#inputFormCard #mainCalcBtn.cd-main-cta{min-height:38px;padding:8px 12px;font-size:9px;letter-spacing:.08em;border-radius:12px;}#inputFormCard .cd-main-cta-note{margin-top:6px;font-size:10px;line-height:1.25;}}
+
+  /* ==== Admin Experiments visual system: exact surface, tokens, motion and controls ==== */
+  :root{color-scheme:dark;--ae-bg:#0a0a14;--ae-surface:rgba(255,255,255,.025);--ae-surface-strong:rgba(255,255,255,.045);--ae-border:rgba(255,255,255,.1);--ae-border-soft:rgba(255,255,255,.07);--ae-text:#f4f4f5;--ae-muted:#a1a1aa;--ae-amber:#fbbf24;--ae-sky:#38bdf8;--ae-emerald:#34d399;--ae-radius:12px;}
+  html,body{background:var(--ae-bg)!important;color:var(--ae-text)!important;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;}
+  #inputFormCard{border:1px solid var(--ae-border)!important;border-radius:var(--ae-radius)!important;background:var(--ae-surface)!important;box-shadow:0 24px 80px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.04)!important;backdrop-filter:blur(14px);}
+  #inputFormCard .numerology-intro{border-bottom:1px solid var(--ae-border-soft)!important;background:linear-gradient(180deg,rgba(255,255,255,.035),transparent)!important;}
+  #inputFormCard .numerology-kicker,#inputFormCard label{font-family:ui-monospace,SFMono-Regular,Menlo,monospace!important;color:var(--ae-amber)!important;letter-spacing:.16em!important;font-size:10px!important;}
+  #inputFormCard .numerology-copy h2{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;color:var(--ae-text)!important;font-weight:650!important;letter-spacing:-.04em!important;text-shadow:none!important;}
+  #inputFormCard .numerology-copy p{font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;color:var(--ae-muted)!important;}
+  #inputFormCard input,#inputFormCard select,#inputFormCard textarea{border:1px solid var(--ae-border)!important;border-radius:var(--ae-radius)!important;background:rgba(255,255,255,.025)!important;color:var(--ae-text)!important;font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.03)!important;}
+  #inputFormCard input::placeholder{color:#71717a!important;}
+  #inputFormCard input:focus,#inputFormCard select:focus,#inputFormCard textarea:focus{border-color:rgba(56,189,248,.65)!important;box-shadow:0 0 0 3px rgba(56,189,248,.12)!important;}
+  #inputFormCard .date-field label{color:var(--ae-muted)!important;}
+  #inputFormCard .btn,#inputFormCard button{border:1px solid rgba(251,191,36,.35)!important;border-radius:var(--ae-radius)!important;background:rgba(251,191,36,.1)!important;color:#fde68a!important;box-shadow:none!important;font-family:ui-monospace,SFMono-Regular,Menlo,monospace!important;letter-spacing:.08em!important;}
+  #inputFormCard .btn:hover,#inputFormCard button:hover{border-color:rgba(251,191,36,.7)!important;background:rgba(251,191,36,.16)!important;box-shadow:0 0 28px rgba(251,191,36,.12)!important;transform:translateY(-1px);}
+  #inputFormCard #mainCalcBtn.cd-main-cta{background:var(--ae-amber)!important;color:#18181b!important;border:0!important;border-radius:var(--ae-radius)!important;box-shadow:0 10px 30px rgba(251,191,36,.14)!important;font-family:Inter,ui-sans-serif,system-ui,sans-serif!important;font-weight:700!important;text-shadow:none!important;animation:aePulse 3s ease-in-out infinite!important;}
+  #inputFormCard #mainCalcBtn.cd-main-cta::before{display:none!important;}
+  #inputFormCard #mainCalcBtn.cd-main-cta:hover{background:#fcd34d!important;box-shadow:0 14px 34px rgba(251,191,36,.22)!important;}
+  @keyframes aePulse{0%,100%{box-shadow:0 10px 30px rgba(251,191,36,.12)}50%{box-shadow:0 10px 38px rgba(251,191,36,.25)}}
+  @media (prefers-reduced-motion:reduce){#inputFormCard #mainCalcBtn.cd-main-cta{animation:none!important;}}
   </style></head>""", 1)
 
 # 1c. Strat de design premium pentru raport (doar #results) — sursa: scripts/cristalul-premium-report.css

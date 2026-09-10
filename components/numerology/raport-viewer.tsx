@@ -103,11 +103,8 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="mb-6 flex w-full items-center gap-3 rounded-none border-x-0 px-4 py-3 sm:rounded-lg sm:border-x"
-        style={{
-          background: 'rgba(212,175,55,0.06)',
-          border: '1px solid rgba(212,175,55,0.2)',
-        }}
+        className="mb-6 flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/[0.025] px-4 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-md"
+        style={{ animation: 'aeBannerReveal .45s ease both' }}
       >
         <Mail size={16} style={{ color: '#D4AF37', flexShrink: 0 }} />
         <p className="text-sm" style={{ color: 'rgba(237,227,207,0.7)' }}>
