@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface CristalLoadingProps {
@@ -48,7 +49,27 @@ export function CristalLoading({ eyebrow, title, phrases, durationMs = 5000, rea
     if (onDone && elapsed && ready) onDone()
   }, [elapsed, ready, onDone])
 
-  return (
+  // Portalul e disponibil abia după montare (SSR nu are `document`).
+  const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null)
+  useEffect(() => {
+    setPortalTarget(document.body)
+  }, [])
+
+  // Cât timp ecranul e afișat, pagina de sub el nu trebuie să deruleze (footerul nu apare sub cristal).
+  useEffect(() => {
+    if (!portalTarget) return
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previous
+    }
+  }, [portalTarget])
+
+  if (!portalTarget) return null
+
+  // Randat direct în <body>: părinții cu `transform`/`backdrop-filter` (cardurile, motion.div) transformă
+  // `position: fixed` într-un bloc relativ la card, iar ecranul acoperea doar partea de sus a paginii.
+  return createPortal(
     <motion.div
       // Apare INSTANT și complet opac (fără fade-in) — raportul de dedesubt nu trebuie să se vadă nicio clipă.
       initial={{ opacity: 1 }}
@@ -166,6 +187,7 @@ export function CristalLoading({ eyebrow, title, phrases, durationMs = 5000, rea
           )}
         </div>
       </div>
-    </motion.div>
+    </motion.div>,
+    portalTarget,
   )
 }
