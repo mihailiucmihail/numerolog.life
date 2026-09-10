@@ -4,6 +4,13 @@ import { routing } from './i18n/routing'
 import { COUNTRY_HEADER, CURRENCY_COOKIE, CURRENCY_HEADER, currencyFromCountry, parseCurrency, type Currency } from './lib/currency'
 import { isCountryOverrideAllowed, isNativelyPriced } from './lib/country-pricing'
 import { COUNTRY_COOKIE, COUNTRY_COOKIE_MAX_AGE, readCountryCookie, signCountryCookie } from './lib/country-cookie'
+import {
+  EXPERIMENT_COOKIE,
+  EXPERIMENT_COOKIE_MAX_AGE,
+  resolveAssignment,
+  signAssignment,
+  type Assignment,
+} from './lib/experiments/assignment'
 
 const handleI18nRouting = createMiddleware(routing)
 
@@ -61,10 +68,19 @@ async function withGeoCookies(
   response: NextResponse | Response,
   request: NextRequest,
   resolved: { country: string | null; persist: boolean },
+  experiment?: { assignment: Assignment; changed: boolean },
 ): Promise<NextResponse | Response> {
   const { currency, persist } = resolveCurrency(request, resolved.country)
-  if (!persist && !resolved.persist) return response
+  const persistExperiment = experiment?.changed === true
+  if (!persist && !resolved.persist && !persistExperiment) return response
   const res = response instanceof NextResponse ? response : new NextResponse(response.body, response)
+  if (persistExperiment && experiment) {
+    // Nu este httpOnly: interfața trebuie să știe ce variantă randează. Semnătura HMAC
+    // împiedică alegerea manuală a unei variante din browser.
+    res.cookies.set(EXPERIMENT_COOKIE, await signAssignment(experiment.assignment), {
+      path: '/', maxAge: EXPERIMENT_COOKIE_MAX_AGE, sameSite: 'lax',
+    })
+  }
   if (persist) res.cookies.set(CURRENCY_COOKIE, currency, { path: '/', maxAge: CURRENCY_COOKIE_MAX_AGE, sameSite: 'lax' })
   if (resolved.persist && resolved.country) {
     res.cookies.set(COUNTRY_COOKIE, await signCountryCookie(resolved.country), {
@@ -96,8 +112,14 @@ export default async function proxy(request: NextRequest) {
     headers.set(CURRENCY_HEADER, currency)
     // Țara efectivă (prețul fix al Cristalului, alfabetul numelui); ?country=XX permite testarea fără VPN doar în dev/preview.
     if (resolved.country) headers.set(COUNTRY_HEADER, resolved.country)
+    // Variantele de experiment se stabilesc ÎNAINTE de randare, ca prima pagină să fie deja
+    // varianta finală (fără schimbare vizibilă) și să rămână aceeași la refresh sau revenire.
+    const experiment = await resolveAssignment(request.cookies.get(EXPERIMENT_COOKIE)?.value)
+    headers.set('x-exp-visitor', experiment.assignment.visitorId)
+    headers.set('x-exp-form', experiment.assignment.form)
+    headers.set('x-exp-preview', experiment.assignment.preview)
     const forwarded = new NextRequest(request, { headers })
-    return withGeoCookies(handleI18nRouting(forwarded), request, resolved)
+    return withGeoCookies(handleI18nRouting(forwarded), request, resolved, experiment)
   }
 
   // Orice rută publică este redirecționată către versiunea rusă.

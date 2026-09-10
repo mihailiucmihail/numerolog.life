@@ -3,6 +3,7 @@ import type Stripe from "stripe"
 import { getStripe } from "@/lib/stripe"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { consumePromoCode } from "@/lib/promo"
+import { recordPurchaseFromSession } from "@/lib/experiments/purchase"
 
 // Stripe trimite payload-ul brut; dezactivam parsarea automata.
 export const runtime = "nodejs"
@@ -47,6 +48,14 @@ export async function POST(request: NextRequest) {
           } catch (err) {
             console.error("[v0] Eroare la consumarea codului promo:", err)
           }
+        }
+
+        // Sursa autoritară pentru atribuirea cumpărării: webhookul, nu pagina de succes
+        // (pe care vizitatorul poate să nu o deschidă niciodată). Deduplicat pe id-ul sesiunii.
+        try {
+          await recordPurchaseFromSession(session, { entry: session.metadata?.entry ?? null })
+        } catch (err) {
+          console.error("[v0] Eroare la atribuirea experimentului:", err)
         }
 
         const userId = session.metadata?.userId

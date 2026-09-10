@@ -8,6 +8,8 @@ import { getRequestCristalPrice, getRequestCurrency } from "@/lib/currency-serve
 import { getGraniPriceMinor, graniCurrency } from "@/lib/currency"
 import { fromStripeMinor, toStripeMinor } from "@/lib/country-pricing"
 import { recordCheckoutAttempt } from "@/lib/checkout-attempts"
+import { getRequestAssignment } from "@/lib/experiments/server"
+import { recordExperimentEvent } from "@/app/actions/experiment-events"
 
 const PROMO_ERRORS = {
   ro: {
@@ -40,6 +42,10 @@ export async function startNumerologieCheckout(
   // Browser-ul nu trimite sume, monede sau prețuri afișate; primim doar produsul și eventualul cod promo.
   const price = await getRequestCristalPrice()
   const currency = price.currency.toLowerCase()
+
+  // Atribuirea experimentului vine din cookie-ul SEMNAT, nu din browser: altfel un vizitator
+  // ar putea raporta cumpărarea pe altă variantă decât cea pe care a văzut-o.
+  const assignment = await getRequestAssignment()
   let unitAmount = toStripeMinor(price.amount, price.currency)
   let appliedPromo: string | null = null
   let appliedPercent = 0
@@ -58,6 +64,9 @@ export async function startNumerologieCheckout(
       sessionId,
       status,
       error,
+      visitorId: assignment.visitorId || null,
+      formVariant: assignment.form,
+      previewVariant: assignment.preview,
     })
 
   if (!price.stripeSupported) {
@@ -94,6 +103,14 @@ export async function startNumerologieCheckout(
     throw new Error('Nu s-a putut genera URL-ul de plată.')
   }
   await attempt('started', session.id)
+  // Tentativă efectivă de plată (sesiune Stripe creată) — diferită de simplul click pe buton.
+  await recordExperimentEvent({
+    event: 'checkout_start',
+    entry: typeof formData?.entry === 'string' ? formData.entry : null,
+    dedupSuffix: session.id,
+    valueAmount: fromStripeMinor(unitAmount, price.currency),
+    valueCurrency: currency,
+  })
   return session.url
 
   function createCristalSession() {
@@ -119,6 +136,11 @@ export async function startNumerologieCheckout(
       displayPrice: price.displayPrice,
       ...(formData ? { formData: JSON.stringify(formData) } : {}),
       ...(appliedPromo ? { promoCode: appliedPromo } : {}),
+      // Atribuirea plății: rămâne în sesiunea Stripe, deci cumpărarea confirmată de webhook
+      // poate fi legată de variantă chiar dacă vizitatorul revine mai târziu sau de pe alt dispozitiv.
+      ...(assignment.visitorId ? { expVisitor: assignment.visitorId } : {}),
+      expForm: assignment.form,
+      expPreview: assignment.preview,
     },
     success_url: `${baseUrl}/${locale}/numerologie?payment=success&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/${locale}/numerologie?payment=cancelled`,

@@ -13,6 +13,7 @@ import { trackFunnel, trackPurchase } from '@/lib/funnel-analytics'
 import { FunnelPaywall, type AppliedOffer } from './funnel-paywall'
 import { CristalLoading } from '@/components/numerology/cristal-loading'
 import { CHECKOUT_STORAGE_KEY, FUNNEL_STORAGE_KEY, type FunnelForm as FormValues } from './types'
+import { useLandingView } from '@/lib/experiments/use-experiment'
 
 const PAYWALL_ID = 'funnel-paywall'
 const CALCULATOR_SRC = '/cristalul-calculator.html'
@@ -104,6 +105,8 @@ export default function CristalFunnel() {
   const [nativePreview, setNativePreview] = useState(false)
   // Ecranul „Cristalul se formează” (≈7 s) între formular și raportul blurat.
   const [forming, setForming] = useState(false)
+  // Experimentul FORM/PREVIEW: varianta e deja stabilită de proxy, aici doar raportăm parcursul.
+  const exp = useLandingView(entry)
   const [checkoutBusy, setCheckoutBusy] = useState(false)
   const [checkoutError, setCheckoutError] = useState('')
   const [paidOverlay, setPaidOverlay] = useState(false)
@@ -158,6 +161,9 @@ export default function CristalFunnel() {
   // Mesaje din iframe: înălțime, raport blurat randat, validare promo din formularul original.
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
+      // Acceptăm doar mesajele venite din propriul iframe: altfel orice pagină care ne încarcă
+      // ar putea declanșa checkout sau falsifica evenimentele de funnel.
+      if (iframeRef.current && event.source !== iframeRef.current.contentWindow) return
       const d = event.data
       if (!d || typeof d !== 'object') return
 
@@ -174,13 +180,20 @@ export default function CristalFunnel() {
       if (d.type === 'cdTrack' && typeof d.event === 'string') {
         const p = (d.params && typeof d.params === 'object' ? d.params : {}) as Record<string, unknown>
         const base = { product: 'full_crystal', country: country || undefined, currency: cristal.currency, price: cristal.amount, language: locale, entry: entry || 'default' }
-        if (d.event === 'paywall_view') trackFunnel('numerology_paywall_view', base)
-        else if (d.event === 'paywall_cta_click') trackFunnel('numerology_unlock_click', { ...base, source: typeof p.source === 'string' ? p.source : undefined })
+        if (d.event === 'paywall_view') {
+          trackFunnel('numerology_paywall_view', base)
+          exp.track({ event: 'paywall_view' })
+        } else if (d.event === 'paywall_cta_click') {
+          trackFunnel('numerology_unlock_click', { ...base, source: typeof p.source === 'string' ? p.source : undefined })
+          exp.track({ event: 'cta_click', meta: { source: typeof p.source === 'string' ? p.source : 'paywall' } })
+        }
         else if (d.event === 'report_preview_view') trackFunnel('full_report_offer_viewed', base)
       }
 
       if (d.type === 'previewStarted') {
         setForming(true)
+        exp.track({ event: 'form_submit' })
+        exp.track({ event: 'calculation_start' })
         window.scrollTo({ top: 0 })
       }
 
@@ -211,6 +224,8 @@ export default function CristalFunnel() {
         }
         setPreviewReady(true)
         setNativePreview(d.native === true)
+        exp.track({ event: 'calculation_complete' })
+        exp.track({ event: 'preview_impression', meta: { native: d.native === true, motion: exp.previewMotion } })
         trackFunnel('free_result_viewed', { mode: d.native === true ? 'native_preview' : 'blurred_report', entry: entry || 'default' })
         trackFunnel('numerology_free_result_view', { product: 'full_crystal', country: country || undefined, currency: cristal.currency, language: locale })
         // Derularea la raport se face când dispare ecranul de formare (vezi onDone).
@@ -247,7 +262,7 @@ export default function CristalFunnel() {
     }
     window.addEventListener('message', onMessage)
     return () => window.removeEventListener('message', onMessage)
-  }, [postToFrame, pricingMessage, locale, cristal.currency, cristal.amount, country, entry])
+  }, [postToFrame, pricingMessage, locale, cristal.currency, cristal.amount, country, entry, exp])
 
   // Restaurare după întoarcere de la Stripe (anulat): raport blurat direct, fără re-completare.
   useEffect(() => {
