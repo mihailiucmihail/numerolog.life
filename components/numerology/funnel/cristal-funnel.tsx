@@ -91,7 +91,10 @@ export default function CristalFunnel() {
   const entry = normalizeEntry(searchParams.get('entry'))
 
   // Formularul se deschide cu alfabetul numelui preselectat după țara vizitatorului (HTML-ul citește ?alpha=).
-  const formSrc = `${CALCULATOR_SRC}?alpha=${alphabet}&country=${country || ''}${emailParam ? `&email=${encodeURIComponent(emailParam)}` : ''}${entry ? `&entry=${entry}` : ''}`
+  // Experimentul FORM/PREVIEW: varianta e stabilită de proxy înainte de randare; aici doar o
+  // transmitem formularului (?fv=/?pv=) și raportăm parcursul.
+  const exp = useLandingView(entry)
+  const formSrc = `${CALCULATOR_SRC}?alpha=${alphabet}&country=${country || ''}${emailParam ? `&email=${encodeURIComponent(emailParam)}` : ''}${entry ? `&entry=${entry}` : ''}&fv=${exp.form}&pv=${exp.preview}`
   const [frameSrc, setFrameSrc] = useState<string>(formSrc)
   // Înălțime de pornire ≥ formular complet (titlu + video 3:4 + câmpuri + buton), ca nimic să nu fie
   // tăiat până sosește prima măsurătoare `resize` din iframe.
@@ -105,8 +108,6 @@ export default function CristalFunnel() {
   const [nativePreview, setNativePreview] = useState(false)
   // Ecranul „Cristalul se formează” (≈7 s) între formular și raportul blurat.
   const [forming, setForming] = useState(false)
-  // Experimentul FORM/PREVIEW: varianta e deja stabilită de proxy, aici doar raportăm parcursul.
-  const exp = useLandingView(entry)
   const [checkoutBusy, setCheckoutBusy] = useState(false)
   const [checkoutError, setCheckoutError] = useState('')
   const [paidOverlay, setPaidOverlay] = useState(false)
@@ -188,6 +189,15 @@ export default function CristalFunnel() {
           exp.track({ event: 'cta_click', meta: { source: typeof p.source === 'string' ? p.source : 'paywall' } })
         }
         else if (d.event === 'report_preview_view') trackFunnel('full_report_offer_viewed', base)
+      }
+
+      // Evenimente venite din stratul de variante al formularului (pași, prima interacțiune).
+      if (d.type === 'cdVariantEvent' && typeof d.event === 'string') {
+        const step = d.meta && typeof d.meta === 'object' ? (d.meta as { step?: number }).step : undefined
+        exp.track({
+          event: d.event === 'form_step_complete' ? 'form_step_complete' : 'form_first_interaction',
+          ...(typeof step === 'number' ? { meta: { step }, dedupSuffix: `step-${step}` } : {}),
+        })
       }
 
       if (d.type === 'previewStarted') {

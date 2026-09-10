@@ -29,6 +29,7 @@ SRC = ROOT / 'public/cristalul-versions/cristalul-destinului-v3-entry-upload.htm
 DST = ROOT / 'public/cristalul-calculator.html'
 BRIDGE = ROOT / 'scripts/cristalul-bridge-snippet.html'
 PREVIEW = ROOT / 'scripts/cristalul-native-preview-snippet.html'
+VARIANTS = ROOT / 'scripts/cristalul-variants-snippet.html'
 PREMIUM_CSS = ROOT / 'scripts/cristalul-premium-report.css'
 
 s = SRC.read_text(encoding='utf-8')
@@ -342,7 +343,10 @@ bridge = re.sub(r'(?m)^([ \t]*)> ', r'\1', BRIDGE.read_text(encoding='utf-8'))
 assert 'requestPayment' in bridge and 'reportRendered' in bridge
 preview = re.sub(r'(?m)^([ \t]*)> ', r'\1', PREVIEW.read_text(encoding='utf-8'))
 assert 'CrystalReport' in preview and "params.get('preview')" in preview
-rep('</body>', bridge.rstrip('\n') + '\n' + preview.rstrip('\n') + '\n</body>')
+variants = re.sub(r'(?m)^([ \t]*)> ', r'\1', VARIANTS.read_text(encoding='utf-8'))
+assert 'data-cd-form' in variants and "params.get('fv')" in variants
+assert variants.count('\ufffd') == 0, 'stratul de variante contine U+FFFD'
+rep('</body>', bridge.rstrip('\n') + '\n' + preview.rstrip('\n') + '\n' + variants.rstrip('\n') + '\n</body>')
 
 # 6. Fără surse/autori în text vizibil -------------------------------------------------------------
 rep("Сравнение Карта Рождения ↔ Карта Имени (метод Айрэн По / Джули По) — где цифры отличаются:",
@@ -361,7 +365,7 @@ s = re.sub(r'(?m)^([ \t]*)> ', r'\1', s)
 for marker in ('id="emailAddr"', 'id="promoCode"', 'id="mainCalcBtn"', 'function requestPayment',
                "params.get('auto')", 'reportRendered', 'validatePromo', 'paymentSuccess',
                "params.get('preview')", 'window.CrystalReport', 'previewRendered', 'window.__cdSkipMail', 'getEntryContext',
-               'function cdMainAction', 'onclick="cdMainAction()"', 'cristalul-premium.mp4', 'hero-video',
+               'function cdMainAction', 'onclick="cdMainAction()"', 'data-cd-form', "params.get('fv')", 'cristalul-premium.mp4', 'hero-video',
                ':root{color-scheme:light;}', '.bg-anim{display:none !important;}'):
     assert marker in s, f'marker lipsă după patch: {marker}'
 
