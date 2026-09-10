@@ -10,9 +10,9 @@ const CristalFunnel = dynamic(() => import('./funnel/cristal-funnel'), { ssr: fa
 
 export default function NumerologieClient() {
   return (
-    <div className="mx-auto w-full max-w-6xl px-6 pb-16 sm:px-8 lg:px-12">
+    <div className="w-full">
       <AdminExperimentsHeader eyebrow="Numerolog / Experiment surface" title="Cristalul Destinului" />
-      <AdminExperimentsSurface className="overflow-hidden p-0">
+      <AdminExperimentsSurface className="w-full overflow-hidden p-0">
         <CristalFunnel />
       </AdminExperimentsSurface>
     </div>
