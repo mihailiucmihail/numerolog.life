@@ -51,7 +51,7 @@ function readSaved(): FormValues | null {
 }
 
 /** Întoarcere de la Stripe (anulat): re-deschidem direct raportul blurat cu datele salvate. */
-function buildPreviewSrc(v: FormValues): string {
+function buildPreviewSrc(v: FormValues, variants?: { form: string; preview: string }): string {
   const params = new URLSearchParams({
     preview: '1',
     last: v.last,
@@ -64,6 +64,12 @@ function buildPreviewSrc(v: FormValues): string {
     alpha: v.nameAlphabetKey,
   })
   if (v.entry) params.set('entry', v.entry)
+  // Varianta de PREVIEW din experiment: fără ea iframe-ul ar randa mereu baseline-ul, iar panoul de admin
+  // ar arăta același ecran pentru toate variantele.
+  if (variants) {
+    params.set('fv', variants.form)
+    params.set('pv', variants.preview)
+  }
   return `${CALCULATOR_SRC}?${params.toString()}`
 }
 
@@ -263,7 +269,7 @@ export default function CristalFunnel() {
         const saved = formRef.current
         if (saved && !previewRetried.current) {
           previewRetried.current = true
-          setFrameSrc(`${buildPreviewSrc(saved)}&k=${Date.now()}`)
+          setFrameSrc(`${buildPreviewSrc(saved, { form: exp.form, preview: exp.preview })}&k=${Date.now()}`)
           return
         }
         setPreviewRequested(false)
@@ -501,7 +507,7 @@ export default function CristalFunnel() {
               ...(entry ? { entry } : {}),
             }
             setForm(nextValues)
-            setFrameSrc(`${buildPreviewSrc(nextValues)}&k=${Date.now()}`)
+            setFrameSrc(`${buildPreviewSrc(nextValues, { form: exp.form, preview: exp.preview })}&k=${Date.now()}`)
             setPreviewRequested(true)
             setForming(true)
             exp.track({ event: 'form_submit' })

@@ -8466,6 +8466,9 @@ function startPdfExport(){
         if(alpha && document.getElementById('nameAlphabetSelect')) document.getElementById('nameAlphabetSelect').value = alpha;
         document.body.classList.add('cd-preview');
         await __cdWaitForReportData(15000);
+        // Formularul React nu cunoaste alfabetul numelui: il deducem din litere, altfel calculate()
+        // respinge numele latine cu "alfabetul nu corespunde" si previzualizarea cade.
+        __cdAutoAlphabet();
         if(typeof calculate === 'function') calculate();
         var ok = await __cdWaitForPreviewRender(8000);
         if(ok && typeof window.__cdApplyPricing === 'function') window.__cdApplyPricing();

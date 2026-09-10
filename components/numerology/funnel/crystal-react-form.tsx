@@ -23,6 +23,23 @@ interface CrystalReactFormProps {
   onSubmit: (values: CrystalFormValues) => void
 }
 
+/**
+ * Alfabetul preselectat vine din țară (RO → latin), dar mulți vizitatori scriu numele în chirilică și invers.
+ * Calculatorul respinge nepotrivirea („alfabetul nu corespunde literelor”), deci deducem din literele reale:
+ * chirilic → `ru` (HTML-ul îl rafinează pe uk/be/kk dacă apar litere specifice), latin → păstrăm alegerea
+ * latină existentă sau `ro`.
+ */
+function detectAlphabet(name: string, current: string): string {
+  const letters = name.replace(/[^\p{L}]/gu, '')
+  if (!letters) return current
+  const cyrillic = (letters.match(/\p{Script=Cyrillic}/gu) ?? []).length
+  const latin = (letters.match(/\p{Script=Latin}/gu) ?? []).length
+  const CYRILLIC_KEYS = ['ru', 'uk', 'be', 'kk', 'bg']
+  if (cyrillic > latin) return CYRILLIC_KEYS.includes(current) ? current : 'ru'
+  if (latin > cyrillic) return CYRILLIC_KEYS.includes(current) ? 'ro' : current
+  return current
+}
+
 const inputClass =
   'h-12 w-full rounded-xl border border-white/10 bg-white/[0.02] px-3.5 text-[16px] text-foreground outline-none transition placeholder:text-muted-foreground/50 focus:border-sky-400/60 focus:bg-white/[0.04] focus:ring-4 focus:ring-sky-400/10 sm:text-sm'
 
@@ -63,7 +80,13 @@ export function CrystalReactForm({ initialEmail = '', initialValues, onSubmit }:
     if (!values.first.trim() || !values.last.trim()) return setError('Заполни имя и фамилию.')
     if (!dateValid) return setError('Проверь дату рождения.')
     setError('')
-    onSubmit({ ...values, day: Number(values.day), month: Number(values.month), year: Number(values.year) })
+    onSubmit({
+      ...values,
+      nameAlphabetKey: detectAlphabet(`${values.last}${values.first}${values.middle}`, values.nameAlphabetKey),
+      day: Number(values.day),
+      month: Number(values.month),
+      year: Number(values.year),
+    })
   }
 
   return (
