@@ -8403,11 +8403,29 @@ function startPdfExport(){
   [data-cd-motion] .cd-v-step { animation: none !important; }
 }
 
-[data-cd-preview="preview-single-insight"] #previewLayer .preview-card:nth-of-type(n+2) { display: none !important; }
-[data-cd-preview="preview-structure-map"] #previewLayer .preview-card { padding: 12px 14px !important; margin-bottom: 8px !important; }
-[data-cd-preview="preview-structure-map"] #previewLayer .preview-card p { display: none !important; }
-[data-cd-preview="preview-theme-answer"] #previewLayer .preview-card:not(.entry-start-card) { opacity: .72; }
-[data-cd-preview="preview-theme-answer"] #previewLayer .entry-start-card { box-shadow: 0 10px 40px rgba(0,0,0,.12); }
+/* Preview variante - DOM real al previzualizarii native: #previewLayer > .pv-screen ... .pv-card / .pv-card-head. */
+[data-cd-preview="preview-single-insight"] #previewLayer .pv-card:nth-of-type(n+2) { display: none !important; }
+
+[data-cd-preview="preview-card-personal"] #previewLayer .pv-card:first-of-type {
+  border: 1px solid rgba(212,175,55,.40) !important;
+  box-shadow: 0 14px 46px rgba(0,0,0,.18) !important;
+}
+
+[data-cd-preview="preview-timeline"] #previewLayer .pv-card { position: relative; padding-left: 26px !important; }
+[data-cd-preview="preview-timeline"] #previewLayer .pv-card::before {
+  content: ""; position: absolute; left: 8px; top: 22px; bottom: -12px; width: 2px; background: rgba(255,255,255,.14);
+}
+[data-cd-preview="preview-timeline"] #previewLayer .pv-card::after {
+  content: ""; position: absolute; left: 3px; top: 18px; width: 11px; height: 11px; border-radius: 50%;
+  background: #d4af37; box-shadow: 0 0 0 3px rgba(212,175,55,.18);
+}
+[data-cd-preview="preview-timeline"] #previewLayer .pv-card:last-of-type::before { display: none; }
+
+[data-cd-preview="preview-theme-answer"] #previewLayer .pv-screen:not(.pv-themes) .pv-card { opacity: .78; }
+[data-cd-preview="preview-theme-answer"] #previewLayer .pv-themes .pv-card { box-shadow: 0 12px 44px rgba(0,0,0,.16); }
+
+[data-cd-preview="preview-structure-map"] #previewLayer .pv-card { padding: 12px 14px !important; margin-bottom: 8px !important; }
+[data-cd-preview="preview-structure-map"] #previewLayer .pv-card > *:not(.pv-card-head) { display: none !important; }
 </style>
 <script>
 (function () {
