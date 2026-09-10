@@ -3,6 +3,8 @@
     const results = document.getElementById('results')
     if (!results || results.dataset.redesigned === '3') return
     results.dataset.redesigned = '3'
+    // Raportul permanent trebuie să fie vizibil imediat; modul auto=1 ascunde rezultatele până la calcul.
+    results.style.display = 'block'
 
     const cards = [...results.children].filter((node) => node.classList?.contains('card'))
     const summary = document.getElementById('personalDataSummary')
