@@ -98,7 +98,7 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
   const numeFull = [formData.first, formData.last].filter(Boolean).join(' ')
 
   return (
-    <AdminExperimentsSurface className="w-full overflow-hidden p-4 sm:p-5">
+    <AdminExperimentsSurface className="w-full overflow-hidden !border-0 !bg-transparent !p-0">
       {/* Banner informativ */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
