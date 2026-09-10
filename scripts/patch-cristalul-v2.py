@@ -35,7 +35,7 @@ REPORT_REDESIGN = ROOT / 'scripts/cristalul-report-redesign.js'
 
 assert REPORT_REDESIGN.exists(), 'lipsește stratul de redesign al raportului'
 REPORT_REDESIGN_JS = re.sub(r'(?m)^([ \\t]*)> ', r'\\1', REPORT_REDESIGN.read_text(encoding='utf-8'))
-assert 'report-chapter-nav' in REPORT_REDESIGN_JS and 'report-insights' in REPORT_REDESIGN_JS
+assert 'report-chapter-nav' in REPORT_REDESIGN_JS and 'report-main-summary' in REPORT_REDESIGN_JS
 assert REPORT_REDESIGN_JS.count('\\ufffd') == 0, 'redesignul raportului conține U+FFFD'
 
 s = SRC.read_text(encoding='utf-8')
