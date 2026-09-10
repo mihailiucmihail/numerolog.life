@@ -367,3 +367,30 @@
   #results .card .namearc-item,
   #results .card .medallion{padding:20px!important;margin-bottom:16px!important;border-radius:1.25rem!important;}
 }
+
+/* ==== Redesign premium al raportului ==== */
+#results{max-width:1120px!important;margin:0 auto!important;padding:0 24px 80px!important;}
+.report-hero{position:relative;text-align:center;padding:clamp(52px,8vw,112px) 24px 42px;margin:0 -24px 18px;background:radial-gradient(ellipse at 50% 0%,rgba(217,169,79,.16),transparent 54%);}
+.report-kicker,.report-section-eyebrow{margin:0 0 14px;color:var(--cdp-gold);font:700 11px/1.4 var(--cdp-sans);letter-spacing:.24em;text-transform:uppercase;}
+.report-hero h1{margin:0;color:var(--cdp-ink);font:600 clamp(32px,5vw,68px)/1.05 var(--cdp-serif);letter-spacing:-.02em;}
+.report-name{margin:22px 0 6px;color:var(--cdp-gold);font:500 clamp(24px,3vw,38px)/1.15 var(--cdp-serif);}
+.report-meta{margin:0;color:var(--cdp-ink-dim);font:14px/1.6 var(--cdp-sans);}
+.report-pdf-link{display:inline-flex;margin-top:26px;padding:10px 17px;border:1px solid var(--cdp-gold-line);border-radius:999px;color:var(--cdp-ink);font:600 12px var(--cdp-sans);text-decoration:none;}
+.report-chapter-nav{position:sticky;top:0;z-index:20;display:flex;gap:8px;overflow-x:auto;margin:0 -24px 34px;padding:10px 24px;border-block:1px solid var(--cdp-gold-line);background:rgba(14,10,31,.9);backdrop-filter:blur(16px);scrollbar-width:none;}
+.report-chapter-nav::-webkit-scrollbar{display:none;}
+.report-chapter-nav a{flex:none;padding:8px 13px;border:1px solid transparent;border-radius:999px;color:var(--cdp-ink-dim);font:600 12px var(--cdp-sans);text-decoration:none;white-space:nowrap;}
+.report-chapter-nav a:hover,.report-chapter-nav a.is-active{color:var(--cdp-ink);background:rgba(217,169,79,.12);border-color:var(--cdp-gold-line);}
+.report-insights{margin:0 0 46px;padding:clamp(26px,4vw,46px);border:1px solid var(--cdp-gold-line);border-radius:28px;background:linear-gradient(145deg,rgba(42,24,64,.88),rgba(14,12,35,.9));box-shadow:0 20px 70px rgba(0,0,0,.18);}
+.report-insights h2{max-width:650px;margin:0;color:var(--cdp-ink);font:600 clamp(27px,4vw,46px)/1.1 var(--cdp-serif);}
+.report-insights>p{max-width:620px;margin:14px 0 28px;color:var(--cdp-ink-dim);font:16px/1.65 var(--cdp-sans);}
+.report-insight-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;}
+.report-insight-card{min-width:0;padding:18px;border:1px solid rgba(217,169,79,.22);border-radius:18px;background:rgba(255,255,255,.035);}
+.report-insight-card span{display:block;margin-bottom:12px;color:var(--cdp-gold);font:700 9px var(--cdp-sans);letter-spacing:.14em;}
+.report-insight-card strong{display:block;color:var(--cdp-ink);font:600 19px/1.15 var(--cdp-serif);}
+.report-insight-card p{margin:10px 0 0;color:var(--cdp-ink-dim);font:13px/1.55 var(--cdp-sans);}
+.report-chapter-anchor{height:1px;scroll-margin-top:72px;}
+#results .card[data-chapter]{scroll-margin-top:78px;}
+#results .card[data-chapter]::before{content:attr(data-chapter);display:block;margin:-2px 0 16px;color:var(--cdp-gold);font:700 10px var(--cdp-sans);letter-spacing:.16em;text-transform:uppercase;opacity:.72;}
+@media (min-width:900px){.report-chapter-nav{justify-content:center;}.report-insight-grid{gap:16px;}}
+@media (max-width:760px){#results{padding-inline:14px!important;}.report-hero{margin-inline:-14px;padding-inline:18px;}.report-chapter-nav{margin-inline:-14px;padding-inline:14px;}.report-insights{border-radius:22px;padding:24px 18px;}.report-insight-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.report-insight-card:last-child{grid-column:1/-1;}}
+@media print{.report-chapter-nav,.report-pdf-link{display:none!important;}.report-hero{padding-top:20px;background:none;}.report-insights{break-inside:avoid;}}
