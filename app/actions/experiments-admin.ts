@@ -61,6 +61,12 @@ export interface VariantReport {
   revenue: RevenueByCurrency[]
 }
 
+export interface FunnelTrafficSetting {
+  key: string
+  active: boolean
+  percentage: number
+}
+
 export interface ExperimentReport {
   form: VariantReport[]
   preview: VariantReport[]
@@ -143,11 +149,21 @@ async function assignmentsFor(kind: ExperimentKind): Promise<Map<string, number>
   return map
 }
 
+type RegistryState = { active: boolean; weight: number }
+
+async function registryState(): Promise<Map<string, RegistryState>> {
+  await syncVariantRegistry()
+  const rows = await db<{ id: string; active: boolean; weight: number }[]>`
+    SELECT id, active, weight FROM experiment_variants WHERE retired_at IS NULL`
+  return new Map(rows.map((row) => [row.id, { active: row.active, weight: Number(row.weight) || 0 }]))
+}
+
 function buildReport(
   kind: ExperimentKind,
   stages: Map<string, Stage>,
   revenue: Map<string, RevenueByCurrency[]>,
   assigned: Map<string, number>,
+  registry: Map<string, RegistryState>,
 ): VariantReport[] {
   const defs = kind === "form" ? FORM_VARIANTS : PREVIEW_VARIANTS
   return defs.map((v) => {
@@ -158,8 +174,8 @@ function buildReport(
       hypothesis: v.hypothesis,
       angle: v.angle,
       motion: v.motion,
-      active: v.active,
-      weight: v.weight,
+      active: registry.get(v.id)?.active ?? v.active,
+      weight: registry.get(v.id)?.weight ?? v.weight,
       assigned: assigned.get(v.id) ?? 0,
       visitors: s?.visitors ?? 0,
       submits: s?.submits ?? 0,
@@ -191,17 +207,18 @@ function mergeRevenue(lists: RevenueByCurrency[][]): RevenueByCurrency[] {
 export async function getExperimentReport(password: string): Promise<{ ok: boolean; report?: ExperimentReport }> {
   if (!checkPassword(password)) return { ok: false }
   try {
-    const [formStages, previewStages, formRev, previewRev, formAssigned, previewAssigned] = await Promise.all([
+    const [formStages, previewStages, formRev, previewRev, formAssigned, previewAssigned, registry] = await Promise.all([
       stagesFor("form"),
       stagesFor("preview"),
       revenueFor("form"),
       revenueFor("preview"),
       assignmentsFor("form"),
       assignmentsFor("preview"),
+      registryState(),
     ])
 
-    const form = buildReport("form", formStages, formRev, formAssigned)
-    const preview = buildReport("preview", previewStages, previewRev, previewAssigned)
+    const form = buildReport("form", formStages, formRev, formAssigned, registry)
+    const preview = buildReport("preview", previewStages, previewRev, previewAssigned, registry)
 
     // Totalul de cumpărări/venit se ia din experimentul FORM (fiecare eveniment purchase are ambele variante,
     // deci FORM și PREVIEW dau aceeași sumă — evităm dubla numărare folosind o singură latură).
@@ -288,6 +305,55 @@ export async function getAllocationRecommendation(
   } catch (err) {
     console.error("[v0] getAllocationRecommendation error:", err)
     return { ok: false }
+  }
+}
+
+export async function saveFunnelTraffic(
+  password: string,
+  settings: FunnelTrafficSetting[],
+): Promise<{ ok: boolean; error?: string }> {
+  if (!checkPassword(password)) return { ok: false, error: "Parolă incorectă." }
+
+  const known = new Map(FORM_VARIANTS.map((form, index) => [
+    form.id.replace("form-", ""),
+    { form: form.id, preview: PREVIEW_VARIANTS[index]?.id },
+  ]))
+  if (settings.length !== known.size || new Set(settings.map((item) => item.key)).size !== known.size) {
+    return { ok: false, error: "Configurația funnelurilor este incompletă." }
+  }
+  const control = settings.find((item) => item.key === "control")
+  if (!control?.active) return { ok: false, error: "Varianta Control trebuie să rămână activă." }
+
+  for (const item of settings) {
+    if (!known.has(item.key)) return { ok: false, error: "A fost trimis un funnel necunoscut." }
+    if (!Number.isInteger(item.percentage) || item.percentage < 0 || item.percentage > 100) {
+      return { ok: false, error: "Procentele trebuie să fie numere întregi între 0 și 100." }
+    }
+    if (item.active && item.percentage < 1) return { ok: false, error: "Un funnel activ trebuie să primească minimum 1% trafic." }
+    if (!item.active && item.percentage !== 0) return { ok: false, error: "Un funnel privat trebuie să aibă 0% trafic." }
+  }
+  const total = settings.reduce((sum, item) => sum + (item.active ? item.percentage : 0), 0)
+  if (total !== 100) return { ok: false, error: `Traficul activ însumează ${total}%. Totalul trebuie să fie exact 100%.` }
+
+  try {
+    await syncVariantRegistry()
+    await db.begin(async (sql) => {
+      for (const item of settings) {
+        const pair = known.get(item.key)!
+        const ids = [pair.form, pair.preview]
+        await sql`
+          UPDATE experiment_variants
+             SET active = ${item.active},
+                 weight = ${item.percentage},
+                 launched_at = CASE WHEN ${item.active} THEN COALESCE(launched_at, now()) ELSE launched_at END,
+                 updated_at = now()
+           WHERE id = ANY(${ids})`
+      }
+    })
+    return { ok: true }
+  } catch (error) {
+    console.error("[v0] saveFunnelTraffic error:", error)
+    return { ok: false, error: "Configurația nu a putut fi salvată." }
   }
 }
 

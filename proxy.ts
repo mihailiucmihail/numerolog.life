@@ -12,6 +12,7 @@ import {
   type Assignment,
 } from './lib/experiments/assignment'
 import { PREVIEW_TOKEN_PARAM, verifyPreviewToken } from './lib/experiments/preview-token'
+import { getRuntimeFunnels } from './lib/experiments/runtime-config'
 
 const handleI18nRouting = createMiddleware(routing)
 
@@ -132,7 +133,8 @@ export default async function proxy(request: NextRequest) {
 
     // Variantele de experiment se stabilesc ÎNAINTE de randare, ca prima pagină să fie deja
     // varianta finală (fără schimbare vizibilă) și să rămână aceeași la refresh sau revenire.
-    const experiment = await resolveAssignment(request.cookies.get(EXPERIMENT_COOKIE)?.value)
+    const runtimeFunnels = /^\/ru\/numerologie\/?$/.test(pathname) ? await getRuntimeFunnels() : undefined
+    const experiment = await resolveAssignment(request.cookies.get(EXPERIMENT_COOKIE)?.value, runtimeFunnels)
     headers.set('x-exp-visitor', experiment.assignment.visitorId)
     headers.set('x-exp-form', experiment.assignment.form)
     headers.set('x-exp-preview', experiment.assignment.preview)

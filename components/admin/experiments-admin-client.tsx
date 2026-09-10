@@ -11,11 +11,13 @@ import {
   Lock,
   Monitor,
   RefreshCw,
+  Save,
   Smartphone,
 } from "lucide-react"
 import {
   getExperimentReport,
   getVariantPreviewLinks,
+  saveFunnelTraffic,
   type ExperimentReport,
   type VariantPreviewLinks,
   type VariantReport,
@@ -118,6 +120,14 @@ type FunnelKey = (typeof FUNNELS)[number]["key"]
 type PreviewStage = "start" | "result"
 type PreviewLocale = "ru" | "ro"
 type Device = "desktop" | "mobile"
+type TrafficDraft = Record<FunnelKey, { active: boolean; percentage: number }>
+
+function defaultTraffic(): TrafficDraft {
+  return Object.fromEntries(FUNNELS.map((item) => [item.key, {
+    active: item.key === "control",
+    percentage: item.key === "control" ? 100 : 0,
+  }])) as TrafficDraft
+}
 
 function pct(num: number, den: number) {
   return den ? `${((num / den) * 100).toFixed(1)}%` : "—"
@@ -196,11 +206,17 @@ export function ExperimentsAdminClient() {
   const [stage, setStage] = useState<PreviewStage>("start")
   const [locale, setLocale] = useState<PreviewLocale>("ru")
   const [device, setDevice] = useState<Device>("desktop")
+  const [traffic, setTraffic] = useState<TrafficDraft>(defaultTraffic)
+  const [savingTraffic, setSavingTraffic] = useState(false)
+  const [trafficMessage, setTrafficMessage] = useState("")
+  const [trafficError, setTrafficError] = useState("")
 
   const funnel = FUNNELS.find((item) => item.key === selected) || FUNNELS[0]
   const row = report?.form.find((item) => item.id === funnel.form)
   const baseUrl = links?.funnel?.[funnel.key]
   const previewUrl = useMemo(() => localizedUrl(baseUrl, locale, stage), [baseUrl, locale, stage])
+  const trafficTotal = FUNNELS.reduce((sum, item) => sum + (traffic[item.key].active ? traffic[item.key].percentage : 0), 0)
+  const activeCount = FUNNELS.filter((item) => traffic[item.key].active).length
 
   async function load(pw = password) {
     setLoading(true)
@@ -212,7 +228,53 @@ export function ExperimentsAdminClient() {
     if (!reportResult.ok || !reportResult.report || !linksResult.ok || !linksResult.links) return false
     setReport(reportResult.report)
     setLinks(linksResult.links)
+    setTraffic(Object.fromEntries(FUNNELS.map((item) => {
+      const variant = reportResult.report!.form.find((row) => row.id === item.form)
+      return [item.key, { active: variant?.active ?? item.key === "control", percentage: variant?.active ? Math.round(variant.weight) : 0 }]
+    })) as TrafficDraft)
     return true
+  }
+
+  function toggleFunnel(key: FunnelKey) {
+    if (key === "control") return
+    setTrafficMessage("")
+    setTrafficError("")
+    setTraffic((current) => {
+      const active = !current[key].active
+      return { ...current, [key]: { active, percentage: active ? Math.max(1, current[key].percentage) : 0 } }
+    })
+  }
+
+  function distributeEvenly() {
+    const active = FUNNELS.filter((item) => traffic[item.key].active)
+    const base = Math.floor(100 / active.length)
+    let remainder = 100 - base * active.length
+    setTraffic(Object.fromEntries(FUNNELS.map((item) => {
+      if (!traffic[item.key].active) return [item.key, { active: false, percentage: 0 }]
+      const percentage = base + (remainder > 0 ? 1 : 0)
+      remainder = Math.max(0, remainder - 1)
+      return [item.key, { active: true, percentage }]
+    })) as TrafficDraft)
+    setTrafficMessage("")
+    setTrafficError("")
+  }
+
+  async function handleSaveTraffic() {
+    setSavingTraffic(true)
+    setTrafficMessage("")
+    setTrafficError("")
+    const result = await saveFunnelTraffic(password, FUNNELS.map((item) => ({
+      key: item.key,
+      active: traffic[item.key].active,
+      percentage: traffic[item.key].active ? traffic[item.key].percentage : 0,
+    })))
+    setSavingTraffic(false)
+    if (!result.ok) {
+      setTrafficError(result.error || "Configurația nu a putut fi salvată.")
+      return
+    }
+    setTrafficMessage("Distribuția a fost salvată. Vizitatorii noi o primesc în maximum 15 secunde.")
+    await load()
   }
 
   async function handleLogin(event: React.FormEvent) {
@@ -247,7 +309,7 @@ export function ExperimentsAdminClient() {
             <FlaskConical className="size-5 text-primary" />
             <h1 className="text-xl font-semibold">Laboratorul funnelurilor</h1>
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">Alege o variantă și vezi exact ce va vedea vizitatorul.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Activează, distribuie și previzualizează cele 10 trasee fără să editezi codul.</p>
         </div>
         <button onClick={() => load()} disabled={loading} className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-foreground transition hover:bg-muted disabled:opacity-50">
           {loading ? <Loader2 className="size-4 animate-spin" /> : <RefreshCw className="size-4" />}
@@ -255,13 +317,28 @@ export function ExperimentsAdminClient() {
         </button>
       </header>
 
-      <div className="mb-5 flex items-start gap-3 rounded-xl border border-primary/25 bg-primary/10 p-4">
-        <Check className="mt-0.5 size-5 shrink-0 text-primary" />
-        <div>
-          <p className="font-medium text-foreground">Pe site este activ doar Control</p>
-          <p className="mt-1 text-sm leading-6 text-muted-foreground">Celelalte cinci variante sunt private și se deschid numai din acest panou. Testarea de aici nu creează lead-uri și nu modifică statisticile reale.</p>
+      <section className="mb-5 rounded-2xl border border-primary/25 bg-card/70 p-4 sm:p-5">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">Distribuție live</p>
+            <h2 className="mt-1 text-lg font-semibold text-foreground">{activeCount} funneluri active · {trafficTotal}% trafic alocat</h2>
+            <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">Activează variantele dorite, stabilește procentul fiecăreia și salvează. Același vizitator își păstrează funnelul la refresh.</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <button type="button" onClick={distributeEvenly} className="rounded-lg border border-border px-3 py-2 text-sm text-foreground transition hover:bg-muted">Distribuie egal</button>
+            <button type="button" onClick={handleSaveTraffic} disabled={savingTraffic || trafficTotal !== 100} className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:cursor-not-allowed disabled:opacity-45">
+              {savingTraffic ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
+              Salvează și activează
+            </button>
+          </div>
         </div>
-      </div>
+        <div className={`mt-4 flex items-start gap-3 rounded-xl border p-3 ${trafficTotal === 100 ? "border-border bg-background/35" : "border-destructive/40 bg-destructive/10"}`}>
+          <Check className={`mt-0.5 size-4 shrink-0 ${trafficTotal === 100 ? "text-primary" : "text-destructive"}`} />
+          <p className={`text-sm ${trafficTotal === 100 ? "text-muted-foreground" : "text-destructive"}`}>{trafficTotal === 100 ? "Totalul este corect. Modificările devin publice numai după salvare." : `Mai trebuie ajustat totalul cu ${Math.abs(100 - trafficTotal)}%. Salvarea este blocată până când totalul este exact 100%.`}</p>
+        </div>
+        {trafficMessage && <p className="mt-3 text-sm text-primary">{trafficMessage}</p>}
+        {trafficError && <p className="mt-3 text-sm text-destructive">{trafficError}</p>}
+      </section>
 
       <div className="grid gap-5 xl:grid-cols-[320px_minmax(0,1fr)]">
         <aside className="rounded-2xl border border-border bg-card/55 p-3">
@@ -273,7 +350,7 @@ export function ExperimentsAdminClient() {
                 <button key={item.key} type="button" onClick={() => { setSelected(item.key); setStage("start") }} className={`rounded-xl border p-3 text-left transition ${active ? "border-primary/45 bg-primary/10" : "border-transparent bg-background/25 hover:border-border hover:bg-muted/50"}`}>
                   <div className="flex items-center justify-between gap-2">
                     <span className={`font-mono text-xs ${active ? "text-primary" : "text-muted-foreground"}`}>0{index + 1}</span>
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] ${index === 0 ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>{index === 0 ? "Public" : "Privat"}</span>
+                    <span className={`rounded-full px-2 py-0.5 text-[10px] ${traffic[item.key].active ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>{traffic[item.key].active ? `${traffic[item.key].percentage}% Public` : "Privat"}</span>
                   </div>
                   <p className="mt-2 font-semibold text-foreground">{item.label}</p>
                   <p className="mt-1 text-xs leading-5 text-muted-foreground">{item.summary}</p>
@@ -295,7 +372,27 @@ export function ExperimentsAdminClient() {
             {baseUrl && <a href={localizedUrl(baseUrl, locale, "start")} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-foreground transition hover:bg-muted"><ExternalLink className="size-4" />Deschide separat</a>}
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 py-4">
+          <div className="my-4 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-background/35 p-4">
+            <div>
+              <p className="text-sm font-medium text-foreground">Stare în traficul public</p>
+              <p className="mt-1 text-xs leading-5 text-muted-foreground">{selected === "control" ? "Control este plasa de siguranță și nu poate fi dezactivat." : "Dezactivarea păstrează statisticile, dar oprește atribuirea vizitatorilor noi."}</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <label className="flex items-center gap-2 text-sm text-muted-foreground" htmlFor={`traffic-${selected}`}>
+                Trafic
+                <span className="flex items-center overflow-hidden rounded-lg border border-border bg-background">
+                  <input id={`traffic-${selected}`} type="number" min={traffic[selected].active ? 1 : 0} max={100} step={1} disabled={!traffic[selected].active} value={traffic[selected].percentage} onChange={(event) => setTraffic((current) => ({ ...current, [selected]: { ...current[selected], percentage: Math.max(0, Math.min(100, Number(event.target.value) || 0)) } }))} className="w-16 bg-transparent px-2 py-2 text-right font-mono text-sm text-foreground outline-none disabled:opacity-40" />
+                  <span className="pr-2 text-sm text-muted-foreground">%</span>
+                </span>
+              </label>
+              <button type="button" role="switch" aria-checked={traffic[selected].active} aria-label={`${traffic[selected].active ? "Dezactivează" : "Activează"} ${funnel.label}`} disabled={selected === "control"} onClick={() => toggleFunnel(selected)} className={`relative h-7 w-12 rounded-full border transition ${traffic[selected].active ? "border-primary bg-primary" : "border-border bg-muted"} disabled:cursor-not-allowed disabled:opacity-60`}>
+                <span className={`absolute top-0.5 size-5 rounded-full bg-primary-foreground transition-transform ${traffic[selected].active ? "translate-x-5" : "translate-x-0.5"}`} />
+              </button>
+              <span className={`min-w-12 text-sm font-medium ${traffic[selected].active ? "text-primary" : "text-muted-foreground"}`}>{traffic[selected].active ? "Activ" : "Privat"}</span>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
             <div className="flex rounded-lg border border-border bg-background/35 p-1">
               <button type="button" onClick={() => setStage("start")} className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm ${stage === "start" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}><Eye className="size-4" />Începutul formularului</button>
               <button type="button" onClick={() => setStage("result")} className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm ${stage === "result" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}><BarChart3 className="size-4" />Preview rezultat</button>
