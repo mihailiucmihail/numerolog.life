@@ -128,6 +128,21 @@ _date_start = s.rfind('<div class="full">', 0, _date_label)
 _date_end = s.find('<div class="full"', _date_label)
 assert _date_start >= 0 and _date_end > _date_start, 'finalul blocului data nașterii nu a fost găsit'
 _date_block = s[_date_start:_date_end]
+# Formular mobile-first pentru data nașterii: păstrăm id-urile day/month/year, astfel încât
+# toate calculele, raportul și plata să primească în continuare aceleași valori.
+_date_block = _date_block.replace(
+    '<input id="day" type="number" min="1" max="31" placeholder="День" value="">',
+    '<div class="date-field"><label for="day">День</label><input id="day" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" min="1" max="31" placeholder="05" autocomplete="bday-day" value=""></div>',
+)
+_date_block = _date_block.replace(
+    '<input id="month" type="number" min="1" max="12" placeholder="Месяц" value="">',
+    '<div class="date-field"><label for="month">Месяц</label><input id="month" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" min="1" max="12" placeholder="10" autocomplete="bday-month" value=""></div>',
+)
+_date_block = _date_block.replace(
+    '<input id="year" type="number" min="1900" max="2100" placeholder="Год" value="">',
+    '<div class="date-field"><label for="year">Год</label><input id="year" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" min="1900" max="2100" placeholder="1992" autocomplete="bday-year" value=""></div>',
+)
+assert 'id="day" type="text"' in _date_block and 'id="month" type="text"' in _date_block and 'id="year" type="text"' in _date_block, 'câmpurile noi de dată nu au fost injectate'
 s = s[:_date_start] + s[_date_end:]
 _name_label = s.find('<label>Фамилия')
 _name_marker = s.rfind('<div>', 0, _name_label)
@@ -263,6 +278,12 @@ rep('</head>', """<style>
   #inputFormCard input{min-height:48px;border:1px solid rgba(212,175,55,.15);border-radius:.85rem;background:rgba(13,13,35,.34);color:#f5edd6;padding:0 14px;font:400 15px/1.3 Arial,sans-serif;box-shadow:inset 0 1px 0 rgba(255,255,255,.03),0 0 0 1px rgba(212,175,55,.025);transition:border-color .2s,box-shadow .2s,background .2s;}
   #inputFormCard input::placeholder{color:rgba(245,237,214,.38);}#inputFormCard input:focus{outline:none;border-color:rgba(239,202,105,.9);background:rgba(12,8,30,.72);box-shadow:0 0 0 3px rgba(212,175,55,.12),0 0 28px rgba(212,175,55,.12);}
   #inputFormCard .cd-field-hint{display:inline-block;margin-left:.45rem;color:rgba(245,237,214,.58);font-size:.78em;font-weight:400;letter-spacing:0;text-transform:none;}
+  #inputFormCard .date-row{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,.82fr) minmax(0,1.36fr);gap:10px;}
+  #inputFormCard .date-field{min-width:0;}
+  #inputFormCard .date-field label{margin:0 0 6px;color:rgba(245,237,214,.7);font-size:10px;letter-spacing:.14em;}
+  #inputFormCard .date-field input{text-align:center;font-variant-numeric:tabular-nums;}
+  #inputFormCard #mainCalcBtn:disabled{cursor:not-allowed;filter:saturate(.45);opacity:.48;box-shadow:none;transform:none;}
+  @media (max-width:600px){#inputFormCard .date-row{gap:8px;}#inputFormCard .date-field input{min-height:54px;padding-inline:8px;font-size:17px;}}
   #inputFormCard label{display:block;margin:15px 0 6px;color:rgba(239,202,105,.86);font:600 10px/1.25 Arial,sans-serif;letter-spacing:.18em;text-transform:uppercase;}
   #inputFormCard .numerology-intro{min-height:330px;margin-inline:-28px;padding-inline:20px;border-bottom:1px solid rgba(212,175,55,.1);background:linear-gradient(145deg,rgba(40,24,62,.28),rgba(13,13,35,.3));}
   #inputFormCard .numerology-copy{width:min(100%,760px);padding:48px 12px;text-align:left;}#inputFormCard .numerology-copy h2{max-width:720px;font-size:clamp(31px,6vw,58px);line-height:1.02;letter-spacing:-.02em;}#inputFormCard .numerology-copy p{max-width:560px;margin-top:20px;font-size:16px;line-height:1.6;}#inputFormCard .numerology-kicker{margin-bottom:18px;}
@@ -281,7 +302,37 @@ premium_css = PREMIUM_CSS.read_text(encoding='utf-8')
 assert premium_css.count('\ufffd') == 0, 'CSS-ul premium conține U+FFFD'
 rep('</style></head>', '</style>\n<style id="cd-premium">\n' + premium_css + '\n</style></head>')
 rep('</body>', '''<script>
-(function(){
+  (function(){
+    const day = document.getElementById('day');
+    const month = document.getElementById('month');
+    const year = document.getElementById('year');
+    const cta = document.getElementById('mainCalcBtn');
+    if(!day || !month || !year || !cta) return;
+    const fields = [day, month, year];
+    const validDate = () => {
+      const d = Number(day.value), m = Number(month.value), y = Number(year.value);
+      if(!/^\\d{1,2}$/.test(day.value) || !/^\\d{1,2}$/.test(month.value) || !/^\\d{4}$/.test(year.value)) return false;
+      if(d < 1 || d > 31 || m < 1 || m > 12 || y < 1900) return false;
+      const now = new Date();
+      const date = new Date(y, m - 1, d);
+      return date.getFullYear() === y && date.getMonth() === m - 1 && date.getDate() === d && date <= now;
+    };
+    const update = () => { cta.disabled = !validDate(); };
+    fields.forEach((field, index) => {
+      field.addEventListener('input', () => {
+        field.value = field.value.replace(/\\D/g, '').slice(0, field === year ? 4 : 2);
+        update();
+        if(field.value.length === (field === year ? 4 : 2) && index < fields.length - 1) fields[index + 1].focus();
+      });
+      field.addEventListener('keydown', (event) => {
+        if(event.key === 'Backspace' && field.value === '' && index > 0) fields[index - 1].focus();
+      });
+      field.addEventListener('blur', update);
+    });
+    update();
+  })();
+  </script><script>
+  (function(){
   const video=document.querySelector('.hero-video-media');
   const sound=document.querySelector('.hero-video-sound');
   if(!video||!sound||video.hidden)return;
