@@ -13,6 +13,10 @@ export interface CheckoutAttemptInput {
   sessionId: string | null
   status: 'started' | 'failed'
   error?: string | null
+  /** Atribuirea experimentului, citită pe server din cookie-ul semnat. */
+  visitorId?: string | null
+  formVariant?: string | null
+  previewVariant?: string | null
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -54,7 +58,11 @@ export async function recordCheckoutAttempt(input: CheckoutAttemptInput): Promis
         leadKey = rows[0].lead_key
         await db`
           UPDATE cristalul_previews
-          SET checkout_clicks = checkout_clicks + 1, last_checkout_at = now()
+          SET checkout_clicks = checkout_clicks + 1,
+              last_checkout_at = now(),
+              visitor_id = COALESCE(visitor_id, ${input.visitorId ?? null}),
+              form_variant = COALESCE(form_variant, ${input.formVariant ?? null}),
+              preview_variant = COALESCE(preview_variant, ${input.previewVariant ?? null})
           WHERE id = ${leadId}
         `
       }
@@ -63,12 +71,13 @@ export async function recordCheckoutAttempt(input: CheckoutAttemptInput): Promis
     await db`
       INSERT INTO cristalul_checkout_attempts
         (lead_id, lead_key, email, first_name, last_name, country, currency, amount, display_price,
-         promo_code, locale, session_id, status, error)
+         promo_code, locale, session_id, status, error, visitor_id, form_variant, preview_variant)
       VALUES
         (${leadId}, ${leadKey}, ${email}, ${id.first || null}, ${id.last || null}, ${input.country},
          ${input.currency.toUpperCase()}, ${input.amount}, ${input.displayPrice}, ${input.promoCode},
          ${input.locale === 'ro' ? 'ro' : 'ru'}, ${input.sessionId}, ${input.status},
-         ${input.error ? String(input.error).slice(0, 500) : null})
+         ${input.error ? String(input.error).slice(0, 500) : null},
+         ${input.visitorId ?? null}, ${input.formVariant ?? null}, ${input.previewVariant ?? null})
     `
   } catch (err) {
     console.error('[v0] recordCheckoutAttempt error:', err)

@@ -5,6 +5,7 @@ import { db } from '@/lib/db'
 import { getStripe } from '@/lib/stripe'
 import { consumePromoCode } from '@/lib/promo'
 import { buildRaportUrl, sendRaportEmail } from '@/lib/raport-email'
+import { recordPurchaseFromSession } from '@/lib/experiments/purchase'
 
 interface FormData {
   last: string
@@ -59,6 +60,9 @@ export async function saveRaportAndSendEmail(
       if (promoCode && session.payment_status === 'paid') {
         await consumePromoCode(promoCode, sessionId, session.customer_details?.email ?? email)
       }
+      // Cumpărarea se atribuie variantelor din metadata sesiunii, nu din browser, și doar dacă
+      // Stripe confirmă plata. Deduplicat pe id-ul sesiunii.
+      await recordPurchaseFromSession(session, { entry: formData.entry ?? null, token })
     } catch (err) {
       console.error('[v0] consumePromoCode error:', err)
     }
