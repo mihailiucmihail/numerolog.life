@@ -321,3 +321,12 @@
   display:none!important;
 }
 #results .card .namearc-list{gap:10px;}
+#results .card [style*="border-left"],
+#results .card [style*="border-top"]{
+  border-left:0!important;
+  border-right:0!important;
+  border-bottom:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+#results .card [style*="border-top"]{border-top:1px solid var(--cdp-gold-line)!important;}
