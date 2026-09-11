@@ -186,6 +186,24 @@ const FUNNELS = [
     form: "form-hidden-gift-v1",
     preview: "preview-hidden-gift-v1",
   },
+  {
+    key: "birthday-express-v1",
+    label: "Data Express",
+    eyebrow: "Un singur câmp",
+    summary: "Primul ecran cere numai data nașterii într-un câmp nativ, cu CTA-ul vizibil imediat.",
+    flow: ["Data nașterii", "Preview birthday", "Identitate", "Raport", "Plată"],
+    form: "form-birthday-express-v1",
+    preview: "preview-birthday-express-v1",
+  },
+  {
+    key: "day-arcana-v1",
+    label: "Arcana zilei",
+    eyebrow: "Micro-recompensă",
+    summary: "Ziua dezvăluie instant Arcana, apoi luna și anul deschid rezultatul birthday real.",
+    flow: ["Zi", "Arcana instant", "Lună și an", "Preview birthday", "Identitate", "Plată"],
+    form: "form-day-arcana-v1",
+    preview: "preview-day-arcana-v1",
+  },
 ] as const
 
 type FunnelKey = (typeof FUNNELS)[number]["key"]
@@ -207,6 +225,8 @@ function defaultTraffic(): TrafficDraft {
     "money-future-v1",
     "life-stage-now-v1",
     "hidden-gift-v1",
+    "birthday-express-v1",
+    "day-arcana-v1",
   ])
 
   return Object.fromEntries(FUNNELS.map((item) => [item.key, {

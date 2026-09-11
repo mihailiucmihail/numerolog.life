@@ -49,6 +49,8 @@ export const FORM_VARIANTS: VariantDef[] = [
   { id: 'form-topic-choice-v1', kind: 'form', label: 'Topic Choice', hypothesis: 'Alegerea întrebării personale înaintea datelor creează un angajament mic și crește relevanța rezultatului.', angle: 'curiozitate personală', motion: 2, active: false, weight: 0 },
   { id: 'form-life-stage-now-v1', kind: 'form', label: 'Etapa vieții acum', hypothesis: 'O concluzie reală despre etapa actuală, obținută doar din data nașterii, creează întrebarea concretă despre următoarea schimbare.', angle: 'cronologie personală', motion: 2, active: true, weight: 9 },
   { id: 'form-hidden-gift-v1', kind: 'form', label: 'Darul ascuns', hypothesis: 'Revelația darului personal înaintea alegerii domeniului transformă raportul complet într-o continuare naturală.', angle: 'revelație personală', motion: 2, active: true, weight: 9 },
+  { id: 'form-birthday-express-v1', kind: 'form', label: 'Data Express', hypothesis: 'Un singur câmp nativ pentru data nașterii și un CTA vizibil reduc fricțiunea primului ecran pe mobil.', angle: 'dată fără fricțiune', motion: 1, active: true, weight: 9 },
+  { id: 'form-day-arcana-v1', kind: 'form', label: 'Arcana zilei', hypothesis: 'Recompensa instant după introducerea zilei motivează completarea lunii și anului.', angle: 'micro-recompensă', motion: 2, active: true, weight: 9 },
 ]
 
 export const PREVIEW_VARIANTS: VariantDef[] = [
@@ -70,6 +72,8 @@ export const PREVIEW_VARIANTS: VariantDef[] = [
   { id: 'preview-topic-choice-v1', kind: 'preview', label: 'Topic Choice', hypothesis: 'Tema aleasă apare prima în raport și transformă curiozitatea inițială într-o continuare personală.', angle: 'curiozitate personală', motion: 2, active: false, weight: 0 },
   { id: 'preview-life-stage-now-v1', kind: 'preview', label: 'Etapa vieții acum', hypothesis: 'Etapa actuală și traseul parcurs sunt vizibile, iar momentul următoarei schimbări rămâne în continuarea raportului.', angle: 'cronologie personală', motion: 2, active: true, weight: 9 },
   { id: 'preview-hidden-gift-v1', kind: 'preview', label: 'Darul ascuns', hypothesis: 'Darul principal este dezvăluit gratuit, iar blocajul din domeniul ales deschide analiza completă.', angle: 'revelație personală', motion: 2, active: true, weight: 9 },
+  { id: 'preview-birthday-express-v1', kind: 'preview', label: 'Data Express', hypothesis: 'Rezultatul birthday real confirmă imediat valoarea după completarea unui singur câmp.', angle: 'recompensă imediată', motion: 1, active: true, weight: 9 },
+  { id: 'preview-day-arcana-v1', kind: 'preview', label: 'Arcana zilei', hypothesis: 'Arcana dezvăluită în formular continuă natural în rezultatul birthday complet.', angle: 'continuitate Arcana', motion: 2, active: true, weight: 9 },
 ]
 
 export const ALL_VARIANTS: VariantDef[] = [...FORM_VARIANTS, ...PREVIEW_VARIANTS]

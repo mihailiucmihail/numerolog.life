@@ -71,6 +71,8 @@ const PREVIEW_ENGINE_VARIANTS: Record<string, string> = {
   'preview-topic-choice-v1': 'preview-topic-choice-v1',
   'preview-life-stage-now-v1': 'preview-life-stage-now-v1',
   'preview-hidden-gift-v1': 'preview-hidden-gift-v1',
+  'preview-birthday-express-v1': 'preview-birthday-first',
+  'preview-day-arcana-v1': 'preview-birthday-first',
 }
 
 type FutureStage = 'date' | 'birth-result' | 'full-result'
@@ -143,7 +145,9 @@ export default function CristalFunnel() {
           ? 'relationships'
           : exp.form === 'form-hidden-gift-v1'
             ? 'birthday'
-            : ''
+            : exp.form === 'form-birthday-express-v1' || exp.form === 'form-day-arcana-v1'
+              ? 'birthday'
+              : ''
   const isFutureFunnel = Boolean(futureTopic)
   const formSrc = `${CALCULATOR_SRC}?alpha=${alphabet}&country=${country || ''}${emailParam ? `&email=${encodeURIComponent(emailParam)}` : ''}${entry ? `&entry=${entry}` : ''}&lang=${locale}&fv=${exp.form}&pv=${exp.preview}`
   const [futureStage, setFutureStage] = useState<FutureStage>('date')
