@@ -453,7 +453,33 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
     return () => window.removeEventListener('message', onMessage)
   }, [postToFrame, pricingMessage, persistParticipant, locale, cristal.currency, cristal.amount, country, entry, exp, futureStage, futureTopic, isFutureFunnel])
 
+  /** Trimiterea formularului Standard: pornește direct raportul complet (toate cele 14 Grani). */
+  const submitStandard = (values: Omit<FormValues, 'gender' | 'nameAlphabetKey'> & { email?: string; gender?: string; nameAlphabetKey?: string }) => {
+    const email = (values.email || '').trim()
+    const { email: _email, ...rest } = values
+    const nextValues: FormValues = { ...rest, gender: 'f', nameAlphabetKey: values.nameAlphabetKey || alphabet }
+    formRef.current = nextValues
+    setFormEmail(email)
+    try {
+      sessionStorage.setItem(`${FUNNEL_STORAGE_KEY}:email`, email)
+      sessionStorage.setItem(FUNNEL_STORAGE_KEY, JSON.stringify(nextValues))
+    } catch {}
+    persistParticipant('form_submitted', nextValues, email)
+    setForm(nextValues)
+    setFutureStage('full-result')
+    setPreviewReady(false)
+    setNativePreview(false)
+    setFrameSrc(`${buildPreviewSrc(nextValues, { form: exp.form, preview: exp.preview }, { stage: 'full', locale })}&email=${encodeURIComponent(email)}&k=${Date.now()}`)
+    setPreviewRequested(true)
+    setForming(true)
+    exp.track({ event: 'form_submit' })
+    exp.track({ event: 'calculation_start' })
+    window.scrollTo({ top: 0 })
+    trackFunnel('birth_data_submitted', { has_middle: Boolean(nextValues.middle), alphabet: nextValues.nameAlphabetKey, funnel: 'standard' })
+  }
+
   // Restaurare după întoarcere de la Stripe (anulat): raport blurat direct, fără re-completare.
+  // `?go=1` = formularul Standard a fost completat pe homepage (datele sunt în sessionStorage) → pornim direct raportul.
   useEffect(() => {
     const saved = readSaved()
     if (saved) setForm(saved)
@@ -464,6 +490,10 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
     if (searchParams.get('payment') === 'cancelled' && saved) {
       setCancelledNotice(true)
       setFrameSrc(`${buildPreviewSrc(saved)}&k=${Date.now()}`)
+    } else if (searchParams.get('go') === '1' && saved && isStandardFunnel && saved.first && saved.last) {
+      let savedEmail = ''
+      try { savedEmail = sessionStorage.getItem(`${FUNNEL_STORAGE_KEY}:email`) || '' } catch {}
+      if (savedEmail) submitStandard({ ...saved, email: savedEmail })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -699,25 +729,7 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
           initialValues={form || undefined}
           locale={locale}
           onFirstInteraction={() => exp.track({ event: 'form_first_interaction' })}
-          onSubmit={(values) => {
-            const email = values.email.trim()
-            const nextValues: FormValues = { ...values, gender: 'f', nameAlphabetKey: values.nameAlphabetKey || alphabet }
-            formRef.current = nextValues
-            setFormEmail(email)
-            try { sessionStorage.setItem(`${FUNNEL_STORAGE_KEY}:email`, email) } catch {}
-            persistParticipant('form_submitted', nextValues, email)
-            setForm(nextValues)
-            setFutureStage('full-result')
-            setPreviewReady(false)
-            setNativePreview(false)
-            setFrameSrc(`${buildPreviewSrc(nextValues, { form: exp.form, preview: exp.preview }, { stage: 'full', locale })}&email=${encodeURIComponent(email)}&k=${Date.now()}`)
-            setPreviewRequested(true)
-            setForming(true)
-            exp.track({ event: 'form_submit' })
-            exp.track({ event: 'calculation_start' })
-            window.scrollTo({ top: 0 })
-            trackFunnel('birth_data_submitted', { has_middle: Boolean(nextValues.middle), alphabet: nextValues.nameAlphabetKey, funnel: 'standard' })
-          }}
+          onSubmit={submitStandard}
         />
       ) : !previewRequested && !cancelledNotice ? (
         <CrystalReactForm
