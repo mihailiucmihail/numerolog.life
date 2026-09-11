@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
 import { startNumerologieCheckout, getNumerologieSessionStatus } from '@/app/actions/stripe'
 import { savePreviewLead, attachLeadEmail } from '@/app/actions/preview-lead'
+import { saveExperimentParticipant } from '@/app/actions/experiment-participants'
 import { saveRaportAndSendEmail } from '@/app/actions/raport'
 import { checkPromoCode } from '@/app/actions/promo'
 import { useCurrency } from '@/components/providers/currency-provider'
@@ -66,6 +67,13 @@ const PREVIEW_ENGINE_VARIANTS: Record<string, string> = {
   'preview-career-future-v1': 'preview-career-future-v1',
   'preview-relationship-future-v1': 'preview-relationship-future-v1',
   'preview-money-future-v1': 'preview-money-future-v1',
+  'preview-instagram-direct-v1': 'preview-instagram-direct-v1',
+  'preview-daria-continuity-v1': 'preview-daria-continuity-v1',
+  'preview-topic-choice-v1': 'preview-topic-choice-v1',
+  'preview-life-stage-now-v1': 'preview-life-stage-now-v1',
+  'preview-hidden-gift-v1': 'preview-hidden-gift-v1',
+  'preview-birthday-express-v1': 'preview-birthday-express-v1',
+  'preview-day-arcana-v1': 'preview-day-arcana-v1',
 }
 
 type FutureStage = 'date' | 'birth-result' | 'full-result'
@@ -128,7 +136,19 @@ export default function CristalFunnel() {
   const exp = standardFlow
     ? { ...assignedExp, form: 'form-control', preview: 'preview-control' }
     : assignedExp
-  const futureTopic = exp.form === 'form-career-future-v1' ? 'career' : exp.form === 'form-relationship-future-v1' ? 'love' : exp.form === 'form-money-future-v1' ? 'money' : ''
+  const futureTopic = exp.form === 'form-career-future-v1'
+    ? 'career'
+    : exp.form === 'form-relationship-future-v1'
+      ? 'love'
+      : exp.form === 'form-money-future-v1'
+        ? 'money'
+        : exp.form === 'form-life-stage-now-v1'
+          ? 'relationships'
+          : exp.form === 'form-hidden-gift-v1'
+            ? 'birthday'
+            : exp.form === 'form-birthday-express-v1' || exp.form === 'form-day-arcana-v1'
+              ? 'birthday'
+              : ''
   const isFutureFunnel = Boolean(futureTopic)
   const formSrc = `${CALCULATOR_SRC}?alpha=${alphabet}&country=${country || ''}${emailParam ? `&email=${encodeURIComponent(emailParam)}` : ''}${entry ? `&entry=${entry}` : ''}&lang=${locale}&fv=${exp.form}&pv=${exp.preview}`
   const [futureStage, setFutureStage] = useState<FutureStage>('date')
@@ -242,6 +262,27 @@ export default function CristalFunnel() {
     postToFrame(pricingMessage())
   }, [pricingMessage, postToFrame])
 
+  const persistParticipant = useCallback((
+    stage: 'form_submitted' | 'preview_seen',
+    values?: Partial<FormValues> | null,
+    email?: string | null,
+  ) => {
+    if (exp.previewMode) return
+    void saveExperimentParticipant({
+      stage,
+      first: values?.first || null,
+      last: values?.last || null,
+      middle: values?.middle || null,
+      day: values?.day || null,
+      month: values?.month || null,
+      year: values?.year || null,
+      email: email || null,
+      currency: cristal.currency,
+      displayedPrice: offer ? offer.finalPrice : cristal.displayPrice,
+      locale,
+    })
+  }, [cristal.currency, cristal.displayPrice, exp.previewMode, locale, offer])
+
   // Mesaje din iframe: înălțime, raport blurat randat, validare promo din formularul original.
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
@@ -296,6 +337,7 @@ export default function CristalFunnel() {
           setNativePreview(true)
           exp.track({ event: 'calculation_complete', dedupSuffix: 'birth-result' })
           exp.track({ event: 'preview_impression', meta: { native: true, stage: 'birth', motion: exp.previewMotion }, dedupSuffix: 'birth-result' })
+          persistParticipant('preview_seen')
           trackFunnel('free_result_viewed', { mode: 'birth_only_graph', entry: futureTopic })
           return
         }
@@ -317,6 +359,7 @@ export default function CristalFunnel() {
           formRef.current = values
           setForm(values)
           if (typeof p.email === 'string') setFormEmail(p.email.trim())
+          persistParticipant('preview_seen', values, p.email)
           try {
             sessionStorage.setItem(FUNNEL_STORAGE_KEY, JSON.stringify(values))
             if (p.email) sessionStorage.setItem(`${FUNNEL_STORAGE_KEY}:email`, p.email.trim())
@@ -329,6 +372,7 @@ export default function CristalFunnel() {
             void savePreviewLead({ ...values, email: p.email || undefined }, locale, cristal.currency.toLowerCase(), country)
           }
         }
+        if (!p) persistParticipant('preview_seen')
         setPreviewReady(true)
         setNativePreview(d.native === true)
         exp.track({ event: 'calculation_complete' })
@@ -371,6 +415,7 @@ export default function CristalFunnel() {
         const email = (p.email || '').trim()
         if (email) {
           setFormEmail(email)
+          persistParticipant('preview_seen', formRef.current, email)
           try { sessionStorage.setItem(`${FUNNEL_STORAGE_KEY}:email`, email) } catch {}
         }
         void handleCheckoutRef.current(email, p.discountCode)
@@ -378,7 +423,7 @@ export default function CristalFunnel() {
     }
     window.addEventListener('message', onMessage)
     return () => window.removeEventListener('message', onMessage)
-  }, [postToFrame, pricingMessage, locale, cristal.currency, cristal.amount, country, entry, exp, futureStage, futureTopic, isFutureFunnel])
+  }, [postToFrame, pricingMessage, persistParticipant, locale, cristal.currency, cristal.amount, country, entry, exp, futureStage, futureTopic, isFutureFunnel])
 
   // Restaurare după întoarcere de la Stripe (anulat): raport blurat direct, fără re-completare.
   useEffect(() => {
@@ -579,6 +624,8 @@ export default function CristalFunnel() {
           locale={locale}
           variant={exp.form}
           futureStage="date"
+          onFirstInteraction={() => exp.track({ event: 'form_first_interaction' })}
+          onStepComplete={(step) => exp.track({ event: 'form_step_complete', meta: { step }, dedupSuffix: `step-${step}` })}
           onBirthSubmit={({ day, month, year }) => {
             const birthValues: FormValues = {
               first: locale === 'ro' ? 'Calcul' : 'Расчёт',
@@ -586,9 +633,10 @@ export default function CristalFunnel() {
               middle: '', day, month, year, gender: 'f',
               nameAlphabetKey: locale === 'ro' ? 'ro' : 'ru',
               entry: futureTopic,
-              intent: `${futureTopic}-future-v1:0`,
+              intent: `${exp.form.replace(/^form-/, '')}:0`,
             }
             formRef.current = birthValues
+            persistParticipant('form_submitted', { day, month, year })
             setForm(birthValues)
             setFutureStage('birth-result')
             setPreviewReady(false)
@@ -604,6 +652,7 @@ export default function CristalFunnel() {
           onSubmit={(values) => {
             const nextValues: FormValues = { ...values, gender: values.gender === 'm' ? 'm' : 'f', nameAlphabetKey: values.nameAlphabetKey || alphabet, ...(values.entry || entry ? { entry: values.entry || entry } : {}) }
             formRef.current = nextValues
+            persistParticipant('form_submitted', nextValues, formEmail)
             setForm(nextValues)
             setFutureStage('full-result')
             setFrameSrc(`${buildPreviewSrc(nextValues, { form: exp.form, preview: exp.preview }, { stage: 'full', locale })}&k=${Date.now()}`)
@@ -636,13 +685,15 @@ export default function CristalFunnel() {
             locale={locale}
             variant={exp.form}
             futureStage="identity"
+            onFirstInteraction={() => exp.track({ event: 'form_first_interaction', dedupSuffix: 'identity' })}
+            onStepComplete={(step) => exp.track({ event: 'form_step_complete', meta: { step }, dedupSuffix: `identity-step-${step}` })}
             onSubmit={(values) => {
               const nextValues: FormValues = {
                 ...values,
                 gender: values.gender === 'm' ? 'm' : 'f',
                 nameAlphabetKey: values.nameAlphabetKey || alphabet,
-                entry: futureTopic,
-                intent: `${futureTopic}-future-v1:0`,
+                entry: values.entry || futureTopic,
+                intent: values.intent || `${exp.form.replace(/^form-/, '')}:0`,
               }
               formRef.current = nextValues
               setForm(nextValues)

@@ -34,33 +34,33 @@
   var preview = params.get('pv') || 'preview-control';
   var stage = params.get('stage') || 'full';
   var lang = params.get('lang') === 'ro' ? 'ro' : 'ru';
-  var allowed = ['preview-control','preview-birthday-first','preview-love-graph','preview-career-graph','preview-life-now','preview-content-first','preview-money-flow','preview-profession-match','preview-relationship-needs','preview-life-timeline','preview-career-future-v1','preview-relationship-future-v1','preview-money-future-v1'];
+  var allowed = ['preview-control','preview-birthday-first','preview-love-graph','preview-career-graph','preview-life-now','preview-content-first','preview-money-flow','preview-profession-match','preview-relationship-needs','preview-life-timeline','preview-career-future-v1','preview-relationship-future-v1','preview-money-future-v1','preview-life-stage-now-v1','preview-hidden-gift-v1','preview-birthday-express-v1','preview-day-arcana-v1'];
   if(allowed.indexOf(preview) < 0 || preview === 'preview-control' || preview === 'preview-birthday-first') return;
   document.documentElement.setAttribute('data-cd-preview', preview);
   document.documentElement.setAttribute('data-cd-form', params.get('fv') || 'form-control');
 
   var intent = params.get('intent') || '';
   var baseRenderPreview = window.renderPreview || renderPreview;
-  var isFuture = /-(career|relationship|money)-future-v1$/.test(preview);
-  var topic = preview.indexOf('relationship') >= 0 || preview.indexOf('love') >= 0 ? 'love' : preview.indexOf('money') >= 0 ? 'money' : preview.indexOf('career') >= 0 || preview.indexOf('profession') >= 0 ? 'career' : preview.indexOf('life') >= 0 ? 'life' : 'report';
+  var isFuture = /-(career|relationship|money)-future-v1$/.test(preview) || preview === 'preview-life-stage-now-v1' || preview === 'preview-hidden-gift-v1' || preview === 'preview-birthday-express-v1' || preview === 'preview-day-arcana-v1';
+  var topic = preview.indexOf('relationship') >= 0 || preview.indexOf('love') >= 0 ? 'love' : preview.indexOf('money') >= 0 ? 'money' : preview.indexOf('career') >= 0 || preview.indexOf('profession') >= 0 ? 'career' : preview.indexOf('life') >= 0 || preview.indexOf('birthday') >= 0 || preview.indexOf('day-arcana') >= 0 ? 'life' : 'report';
 
   var COPY = {
     ru: {
-      birthKicker:'Бесплатный результат по дате рождения', birthTitle:{career:'Твоя текущая точка в карьере',love:'Твоя текущая точка в отношениях',money:'Твоя текущая финансовая точка'},
+      birthKicker:'Бесплатный результат по дате рождения', birthTitle:{career:'Твоя текущая точка в карьере',love:'Твоя текущая точка в отношениях',money:'Твоя текущая финансовая точка',life:'Твой текущий этап жизни',report:'Твой скрытый дар'},
       current:'Что видно сейчас', graphNow:'сейчас', graphNote:'Показан пройденный отрезок и твоя текущая точка. Следующая часть линии намеренно скрыта.',
       proof:'Вывод построен по твоему реальному графику и текущему возрасту.', questionsTitle:'Твой график открывает следующий вопрос',
-      questions:{career:['Когда начинается следующая профессиональная смена?','Подходит ли этот период для новой работы?','Твоё естественное направление — управление или исполнение?'],love:['Когда личная линия входит в новую фазу?','Какой сценарий повторяется в отношениях?','Какая форма близости подходит тебе сильнее?'],money:['Когда линия денег меняет направление?','Где начинается следующий период роста?','Какие качества усиливают или замедляют доход?']},
+      questions:{career:['Когда начинается следующая профессиональная смена?','Подходит ли этот период для новой работы?','Твоё естественное направление — управление или исполнение?'],love:['Когда личная линия входит в новую фазу?','Какой сценарий повторяется в отношениях?','Какая форма близости подходит тебе сильнее?'],money:['Когда линия денег меняет направление?','Где начинается следующий период роста?','Какие качества усиливают или замедляют доход?'],life:['Когда начинается следующий этап жизни?','Какая сфера станет главной в новой фазе?','Как перемена проявится в отношениях, деньгах и направлении?'],report:['Где твой дар раскрывается сильнее всего?','Что мешает использовать его полностью?','Как он проявляется в выбранной сфере?']},
       continueTitle:'Текущая точка уже рассчитана', continueText:'Добавь имя ниже, чтобы связать график с личными качествами и получить углублённый результат.',
-      answerKicker:'Ответ по твоему Кристаллу', partial:'Углублённый результат', fullTitle:{career:'Твоя профессиональная линия становится личной',love:'Твоя линия отношений становится личной',money:'Твоя финансовая линия становится личной'},
+      answerKicker:'Ответ по твоему Кристаллу', partial:'Углублённый результат', fullTitle:{career:'Твоя профессиональная линия становится личной',love:'Твоя линия отношений становится личной',money:'Твоя финансовая линия становится личной',life:'Твоя следующая жизненная перемена',report:'Твой дар становится личным направлением'},
       nextTitle:'В полном разборе продолжаются вопросы', lock:'Ответы продолжаются в полном разборе', paywallTitle:'График продолжается', paywallText:'Открой следующие периоды, точные переходы и весь «Кристалл судьбы» сразу после оплаты.'
     },
     ro: {
-      birthKicker:'Rezultat gratuit din data nașterii', birthTitle:{career:'Punctul tău actual în carieră',love:'Punctul tău actual în relații',money:'Punctul tău financiar actual'},
+      birthKicker:'Rezultat gratuit din data nașterii', birthTitle:{career:'Punctul tău actual în carieră',love:'Punctul tău actual în relații',money:'Punctul tău financiar actual',life:'Etapa actuală a vieții tale',report:'Darul tău ascuns'},
       current:'Ce se vede acum', graphNow:'acum', graphNote:'Sunt afișate traseul parcurs și punctul tău actual. Următoarea parte a liniei este ascunsă intenționat.',
       proof:'Concluzia este construită din graficul tău real și vârsta actuală.', questionsTitle:'Graficul tău deschide următoarea întrebare',
-      questions:{career:['Când începe următoarea schimbare profesională?','Este această perioadă potrivită pentru un job nou?','Direcția ta naturală este conducerea sau execuția?'],love:['Când intră linia personală într-o fază nouă?','Ce scenariu se repetă în relații?','Ce formă de apropiere ți se potrivește?'],money:['Când își schimbă direcția linia banilor?','Unde începe următoarea perioadă de creștere?','Ce trăsături susțin sau încetinesc veniturile?']},
+      questions:{career:['Când începe următoarea schimbare profesională?','Este această perioadă potrivită pentru un job nou?','Direcția ta naturală este conducerea sau execuția?'],love:['Când intră linia personală într-o fază nouă?','Ce scenariu se repetă în relații?','Ce formă de apropiere ți se potrivește?'],money:['Când își schimbă direcția linia banilor?','Unde începe următoarea perioadă de creștere?','Ce trăsături susțin sau încetinesc veniturile?'],life:['Când începe următoarea etapă a vieții?','Ce domeniu devine principal în noua fază?','Cum se manifestă schimbarea în relații, bani și direcție?'],report:['Unde se exprimă cel mai puternic darul tău?','Ce te împiedică să îl folosești pe deplin?','Cum se manifestă în domeniul ales?']},
       continueTitle:'Punctul actual este deja calculat', continueText:'Adaugă numele mai jos pentru a conecta graficul cu trăsăturile tale și a primi rezultatul aprofundat.',
-      answerKicker:'Răspuns din Cristalul tău', partial:'Rezultat aprofundat', fullTitle:{career:'Linia profesională devine personală',love:'Linia relațiilor devine personală',money:'Linia financiară devine personală'},
+      answerKicker:'Răspuns din Cristalul tău', partial:'Rezultat aprofundat', fullTitle:{career:'Linia profesională devine personală',love:'Linia relațiilor devine personală',money:'Linia financiară devine personală',life:'Următoarea schimbare din viața ta',report:'Darul tău devine o direcție personală'},
       nextTitle:'Analiza completă continuă cu aceste întrebări', lock:'Răspunsurile continuă în analiza completă', paywallTitle:'Graficul tău continuă', paywallText:'Deschide perioadele următoare, tranzițiile exacte și întregul „Cristal al Destinului” imediat după plată.'
     }
   };

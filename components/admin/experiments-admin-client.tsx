@@ -13,11 +13,14 @@ import {
   RefreshCw,
   Save,
   Smartphone,
+  UserRound,
 } from "lucide-react"
 import {
   getExperimentReport,
+  getExperimentParticipants,
   getVariantPreviewLinks,
   saveFunnelTraffic,
+  type ExperimentParticipantRow,
   type ExperimentReport,
   type VariantPreviewLinks,
   type VariantReport,
@@ -141,6 +144,69 @@ const FUNNELS = [
     form: "form-money-future-v1",
     preview: "preview-money-future-v1",
   },
+  {
+    key: "instagram-direct-v1",
+    label: "Instagram Direct",
+    eyebrow: "Trafic rece din Instagram",
+    summary: "Promisiune clară și toate datele vizibile imediat, fără pași intermediari.",
+    flow: ["Promisiune directă", "Date", "Preview nativ", "Plată"],
+    form: "form-instagram-direct-v1",
+    preview: "preview-instagram-direct-v1",
+  },
+  {
+    key: "daria-continuity-v1",
+    label: "Daria Continuity",
+    eyebrow: "Continuitate cu reclama",
+    summary: "Reia videoclipul Dariei în limba rusă înaintea formularului și continuă cu același raport nativ.",
+    flow: ["Video Daria", "Date", "Preview nativ", "Plată"],
+    form: "form-daria-continuity-v1",
+    preview: "preview-daria-continuity-v1",
+  },
+  {
+    key: "topic-choice-v1",
+    label: "Topic Choice",
+    eyebrow: "Curiozitate personală",
+    summary: "Vizitatorul alege întâi tema care îl interesează, iar capitolul corespunzător se deschide primul.",
+    flow: ["Alegere temă", "Date", "Preview tematic", "Plată"],
+    form: "form-topic-choice-v1",
+    preview: "preview-topic-choice-v1",
+  },
+  {
+    key: "life-stage-now-v1",
+    label: "Etapa vieții acum",
+    eyebrow: "Cronologie personală",
+    summary: "Data nașterii arată gratuit etapa actuală, iar următoarea schimbare conduce spre raportul complet.",
+    flow: ["Data nașterii", "Etapa actuală", "Identitate", "Următoarea schimbare", "Plată"],
+    form: "form-life-stage-now-v1",
+    preview: "preview-life-stage-now-v1",
+  },
+  {
+    key: "hidden-gift-v1",
+    label: "Darul ascuns",
+    eyebrow: "Revelație personală",
+    summary: "Data nașterii dezvăluie darul principal, apoi utilizatorul alege domeniul în care îl simte blocat.",
+    flow: ["Data nașterii", "Dar personal", "Alegere domeniu", "Preview personalizat", "Plată"],
+    form: "form-hidden-gift-v1",
+    preview: "preview-hidden-gift-v1",
+  },
+  {
+    key: "birthday-express-v1",
+    label: "Data Express",
+    eyebrow: "Un singur câmp",
+    summary: "Primul ecran cere numai data nașterii într-un câmp nativ, cu CTA-ul vizibil imediat.",
+    flow: ["Data nașterii", "Preview birthday", "Identitate", "Raport", "Plată"],
+    form: "form-birthday-express-v1",
+    preview: "preview-birthday-express-v1",
+  },
+  {
+    key: "day-arcana-v1",
+    label: "Arcana zilei",
+    eyebrow: "Micro-recompensă",
+    summary: "Ziua dezvăluie instant Arcana, apoi luna și anul deschid rezultatul birthday real.",
+    flow: ["Zi", "Arcana instant", "Lună și an", "Preview birthday", "Identitate", "Plată"],
+    form: "form-day-arcana-v1",
+    preview: "preview-day-arcana-v1",
+  },
 ] as const
 
 type FunnelKey = (typeof FUNNELS)[number]["key"]
@@ -150,9 +216,25 @@ type Device = "desktop" | "mobile"
 type TrafficDraft = Record<FunnelKey, { active: boolean; percentage: number }>
 
 function defaultTraffic(): TrafficDraft {
+  const activeFunnels = new Set([
+    "control",
+    "birthday-first",
+    "career-graph",
+    "life-now",
+    "relationship-needs",
+    "life-timeline",
+    "career-future-v1",
+    "relationship-future-v1",
+    "money-future-v1",
+    "life-stage-now-v1",
+    "hidden-gift-v1",
+    "birthday-express-v1",
+    "day-arcana-v1",
+  ])
+
   return Object.fromEntries(FUNNELS.map((item) => [item.key, {
-    active: item.key === "control",
-    percentage: item.key === "control" ? 100 : 0,
+    active: activeFunnels.has(item.key),
+    percentage: item.key === "control" ? 10 : activeFunnels.has(item.key) ? 9 : 0,
   }])) as TrafficDraft
 }
 
@@ -185,6 +267,66 @@ function FunnelMetrics({ row }: { row?: VariantReport }) {
       <Metric label="Au deschis plata" value={row?.checkouts ?? 0} />
       <Metric label="Conversie" value={pct(row?.purchases ?? 0, denominator)} />
     </div>
+  )
+}
+
+function formatBirthDate(row: ExperimentParticipantRow) {
+  if (!row.birthDay || !row.birthMonth || !row.birthYear) return "—"
+  return [row.birthDay, row.birthMonth, row.birthYear].map((part, index) => index < 2 ? String(part).padStart(2, "0") : part).join(".")
+}
+
+function formatActivity(iso: string) {
+  return new Intl.DateTimeFormat("ro-RO", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(iso))
+}
+
+function ParticipantList({ rows, total, loading, hasMore, onLoadMore }: { rows: ExperimentParticipantRow[]; total: number; loading: boolean; hasMore: boolean; onLoadMore: () => void }) {
+  return (
+    <section className="mt-5 border-t border-border pt-5">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">Persoane recente</p>
+          <h3 className="mt-1 flex items-center gap-2 text-lg font-semibold text-foreground"><UserRound className="size-4 text-primary" />{total} persoane au completat sau au văzut preview-ul</h3>
+        </div>
+        <p className="text-xs text-muted-foreground">Ora este afișată în fusul tău local.</p>
+      </div>
+
+      {loading && !rows.length ? (
+        <div className="mt-4 flex min-h-28 items-center justify-center rounded-xl border border-border bg-background/30 text-sm text-muted-foreground"><Loader2 className="mr-2 size-4 animate-spin" />Se încarcă persoanele</div>
+      ) : rows.length === 0 ? (
+        <div className="mt-4 rounded-xl border border-dashed border-border bg-background/25 px-4 py-8 text-center text-sm text-muted-foreground">Încă nu există persoane înregistrate pentru acest funnel. Datele se colectează de la această lansare înainte.</div>
+      ) : (
+        <div className="mt-4 flex flex-col gap-2">
+          {rows.map((person) => {
+            const fullName = [person.firstName, person.middleName, person.lastName].filter(Boolean).join(" ") || "—"
+            return (
+              <article key={person.visitorId} className="rounded-xl border border-border bg-background/30 p-3 sm:p-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className={`rounded-full px-2 py-1 text-[10px] font-medium ${person.stage === "preview_seen" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>{person.stage === "preview_seen" ? "A văzut preview" : "A completat formularul"}</span>
+                      <span className="font-mono text-xs uppercase text-muted-foreground">{person.country || "Țară necunoscută"}</span>
+                    </div>
+                    <p className="mt-2 break-words font-medium text-foreground">{fullName}</p>
+                    <p className="mt-1 break-all text-sm text-muted-foreground">{person.email || "Email necompletat"}</p>
+                  </div>
+                  <div className="text-left sm:text-right">
+                    <p className="font-mono text-sm text-foreground">{formatActivity(person.lastActivityAt)}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Ultima activitate</p>
+                  </div>
+                </div>
+                <dl className="mt-3 grid grid-cols-2 gap-2 border-t border-border pt-3 sm:grid-cols-4">
+                  <div><dt className="text-[11px] text-muted-foreground">Data nașterii</dt><dd className="mt-1 font-mono text-sm text-foreground">{formatBirthDate(person)}</dd></div>
+                  <div><dt className="text-[11px] text-muted-foreground">Valuta</dt><dd className="mt-1 font-mono text-sm uppercase text-foreground">{person.currency || "—"}</dd></div>
+                  <div><dt className="text-[11px] text-muted-foreground">Preț afișat</dt><dd className="mt-1 font-mono text-sm text-primary">{person.displayedPrice || "—"}</dd></div>
+                  <div><dt className="text-[11px] text-muted-foreground">Limba</dt><dd className="mt-1 font-mono text-sm uppercase text-foreground">{person.locale || "—"}</dd></div>
+                </dl>
+              </article>
+            )
+          })}
+          {hasMore && <button type="button" onClick={onLoadMore} disabled={loading} className="mt-2 flex items-center justify-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm text-foreground transition hover:bg-muted disabled:opacity-50">{loading && <Loader2 className="size-4 animate-spin" />}Încarcă mai multe</button>}
+        </div>
+      )}
+    </section>
   )
 }
 
@@ -237,6 +379,10 @@ export function ExperimentsAdminClient() {
   const [savingTraffic, setSavingTraffic] = useState(false)
   const [trafficMessage, setTrafficMessage] = useState("")
   const [trafficError, setTrafficError] = useState("")
+  const [participants, setParticipants] = useState<ExperimentParticipantRow[]>([])
+  const [participantsTotal, setParticipantsTotal] = useState(0)
+  const [participantsHasMore, setParticipantsHasMore] = useState(false)
+  const [participantsLoading, setParticipantsLoading] = useState(false)
 
   const funnel = FUNNELS.find((item) => item.key === selected) || FUNNELS[0]
   const isProgressiveFuture = selected.endsWith('-future-v1')
@@ -248,19 +394,55 @@ export function ExperimentsAdminClient() {
 
   async function load(pw = password) {
     setLoading(true)
-    const [reportResult, linksResult] = await Promise.all([
+    setParticipantsLoading(true)
+    const [reportResult, linksResult, participantsResult] = await Promise.all([
       getExperimentReport(pw),
       getVariantPreviewLinks(pw),
+      getExperimentParticipants(pw, funnel.form),
     ])
     setLoading(false)
+    setParticipantsLoading(false)
     if (!reportResult.ok || !reportResult.report || !linksResult.ok || !linksResult.links) return false
     setReport(reportResult.report)
     setLinks(linksResult.links)
+    if (participantsResult.ok && participantsResult.page) {
+      setParticipants(participantsResult.page.rows)
+      setParticipantsTotal(participantsResult.page.total)
+      setParticipantsHasMore(participantsResult.page.hasMore)
+    }
     setTraffic(Object.fromEntries(FUNNELS.map((item) => {
       const variant = reportResult.report!.form.find((row) => row.id === item.form)
       return [item.key, { active: variant?.active ?? item.key === "control", percentage: variant?.active ? Math.round(variant.weight) : 0 }]
     })) as TrafficDraft)
     return true
+  }
+
+  async function selectFunnel(key: FunnelKey) {
+    setSelected(key)
+    setStage("start")
+    setParticipants([])
+    setParticipantsTotal(0)
+    setParticipantsHasMore(false)
+    setParticipantsLoading(true)
+    const target = FUNNELS.find((item) => item.key === key) || FUNNELS[0]
+    const result = await getExperimentParticipants(password, target.form)
+    setParticipantsLoading(false)
+    if (result.ok && result.page) {
+      setParticipants(result.page.rows)
+      setParticipantsTotal(result.page.total)
+      setParticipantsHasMore(result.page.hasMore)
+    }
+  }
+
+  async function loadMoreParticipants() {
+    setParticipantsLoading(true)
+    const result = await getExperimentParticipants(password, funnel.form, participants.length)
+    setParticipantsLoading(false)
+    if (result.ok && result.page) {
+      setParticipants((current) => [...current, ...result.page!.rows])
+      setParticipantsTotal(result.page.total)
+      setParticipantsHasMore(result.page.hasMore)
+    }
   }
 
   function toggleFunnel(key: FunnelKey) {
@@ -375,7 +557,7 @@ export function ExperimentsAdminClient() {
             {FUNNELS.map((item, index) => {
               const active = item.key === selected
               return (
-                <button key={item.key} type="button" onClick={() => { setSelected(item.key); setStage("start") }} className={`rounded-xl border p-3 text-left transition ${active ? "border-primary/45 bg-primary/10" : "border-transparent bg-background/25 hover:border-border hover:bg-muted/50"}`}>
+                <button key={item.key} type="button" onClick={() => void selectFunnel(item.key)} className={`rounded-xl border p-3 text-left transition ${active ? "border-primary/45 bg-primary/10" : "border-transparent bg-background/25 hover:border-border hover:bg-muted/50"}`}>
                   <div className="flex items-center justify-between gap-2">
                     <span className={`font-mono text-xs ${active ? "text-primary" : "text-muted-foreground"}`}>0{index + 1}</span>
                     <span className={`rounded-full px-2 py-0.5 text-[10px] ${traffic[item.key].active ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>{traffic[item.key].active ? `${traffic[item.key].percentage}% Public` : "Privat"}</span>
@@ -445,6 +627,7 @@ export function ExperimentsAdminClient() {
           {stage !== "start" && <p className="mt-3 text-xs leading-5 text-muted-foreground">Rezultatul este calculat cu date demonstrative. Așteaptă finalizarea animației „Cristalul se formează”; calculele și designul sunt aceleași ca în fluxul real.</p>}
 
           <div className="mt-4"><FunnelMetrics row={row} /></div>
+          <ParticipantList rows={participants} total={participantsTotal} loading={participantsLoading} hasMore={participantsHasMore} onLoadMore={() => void loadMoreParticipants()} />
         </section>
       </div>
 
