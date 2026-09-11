@@ -34,15 +34,15 @@
   var preview = params.get('pv') || 'preview-control';
   var stage = params.get('stage') || 'full';
   var lang = params.get('lang') === 'ro' ? 'ro' : 'ru';
-  var allowed = ['preview-control','preview-birthday-first','preview-love-graph','preview-career-graph','preview-life-now','preview-content-first','preview-money-flow','preview-profession-match','preview-relationship-needs','preview-life-timeline','preview-career-future-v1','preview-relationship-future-v1','preview-money-future-v1','preview-life-stage-now-v1','preview-hidden-gift-v1'];
+  var allowed = ['preview-control','preview-birthday-first','preview-love-graph','preview-career-graph','preview-life-now','preview-content-first','preview-money-flow','preview-profession-match','preview-relationship-needs','preview-life-timeline','preview-career-future-v1','preview-relationship-future-v1','preview-money-future-v1','preview-life-stage-now-v1','preview-hidden-gift-v1','preview-birthday-express-v1','preview-day-arcana-v1'];
   if(allowed.indexOf(preview) < 0 || preview === 'preview-control' || preview === 'preview-birthday-first') return;
   document.documentElement.setAttribute('data-cd-preview', preview);
   document.documentElement.setAttribute('data-cd-form', params.get('fv') || 'form-control');
 
   var intent = params.get('intent') || '';
   var baseRenderPreview = window.renderPreview || renderPreview;
-  var isFuture = /-(career|relationship|money)-future-v1$/.test(preview) || preview === 'preview-life-stage-now-v1' || preview === 'preview-hidden-gift-v1';
-  var topic = preview.indexOf('relationship') >= 0 || preview.indexOf('love') >= 0 ? 'love' : preview.indexOf('money') >= 0 ? 'money' : preview.indexOf('career') >= 0 || preview.indexOf('profession') >= 0 ? 'career' : preview.indexOf('life') >= 0 ? 'life' : 'report';
+  var isFuture = /-(career|relationship|money)-future-v1$/.test(preview) || preview === 'preview-life-stage-now-v1' || preview === 'preview-hidden-gift-v1' || preview === 'preview-birthday-express-v1' || preview === 'preview-day-arcana-v1';
+  var topic = preview.indexOf('relationship') >= 0 || preview.indexOf('love') >= 0 ? 'love' : preview.indexOf('money') >= 0 ? 'money' : preview.indexOf('career') >= 0 || preview.indexOf('profession') >= 0 ? 'career' : preview.indexOf('life') >= 0 || preview.indexOf('birthday') >= 0 || preview.indexOf('day-arcana') >= 0 ? 'life' : 'report';
 
   var COPY = {
     ru: {

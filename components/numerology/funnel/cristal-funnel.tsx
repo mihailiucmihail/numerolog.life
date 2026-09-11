@@ -71,8 +71,8 @@ const PREVIEW_ENGINE_VARIANTS: Record<string, string> = {
   'preview-topic-choice-v1': 'preview-topic-choice-v1',
   'preview-life-stage-now-v1': 'preview-life-stage-now-v1',
   'preview-hidden-gift-v1': 'preview-hidden-gift-v1',
-  'preview-birthday-express-v1': 'preview-birthday-first',
-  'preview-day-arcana-v1': 'preview-birthday-first',
+  'preview-birthday-express-v1': 'preview-birthday-express-v1',
+  'preview-day-arcana-v1': 'preview-day-arcana-v1',
 }
 
 type FutureStage = 'date' | 'birth-result' | 'full-result'
