@@ -5,8 +5,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 function FunnelSkeleton() {
   return (
-    <div className="min-h-144 px-4 py-8" aria-hidden="true">
-      <div className="mx-auto flex min-h-128 max-w-3xl flex-col gap-6 rounded-3xl border border-border bg-card/80 p-5 sm:p-8">
+    <div className="min-h-120 px-4" aria-hidden="true">
+      <div className="mx-auto flex min-h-120 max-w-3xl flex-col gap-6 rounded-3xl border border-border bg-card/80 p-5 sm:p-8">
         <div className="flex items-start gap-4">
           <Skeleton className="size-10 shrink-0 rounded-xl" />
           <div className="flex flex-1 flex-col gap-3">
