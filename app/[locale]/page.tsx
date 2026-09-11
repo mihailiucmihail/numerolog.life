@@ -1,36 +1,42 @@
-import { Navbar } from "@/components/navbar"
-export const dynamic = 'force-dynamic'
-import { HeroSection } from "@/components/hero-section"
-import { HowItWorksSection } from "@/components/how-it-works-section"
-import { FeaturesSection } from "@/components/features-section"
-import { FAQSection } from "@/components/faq-section"
-import { Footer } from "@/components/footer"
-import { StarField } from "@/components/star-field"
-import { NewsletterSection } from "@/components/newsletter/newsletter-section"
-import { NewsletterPopup } from "@/components/newsletter/newsletter-popup"
-import { ReportPreviewSection } from "@/components/report-preview-section"
-import { GraniPaymentFrame } from "@/components/grani-payment-frame"
-import { PROMO_ENABLED } from "@/lib/promo-flags"
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import { HomePreviewPremium } from '@/components/home-preview-premium'
 
-export default function HomePage() {
-  return (
-    <main className="min-h-screen bg-background relative">
-      <StarField />
-      <Navbar />
-      <HeroSection />
-      <FeaturesSection />
-      <ReportPreviewSection />
-      <section id="grani" className="relative z-10 px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mx-auto w-full max-w-7xl overflow-hidden">
-          <GraniPaymentFrame locale="ru" preview />
-        </div>
-      </section>
-      <HowItWorksSection />
-      {/* Secțiunea și popup-ul newsletter promit −15 % → ascunse cât timp promoțiile sunt oprite. */}
-      {PROMO_ENABLED && <NewsletterSection />}
-      <FAQSection />
-      <Footer />
-      {PROMO_ENABLED && <NewsletterPopup />}
-    </main>
-  )
+type Locale = 'ro' | 'ru'
+
+export const dynamic = 'force-dynamic'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const ro = locale === 'ro'
+
+  return {
+    title: ro ? 'Cristalul Destinului — raport numerologic personal' : 'Кристалл судьбы — персональный нумерологический разбор',
+    description: ro
+      ? 'Descoperă gratuit prima Arcană și explorează structura Cristalului Destinului: identitate, relații, bani, carieră și ciclurile vieții.'
+      : 'Узнай бесплатно первый Аркан и исследуй свой «Кристалл судьбы»: личность, отношения, деньги, карьеру и жизненные циклы.',
+    alternates: {
+      canonical: `/${locale}`,
+      languages: {
+        ro: '/ro',
+        ru: '/ru',
+      },
+    },
+    robots: { index: true, follow: true },
+  }
+}
+
+export default async function HomePage({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params
+  if (locale !== 'ro' && locale !== 'ru') notFound()
+
+  return <HomePreviewPremium locale={locale as Locale} />
 }
