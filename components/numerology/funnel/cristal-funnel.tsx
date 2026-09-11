@@ -118,11 +118,16 @@ export default function CristalFunnel() {
   const emailParam = searchParams.get('email') || ''
   // Tema din link (Reels): ?entry=birthday|love|money|career → formular, previzualizare și raport adaptate.
   const entry = normalizeEntry(searchParams.get('entry'))
+  // Paginile generale despre Cristal trimit explicit către experiența standard, fără o temă sau un unghi experimental.
+  const standardFlow = searchParams.get('flow') === 'standard'
 
   // Formularul se deschide cu alfabetul numelui preselectat după țara vizitatorului (HTML-ul citește ?alpha=).
   // Experimentul FORM/PREVIEW: varianta e stabilită de proxy înainte de randare; aici doar o
   // transmitem formularului (?fv=/?pv=) și raportăm parcursul.
-  const exp = useLandingView(entry)
+  const assignedExp = useLandingView(entry)
+  const exp = standardFlow
+    ? { ...assignedExp, form: 'form-control', preview: 'preview-control' }
+    : assignedExp
   const futureTopic = exp.form === 'form-career-future-v1' ? 'career' : exp.form === 'form-relationship-future-v1' ? 'love' : exp.form === 'form-money-future-v1' ? 'money' : ''
   const isFutureFunnel = Boolean(futureTopic)
   const formSrc = `${CALCULATOR_SRC}?alpha=${alphabet}&country=${country || ''}${emailParam ? `&email=${encodeURIComponent(emailParam)}` : ''}${entry ? `&entry=${entry}` : ''}&lang=${locale}&fv=${exp.form}&pv=${exp.preview}`
