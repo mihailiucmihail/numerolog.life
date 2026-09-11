@@ -11,7 +11,7 @@ type Locale = 'ro' | 'ru'
 const COPY = {
   ro: {
     label: 'Cristalul destinului · 22 de arcane · 14 fațete', title: 'Calculează Cristalul Destinului',
-    body: 'Calculul complet se construiește din nume, prenume, al doilea prenume și data nașterii. Vei vedea întreg Cristalul — pe fațete, cu fapte reale despre tine.',
+    body: 'Calculul complet se construiește din nume, prenume, al doilea prenume și data nașterii. Vei descoperi întreg Cristalul — fațetă cu fațetă, prin sensuri personale care ți se dezvăluie numai ție.',
     last: 'Nume', first: 'Prenume', middle: 'Al doilea prenume', optional: 'dacă există',
     date: 'Data nașterii', day: 'Zi', month: 'Lună', year: 'An',
     email: 'Email', emailNote: 'Aici primești linkul permanent către Cristalul tău.',
@@ -21,7 +21,7 @@ const COPY = {
   },
   ru: {
     label: 'Кристалл судьбы · 22 аркана · 14 граней', title: 'Рассчитай свой Кристалл судьбы',
-    body: 'Полный расчёт строится по фамилии, имени, отчеству и дате рождения. Ты увидишь весь Кристалл — по граням, с реальными фактами о себе.',
+    body: 'Полный расчёт строится по фамилии, имени, отчеству и дате рождения. Ты увидишь весь Кристалл — грань за гранью, с персональными смыслами, которые открываются только тебе.',
     last: 'Фамилия', first: 'Имя', middle: 'Отчество', optional: 'если есть',
     date: 'Дата рождения', day: 'День', month: 'Месяц', year: 'Год',
     email: 'Email', emailNote: 'Сюда придёт постоянная ссылка на твой Кристалл.',
