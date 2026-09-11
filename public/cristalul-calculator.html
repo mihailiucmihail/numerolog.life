@@ -9231,5 +9231,266 @@ function startPdfExport(){
   };
 })();
 </script>
+<style id="cd-grani-preview">
+.cd-gr{display:flex;flex-direction:column;gap:14px}
+.cd-gr-head{padding:20px 16px 18px;border:1px solid rgba(217,169,79,.32);border-radius:18px;background:linear-gradient(170deg,rgba(217,169,79,.12),rgba(16,10,31,.78) 60%)}
+.cd-gr-kicker{margin:0 0 7px;color:var(--brass-bright,#d9a94f);font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+.cd-gr-head h2{margin:0;color:var(--parchment,#fff3d6);font-family:var(--font-display,serif);font-size:28px;line-height:1.1;font-weight:500}
+.cd-gr-meta{margin:8px 0 0;color:var(--parchment-dim,#c9bda3);font-size:13px}
+.cd-gr-lead{margin:12px 0 0;color:var(--parchment,#fff3d6);font-size:14.5px;line-height:1.55}
+.cd-gr-progress{display:flex;align-items:center;gap:10px;margin:14px 0 0;color:var(--parchment-dim,#c9bda3);font-size:12px}
+.cd-gr-progress i{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.1);overflow:hidden;display:block}
+.cd-gr-progress i b{display:block;height:100%;background:var(--brass-bright,#d9a94f);transition:width .6s ease}
+.cd-gr-card{position:relative;padding:18px 16px;border:1px solid rgba(255,255,255,.1);border-radius:18px;background:rgba(16,10,31,.72);overflow:hidden;transition:transform .35s ease,border-color .35s ease}
+.cd-gr-card.is-locked:hover{transform:translateY(-2px);border-color:rgba(217,169,79,.42)}
+.cd-gr-card.is-open{border-color:rgba(217,169,79,.5)}
+.cd-gr-card:before{content:"";position:absolute;left:14%;right:14%;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(217,169,79,.8),transparent)}
+.cd-gr-card h3{margin:0;color:var(--parchment,#fff3d6);font-family:var(--font-display,serif);font-size:22px;line-height:1.2;font-weight:500}
+.cd-gr-card.is-open h3{color:var(--brass-bright,#d9a94f)}
+.cd-gr-fact{margin:14px 0 0;padding:14px 14px 14px 16px;border-radius:12px;background:rgba(217,169,79,.08);border:1px solid rgba(217,169,79,.22);color:var(--parchment,#fff3d6);font-size:15px;line-height:1.6}
+.cd-gr-fact .cd-gr-kicker{margin-bottom:6px}
+.cd-gr-fact p{margin:0}
+.cd-gr-fact b{color:var(--brass-bright,#d9a94f);font-weight:600}
+.cd-gr-nums{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 0}
+.cd-gr-num{flex:1 1 90px;min-width:90px;padding:10px 8px;border:1px solid rgba(217,169,79,.28);border-radius:12px;text-align:center;background:rgba(0,0,0,.2)}
+.cd-gr-num strong{display:block;color:var(--brass-bright,#d9a94f);font-family:var(--font-display,serif);font-size:30px;line-height:1}
+.cd-gr-num span{display:block;margin-top:6px;color:var(--parchment-dim,#c9bda3);font-size:10.5px;line-height:1.35}
+.cd-gr-inside{margin:14px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.cd-gr-inside li{display:grid;grid-template-columns:16px minmax(0,1fr);gap:9px;color:var(--parchment-dim,#c9bda3);font-size:13.5px;line-height:1.5}
+.cd-gr-inside li i{display:inline-block;width:13px;height:13px;margin-top:4px;border:1.5px solid rgba(217,169,79,.7);border-radius:4px;position:relative}
+.cd-gr-inside li i:after{content:"";position:absolute;left:2.5px;top:-6px;width:5px;height:6px;border:1.5px solid rgba(217,169,79,.7);border-bottom:0;border-radius:4px 4px 0 0}
+.cd-gr-inside li em{font-style:normal;color:var(--parchment,#fff3d6)}
+.cd-gr-veil{position:relative;margin:14px 0 0;height:72px;border-radius:12px;overflow:hidden;background:linear-gradient(90deg,rgba(26,15,51,.9),rgba(13,8,25,.95))}
+.cd-gr-veil:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(217,169,79,.16),transparent);width:120px;animation:cdVeilSweep 6s linear infinite}
+.cd-gr-veil span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--parchment-dim,#c9bda3);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.cd-gr-veil .cd-gr-spark{position:absolute;width:3px;height:3px;border-radius:50%;background:var(--brass-bright,#d9a94f);opacity:0;animation:cdGrSpark 4.6s ease-in-out infinite}
+@keyframes cdGrSpark{0%{opacity:0;transform:translateY(0) scale(.6)}20%{opacity:.9}60%{opacity:.5}100%{opacity:0;transform:translateY(-30px) scale(1.1)}}
+.cd-gr-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:16px 0 0}
+.cd-gr-btn{flex:1 1 220px;padding:14px 16px;border:0;border-radius:12px;background:var(--brass-bright,#d9a94f);color:#1a1108;font-family:var(--mono,monospace);font-size:13px;font-weight:700;letter-spacing:.05em;cursor:pointer;box-shadow:0 6px 22px rgba(217,169,79,.22);transition:transform .2s ease,box-shadow .2s ease}
+.cd-gr-btn:hover{transform:translateY(-1px);box-shadow:0 10px 26px rgba(217,169,79,.3)}
+.cd-gr-note{margin:0;color:var(--parchment-dim,#c9bda3);font-size:12px;line-height:1.5}
+.cd-gr-open-tag{display:inline-flex;align-items:center;gap:6px;margin:0 0 8px;color:var(--brass-bright,#d9a94f);font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+.cd-gr-open-tag:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--brass-bright,#d9a94f);box-shadow:0 0 12px var(--brass-bright,#d9a94f)}
+.cd-gr-body{margin:14px 0 0;display:flex;flex-direction:column;gap:16px}
+.cd-gr-body .card{margin:0 !important;border-radius:14px}
+.cd-gr-body .card .section-title{font-size:19px}
+.cd-gr-full{margin:8px 0 0}
+.cd-gr-full .cd-gr-kicker{text-align:center}
+.cd-gr-saved{margin:6px 0 0;text-align:center;color:var(--brass-bright,#d9a94f);font-size:13px}
+.cd-gr-reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+.cd-gr-reveal.is-in{opacity:1;transform:none}
+@media(min-width:620px){.cd-gr{gap:16px}.cd-gr-head{padding:26px 24px 22px}.cd-gr-card{padding:22px 22px}.cd-gr-head h2{font-size:34px}}
+@media(prefers-reduced-motion:reduce){.cd-gr-veil:after,.cd-gr-veil .cd-gr-spark{animation:none}.cd-gr-reveal{opacity:1;transform:none;transition:none}}
+</style>
+<script>
+(function(){
+  'use strict';
+  var params = new URLSearchParams(location.search);
+  var pv = params.get('pv');
+  if(pv !== 'preview-grani-v1') return;
+  var lang = params.get('lang') === 'ro' ? 'ro' : 'ru';
+  var unlocked = (params.get('unlocked') || '').split(',').map(function(v){ return parseInt(v, 10); }).filter(function(n){ return n >= 1 && n <= 14; });
+  var emailParam = params.get('email') || '';
+  /* Emailul e cerut deja in formularul standard: paywall-ul nativ nu trebuie sa-l mai ceara. */
+  if(emailParam){ try{ localStorage.setItem('crystal_last_email', emailParam); }catch(e){} }
+  var baseRender = window.renderPreview || renderPreview;
+  var graniPrice = null, unlockedCount = unlocked.length;
+
+  /* Cele 14 Grani: potrivire pe inceputul titlului real al sectiunii din raport. */
+  var GRANI = [
+    { id:1, ru:'Кто ты по дате и имени', ro:'Cine ești după dată și nume', keys:['Что означает твоя дата рождения','Что означает твоё Имя','Ключевые числа'] },
+    { id:2, ru:'Карма прошлого', ro:'Karma trecutului', keys:['Ошибка прошлого воплощения','Сожаление прошлой жизни','Кармический урок'] },
+    { id:3, ru:'Задачи и призвание', ro:'Sarcini și vocație', keys:['Планетарная и Социальная задача','Родовая задача','Призвание'] },
+    { id:4, ru:'Судьба и планеты', ro:'Destin și planete', keys:['Планеты Судьбы и Кармы','Личная стихия','Ловушка Судьбы','Тайное желание Судьбы'] },
+    { id:5, ru:'Здоровье', ro:'Sănătate', keys:['Нумерология здоровья','Возраст Души','Здоровье по знаку зодиака'] },
+    { id:6, ru:'Характер', ro:'Caracter', keys:['Отрицательные черты характера','Положительные черты характера'] },
+    { id:7, ru:'Отношения', ro:'Relații', keys:['Совместные задачи в партнёрстве','Отрицательные эмоции в отношениях','Решение конфликтов'] },
+    { id:8, ru:'География и подсознание', ro:'Geografie și subconștient', keys:['Планета и Кармическая география','Страх подсознания'] },
+    { id:9, ru:'Метациклы и Графики Судьбы', ro:'Metacicluri și Graficele Destinului', keys:['Метациклы жизни','Графики Судьбы'], chart:'career' },
+    { id:10, ru:'Твои годы', ro:'Anii tăi', keys:['Календарь личного года','Годичные циклы','Качество Жизни по Годам','Циклы Лилит'] },
+    { id:11, ru:'Род', ro:'Neamul', keys:['Кармические задачи перед Родом','Родовые таланты','Кармический след Рода','Кармический кон Рода','Возрасты кармических слоёв'] },
+    { id:12, ru:'Мандала', ro:'Mandala', keys:['Мандала: Грань и Корень','Мандала: 4 сферы жизни','Графики мандалы'] },
+    { id:13, ru:'Карты', ro:'Hărțile', keys:['Карта Рождения и Карта Имени','Мантический квадрат Ло-Шу','Карта Души','Карта Инклюзий','Векторная Карта'] },
+    { id:14, ru:'Ещё немного о тебе', ro:'Încă puțin despre tine', keys:['Дополнительное Число Года','Ещё немного о тебе'] }
+  ];
+  var T = lang === 'ro' ? {
+    kicker:'Cristalul destinului · 14 fațete', years:function(n){ return n===1?'an':'ani'; },
+    lead:'Întregul tău raport este deja calculat. Fiecare fațetă de mai jos arată un fapt real despre tine; o deschizi separat sau deschizi tot Cristalul deodată.',
+    progress:function(o){ return o+' din 14 fațete deschise'; }, grani:function(i,n){ return 'Fațeta '+i+' · '+n+(n===1?' secțiune':' secțiuni'); },
+    fact:'Din analiza ta', inside:'Ce este înăuntru', chartVeilTop:'Linia continuă', chartVeilSub:'Ce urmează după această vârstă — în fațetă',
+    veil:'Text, grafice și hărți — după deschidere', open:'Deschide fațeta', openTag:'Deschisă', note:'Plată unică. Fațeta rămâne deschisă permanent, pe linkul tău.',
+    fullKicker:'Sau tot Cristalul deodată', saved:function(n){ return 'Fațetele deja deschise ('+n+') se scad din preț.'; },
+    legend:['Nivelul tău','Nivelul tău de confort','Vârsta ta acum','Schimbare de tendință'], chartTitle:'Graficul carierei — ca în raport'
+  } : {
+    kicker:'Кристалл судьбы · 14 граней', years:function(n){ var a=n%10,b=n%100; if(b>=11&&b<=19) return 'лет'; if(a===1) return 'год'; if(a>=2&&a<=4) return 'года'; return 'лет'; },
+    lead:'Твой полный разбор уже рассчитан. Каждая грань ниже показывает реальный факт о тебе; её можно открыть отдельно — или открыть весь Кристалл сразу.',
+    progress:function(o){ return 'Открыто '+o+' из 14 граней'; }, grani:function(i,n){ var a=n%10; return 'Грань '+i+' · '+n+(a===1&&n!==11?' раздел':(a>=2&&a<=4&&(n<10||n>20))?' раздела':' разделов'); },
+    fact:'Из твоего разбора', inside:'Что внутри', chartVeilTop:'Линия продолжается', chartVeilSub:'Что после этого возраста — в грани',
+    veil:'Текст, графики и карты — после открытия', open:'Открыть грань', openTag:'Открыто', note:'Разовая оплата. Грань остаётся открытой навсегда по твоей ссылке.',
+    fullKicker:'Или весь Кристалл сразу', saved:function(n){ return 'Уже открытые грани ('+n+') вычитаются из цены.'; },
+    legend:['Твой уровень','Твой уровень комфорта','Твой возраст сейчас','Смена тенденции'], chartTitle:'График карьеры — как в разборе'
+  };
+
+  function esc(v){ return String(v==null?'':v).replace(/[&<>"']/g,function(ch){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]; }); }
+  function titleOf(card){ var t = card.querySelector('.section-title'); return t ? t.textContent.replace(/\s+/g,' ').trim() : ''; }
+  function matchGrani(title){
+    for(var i=0;i<GRANI.length;i++){ for(var k=0;k<GRANI[i].keys.length;k++){ if(title.indexOf(GRANI[i].keys[k]) === 0) return GRANI[i]; } }
+    return null;
+  }
+  function btnLabel(){ return T.open + (graniPrice ? ' · ' + esc(graniPrice) : ''); }
+
+  /* Un fapt real: primele 1–2 propozitii din primul bloc de text substantial al sectiunii (fara titlu, fara text de ajutor). */
+  function extractFact(cards){
+    for(var c=0;c<cards.length;c++){
+      var nodes = cards[c].querySelectorAll('p, .hint, .text, .desc, li, div');
+      for(var i=0;i<nodes.length;i++){
+        var el = nodes[i];
+        if(el.closest('.section-title') || el.querySelector('svg, canvas, table') || el.children.length > 3) continue;
+        var txt = el.textContent.replace(/\s+/g,' ').trim();
+        if(txt.length < 60 || txt.length > 1400 || /^Источник/.test(txt)) continue;
+        var sentences = txt.match(/[^.!?…]+[.!?…]+/g) || [txt];
+        var out = sentences[0].trim();
+        if(out.length < 110 && sentences[1]) out += ' ' + sentences[1].trim();
+        if(out.length > 260) out = out.slice(0, 250).replace(/\s+\S*$/, '') + '…';
+        return out;
+      }
+    }
+    return '';
+  }
+  /* Numere reale (medalioane) din sectiune, cu etichetele lor. */
+  function extractNums(cards, limit){
+    var out = [];
+    cards.forEach(function(card){
+      card.querySelectorAll('.medallion, .namearc-item').forEach(function(m){
+        var n = m.querySelector('.num'), l = m.querySelector('.label');
+        var v = n ? n.textContent.trim() : '';
+        if(v && v !== '—' && l && out.length < limit) out.push({ v:v, l:l.textContent.replace(/\s+/g,' ').trim() });
+      });
+    });
+    return out;
+  }
+  function lifeCharts(){ var r = window.__cdLastResult; return (r && r.lifeCharts) || (typeof currentLifeCharts !== 'undefined' ? currentLifeCharts : null); }
+  function curAge(){ try{ return Math.max(0, computeCurrentAge(currentBirthYear, currentBirthMonth, currentBirthDay)); }catch(e){ return 0; } }
+
+  /* Graficul carierei ca in raport, cu viitorul voalat (aceleasi clase ca previewurile carierei: cd-cr-svg). */
+  var chartSeq = 0;
+  function veiledChart(data, age){
+    var W=640, H=320, padL=36, padR=20, padT=20, padB=34, plotW=W-padL-padR, plotH=H-padT-padB;
+    var maxAge = Math.max.apply(null, data.points.map(function(p){ return p.plotAge; })) * 1.06;
+    var xS = function(a){ return padL + (a/maxAge)*plotW; }, yS = function(l){ return padT + plotH - (l/9)*plotH; };
+    var uid = 'cdgr'+(++chartSeq), parts = [];
+    for(var lvl=0; lvl<=9; lvl+=3){ parts.push('<line class="axis-line" x1="'+padL+'" y1="'+yS(lvl)+'" x2="'+(W-padR)+'" y2="'+yS(lvl)+'"/><text class="axis-label" x="'+(padL-8)+'" y="'+(yS(lvl)+3)+'" text-anchor="end">'+lvl+'</text>'); }
+    var maxReal = Math.max.apply(null, data.points.map(function(p){ return p.age; }));
+    for(var a=0; a<=maxReal+5; a+=10) parts.push('<text class="axis-label" x="'+xS(a)+'" y="'+(H-padB+16)+'" text-anchor="middle">'+a+'</text>');
+    var avgY = yS(data.avg);
+    parts.push('<line class="avg-line show" x1="'+padL+'" y1="'+avgY+'" x2="'+(W-padR)+'" y2="'+avgY+'"/>');
+    var hasFuture = age >= 0 && age < maxAge;
+    var past = hasFuture ? data.points.filter(function(p){ return p.plotAge <= age; }) : data.points.slice();
+    var nowLv = hasFuture ? interpolateAtAge(data.points, age) : null;
+    var pts = past.map(function(p){ return {x:xS(p.plotAge), y:yS(p.level)}; });
+    if(hasFuture) pts.push({x:xS(age), y:yS(nowLv)});
+    parts.push('<path class="life-path" d="'+pts.map(function(pt,i){ return (i===0?'M':'L')+pt.x.toFixed(1)+','+pt.y.toFixed(1); }).join(' ')+'"/>');
+    past.forEach(function(p){ parts.push('<circle class="life-point show" cx="'+xS(p.plotAge).toFixed(1)+'" cy="'+yS(p.level).toFixed(1)+'" r="5.5"/>'); });
+    if(hasFuture){
+      var mx = xS(age), my = yS(nowLv), vx = mx + 6, vw = W - padR - vx;
+      if(vw > 40){
+        parts.push('<defs><linearGradient id="'+uid+'g" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#100a1f" stop-opacity="0"/><stop offset=".08" stop-color="#100a1f" stop-opacity=".9"/><stop offset=".35" stop-color="#1a0f33"/><stop offset="1" stop-color="#0d0819"/></linearGradient><linearGradient id="'+uid+'s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d9a94f" stop-opacity="0"/><stop offset=".5" stop-color="#d9a94f" stop-opacity=".16"/><stop offset="1" stop-color="#d9a94f" stop-opacity="0"/></linearGradient><clipPath id="'+uid+'c"><rect x="'+vx+'" y="'+padT+'" width="'+vw+'" height="'+plotH+'"/></clipPath></defs>');
+        parts.push('<rect class="cd-cr-veil" x="'+vx+'" y="'+padT+'" width="'+vw+'" height="'+plotH+'" fill="url(#'+uid+'g)"/><g clip-path="url(#'+uid+'c)"><rect class="cd-cr-sweep" x="'+vx+'" y="'+padT+'" width="110" height="'+plotH+'" fill="url(#'+uid+'s)"/>');
+        for(var k=0;k<16;k++){ var sx = vx + 14 + ((k*97)%Math.max(1,(vw-28))), sy = padT + 30 + ((k*61)%(plotH-40)); parts.push('<circle class="cd-cr-spark" cx="'+sx.toFixed(1)+'" cy="'+sy.toFixed(1)+'" r="'+(k%3===0?1.8:1.1)+'" style="animation-delay:'+((k*0.37)%4.8).toFixed(2)+'s"/>'); }
+        parts.push('</g><line class="cd-cr-edge" x1="'+vx+'" y1="'+padT+'" x2="'+vx+'" y2="'+(H-padB)+'"/>');
+        data.points.filter(function(p){ return p.plotAge > age && p.plotAge < maxAge; }).forEach(function(p, i){ var qx = xS(p.plotAge).toFixed(1); parts.push('<circle class="cd-cr-q-ring" cx="'+qx+'" cy="'+avgY+'" r="7" style="animation-delay:'+(i*0.6)+'s"/><circle class="cd-cr-q-dot" cx="'+qx+'" cy="'+avgY+'" r="7"/><text class="cd-cr-q-txt" x="'+qx+'" y="'+(avgY+4)+'" text-anchor="middle">?</text>'); });
+        if(vw > 150){ var lxm = vx + vw/2; parts.push('<text class="cd-cr-veil-label" x="'+lxm+'" y="'+(padT+22)+'" text-anchor="middle">'+esc(T.chartVeilTop)+'</text><text class="cd-cr-veil-sub" x="'+lxm+'" y="'+(padT+plotH-14)+'" text-anchor="middle">'+esc(T.chartVeilSub)+'</text>'); }
+      }
+      parts.push('<line class="now-line show" x1="'+mx+'" y1="'+padT+'" x2="'+mx+'" y2="'+(H-padB)+'"/>');
+      var lw=74, lh=18, lx=Math.min(Math.max(mx-lw/2, padL), W-padR-lw), ly=padT+2;
+      parts.push('<circle class="now-marker-ring show" cx="'+mx.toFixed(1)+'" cy="'+my.toFixed(1)+'" r="6"/><rect class="now-label-bg show" x="'+lx+'" y="'+ly+'" width="'+lw+'" height="'+lh+'" rx="3"/><text class="now-label-text show" x="'+(lx+lw/2)+'" y="'+(ly+13)+'" text-anchor="middle">'+(lang==='ro'?'Vârsta ':'Возраст ')+age+'</text><circle class="now-marker show" cx="'+mx.toFixed(1)+'" cy="'+my.toFixed(1)+'" r="6"/>');
+    }
+    return '<div class="cd-cr-legend"><span><i class="l1"></i>'+T.legend[0]+'</span><span><i class="l2"></i>'+T.legend[1]+'</span><span><i class="l3"></i>'+T.legend[2]+'</span><span><i class="l4"></i>'+T.legend[3]+'</span></div><svg class="cd-cr-svg" viewBox="0 0 '+W+' '+H+'">'+parts.join('')+'</svg>';
+  }
+
+  function veilHtml(){
+    var sparks = '';
+    for(var k=0;k<9;k++){ sparks += '<i class="cd-gr-spark" style="left:'+(6+k*10.5)+'%;top:'+(30+((k*37)%40))+'%;animation-delay:'+((k*0.5)%4.6).toFixed(1)+'s"></i>'; }
+    return '<div class="cd-gr-veil" aria-hidden="true">'+sparks+'<span>'+T.veil+'</span></div>';
+  }
+
+  function lockedCard(g, cards){
+    var titles = cards.map(titleOf);
+    var fact = extractFact(cards), nums = extractNums(cards, 5);
+    var html = '<section class="cd-gr-card is-locked cd-gr-reveal" data-grani="'+g.id+'"><p class="cd-gr-kicker">'+T.grani(g.id, cards.length)+'</p><h3>'+esc(g[lang])+'</h3>';
+    if(nums.length){ html += '<div class="cd-gr-nums">'+nums.map(function(n){ return '<div class="cd-gr-num"><strong>'+esc(n.v)+'</strong><span>'+esc(n.l)+'</span></div>'; }).join('')+'</div>'; }
+    if(fact){ html += '<div class="cd-gr-fact"><p class="cd-gr-kicker">'+T.fact+'</p><p>'+esc(fact)+'</p></div>'; }
+    if(g.chart){ var C = lifeCharts(), data = C && C[g.chart]; if(data && data.points) html += '<div style="margin-top:14px">'+veiledChart(data, curAge())+'</div>'; }
+    else html += veilHtml();
+    html += '<p class="cd-gr-kicker" style="margin:16px 0 0">'+T.inside+'</p><ul class="cd-gr-inside">'+titles.map(function(t){ return '<li><i></i><em>'+esc(t)+'</em></li>'; }).join('')+'</ul>';
+    html += '<div class="cd-gr-actions"><button type="button" class="cd-gr-btn" data-grani-btn="'+g.id+'" onclick="__cdGraniUnlock('+g.id+')">'+btnLabel()+'</button><p class="cd-gr-note">'+T.note+'</p></div></section>';
+    return html;
+  }
+  function openCard(g, cards){
+    var sec = document.createElement('section');
+    sec.className = 'cd-gr-card is-open cd-gr-reveal'; sec.setAttribute('data-grani', String(g.id));
+    sec.innerHTML = '<p class="cd-gr-open-tag">'+T.openTag+'</p><h3>'+esc(g[lang])+'</h3><div class="cd-gr-body"></div>';
+    var body = sec.querySelector('.cd-gr-body');
+    cards.forEach(function(card){ body.appendChild(card); });
+    return sec;
+  }
+
+  window.__cdGraniUnlock = function(id){
+    var data = typeof __cdCollectForm === 'function' ? __cdCollectForm() : {};
+    if(!data.email && emailParam) data.email = emailParam;
+    try{ if(typeof track === 'function') track('grani_unlock_click', { graniId:id }); }catch(e){}
+    window.parent.postMessage({ type:'requestGraniPayment', graniId:id, data:data, source:'grani_card' }, '*');
+  };
+  function refreshGraniButtons(){
+    document.querySelectorAll('[data-grani-btn]').forEach(function(b){ b.textContent = btnLabel(); });
+  }
+  window.addEventListener('message', function(ev){
+    var d = ev.data; if(!d || typeof d !== 'object') return;
+    if(d.type === 'setPricing' && d.pricing){
+      if(d.pricing.graniUnit) graniPrice = String(d.pricing.graniUnit);
+      refreshGraniButtons();
+    }
+  });
+  function observeReveal(layer){
+    var items = layer.querySelectorAll('.cd-gr-reveal');
+    if(!('IntersectionObserver' in window)){ items.forEach(function(el){ el.classList.add('is-in'); }); return; }
+    var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('is-in'); io.unobserve(e.target); } }); }, { threshold:.08 });
+    items.forEach(function(el){ io.observe(el); });
+  }
+
+  window.renderPreview = renderPreview = function(model){
+    baseRender(model);
+    var layer = document.getElementById('previewLayer');
+    var results = document.getElementById('results');
+    if(!layer || !results) return;
+    var groups = {}; GRANI.forEach(function(g){ groups[g.id] = []; });
+    Array.prototype.slice.call(results.querySelectorAll(':scope .card')).forEach(function(card){
+      if(layer.contains(card)) return;
+      var g = matchGrani(titleOf(card)); if(g) groups[g.id].push(card);
+    });
+    var name = (model && model.identity && (model.identity.name || model.identity.first)) || '';
+    var age = model && model.identity ? model.identity.age : '';
+    var head = '<header class="cd-gr-head"><p class="cd-gr-kicker">'+T.kicker+'</p><h2>'+esc(name)+'</h2><p class="cd-gr-meta">'+esc(model && model.identity ? model.identity.date : '')+(age!==''?' · '+esc(age)+' '+T.years(Number(age)):'')+'</p><p class="cd-gr-lead">'+T.lead+'</p>'
+      + '<div class="cd-gr-progress"><i><b style="width:'+Math.round(unlockedCount/14*100)+'%"></b></i><span>'+T.progress(unlockedCount)+'</span></div></header>';
+    var wrap = document.createElement('div'); wrap.className = 'pv-screen cd-gr pv-reveal';
+    wrap.innerHTML = head;
+    GRANI.forEach(function(g){
+      var cards = groups[g.id]; if(!cards.length) return;
+      if(unlocked.indexOf(g.id) >= 0){ wrap.appendChild(openCard(g, cards)); }
+      else { var tmp = document.createElement('div'); tmp.innerHTML = lockedCard(g, cards); wrap.appendChild(tmp.firstElementChild); }
+    });
+    var full = document.createElement('div'); full.className = 'cd-gr-full';
+    full.innerHTML = '<p class="cd-gr-kicker">'+T.fullKicker+'</p>'+(unlockedCount ? '<p class="cd-gr-saved">'+T.saved(unlockedCount)+'</p>' : '')+renderPaywall(model);
+    wrap.appendChild(full);
+    layer.innerHTML = ''; layer.appendChild(wrap);
+    /* Siguranta: sectiunile inchise nu raman in DOM — doar fragmentele alese mai sus. */
+    Array.prototype.slice.call(results.children).forEach(function(el){ if(el.id !== 'previewLayer' && el.id !== 'devBarFull' && el.id !== 'personalDataSummary') el.remove(); });
+    try{ if(typeof applyGenderLayer === 'function') layer.querySelectorAll('.cd-gr-fact').forEach(function(el){ applyGenderLayer(el); }); }catch(e){}
+    refreshGraniButtons();
+    observeReveal(layer);
+    try{ if(typeof track === 'function') track('grani_preview_view', { unlocked:unlockedCount }); }catch(e){}
+  };
+})();
+</script>
 </body>
 </html>

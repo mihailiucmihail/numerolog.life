@@ -28,6 +28,11 @@ export interface VariantDef {
   active: boolean
   /** Pondere relativă în distribuția fixă de start (se normalizează pe variantele active). */
   weight: number
+  /**
+   * Funnelul implicit pentru traficul organic/intern (fără marker de promovare). Nu intră
+   * NICIODATĂ în tragerea la sorți a experimentelor, chiar dacă ar fi activat din greșeală.
+   */
+  standard?: boolean
 }
 
 export const FORM_VARIANTS: VariantDef[] = [
@@ -56,6 +61,7 @@ export const FORM_VARIANTS: VariantDef[] = [
   { id: 'form-hidden-gift-v1', kind: 'form', label: 'Darul ascuns', hypothesis: 'Revelația darului personal înaintea alegerii domeniului transformă raportul complet într-o continuare naturală.', angle: 'revelație personală', motion: 2, active: false, weight: 0 },
   { id: 'form-birthday-express-v1', kind: 'form', label: 'Data Express', hypothesis: 'Un singur câmp nativ pentru data nașterii și un CTA vizibil reduc fricțiunea primului ecran pe mobil.', angle: 'dată fără fricțiune', motion: 1, active: false, weight: 0 },
   { id: 'form-day-arcana-v1', kind: 'form', label: 'Arcana zilei', hypothesis: 'Recompensa instant după introducerea zilei motivează completarea lunii și anului.', angle: 'micro-recompensă', motion: 2, active: false, weight: 0 },
+  { id: 'form-standard-v1', kind: 'form', label: 'Standard: formular complet', hypothesis: 'Traficul organic/intern (fără UTM) vine deja cu intenție: un formular complet premium (nume, prenume, patronimic, dată, email) într-un singur pas convertește fără mecanici de curiozitate.', angle: 'implicit: trafic intern', motion: 1, active: false, weight: 0, standard: true },
 ]
 
 export const PREVIEW_VARIANTS: VariantDef[] = [
@@ -84,12 +90,19 @@ export const PREVIEW_VARIANTS: VariantDef[] = [
   { id: 'preview-hidden-gift-v1', kind: 'preview', label: 'Darul ascuns', hypothesis: 'Darul principal este dezvăluit gratuit, iar blocajul din domeniul ales deschide analiza completă.', angle: 'revelație personală', motion: 2, active: false, weight: 0 },
   { id: 'preview-birthday-express-v1', kind: 'preview', label: 'Data Express', hypothesis: 'Rezultatul birthday real confirmă imediat valoarea după completarea unui singur câmp.', angle: 'recompensă imediată', motion: 1, active: false, weight: 0 },
   { id: 'preview-day-arcana-v1', kind: 'preview', label: 'Arcana zilei', hypothesis: 'Arcana dezvăluită în formular continuă natural în rezultatul birthday complet.', angle: 'continuitate Arcana', motion: 2, active: false, weight: 0 },
+  { id: 'preview-grani-v1', kind: 'preview', label: 'Standard: Cristalul pe Grani', hypothesis: 'Raportul întreg prezentat ca 14 Grani tematice, fiecare cu un fapt real despre persoană și un preț mic de deschidere (1 € echivalent), plus raportul complet redus cu suma plătită — auto-recunoașterea și pragul mic cresc prima plată.', angle: 'implicit: Grani la 1 €', motion: 2, active: false, weight: 0, standard: true },
 ]
 
 export const ALL_VARIANTS: VariantDef[] = [...FORM_VARIANTS, ...PREVIEW_VARIANTS]
 
 export const DEFAULT_FORM_VARIANT = 'form-control'
 export const DEFAULT_PREVIEW_VARIANT = 'preview-control'
+export const STANDARD_FORM_VARIANT = 'form-standard-v1'
+export const STANDARD_PREVIEW_VARIANT = 'preview-grani-v1'
+
+export function isStandardVariant(id: string | null | undefined): boolean {
+  return !!findVariant(id)?.standard
+}
 
 export function variantsFor(kind: ExperimentKind): VariantDef[] {
   return kind === 'form' ? FORM_VARIANTS : PREVIEW_VARIANTS

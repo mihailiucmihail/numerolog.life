@@ -20,11 +20,13 @@ export async function sendRaportEmail(params: {
   lastName?: string
   raportUrl: string
   reportType: ReportType
+  /** O singură fațetă a Cristalului a fost plătită: emailul o numește în loc de „разбор полностью”. */
+  graniTitle?: string
 }): Promise<{ sent: boolean; error?: string }> {
   const resendKey = process.env.RESEND_API_KEY
   if (!resendKey) return { sent: false, error: 'no_resend' }
 
-  const { to, raportUrl, reportType } = params
+  const { to, raportUrl, reportType, graniTitle } = params
   const numeFull = [params.firstName, params.lastName].filter(Boolean).join(' ') || 'пользователь'
   const fromDomain = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
 
@@ -33,7 +35,9 @@ export async function sendRaportEmail(params: {
     const { error } = await resend.emails.send({
       from: `Numerolog.life <${fromDomain}>`,
       to,
-      subject: reportType === 'grani' ? 'Твой отчёт «Грани Судьбы» готов' : 'Твой отчёт «Кристалл Судьбы» готов',
+      subject: reportType === 'grani'
+        ? 'Твой отчёт «Грани Судьбы» готов'
+        : graniTitle ? `Грань «${graniTitle}» открыта в твоём Кристалле Судьбы` : 'Твой отчёт «Кристалл Судьбы» готов',
       html: `
         <!DOCTYPE html>
         <html>
@@ -55,7 +59,11 @@ export async function sendRaportEmail(params: {
                       Здравствуйте, <strong style="color:#D4AF37;">${numeFull}</strong>,
                     </p>
                     <p style="color:rgba(237,227,207,0.7);font-size:14px;line-height:1.7;margin:0 0 32px;">
-                      ${reportType === 'grani' ? 'Твой отчёт «Грани Судьбы» успешно создан.' : 'Твой разбор по методу «Кристалл Судьбы» успешно создан.'}
+                      ${reportType === 'grani'
+                        ? 'Твой отчёт «Грани Судьбы» успешно создан.'
+                        : graniTitle
+                          ? `Грань «${graniTitle}» твоего Кристалла Судьбы открыта. Остальные грани можно открыть по одной или весь разбор сразу — уже открытые вычитаются из цены.`
+                          : 'Твой разбор по методу «Кристалл Судьбы» успешно создан.'}
                       Открывай его в любое время по ссылке ниже — дополнительная оплата не требуется.
                     </p>
                     <table width="100%" cellpadding="0" cellspacing="0">

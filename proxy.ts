@@ -13,6 +13,7 @@ import {
 } from './lib/experiments/assignment'
 import { PREVIEW_TOKEN_PARAM, verifyPreviewToken } from './lib/experiments/preview-token'
 import { getRuntimeFunnels } from './lib/experiments/runtime-config'
+import { hasPromoMarker, resolveStandardAssignment } from './lib/experiments/routing'
 
 const handleI18nRouting = createMiddleware(routing)
 
@@ -136,10 +137,13 @@ export default async function proxy(request: NextRequest) {
     // Atribuirea rămâne tot înainte de randarea calculatorului, deci nu există schimbare vizibilă.
     const isNumerologyEntry = /^\/ru\/numerologie\/?$/.test(pathname)
     if (isNumerologyEntry) {
-      const experiment = await resolveAssignment(
-        request.cookies.get(EXPERIMENT_COOKIE)?.value,
-        await getRuntimeFunnels(),
-      )
+      // Traficul din promovare (utm_*, fbclid, gclid, entry=, src=) intră în distribuția live a
+      // experimentelor; orice altă intrare (link intern/organic) primește funnelul Standard.
+      const funnels = await getRuntimeFunnels()
+      const rawCookie = request.cookies.get(EXPERIMENT_COOKIE)?.value
+      const experiment = hasPromoMarker(sp) || previewToken
+        ? await resolveAssignment(rawCookie, funnels)
+        : await resolveStandardAssignment(rawCookie, funnels)
       headers.set('x-exp-visitor', experiment.assignment.visitorId)
       headers.set('x-exp-form', experiment.assignment.form)
       headers.set('x-exp-preview', experiment.assignment.preview)

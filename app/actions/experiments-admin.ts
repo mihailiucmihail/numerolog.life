@@ -393,9 +393,10 @@ export async function saveFunnelTraffic(
 ): Promise<{ ok: boolean; error?: string }> {
   if (!checkPassword(password)) return { ok: false, error: "Parolă incorectă." }
 
-  const known = new Map(FORM_VARIANTS.map((form, index) => [
+  // Funnelul Standard (ruta implicită pentru traficul fără marker) nu face parte din distribuție.
+  const known = new Map(FORM_VARIANTS.filter((form) => !form.standard).map((form, index) => [
     form.id.replace("form-", ""),
-    { form: form.id, preview: PREVIEW_VARIANTS[index]?.id },
+    { form: form.id, preview: PREVIEW_VARIANTS[FORM_VARIANTS.indexOf(form)]?.id },
   ]))
   if (settings.length !== known.size || new Set(settings.map((item) => item.key)).size !== known.size) {
     return { ok: false, error: "Configurația funnelurilor este incompletă." }

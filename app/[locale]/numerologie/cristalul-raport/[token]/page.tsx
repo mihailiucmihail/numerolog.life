@@ -4,8 +4,9 @@ import { notFound } from 'next/navigation'
 import { StarField } from '@/components/star-field'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
-import { getRaportByToken } from '@/app/actions/raport'
+import { getRaportRecordByToken } from '@/app/actions/raport'
 import RaportViewer from '@/components/numerology/raport-viewer'
+import GraniReportViewer from '@/components/numerology/grani-report-viewer'
 
 export const metadata: Metadata = {
   title: 'Raportul tău — Cristalul Destinului',
@@ -18,11 +19,12 @@ export default async function CristalulRaportPage({
   params: Promise<{ token: string }>
 }) {
   const { token } = await params
-  const formData = await getRaportByToken(token)
+  const record = await getRaportRecordByToken(token)
 
-  if (!formData) {
+  if (!record) {
     notFound()
   }
+  const { formData, unlockedGrani } = record
 
   return (
     <main className="min-h-screen bg-background relative">
@@ -35,7 +37,9 @@ export default async function CristalulRaportPage({
             <span className="font-mono tracking-[0.12em] text-primary/70">CRISTALUL DESTINULUI · RAPORT</span>
           </div>
           <Suspense fallback={null}>
-            <RaportViewer formData={formData} />
+            {unlockedGrani === null
+              ? <RaportViewer formData={formData} />
+              : <GraniReportViewer token={token} formData={formData} unlockedGrani={unlockedGrani} />}
           </Suspense>
         </div>
       </div>
