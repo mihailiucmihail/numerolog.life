@@ -77,7 +77,7 @@ export function HomePreviewArcana({ locale }: { locale: Locale }) {
           <div className="rounded-2xl border border-primary/15 bg-card/70 p-4">
             <div className="flex items-end justify-between gap-4"><div><p className="text-sm text-foreground">{c.price}</p><p className="mt-1 text-xs text-muted-foreground">{c.note}</p></div><strong className="font-serif text-2xl text-primary">{cristal.displayPrice}</strong></div>
           </div>
-          <Link href="/numerologie?entry=birthday" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-6 text-center font-medium text-primary-foreground">{c.continue}<ArrowRight className="size-4" aria-hidden="true" /></Link>
+          <Link href="/numerologie?flow=standard" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-6 text-center font-medium text-primary-foreground">{c.continue}<ArrowRight className="size-4" aria-hidden="true" /></Link>
           <button type="button" onClick={() => setRevealed(false)} className="text-sm text-muted-foreground underline decoration-border underline-offset-4 hover:text-foreground">{c.reset}</button>
         </div>
       )}
