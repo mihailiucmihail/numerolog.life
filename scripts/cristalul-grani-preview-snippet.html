@@ -99,7 +99,7 @@
   };
 
   function esc(v){ return String(v==null?'':v).replace(/[&<>"']/g,function(ch){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]; }); }
-  function titleOf(card){ var t = card.querySelector('.section-title'); return t ? t.textContent.replace(/\s+/g,' ').trim() : ''; }
+  function titleOf(card){ var t = card.querySelector('.section-title'); if(!t) return ''; var first = null; t.childNodes.forEach(function(n){ if(first) return; var v = (n.nodeType === 3 ? n.nodeValue : n.textContent).replace(/\s+/g,' ').trim(); if(v) first = v; }); return first || t.textContent.replace(/\s+/g,' ').trim(); }
   function matchGrani(title){
     for(var i=0;i<GRANI.length;i++){ for(var k=0;k<GRANI[i].keys.length;k++){ if(title.indexOf(GRANI[i].keys[k]) === 0) return GRANI[i]; } }
     return null;
