@@ -14,7 +14,7 @@ import { trackFunnel, trackPurchase } from '@/lib/funnel-analytics'
 import { FunnelPaywall, type AppliedOffer } from './funnel-paywall'
 import { CristalLoading } from '@/components/numerology/cristal-loading'
 import { CHECKOUT_STORAGE_KEY, FUNNEL_STORAGE_KEY, type FunnelForm as FormValues } from './types'
-import { useLandingView } from '@/lib/experiments/use-experiment'
+import { useLandingView, type InitialExperimentAssignment } from '@/lib/experiments/use-experiment'
 import { CrystalReactForm } from './crystal-react-form'
 
 const PAYWALL_ID = 'funnel-paywall'
@@ -110,7 +110,11 @@ function buildPreviewSrc(v: FormValues, variants?: { form: string; preview: stri
  *    (trecutul vizibil pe grafice, viitorul mascat) — fără plată;
  * 3) sub raport apare paywall-ul → Stripe → raport permanent complet (fluxul existent, neschimbat).
  */
-export default function CristalFunnel() {
+interface CristalFunnelProps {
+  initialExperiment: InitialExperimentAssignment
+}
+
+export default function CristalFunnel({ initialExperiment }: CristalFunnelProps) {
   const t = useTranslations('funnel')
   const router = useRouter()
   const pathname = usePathname()
@@ -132,7 +136,7 @@ export default function CristalFunnel() {
   // Formularul se deschide cu alfabetul numelui preselectat după țara vizitatorului (HTML-ul citește ?alpha=).
   // Experimentul FORM/PREVIEW: varianta e stabilită de proxy înainte de randare; aici doar o
   // transmitem formularului (?fv=/?pv=) și raportăm parcursul.
-  const assignedExp = useLandingView(entry)
+  const assignedExp = useLandingView(entry, initialExperiment)
   const exp = standardFlow
     ? { ...assignedExp, form: 'form-control', preview: 'preview-control' }
     : assignedExp

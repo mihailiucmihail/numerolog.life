@@ -24,10 +24,10 @@ type Copy = {
 
 const COPY: Record<Locale, Copy> = {
   ro: {
-    nav: ['Metodă', 'În raport', 'Despre Daria'], eyebrow: 'Observator numerologic personal',
-    title: 'Destinul tău are o arhitectură. Descoperă-i forma.',
-    intro: 'Cristalul Destinului transformă data nașterii și numele într-o hartă personală a Arcanelor, etapelor și tiparelor care îți modelează viața.',
-    cta: 'Vezi gratuit prima mea Arcană', ctaNote: 'Începi doar cu data nașterii · fără card',
+    nav: ['Metodă', 'În raport', 'Despre Daria'], eyebrow: 'Harta ta numerologică personală',
+    title: 'Cristalul Destinului',
+    intro: 'Harta ta numerologică completă: identitate, relații, bani, vocație și ciclurile vieții, calculate din data nașterii și numele tău.',
+    cta: 'Calculează Cristalul meu', ctaNote: 'Prima cheie este gratuită · începi doar cu data nașterii · fără card',
     trust: ['Calcul din datele tale', 'Sistem cu 22 de Arcane', 'Raport disponibil imediat', 'Plată securizată prin Stripe'],
     mechanismEyebrow: 'Un calcul, nu un text ales la întâmplare', mechanismTitle: 'Cum se formează Cristalul tău',
     mechanismIntro: 'Fiecare valoare pornește din numele și data ta. Rezultatele sunt așezate în poziții distincte, apoi interpretate împreună ca o singură hartă.',
@@ -74,10 +74,10 @@ const COPY: Record<Locale, Copy> = {
     ],
   },
   ru: {
-    nav: ['Метод', 'Что внутри', 'О Дарье'], eyebrow: 'Персональная нумерологическая обсерватория',
-    title: 'У твоей судьбы есть архитектура. Увидь её форму.',
-    intro: '«Кристалл судьбы» превращает дату рождения и имя в личную карту Арканов, этапов и сценариев, которые формируют твою жизнь.',
-    cta: 'Бесплатно узнать мой первый Аркан', ctaNote: 'Для начала нужна только дата рождения · без карты',
+    nav: ['Метод', 'Что внутри', 'О Дарье'], eyebrow: 'Твоя персональная нумерологическая карта',
+    title: 'Кристалл судьбы',
+    intro: 'Твоя полная нумерологическая карта: личность, отношения, деньги, призвание и жизненные циклы, рассчитанные по дате рождения и имени.',
+    cta: 'Рассчитать мой Кристалл', ctaNote: 'Первый ключ бесплатно · нужна только дата рождения · без карты',
     trust: ['Расчёт по твоим данным', 'Система 22 Арканов', 'Результат доступен сразу', 'Безопасная оплата через Stripe'],
     mechanismEyebrow: 'Расчёт, а не случайный текст', mechanismTitle: 'Как создаётся твой Кристалл',
     mechanismIntro: 'Каждое значение строится по твоему имени и дате. Результаты занимают определённые позиции, а затем читаются вместе как единая карта.',
@@ -147,17 +147,63 @@ export function HomePreviewPremium({ locale }: { locale: Locale }) {
       <NumerologyField />
       <header className={`fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,border-color] duration-300 ${scrolled ? 'border-b border-primary/10 bg-card/75 backdrop-blur-xl' : 'border-b border-transparent bg-transparent backdrop-blur-none'}`}><nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8" aria-label={locale === 'ro' ? 'Navigație principală' : 'Основная навигация'}><Link href="/" className="font-serif text-xl tracking-[0.08em]">NUMEROLOG<span className="text-primary">.life</span></Link><div className="hidden items-center gap-7 md:flex">{c.nav.map((label, index) => <a key={label} href={`#${anchors[index]}`} className="text-sm text-muted-foreground transition-colors hover:text-foreground">{label}</a>)}</div><Link href="/numerologie?flow=standard" className="rounded-full border border-primary/35 px-4 py-2 text-sm text-primary transition-colors hover:bg-primary/10">{locale === 'ro' ? 'Începe calculul' : 'Начать расчёт'}</Link></nav></header>
 
-      <section className="relative z-10 px-5 pb-20 pt-28 sm:px-8 lg:pb-28 lg:pt-36"><div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.08fr_.92fr]"><div><p className="text-xs font-medium uppercase tracking-[0.25em] text-primary">{c.eyebrow}</p><h1 className="mt-6 max-w-4xl text-balance font-serif text-5xl leading-[1.02] sm:text-6xl lg:text-7xl">{c.title}</h1><p className="mt-7 max-w-2xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg">{c.intro}</p><div className="mt-9 flex flex-col items-start gap-3"><a href="#prima-cheie" className="inline-flex min-h-12 items-center gap-3 rounded-full bg-primary px-7 font-medium text-primary-foreground shadow-xl transition-transform hover:-translate-y-0.5">{c.cta}<ArrowRight className="size-4" aria-hidden="true" /></a><p className="text-sm text-muted-foreground">{c.ctaNote}</p></div></div><div id="prima-cheie" className="scroll-mt-24"><HomePreviewArcana locale={locale} /></div></div></section>
+      <section className="relative z-10 px-5 pb-20 pt-28 sm:px-8 lg:pb-28 lg:pt-36">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.08fr_.92fr]">
+          <div>
+            <div className="flex items-center gap-4">
+              <p className="text-xs font-medium uppercase tracking-[0.25em] text-primary">{c.eyebrow}</p>
+              <span className="h-px max-w-24 flex-1 bg-primary/35" aria-hidden="true" />
+            </div>
+            <h1 className="mt-6 max-w-4xl text-balance font-serif text-6xl leading-[.94] sm:text-7xl lg:text-8xl">{c.title}</h1>
+            <p className="mt-7 max-w-2xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg">{c.intro}</p>
+            <div className="mt-7 flex flex-wrap gap-2" aria-label={locale === 'ro' ? 'Domeniile Cristalului Destinului' : 'Сферы Кристалла судьбы'}>
+              {(locale === 'ro' ? ['Identitate', 'Relații', 'Bani', 'Vocație', 'Cicluri'] : ['Личность', 'Отношения', 'Деньги', 'Призвание', 'Циклы']).map((item) => <span key={item} className="rounded-full border border-primary/20 bg-background/40 px-3 py-1.5 text-xs text-foreground/80">{item}</span>)}
+            </div>
+            <div className="mt-9 flex flex-col items-start gap-3">
+              <a href="#prima-cheie" className="inline-flex min-h-12 items-center gap-3 rounded-full bg-primary px-7 font-medium text-primary-foreground shadow-xl transition-transform hover:-translate-y-0.5">{c.cta}<ArrowRight className="size-4" aria-hidden="true" /></a>
+              <p className="text-sm text-muted-foreground">{c.ctaNote}</p>
+            </div>
+            <div className="mt-8 flex items-center gap-4 border-t border-primary/15 pt-5">
+              <span className="font-serif text-4xl text-primary">22</span>
+              <p className="max-w-xs text-xs uppercase leading-5 tracking-[0.16em] text-muted-foreground">{locale === 'ro' ? 'Arcane așezate într-o singură hartă personală' : 'Аркана, собранные в единую личную карту'}</p>
+            </div>
+          </div>
+          <div id="prima-cheie" className="scroll-mt-24">
+            <div className="mb-3 flex items-center justify-between px-2 font-mono text-[10px] uppercase tracking-[0.18em] text-primary">
+              <span>{locale === 'ro' ? 'Intrarea în Cristalul tău' : 'Вход в твой Кристалл'}</span>
+              <span>01 / 22</span>
+            </div>
+            <HomePreviewArcana locale={locale} />
+          </div>
+        </div>
+      </section>
 
       <section className="relative z-10 border-y border-primary/15 bg-background/45 px-5 py-6 backdrop-blur-xl"><div className="mx-auto grid max-w-7xl gap-5 sm:grid-cols-2 lg:grid-cols-4">{c.trust.map((item, index) => <div key={item} className="flex items-center gap-3 text-sm text-muted-foreground">{index === 0 ? <Fingerprint className="size-4 text-primary" /> : index === 1 ? <Sparkles className="size-4 text-primary" /> : index === 2 ? <BookOpen className="size-4 text-primary" /> : <CreditCard className="size-4 text-primary" />}<span>{item}</span></div>)}</div></section>
+
+      <section id="raport" className="relative z-10 scroll-mt-20 border-b border-border bg-background/35 px-5 py-16 sm:px-8 lg:py-24">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.1fr_.9fr]">
+          <figure>
+            <div className="relative h-[520px] overflow-hidden rounded-3xl border border-primary/20 bg-card p-3 shadow-2xl">
+              <div className="absolute inset-x-8 top-0 z-10 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
+              <iframe src={`/cristalul-calculator.html?auto=1&first=${locale === 'ro' ? 'Ana' : 'Анна'}&last=${locale === 'ro' ? 'Popescu' : 'Иванова'}&day=10&month=9&year=1990&alpha=${locale === 'ro' ? 'ro' : 'ru'}&lang=${locale}`} title={locale === 'ro' ? 'Exemplu real de raport Cristalul Destinului' : 'Реальный пример разбора «Кристалл судьбы»'} loading="eager" tabIndex={-1} className="pointer-events-none h-[1120px] w-full rounded-2xl border-0 bg-transparent" />
+            </div>
+            <figcaption className="mt-3 text-center text-xs text-muted-foreground">{c.reportCaption}</figcaption>
+          </figure>
+          <div>
+            <p className="text-xs uppercase tracking-[0.25em] text-primary">{c.reportEyebrow}</p>
+            <h2 className="mt-4 text-balance font-serif text-4xl sm:text-5xl">{c.reportTitle}</h2>
+            <p className="mt-5 leading-7 text-muted-foreground">{c.reportText}</p>
+            <ul className="mt-8 flex flex-col gap-4">{c.reportPoints.map((point) => <li key={point} className="flex items-center gap-3"><span className="flex size-7 items-center justify-center rounded-full border border-primary/30"><Check className="size-4 text-primary" /></span><span>{point}</span></li>)}</ul>
+            <Link href="/numerologie?flow=standard" className="mt-9 inline-flex min-h-12 items-center gap-2 rounded-full bg-primary px-7 font-medium text-primary-foreground">{locale === 'ro' ? 'Deschide Cristalul meu' : 'Открыть мой Кристалл'}<ArrowRight className="size-4" /></Link>
+          </div>
+        </div>
+      </section>
 
       <section id="metoda" className="relative z-10 scroll-mt-20 px-5 py-16 sm:px-8 lg:py-28"><div className="mx-auto max-w-7xl"><div className="grid gap-10 lg:grid-cols-[.8fr_1.2fr]"><div><p className="text-xs uppercase tracking-[0.25em] text-primary">{c.mechanismEyebrow}</p><h2 className="mt-4 text-balance font-serif text-4xl sm:text-5xl">{c.mechanismTitle}</h2><p className="mt-5 text-pretty leading-7 text-muted-foreground">{c.mechanismIntro}</p></div><div className="grid gap-px overflow-hidden rounded-3xl border border-border bg-border sm:grid-cols-2">{c.steps.map((step, index) => <article key={step.title} className="bg-card p-6"><div className="flex items-center justify-between"><span className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">{step.label}</span><span className="font-serif text-2xl text-primary/40">0{index + 1}</span></div><h3 className="mt-9 font-serif text-2xl">{step.title}</h3><p className="mt-3 text-sm leading-6 text-muted-foreground">{step.text}</p></article>)}</div></div></div></section>
 
       <section className="relative z-10 border-y border-border bg-background/35 px-5 py-20 sm:px-8"><div className="mx-auto max-w-7xl"><h2 className="max-w-xl text-balance font-serif text-4xl">{c.questionsTitle}</h2><div className="mt-10 grid gap-3 sm:grid-cols-2">{c.questions.map((question) => <p key={question} className="flex items-center gap-4 rounded-2xl border border-primary/15 bg-card/60 p-5 text-lg"><span className="size-1.5 shrink-0 rounded-full bg-primary" />{question}</p>)}</div></div></section>
 
       <section className="relative z-10 px-5 py-16 sm:px-8 lg:py-28"><div className="mx-auto max-w-7xl"><p className="text-xs uppercase tracking-[0.25em] text-primary">{c.dimensionsEyebrow}</p><h2 className="mt-4 font-serif text-4xl sm:text-5xl">{c.dimensionsTitle}</h2><div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-6">{c.dimensions.map((item, index) => <article key={item.title} className={`rounded-3xl border border-primary/15 bg-background/55 p-6 ${index < 2 ? 'lg:col-span-3' : 'lg:col-span-2'}`}><span className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">{item.label}</span><h3 className="mt-8 font-serif text-2xl">{item.title}</h3><p className="mt-3 max-w-md text-sm leading-6 text-muted-foreground">{item.text}</p></article>)}</div></div></section>
-
-      <section id="raport" className="relative z-10 scroll-mt-20 border-y border-border bg-background/35 px-5 py-16 sm:px-8 lg:py-28"><div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.1fr_.9fr]"><figure><div className="relative h-[520px] overflow-hidden rounded-3xl border border-primary/20 bg-card p-3 shadow-2xl"><iframe src={`/cristalul-calculator.html?auto=1&first=${locale === 'ro' ? 'Ana' : 'Анна'}&last=${locale === 'ro' ? 'Popescu' : 'Иванова'}&day=10&month=9&year=1990&alpha=${locale === 'ro' ? 'ro' : 'ru'}&lang=${locale}`} title={locale === 'ro' ? 'Exemplu real de raport Cristalul Destinului' : 'Реальный пример разбора «Кристалл судьбы»'} loading="lazy" tabIndex={-1} className="pointer-events-none h-[1120px] w-full rounded-2xl border-0 bg-transparent" /></div><figcaption className="mt-3 text-center text-xs text-muted-foreground">{c.reportCaption}</figcaption></figure><div><p className="text-xs uppercase tracking-[0.25em] text-primary">{c.reportEyebrow}</p><h2 className="mt-4 text-balance font-serif text-4xl sm:text-5xl">{c.reportTitle}</h2><p className="mt-5 leading-7 text-muted-foreground">{c.reportText}</p><ul className="mt-8 flex flex-col gap-4">{c.reportPoints.map((point) => <li key={point} className="flex items-center gap-3"><span className="flex size-7 items-center justify-center rounded-full border border-primary/30"><Check className="size-4 text-primary" /></span><span>{point}</span></li>)}</ul></div></div></section>
 
       <section className="relative z-10 px-5 py-16 sm:px-8 lg:py-28"><div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[.8fr_1.2fr]"><div><Layers3 className="size-7 text-primary" aria-hidden="true" /><h2 className="mt-6 text-balance font-serif text-4xl sm:text-5xl">{c.methodTitle}</h2><p className="mt-5 leading-7 text-muted-foreground">{c.methodText}</p></div><div className="flex flex-col gap-3">{c.methodFacts.map((fact) => <article key={fact.title} className="rounded-2xl border border-border bg-background/50 p-6"><h3 className="font-serif text-2xl">{fact.title}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{fact.text}</p></article>)}</div></div></section>
 
