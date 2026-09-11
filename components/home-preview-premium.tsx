@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { ArrowRight, BookOpen, Check, CreditCard, Fingerprint, Layers3, LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
@@ -133,6 +133,21 @@ export function HomePreviewPremium({ locale }: { locale: Locale }) {
   const c = COPY[locale]
   const anchors = ['metoda', 'raport', 'daria']
   const [scrolled, setScrolled] = useState(false)
+  const [showReportExample, setShowReportExample] = useState(false)
+  const reportExampleRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    const section = reportExampleRef.current
+    if (!section) return
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return
+      setShowReportExample(true)
+      observer.disconnect()
+    })
+    observer.observe(section)
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     const previousScrollRestoration = window.history.scrollRestoration
@@ -187,12 +202,12 @@ export function HomePreviewPremium({ locale }: { locale: Locale }) {
 
       <section className="relative z-10 border-y border-primary/15 bg-background/45 px-5 py-6 backdrop-blur-xl"><div className="mx-auto grid max-w-7xl gap-5 sm:grid-cols-2 lg:grid-cols-4">{c.trust.map((item, index) => <div key={item} className="flex items-center gap-3 text-sm text-muted-foreground">{index === 0 ? <Fingerprint className="size-4 text-primary" /> : index === 1 ? <Sparkles className="size-4 text-primary" /> : index === 2 ? <BookOpen className="size-4 text-primary" /> : <CreditCard className="size-4 text-primary" />}<span>{item}</span></div>)}</div></section>
 
-      <section id="raport" className="relative z-10 scroll-mt-20 border-b border-border bg-background/35 px-5 py-16 sm:px-8 lg:py-24">
+      <section ref={reportExampleRef} id="raport" className="relative z-10 scroll-mt-20 border-b border-border bg-background/35 px-5 py-16 sm:px-8 lg:py-24">
         <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.1fr_.9fr]">
           <figure>
             <div className="relative h-[520px] overflow-hidden rounded-3xl border border-primary/20 bg-card p-3 shadow-2xl">
               <div className="absolute inset-x-8 top-0 z-10 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
-              <iframe src={`/cristalul-calculator.html?auto=1&first=${locale === 'ro' ? 'Ana' : 'Анна'}&last=${locale === 'ro' ? 'Popescu' : 'Иванова'}&day=10&month=9&year=1990&alpha=${locale === 'ro' ? 'ro' : 'ru'}&lang=${locale}`} title={locale === 'ro' ? 'Exemplu real de raport Cristalul Destinului' : 'Реальный пример разбора «Кристалл судьбы»'} loading="eager" tabIndex={-1} className="pointer-events-none h-[1120px] w-full rounded-2xl border-0 bg-transparent" />
+              {showReportExample ? <iframe src={`/cristalul-calculator.html?auto=1&first=${locale === 'ro' ? 'Ana' : 'Анна'}&last=${locale === 'ro' ? 'Popescu' : 'Иванова'}&day=10&month=9&year=1990&alpha=${locale === 'ro' ? 'ro' : 'ru'}&lang=${locale}`} title={locale === 'ro' ? 'Exemplu real de raport Cristalul Destinului' : 'Реальный пример разбора «Кристалл судьбы»'} loading="lazy" tabIndex={-1} className="pointer-events-none h-[1120px] w-full rounded-2xl border-0 bg-transparent" /> : null}
             </div>
             <figcaption className="mt-3 text-center text-xs text-muted-foreground">{c.reportCaption}</figcaption>
           </figure>
