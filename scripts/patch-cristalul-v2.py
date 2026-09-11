@@ -30,6 +30,7 @@ DST = ROOT / 'public/cristalul-calculator.html'
 BRIDGE = ROOT / 'scripts/cristalul-bridge-snippet.html'
 PREVIEW = ROOT / 'scripts/cristalul-native-preview-snippet.html'
 VARIANTS = ROOT / 'scripts/cristalul-variants-snippet.html'
+DATE_AGE_PREVIEW = ROOT / 'scripts/cristalul-date-age-preview-snippet.html'
 PREMIUM_CSS = ROOT / 'scripts/cristalul-premium-report.css'
 
 s = SRC.read_text(encoding='utf-8')
@@ -416,8 +417,18 @@ rep("        try{ initCountryDetection(); }catch(e){ console.error('countryDetec
 # 4b. Funnel (rezultat gratuit): expunem rezultatul determinist al ultimului calcul, ca aplicația
 #     React (același origin) să poată citi numerele reale fără să dubleze formulele.
 rep("  const r = computeAll(last, first, middle, day, month, year, nameAlphabetKey);\n",
-    "  const r = computeAll(last, first, middle, day, month, year, nameAlphabetKey);\n"
-    "  window.__cdLastResult = r;\n")
+"  const r = computeAll(last, first, middle, day, month, year, nameAlphabetKey);\n"
+"  window.__cdLastResult = r;\n")
+
+# Previewul compact păstrează vârsta exactă a următorului prag ascunsă, dar poate arăta
+# direcția lui reală (urcare, coborâre sau stabilizare) din același grafic determinist.
+rep("    m.graph = { key, title: CHART_NAMES[key], points: data.points.filter(p=>p.plotAge<=curAge), avg:data.avg, curAge,\n"
+"                curLevel: (edge!=='outside' && st) ? st.level : null, maxAgeAll: realMaxPlotAge*1.06, edge, state };\n",
+"    const nextPoint = data.points.find(p=>p.plotAge>curAge);\n"
+"    const currentLevel = (edge!=='outside' && st) ? st.level : null;\n"
+"    const nextTrend = nextPoint && currentLevel!=null ? (nextPoint.level>currentLevel+.35?'up':nextPoint.level<currentLevel-.35?'down':'steady') : null;\n"
+"    m.graph = { key, title: CHART_NAMES[key], points: data.points.filter(p=>p.plotAge<=curAge), avg:data.avg, curAge,\n"
+"                curLevel: currentLevel, nextTrend, hasNextPoint: !!nextPoint, maxAgeAll: realMaxPlotAge*1.06, edge, state };\n")
 
 # 5. Bridge-ul de integrare, înainte de </body> ------------------------------------------------
 bridge = re.sub(r'(?m)^([ \t]*)> ', r'\1', BRIDGE.read_text(encoding='utf-8'))
@@ -427,7 +438,10 @@ assert 'CrystalReport' in preview and "params.get('preview')" in preview
 variants = re.sub(r'(?m)^([ \t]*)> ', r'\1', VARIANTS.read_text(encoding='utf-8'))
 assert 'data-cd-form' in variants and "params.get('fv')" in variants
 assert variants.count('\ufffd') == 0, 'stratul de variante contine U+FFFD'
-rep('</body>', bridge.rstrip('\n') + '\n' + preview.rstrip('\n') + '\n' + variants.rstrip('\n') + '\n</body>')
+date_age_preview = re.sub(r'(?m)^([ \t]*)> ', r'\1', DATE_AGE_PREVIEW.read_text(encoding='utf-8'))
+assert 'preview-date-age-next-v1' in date_age_preview and 'renderPaywall(model)' in date_age_preview
+assert date_age_preview.count('\ufffd') == 0, 'previewul Data + Acum contine U+FFFD'
+rep('</body>', bridge.rstrip('\n') + '\n' + preview.rstrip('\n') + '\n' + variants.rstrip('\n') + '\n' + date_age_preview.rstrip('\n') + '\n</body>')
 
 # 6. Fără surse/autori în text vizibil -------------------------------------------------------------
 rep("Сравнение Карта Рождения ↔ Карта Имени (метод Айрэн По / Джули По) — где цифры отличаются:",

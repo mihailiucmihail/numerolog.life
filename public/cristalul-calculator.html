@@ -5539,8 +5539,11 @@ function buildPreviewModel(r, charts, ctx){
     if(edge==='inside' && st) state = humanState(st.level, st.avg, st.rising, nounMap[key]||'эта сфера');
     else if(edge==='near' && st) state = 'По последнему рассчитанному отрезку: ' + humanState(st.level, st.avg, st.rising, nounMap[key]||'эта сфера').replace(/^Сейчас /,'').replace(/^Ты /,'ты ');
     else state = `Этот график рассчитан до ${Math.round(lastRealAge)} ${yearsWord(Math.round(lastRealAge))} — вся его история для тебя уже видна.`;
+    const nextPoint = data.points.find(p=>p.plotAge>curAge);
+    const currentLevel = (edge!=='outside' && st) ? st.level : null;
+    const nextTrend = nextPoint && currentLevel!=null ? (nextPoint.level>currentLevel+.35?'up':nextPoint.level<currentLevel-.35?'down':'steady') : null;
     m.graph = { key, title: CHART_NAMES[key], points: data.points.filter(p=>p.plotAge<=curAge), avg:data.avg, curAge,
-                curLevel: (edge!=='outside' && st) ? st.level : null, maxAgeAll: realMaxPlotAge*1.06, edge, state };
+                curLevel: currentLevel, nextTrend, hasNextPoint: !!nextPoint, maxAgeAll: realMaxPlotAge*1.06, edge, state };
   }
   return m;
 }
@@ -8685,6 +8688,68 @@ function startPdfExport(){
       '<header class="cd-context-head"><p class="cd-context-kicker">'+c.answerKicker+'</p><h2>'+escapeHtml(name)+'</h2><p class="cd-context-meta">'+escapeHtml(model.identity.date)+' · '+escapeHtml(model.identity.age)+(lang==='ro'?' ani':' '+yearsWord(model.identity.age))+'</p></header>'+
       '<section class="cd-context-answer"><span class="cd-context-label">'+c.partial+'</span><h3>'+escapeHtml(question)+'</h3><p>'+escapeHtml(answerFor(model))+'</p><p class="cd-context-proof">'+escapeHtml(proofFor(model))+'</p></section>'+
       (preview==='preview-content-first'?'':graphHtml(model))+nextHtml(questions,c.nextTitle)+paywallIntro+renderPaywall(model)+'</div>';
+  };
+})();
+</script>
+<style id="cd-date-age-preview">
+.cd-dan-preview{display:flex;flex-direction:column;gap:12px}
+.cd-dan-head,.cd-dan-card,.cd-dan-graph,.cd-dan-next{border:1px solid rgba(255,255,255,.1);border-radius:18px;background:rgba(16,10,31,.72)}
+.cd-dan-head{padding:18px 16px;border-color:rgba(217,169,79,.3)}
+.cd-dan-kicker{margin:0 0 7px;color:var(--brass-bright,#d9a94f);font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+.cd-dan-head h2{margin:0;color:var(--parchment,#fff3d6);font-family:var(--font-display,serif);font-size:28px;line-height:1.12}
+.cd-dan-meta{margin:7px 0 0;color:var(--parchment-dim,#c9bda3);font-size:13px}
+.cd-dan-card{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;padding:15px 14px}
+.cd-dan-number{display:flex;width:34px;height:34px;align-items:center;justify-content:center;border:1px solid rgba(217,169,79,.42);border-radius:10px;color:var(--brass-bright,#d9a94f);font-family:monospace;font-size:12px}
+.cd-dan-card h3{margin:0 0 5px;color:var(--parchment,#fff3d6);font-size:15px;line-height:1.35}
+.cd-dan-card p{margin:0;color:var(--parchment-dim,#c9bda3);font-size:13.5px;line-height:1.55}
+.cd-dan-graph{padding:14px 12px}
+.cd-dan-graph h3{margin:0 0 4px;color:var(--parchment,#fff3d6);font-size:15px}
+.cd-dan-graph p{margin:0 0 7px;color:var(--parchment-dim,#c9bda3);font-size:12.5px;line-height:1.5}
+.cd-dan-next{padding:16px 14px;border-color:rgba(217,169,79,.3);background:rgba(217,169,79,.07)}
+.cd-dan-next strong{display:block;color:var(--parchment,#fff3d6);font-family:var(--font-display,serif);font-size:19px}
+.cd-dan-next span{display:block;margin-top:5px;color:var(--parchment-dim,#c9bda3);font-size:13px;line-height:1.5}
+@media(min-width:620px){.cd-dan-preview{gap:16px}.cd-dan-head{padding:22px 20px}.cd-dan-card{padding:18px}}
+</style>
+<script>
+(function(){
+  'use strict';
+  var params = new URLSearchParams(location.search);
+  if(params.get('pv') !== 'preview-date-age-next-v1') return;
+  var lang = params.get('lang') === 'ro' ? 'ro' : 'ru';
+  var baseRender = window.renderPreview || renderPreview;
+  var copy = lang === 'ro' ? {
+    kicker:'Primele răspunsuri din Cristalul tău', age:'ani',
+    one:'Ce arată data ta', two:'Unde te afli acum', three:'Direcția următorului prag',
+    fallback:'Calculul a identificat primul tău tipar personal din data nașterii și nume.',
+    graph:'Linia ta personală până astăzi', graphNote:'Sunt afișate traseul parcurs și punctul actual. Continuarea rămâne în analiza completă.',
+    nextUp:'Următorul prag calculat urcă față de punctul actual.', nextDown:'Următorul prag marchează o etapă de reevaluare și ajustare.', nextSteady:'Următorul prag continuă într-un ritm stabil, înaintea unei schimbări mai mari.', nextUnknown:'Graficul complet arată următoarea schimbare și momentul ei exact.',
+    continueTitle:'Ai primit răspunsul de acum. Linia continuă.', continueText:'Deschide vârsta următorului prag, domeniul activ și toate capitolele Cristalului.'
+  } : {
+    kicker:'Первые ответы из твоего Кристалла', age:'лет',
+    one:'Что показывает твоя дата', two:'Где ты находишься сейчас', three:'Направление следующего порога',
+    fallback:'Расчёт определил первый личный паттерн по дате рождения и имени.',
+    graph:'Твоя личная линия до сегодняшнего дня', graphNote:'Показаны пройденный путь и текущая точка. Продолжение остаётся в полном разборе.',
+    nextUp:'Следующий рассчитанный порог поднимается относительно текущей точки.', nextDown:'Следующий порог отмечает этап переоценки и настройки.', nextSteady:'Следующий порог сохраняет стабильный ритм перед более заметной переменой.', nextUnknown:'Полный график показывает следующую перемену и её точный возраст.',
+    continueTitle:'Ответ про настоящее уже открыт. Линия продолжается.', continueText:'Открой возраст следующего порога, активную сферу и все главы Кристалла.'
+  };
+  function esc(value){ return String(value == null ? '' : value).replace(/[&<>"']/g,function(ch){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]; }); }
+  function trend(model){
+    var g=model.graph, pts=g&&g.points||[], last=pts[pts.length-1], prev=pts[pts.length-2], delta=last&&prev?last.level-prev.level:0;
+    if(lang==='ro') return delta>.35?'Linia acestei perioade urcă și indică o energie în creștere.':delta<-.35?'Linia actuală coboară și indică o etapă de reevaluare.':'Linia actuală este stabilă și cere consolidare înaintea următoarei schimbări.';
+    return g&&g.state?g.state:delta>.35?'Линия текущего периода поднимается.':delta<-.35?'Текущий период ведёт к переоценке.':'Текущая линия сохраняет стабильность.';
+  }
+  function next(model){ var value=model.graph&&model.graph.nextTrend; return value==='up'?copy.nextUp:value==='down'?copy.nextDown:value==='steady'?copy.nextSteady:copy.nextUnknown; }
+  function card(number,title,text){ return '<section class="cd-dan-card"><span class="cd-dan-number">'+number+'</span><div><h3>'+esc(title)+'</h3><p>'+esc(text)+'</p></div></section>'; }
+  window.renderPreview = renderPreview = function(model){
+    baseRender(model);
+    var layer=document.getElementById('previewLayer');
+    if(!layer||model.birthday) return;
+    var first=model.wow&&model.wow[0]&&model.wow[0].text?model.wow[0].text:copy.fallback;
+    var graph=model.graph?'<section class="cd-dan-graph"><h3>'+copy.graph+'</h3><p>'+copy.graphNote+'</p>'+previewChartSvg(model.graph).replace('🔒','')+'</section>':'';
+    layer.innerHTML='<div class="pv-screen cd-dan-preview pv-reveal">'+
+      '<header class="cd-dan-head"><p class="cd-dan-kicker">'+copy.kicker+'</p><h2>'+esc(model.identity.name||model.identity.first||'')+'</h2><p class="cd-dan-meta">'+esc(model.identity.date)+' · '+esc(model.identity.age)+' '+copy.age+'</p></header>'+
+      card('01',copy.one,first)+card('02',copy.two,trend(model))+graph+card('03',copy.three,next(model))+
+      '<section class="cd-dan-next"><strong>'+copy.continueTitle+'</strong><span>'+copy.continueText+'</span></section>'+renderPaywall(model)+'</div>';
   };
 })();
 </script>
