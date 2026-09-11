@@ -141,6 +141,33 @@ const FUNNELS = [
     form: "form-money-future-v1",
     preview: "preview-money-future-v1",
   },
+  {
+    key: "instagram-direct-v1",
+    label: "Instagram Direct",
+    eyebrow: "Trafic rece din Instagram",
+    summary: "Promisiune clară și toate datele vizibile imediat, fără pași intermediari.",
+    flow: ["Promisiune directă", "Date", "Preview nativ", "Plată"],
+    form: "form-instagram-direct-v1",
+    preview: "preview-instagram-direct-v1",
+  },
+  {
+    key: "daria-continuity-v1",
+    label: "Daria Continuity",
+    eyebrow: "Continuitate cu reclama",
+    summary: "Reia videoclipul Dariei în limba rusă înaintea formularului și continuă cu același raport nativ.",
+    flow: ["Video Daria", "Date", "Preview nativ", "Plată"],
+    form: "form-daria-continuity-v1",
+    preview: "preview-daria-continuity-v1",
+  },
+  {
+    key: "topic-choice-v1",
+    label: "Topic Choice",
+    eyebrow: "Curiozitate personală",
+    summary: "Vizitatorul alege întâi tema care îl interesează, iar capitolul corespunzător se deschide primul.",
+    flow: ["Alegere temă", "Date", "Preview tematic", "Plată"],
+    form: "form-topic-choice-v1",
+    preview: "preview-topic-choice-v1",
+  },
 ] as const
 
 type FunnelKey = (typeof FUNNELS)[number]["key"]
