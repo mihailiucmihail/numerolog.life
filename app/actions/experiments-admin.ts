@@ -470,11 +470,6 @@ export async function getVariantPreviewLinks(
         pv: previewVariant.id,
         [PREVIEW_TOKEN_PARAM]: await signPreviewToken(formVariant.id, previewVariant.id),
       })
-      if (key === "love-graph" || key === "relationship-needs" || key === "relationship-future-v1") params.set("entry", "love")
-      if (key === "career-graph" || key === "profession-match" || key === "career-future-v1") params.set("entry", "career")
-      if (key === "money-flow" || key === "money-future-v1") params.set("entry", "money")
-      if (key === "life-now" || key === "life-timeline" || key === "life-stage-now-v1") params.set("entry", "relationships")
-      if (key === "birthday-first" || key === "hidden-gift-v1") params.set("entry", "birthday")
       links.funnel[key] = `/ru/numerologie?${params.toString()}`
     }),
   ])
