@@ -44,6 +44,9 @@ export const FORM_VARIANTS: VariantDef[] = [
   { id: 'form-career-future-v1', kind: 'form', label: 'Career Future', hypothesis: 'Un rezultat profesional real obținut doar din data nașterii motivează completarea identității pentru următoarea etapă.', angle: 'viitor profesional', motion: 2, active: false, weight: 0 },
   { id: 'form-relationship-future-v1', kind: 'form', label: 'Relationship Future', hypothesis: 'Poziția relațională actuală creează suficientă relevanță pentru aprofundarea personală ulterioară.', angle: 'viitor relațional', motion: 2, active: false, weight: 0 },
   { id: 'form-money-future-v1', kind: 'form', label: 'Money Future', hypothesis: 'Direcția financiară actuală, calculată înaintea numelui, deschide natural întrebarea următorului prag.', angle: 'viitor financiar', motion: 2, active: false, weight: 0 },
+  { id: 'form-instagram-direct-v1', kind: 'form', label: 'Instagram Direct', hypothesis: 'O promisiune clară și formularul complet vizibil imediat reduc abandonul traficului rece din Instagram.', angle: 'rezultat imediat', motion: 1, active: true, weight: 1 },
+  { id: 'form-daria-continuity-v1', kind: 'form', label: 'Daria Continuity', hypothesis: 'Continuitatea vizuală cu reclama Dariei transferă încrederea din Reel către completarea datelor.', angle: 'continuitate reclamă', motion: 1, active: true, weight: 1 },
+  { id: 'form-topic-choice-v1', kind: 'form', label: 'Topic Choice', hypothesis: 'Alegerea întrebării personale înaintea datelor creează un angajament mic și crește relevanța rezultatului.', angle: 'curiozitate personală', motion: 2, active: true, weight: 1 },
 ]
 
 export const PREVIEW_VARIANTS: VariantDef[] = [
@@ -60,6 +63,9 @@ export const PREVIEW_VARIANTS: VariantDef[] = [
   { id: 'preview-career-future-v1', kind: 'preview', label: 'Career Future', hypothesis: 'Graficul carierei arată trecutul și punctul actual, păstrând următoarea schimbare pentru continuare.', angle: 'viitor profesional', motion: 2, active: false, weight: 0 },
   { id: 'preview-relationship-future-v1', kind: 'preview', label: 'Relationship Future', hypothesis: 'Graficul relațional oferă o concluzie prezentă reală fără a dezvălui următoarea fază.', angle: 'viitor relațional', motion: 2, active: false, weight: 0 },
   { id: 'preview-money-future-v1', kind: 'preview', label: 'Money Future', hypothesis: 'Graficul financiar arată sensul actual al liniei și maschează vârsta următorului viraj.', angle: 'viitor financiar', motion: 2, active: false, weight: 0 },
+  { id: 'preview-instagram-direct-v1', kind: 'preview', label: 'Instagram Direct', hypothesis: 'Raportul nativ imediat confirmă promisiunea simplă făcută înaintea formularului.', angle: 'rezultat imediat', motion: 1, active: true, weight: 1 },
+  { id: 'preview-daria-continuity-v1', kind: 'preview', label: 'Daria Continuity', hypothesis: 'Aceeași previzualizare nativă izolează efectul continuității cu reclama asupra conversiei.', angle: 'continuitate reclamă', motion: 1, active: true, weight: 1 },
+  { id: 'preview-topic-choice-v1', kind: 'preview', label: 'Topic Choice', hypothesis: 'Tema aleasă apare prima în raport și transformă curiozitatea inițială într-o continuare personală.', angle: 'curiozitate personală', motion: 2, active: true, weight: 1 },
 ]
 
 export const ALL_VARIANTS: VariantDef[] = [...FORM_VARIANTS, ...PREVIEW_VARIANTS]

@@ -66,6 +66,9 @@ const PREVIEW_ENGINE_VARIANTS: Record<string, string> = {
   'preview-career-future-v1': 'preview-career-future-v1',
   'preview-relationship-future-v1': 'preview-relationship-future-v1',
   'preview-money-future-v1': 'preview-money-future-v1',
+  'preview-instagram-direct-v1': 'preview-instagram-direct-v1',
+  'preview-daria-continuity-v1': 'preview-daria-continuity-v1',
+  'preview-topic-choice-v1': 'preview-topic-choice-v1',
 }
 
 type FutureStage = 'date' | 'birth-result' | 'full-result'
@@ -579,6 +582,8 @@ export default function CristalFunnel() {
           locale={locale}
           variant={exp.form}
           futureStage="date"
+          onFirstInteraction={() => exp.track({ event: 'form_first_interaction' })}
+          onStepComplete={(step) => exp.track({ event: 'form_step_complete', meta: { step }, dedupSuffix: `step-${step}` })}
           onBirthSubmit={({ day, month, year }) => {
             const birthValues: FormValues = {
               first: locale === 'ro' ? 'Calcul' : 'Расчёт',
@@ -636,6 +641,8 @@ export default function CristalFunnel() {
             locale={locale}
             variant={exp.form}
             futureStage="identity"
+            onFirstInteraction={() => exp.track({ event: 'form_first_interaction', dedupSuffix: 'identity' })}
+            onStepComplete={(step) => exp.track({ event: 'form_step_complete', meta: { step }, dedupSuffix: `identity-step-${step}` })}
             onSubmit={(values) => {
               const nextValues: FormValues = {
                 ...values,

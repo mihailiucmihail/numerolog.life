@@ -31,10 +31,12 @@ interface CrystalReactFormProps {
   variant?: string
   futureStage?: 'date' | 'identity'
   onBirthSubmit?: (values: CrystalBirthValues) => void
+  onFirstInteraction?: () => void
+  onStepComplete?: (step: number) => void
   onSubmit: (values: CrystalFormValues) => void
 }
 
-type FunnelMode = 'control' | 'birthday-first' | 'love-graph' | 'career-graph' | 'life-now' | 'content-first' | 'money-flow' | 'profession-match' | 'relationship-needs' | 'life-timeline' | 'career-future' | 'relationship-future' | 'money-future'
+type FunnelMode = 'control' | 'birthday-first' | 'love-graph' | 'career-graph' | 'life-now' | 'content-first' | 'money-flow' | 'profession-match' | 'relationship-needs' | 'life-timeline' | 'career-future' | 'relationship-future' | 'money-future' | 'instagram-direct' | 'daria-continuity' | 'topic-choice'
 
 type FutureTopic = 'career' | 'relationship' | 'money'
 
@@ -53,6 +55,9 @@ const COPY = {
     professionTitle: 'Какую профессиональную развилку ты проходишь?', professionOptions: ['Какое направление мне подходит', 'Какой тип роли использует мои сильные стороны', 'Почему работа не даёт ощущения реализации'],
     needsTitle: 'Чего тебе сейчас не хватает в отношениях?', needsOptions: ['Безопасности и опоры', 'Близости и понимания', 'Свободы и движения'],
     timelineTitle: 'Какой отрезок жизни хочется увидеть яснее?', timelineOptions: ['Где я нахожусь сейчас', 'Что меняется следующим', 'Какая сфера станет главной'],
+    directTitle: 'Узнай, что твоя дата рождения говорит о тебе', directBody: 'Введи данные — первый персональный фрагмент Кристалла откроется бесплатно.',
+    dariaTitle: 'Продолжим расчёт вместе с Дарьей', dariaBody: 'Ты уже видела, как работает Кристалл. Теперь введи свои данные и открой личный результат.', dariaCaption: 'Дарья · Кристалл Судьбы',
+    topicTitle: 'Что ты хочешь узнать о себе прямо сейчас?', topicBody: 'Выбери тему — она откроется первой в твоём персональном результате.', topicOptions: ['Мой главный дар', 'Любовь и отношения', 'Деньги и потенциал', 'Призвание и карьера'],
     step: 'Шаг 1 из 2', chosen: 'Выбери один вариант, чтобы продолжить',
   },
   ro: {
@@ -69,6 +74,9 @@ const COPY = {
     professionTitle: 'Prin ce răscruce profesională treci?', professionOptions: ['Ce direcție mi se potrivește', 'Ce tip de rol îmi folosește punctele forte', 'De ce munca nu îmi oferă împlinire'],
     needsTitle: 'Ce îți lipsește acum într-o relație?', needsOptions: ['Siguranță și sprijin', 'Apropiere și înțelegere', 'Libertate și mișcare'],
     timelineTitle: 'Ce etapă a vieții vrei să vezi mai clar?', timelineOptions: ['Unde mă aflu acum', 'Ce se schimbă în continuare', 'Ce domeniu va deveni principal'],
+    directTitle: 'Descoperă ce spune data nașterii despre tine', directBody: 'Introdu datele — primul fragment personal al Cristalului se deschide gratuit.',
+    dariaTitle: 'Continuă calculul alături de Daria', dariaBody: 'Ai văzut deja cum funcționează Cristalul. Acum introdu datele și deschide rezultatul tău personal.', dariaCaption: 'Daria · Cristalul Destinului',
+    topicTitle: 'Ce vrei să afli despre tine chiar acum?', topicBody: 'Alege tema — aceasta se va deschide prima în rezultatul tău personal.', topicOptions: ['Darul meu principal', 'Iubire și relații', 'Bani și potențial', 'Vocație și carieră'],
     step: 'Pasul 1 din 2', chosen: 'Alege o variantă pentru a continua',
   },
 }
@@ -91,6 +99,7 @@ const MODE_BY_VARIANT: Record<string, FunnelMode> = {
   'form-life-now': 'life-now', 'form-content-first': 'content-first', 'form-money-flow': 'money-flow', 'form-profession-match': 'profession-match',
   'form-relationship-needs': 'relationship-needs', 'form-life-timeline': 'life-timeline', 'form-career-future-v1': 'career-future',
   'form-relationship-future-v1': 'relationship-future', 'form-money-future-v1': 'money-future',
+  'form-instagram-direct-v1': 'instagram-direct', 'form-daria-continuity-v1': 'daria-continuity', 'form-topic-choice-v1': 'topic-choice',
 }
 
 function detectAlphabet(name: string, current: string): string {
@@ -106,7 +115,7 @@ function detectAlphabet(name: string, current: string): string {
 
 const inputClass = 'h-12 w-full rounded-xl border border-border bg-background/40 px-3.5 text-[16px] text-foreground outline-none transition placeholder:text-muted-foreground/50 focus:border-primary/60 focus:ring-4 focus:ring-primary/10 sm:text-sm'
 
-export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'ru', variant = 'form-control', futureStage = 'date', onBirthSubmit, onSubmit }: CrystalReactFormProps) {
+export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'ru', variant = 'form-control', futureStage = 'date', onBirthSubmit, onFirstInteraction, onStepComplete, onSubmit }: CrystalReactFormProps) {
   const c = locale === 'ro' ? COPY.ro : COPY.ru
   const mode = MODE_BY_VARIANT[variant] || 'control'
   const futureTopic: FutureTopic | null = mode === 'career-future' ? 'career' : mode === 'relationship-future' ? 'relationship' : mode === 'money-future' ? 'money' : null
@@ -120,6 +129,12 @@ export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'r
   })
   const [error, setError] = useState('')
   const dateRefs = useRef<Array<HTMLInputElement | null>>([])
+  const interactionTracked = useRef(false)
+  const trackFirstInteraction = () => {
+    if (interactionTracked.current) return
+    interactionTracked.current = true
+    onFirstInteraction?.()
+  }
 
   const dateValid = useMemo(() => {
     const day = Number(values.day), month = Number(values.month), year = Number(values.year)
@@ -135,9 +150,9 @@ export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'r
     if (value.length === max && index < 2) dateRefs.current[index + 1]?.focus()
   }
 
-  const options = mode === 'love-graph' ? c.loveOptions : mode === 'career-graph' ? c.careerOptions : mode === 'life-now' ? c.lifeOptions : mode === 'money-flow' ? c.moneyOptions : mode === 'profession-match' ? c.professionOptions : mode === 'relationship-needs' ? c.needsOptions : mode === 'life-timeline' ? c.timelineOptions : []
-  const standardTitle = mode === 'birthday-first' ? c.birthdayTitle : mode === 'love-graph' ? c.loveTitle : mode === 'career-graph' ? c.careerTitle : mode === 'life-now' ? c.lifeTitle : mode === 'content-first' ? c.contentTitle : mode === 'money-flow' ? c.moneyTitle : mode === 'profession-match' ? c.professionTitle : mode === 'relationship-needs' ? c.needsTitle : mode === 'life-timeline' ? c.timelineTitle : c.title
-  const standardBody = mode === 'birthday-first' ? c.birthdayBody : mode === 'content-first' ? c.contentBody : c.body
+  const options = mode === 'love-graph' ? c.loveOptions : mode === 'career-graph' ? c.careerOptions : mode === 'life-now' ? c.lifeOptions : mode === 'money-flow' ? c.moneyOptions : mode === 'profession-match' ? c.professionOptions : mode === 'relationship-needs' ? c.needsOptions : mode === 'life-timeline' ? c.timelineOptions : mode === 'topic-choice' ? c.topicOptions : []
+  const standardTitle = mode === 'birthday-first' ? c.birthdayTitle : mode === 'love-graph' ? c.loveTitle : mode === 'career-graph' ? c.careerTitle : mode === 'life-now' ? c.lifeTitle : mode === 'content-first' ? c.contentTitle : mode === 'money-flow' ? c.moneyTitle : mode === 'profession-match' ? c.professionTitle : mode === 'relationship-needs' ? c.needsTitle : mode === 'life-timeline' ? c.timelineTitle : mode === 'instagram-direct' ? c.directTitle : mode === 'daria-continuity' ? c.dariaTitle : mode === 'topic-choice' ? c.topicTitle : c.title
+  const standardBody = mode === 'birthday-first' ? c.birthdayBody : mode === 'content-first' ? c.contentBody : mode === 'instagram-direct' ? c.directBody : mode === 'daria-continuity' ? c.dariaBody : mode === 'topic-choice' ? c.topicBody : c.body
   const title = futureCopy ? (futureStage === 'date' ? futureCopy.title : futureCopy.identityTitle) : standardTitle
   const body = futureCopy ? (futureStage === 'date' ? futureCopy.body : futureCopy.identityBody) : standardBody
   const Icon = mode === 'love-graph' || mode === 'relationship-needs' || mode === 'relationship-future' ? Heart : mode === 'career-graph' || mode === 'profession-match' || mode === 'career-future' ? BriefcaseBusiness : mode === 'content-first' ? Layers3 : mode === 'money-flow' || mode === 'money-future' ? CircleDollarSign : mode === 'life-timeline' ? Route : mode === 'life-now' ? Sparkles : UserRound
@@ -161,14 +176,14 @@ export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'r
       onBirthSubmit?.({ day: Number(values.day), month: Number(values.month), year: Number(values.year) })
       return
     }
-    if (mode === 'birthday-first' && step === 0) { if (!dateValid) return setError(c.dateError); setError(''); setStep(1); return }
+    if (mode === 'birthday-first' && step === 0) { if (!dateValid) return setError(c.dateError); setError(''); setStep(1); onStepComplete?.(1); return }
     if (!values.first.trim() || !values.last.trim()) return setError(c.nameError)
     if (!dateValid) return setError(c.dateError)
     if (futureTopic && !values.gender) return setError(c.genderError)
     if (options.length && !intent) return setError(c.chosen)
     setError('')
     const intentIndex = options.indexOf(intent)
-    const entry = futureTopic === 'relationship' ? 'love' : futureTopic || (mode === 'love-graph' || mode === 'relationship-needs' ? 'love' : mode === 'career-graph' || mode === 'profession-match' ? 'career' : mode === 'money-flow' ? 'money' : mode === 'life-timeline' ? 'relationships' : mode === 'life-now' ? (['love', 'money', 'career', 'relationships'][intentIndex] || 'relationships') : mode === 'birthday-first' ? 'birthday' : undefined)
+    const entry = futureTopic === 'relationship' ? 'love' : futureTopic || (mode === 'love-graph' || mode === 'relationship-needs' ? 'love' : mode === 'career-graph' || mode === 'profession-match' ? 'career' : mode === 'money-flow' ? 'money' : mode === 'topic-choice' ? (['birthday', 'love', 'money', 'career'][intentIndex] || 'birthday') : mode === 'life-timeline' ? 'relationships' : mode === 'life-now' ? (['love', 'money', 'career', 'relationships'][intentIndex] || 'relationships') : mode === 'birthday-first' ? 'birthday' : undefined)
     onSubmit({ ...values, nameAlphabetKey: detectAlphabet(`${values.last}${values.first}${values.middle}`, values.nameAlphabetKey), day: Number(values.day), month: Number(values.month), year: Number(values.year), entry, ...(intentIndex >= 0 ? { intent: `${mode}:${intentIndex}` } : futureTopic ? { intent: `${futureTopic}-future-v1:0` } : {}) })
   }
 
@@ -179,10 +194,18 @@ export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'r
       <header className="flex flex-col gap-4 border-b border-border bg-card/70 px-5 py-6 sm:px-8">
         <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-primary"><span className="size-1.5 rounded-full bg-primary" />{futureTopic ? (futureStage === 'date' ? (locale === 'ro' ? 'Rezultat gratuit' : 'Бесплатный результат') : (locale === 'ro' ? 'Pasul 2 din 2' : 'Шаг 2 из 2')) : mode === 'birthday-first' ? c.step : c.eyebrow}</div>
         <div className="flex items-start gap-4"><div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-background/30 text-primary"><Icon className="size-5" /></div><div><h2 className="text-balance text-xl font-semibold tracking-tight text-foreground">{title}</h2><p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">{body}</p></div></div>
+        {mode === 'daria-continuity' && (
+          <figure className="overflow-hidden rounded-xl border border-border bg-background/30">
+            <video controls playsInline preload="none" poster="/images/daria-instagram-funnel.jpg" className="aspect-[4/5] max-h-[520px] w-full bg-background object-cover" aria-label={c.dariaCaption}>
+              <source src="/videos/daria-instagram-funnel-v2.mp4" type="video/mp4" />
+            </video>
+            <figcaption className="border-t border-border px-4 py-3 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">{c.dariaCaption}</figcaption>
+          </figure>
+        )}
         {mode === 'content-first' && <div className="grid grid-cols-3 gap-2 pt-1">{['22', '3', '1'].map((value, index) => <div key={value} className="rounded-xl border border-border bg-background/30 p-3 text-center"><strong className="font-mono text-lg text-primary">{value}</strong><p className="mt-1 text-[10px] leading-4 text-muted-foreground">{locale === 'ro' ? (index === 0 ? 'arcane' : index === 1 ? 'hărți' : 'fir personal') : (index === 0 ? 'аркана' : index === 1 ? 'карты' : 'личный путь')}</p></div>)}</div>}
       </header>
-      <form onSubmit={submit} className="flex flex-col gap-6 p-5 sm:p-8">
-        {options.length > 0 && <fieldset className="flex flex-col gap-3"><legend className="sr-only">{title}</legend>{options.map((option) => <button key={option} type="button" onClick={() => { setIntent(option); setError('') }} aria-pressed={intent === option} className={`flex min-h-12 items-center justify-between rounded-xl border px-4 py-3 text-left text-sm transition ${intent === option ? 'border-primary bg-primary/10 text-foreground' : 'border-border bg-background/30 text-muted-foreground hover:border-primary/40 hover:text-foreground'}`}><span>{option}</span>{intent === option && <Check className="size-4 text-primary" />}</button>)}</fieldset>}
+      <form onSubmit={submit} onFocusCapture={trackFirstInteraction} onClickCapture={trackFirstInteraction} className="flex flex-col gap-6 p-5 sm:p-8">
+        {options.length > 0 && <fieldset className="flex flex-col gap-3"><legend className="sr-only">{title}</legend>{options.map((option) => <button key={option} type="button" onClick={() => { setIntent(option); setError(''); onStepComplete?.(1) }} aria-pressed={intent === option} className={`flex min-h-12 items-center justify-between rounded-xl border px-4 py-3 text-left text-sm transition ${intent === option ? 'border-primary bg-primary/10 text-foreground' : 'border-border bg-background/30 text-muted-foreground hover:border-primary/40 hover:text-foreground'}`}><span>{option}</span>{intent === option && <Check className="size-4 text-primary" />}</button>)}</fieldset>}
         {futureTopic ? (futureStage === 'date' ? dateFields : <>{identityFields}<fieldset className="flex flex-col gap-3"><legend className="font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">{c.gender}</legend><div className="grid grid-cols-2 gap-3">{([['f', c.female], ['m', c.male]] as const).map(([value, label]) => <button key={value} type="button" onClick={() => update('gender', value)} aria-pressed={values.gender === value} className={`h-12 rounded-xl border text-sm transition ${values.gender === value ? 'border-primary bg-primary/10 text-foreground' : 'border-border bg-background/30 text-muted-foreground hover:border-primary/40 hover:text-foreground'}`}>{label}</button>)}</div></fieldset></>) : mode === 'birthday-first' && step === 0 ? dateFields : <>{identityFields}{mode !== 'birthday-first' && dateFields}</>}
         {error && <p role="alert" className="rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2.5 text-sm text-destructive">{error}</p>}
         <div className="flex gap-3">{mode === 'birthday-first' && step === 1 && <button type="button" onClick={() => setStep(0)} className="h-12 rounded-xl border border-border px-4 text-sm text-muted-foreground hover:text-foreground">{c.back}</button>}<button type="submit" disabled={(futureTopic && futureStage === 'date') || (mode === 'birthday-first' && step === 0) ? !dateValid : false} className="group flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40">{futureCopy ? (futureStage === 'date' ? futureCopy.cta : futureCopy.submit) : mode === 'birthday-first' && step === 0 ? c.next : c.submit}<ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></button></div>
