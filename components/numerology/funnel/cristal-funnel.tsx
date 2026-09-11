@@ -145,7 +145,7 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
   const exp = standardFlow
     ? { ...assignedExp, form: 'form-control', preview: 'preview-control' }
     : assignedExp
-  const futureTopic = exp.form === 'form-career-future-v1'
+  const futureTopic = exp.form === 'form-career-future-v1' || exp.form === 'form-career-report-v1' || exp.form === 'form-career-dual-v1'
     ? 'career'
     : exp.form === 'form-relationship-future-v1'
       ? 'love'

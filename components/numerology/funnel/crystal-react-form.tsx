@@ -117,7 +117,7 @@ const FUTURE_COPY = {
 const MODE_BY_VARIANT: Record<string, FunnelMode> = {
   'form-control': 'control', 'form-birthday-first': 'birthday-first', 'form-date-age-fast-v1': 'date-age-fast', 'form-love-line-v1': 'love-line', 'form-money-age-v1': 'money-age', 'form-love-graph': 'love-graph', 'form-career-graph': 'career-graph',
   'form-life-now': 'life-now', 'form-content-first': 'content-first', 'form-money-flow': 'money-flow', 'form-profession-match': 'profession-match',
-  'form-relationship-needs': 'relationship-needs', 'form-life-timeline': 'life-timeline', 'form-career-future-v1': 'career-future',
+  'form-relationship-needs': 'relationship-needs', 'form-life-timeline': 'life-timeline', 'form-career-future-v1': 'career-future', 'form-career-report-v1': 'career-future', 'form-career-dual-v1': 'career-future',
   'form-relationship-future-v1': 'relationship-future', 'form-money-future-v1': 'money-future',
   'form-instagram-direct-v1': 'instagram-direct', 'form-daria-continuity-v1': 'daria-continuity', 'form-topic-choice-v1': 'topic-choice',
   'form-life-stage-now-v1': 'life-stage-now', 'form-hidden-gift-v1': 'hidden-gift',

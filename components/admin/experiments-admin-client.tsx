@@ -60,7 +60,7 @@ const FUNNELS = [
     eyebrow: "Același formular Career Future",
     summary: "Graficul carierei desenat cu codul raportului (axe, puncte, linia de confort, marcajul vârstei) și paragraful de interpretare al raportului. Punctele deja trăite sunt explicate, cele viitoare blurate; următoarea schimbare apare ca interval de 5 ani.",
     flow: ["Data nașterii", "Nume", "Graficul real + textul raportului", "Interval următoarea schimbare", "Plată"],
-    form: "form-career-future-v1",
+    form: "form-career-report-v1",
     preview: "preview-career-report-v1",
   },
   {
@@ -69,7 +69,7 @@ const FUNNELS = [
     eyebrow: "Același formular Career Future",
     summary: "Două grafice reale ca în raport: cariera (cu textul raportului și intervalul următoarei schimbări) și autorealizarea, cu vârful profesional cel mai puternic (T1/T4/T6) numit și explicat. Celelalte sfere și anul exact rămân în raport.",
     flow: ["Data nașterii", "Nume", "Grafic carieră + grafic autorealizare", "Sfera cea mai puternică", "Plată"],
-    form: "form-career-future-v1",
+    form: "form-career-dual-v1",
     preview: "preview-career-dual-v1",
   },
   {
