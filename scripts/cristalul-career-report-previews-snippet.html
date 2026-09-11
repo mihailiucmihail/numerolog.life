@@ -15,8 +15,21 @@
 .cd-cr-svg .life-point,.cd-cr-svg .crossing-mark,.cd-cr-svg .now-marker,.cd-cr-svg .now-label-bg,.cd-cr-svg .now-label-text,.cd-cr-svg .avg-line,.cd-cr-svg .now-line{opacity:1;transform:none;transition:none}
 .cd-cr-svg .now-marker-ring{opacity:.55;animation:nowPulse 1.8s ease-out infinite}
 .cd-cr-svg .avg-line{opacity:.95}.cd-cr-svg .now-line{opacity:.9}
-.cd-cr-svg .cd-cr-fog{fill:rgba(16,10,31,.82)}
-.cd-cr-svg .cd-cr-fog-label{fill:var(--brass-bright,#d9a94f);font-family:var(--sans,sans-serif);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase}
+.cd-cr-svg .cd-cr-veil{animation:cdVeilBreath 5.5s ease-in-out infinite}
+.cd-cr-svg .cd-cr-sweep{animation:cdVeilSweep 6s linear infinite}
+.cd-cr-svg .cd-cr-spark{fill:var(--brass-bright,#d9a94f);opacity:0;transform-box:fill-box;transform-origin:center;animation:cdSpark 4.8s ease-in-out infinite}
+.cd-cr-svg .cd-cr-q-ring{fill:none;stroke:var(--brass-bright,#d9a94f);stroke-width:1.2;opacity:.75;transform-box:fill-box;transform-origin:center;animation:cdQRing 2.6s ease-out infinite}
+.cd-cr-svg .cd-cr-q-dot{fill:rgba(16,10,31,.95);stroke:var(--brass-bright,#d9a94f);stroke-width:1.4}
+.cd-cr-svg .cd-cr-q-txt{fill:var(--brass-bright,#d9a94f);font-family:var(--font-display,serif);font-size:11px;font-weight:600}
+.cd-cr-svg .cd-cr-veil-label{fill:var(--parchment,#fff3d6);font-family:var(--sans,sans-serif);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;opacity:.9}
+.cd-cr-svg .cd-cr-veil-sub{fill:var(--brass-bright,#d9a94f);font-family:var(--font-display,serif);font-size:13px;font-style:italic;opacity:.95}
+.cd-cr-svg .cd-cr-edge{stroke:var(--brass-bright,#d9a94f);stroke-width:1;stroke-dasharray:3 4;opacity:.7;animation:cdEdgeFlow 1.6s linear infinite}
+@keyframes cdVeilBreath{0%,100%{opacity:.92}50%{opacity:1}}
+@keyframes cdVeilSweep{0%{transform:translateX(-120px)}100%{transform:translateX(640px)}}
+@keyframes cdSpark{0%{opacity:0;transform:translateY(0) scale(.6)}20%{opacity:.9}60%{opacity:.5}100%{opacity:0;transform:translateY(-38px) scale(1.1)}}
+@keyframes cdQRing{0%{transform:scale(.6);opacity:.8}100%{transform:scale(2.4);opacity:0}}
+@keyframes cdEdgeFlow{to{stroke-dashoffset:-14}}
+@media(prefers-reduced-motion:reduce){.cd-cr-svg .cd-cr-veil,.cd-cr-svg .cd-cr-sweep,.cd-cr-svg .cd-cr-spark,.cd-cr-svg .cd-cr-q-ring,.cd-cr-svg .cd-cr-edge{animation:none}.cd-cr-svg .cd-cr-spark{opacity:.5}.cd-cr-svg .cd-cr-sweep{display:none}}
 .cd-cr-text{color:var(--parchment,#fff3d6);font-size:15px;line-height:1.62}
 .cd-cr-text b{color:var(--brass-bright,#d9a94f);font-weight:600}
 .cd-cr-text p{margin:0 0 10px}
@@ -51,8 +64,8 @@
   var baseRender = window.renderPreview || renderPreview;
   var T = lang === 'ro' ? {
     kicker:'Linia ta a carierei — ca în raport', years:'ani', chartTitle:{career:'Graficul carierei', selfrealization:'Graficul autorealizării'},
-    intro:{career:'Același grafic pe care îl vei vedea în raportul complet: nivelul tău pe ani, linia de confort și punctul de azi. Partea de după vârsta actuală este acoperită.', selfrealization:'Cele 7 etape ale acestui grafic arată când și cât de tare se aprinde realizarea ta. Este explicat vârful; celelalte 6 etape rămân în raport.'},
-    legend:['Nivelul tău','Nivelul tău de confort','Vârsta ta acum','Schimbare de tendință'], fog:'în raportul complet',
+    intro:{career:'Același grafic pe care îl vei vedea în raportul complet: nivelul tău pe ani, linia de confort și punctul de azi. Linia de după vârsta actuală se deschide odată cu raportul.', selfrealization:'Cele 7 etape ale acestui grafic arată când și cât de tare se aprinde realizarea ta. Este explicat vârful; celelalte 6 etape rămân în raport.'},
+    legend:['Nivelul tău','Nivelul tău de confort','Vârsta ta acum','Schimbare de tendință'], veilTop:'Linia continuă', veilSub:'Ce urmează după această vârstă — în raport',
     textTitle:'Ce spune graficul despre tine acum', pointsTitle:'Punctele deja trăite (poți verifica)', pointFuture:'urmează', pointLocked:'interpretarea acestui punct este în raport', cmp:['peste nivelul de confort','sub nivelul de confort','la nivelul de confort'],
     nextTitle:'Următoarea schimbare a tendinței', nextText:function(up){ return 'Conform graficului, în acest interval linia carierei trece '+(up?'peste':'sub')+' nivelul tău de confort — anul exact și ce aduce el sunt în raport.'; }, nextNone:'În intervalul afișat nu mai apare o schimbare bruscă de tendință — sensul actual se păstrează.',
     sphereKicker:'Vârful graficului tău de autorealizare', sphereAge:function(a,l){ return 'la '+a+' ani · nivel '+l+'/9'; },
@@ -61,8 +74,8 @@
     lockedDual:[['Toate cele 7 etape ale autorealizării','ce cere fiecare și de ce linia urcă sau coboară acolo.'],['Anul exact al următoarei schimbări în carieră','și ce aduce el.'],['Unde se contrazic cariera și autorealizarea','anii în care lucrezi mult, dar nu în sfera ta.'],['Cea mai bună vârstă pentru schimbarea profesiei','după ambele grafice.']]
   } : {
     kicker:'Твоя линия карьеры — как в разборе', years:'лет', chartTitle:{career:'График карьеры', selfrealization:'График самореализации'},
-    intro:{career:'Тот же график, который ты увидишь в полном разборе: твой уровень по годам, линия комфорта и сегодняшняя точка. Часть после текущего возраста закрыта.', selfrealization:'7 этапов этого графика показывают, когда и насколько сильно включается твоя реализация. Объяснена вершина; остальные 6 этапов остаются в разборе.'},
-    legend:['Твой уровень','Твой уровень комфорта','Твой возраст сейчас','Смена тенденции'], fog:'в полном разборе',
+    intro:{career:'Тот же график, который ты увидишь в полном разборе: твой уровень по годам, линия комфорта и сегодняшняя точка. Линия после текущего возраста открывается вместе с разбором.', selfrealization:'7 этапов этого графика показывают, когда и насколько сильно включается твоя реализация. Объяснена вершина; остальные 6 этапов остаются в разборе.'},
+    legend:['Твой уровень','Твой уровень комфорта','Твой возраст сейчас','Смена тенденции'], veilTop:'Линия продолжается', veilSub:'Что после этого возраста — в разборе',
     textTitle:'Что график говорит о тебе сейчас', pointsTitle:'Точки, которые ты уже прошёл (можно проверить)', pointFuture:'впереди', pointLocked:'трактовка этой точки в разборе', cmp:['выше уровня комфорта','ниже уровня комфорта','на уровне комфорта'],
     nextTitle:'Следующая смена тенденции', nextText:function(up){ return 'По графику в этом интервале линия карьеры переходит '+(up?'выше':'ниже')+' твоего уровня комфорта — точный год и что он приносит, в разборе.'; }, nextNone:'В отображённом интервале больше не появляется резкой смены тенденции — текущее направление сохраняется.',
     sphereKicker:'Вершина твоего графика самореализации', sphereAge:function(a,l){ return 'в '+a+' '+ruYears(a)+' · уровень '+l+'/9'; },
@@ -79,12 +92,14 @@
   function crossAges(data){ return crossingsWithDirection(data.points, data.avg); }
 
   /* Copie 1:1 a randarii din renderLifeChart (aceleasi dimensiuni, scale, clase), plus ceata peste viitor. */
+  var chartSeq = 0;
   function reportChart(data, age){
     var W=640, H=320, padL=36, padR=20, padT=20, padB=34;
     var plotW=W-padL-padR, plotH=H-padT-padB;
     var maxAge = Math.max.apply(null, data.points.map(function(p){ return p.plotAge; })) * 1.06;
     var xScale = function(a){ return padL + (a/maxAge)*plotW; };
     var yScale = function(l){ return padT + plotH - (l/9)*plotH; };
+    var uid = 'cdcr'+(++chartSeq);
     var parts = [];
     for(var lvl=0; lvl<=9; lvl+=3){
       parts.push('<line class="axis-line" x1="'+padL+'" y1="'+yScale(lvl)+'" x2="'+(W-padR)+'" y2="'+yScale(lvl)+'"/>');
@@ -94,16 +109,42 @@
     for(var a=0; a<=maxRealAge+5; a+=10) parts.push('<text class="axis-label" x="'+xScale(a)+'" y="'+(H-padB+16)+'" text-anchor="middle">'+a+'</text>');
     var avgY = yScale(data.avg);
     parts.push('<line class="avg-line show" x1="'+padL+'" y1="'+avgY+'" x2="'+(W-padR)+'" y2="'+avgY+'"/>');
-    var d = data.points.map(function(p,i){ return (i===0?'M':'L')+xScale(p.plotAge).toFixed(1)+','+yScale(p.level).toFixed(1); }).join(' ');
+    var hasFuture = age >= 0 && age < maxAge;
+    /* Trecutul: doar punctele pana la varsta curenta + punctul interpolat de azi. Viitorul NU se deseneaza deloc. */
+    var past = hasFuture ? data.points.filter(function(p){ return p.plotAge <= age; }) : data.points.slice();
+    var nowLv = hasFuture ? interpolateAtAge(data.points, age) : null;
+    var pathPts = past.map(function(p){ return {x:xScale(p.plotAge), y:yScale(p.level)}; });
+    if(hasFuture) pathPts.push({x:xScale(age), y:yScale(nowLv)});
+    var d = pathPts.map(function(pt,i){ return (i===0?'M':'L')+pt.x.toFixed(1)+','+pt.y.toFixed(1); }).join(' ');
     parts.push('<path class="life-path" d="'+d+'"/>');
-    data.crossings.forEach(function(ca){ parts.push('<circle class="crossing-mark show" cx="'+xScale(ca)+'" cy="'+avgY+'" r="5.5"/>'); });
-    data.points.forEach(function(p){ parts.push('<circle class="life-point show" cx="'+xScale(p.plotAge).toFixed(1)+'" cy="'+yScale(p.level).toFixed(1)+'" r="5.5"/>'); });
-    if(age>=0 && age<=maxAge){
-      var lv = interpolateAtAge(data.points, age), mx = xScale(age), my = yScale(lv);
-      var fogX = mx + 8;
-      if(fogX < W-padR-40){
-        parts.push('<rect class="cd-cr-fog" x="'+fogX+'" y="'+padT+'" width="'+(W-padR-fogX)+'" height="'+plotH+'"/>');
-        parts.push('<text class="cd-cr-fog-label" x="'+((fogX+W-padR)/2)+'" y="'+(padT+plotH/2)+'" text-anchor="middle">'+esc(T.fog)+'</text>');
+    data.crossings.filter(function(ca){ return !hasFuture || ca <= age; }).forEach(function(ca){ parts.push('<circle class="crossing-mark show" cx="'+xScale(ca)+'" cy="'+avgY+'" r="5.5"/>'); });
+    past.forEach(function(p){ parts.push('<circle class="life-point show" cx="'+xScale(p.plotAge).toFixed(1)+'" cy="'+yScale(p.level).toFixed(1)+'" r="5.5"/>'); });
+    if(hasFuture){
+      var mx = xScale(age), my = yScale(nowLv);
+      var vx = mx + 6, vw = W - padR - vx;
+      if(vw > 40){
+        parts.push('<defs><linearGradient id="'+uid+'g" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#100a1f" stop-opacity="0"/><stop offset=".08" stop-color="#100a1f" stop-opacity=".9"/><stop offset=".35" stop-color="#1a0f33"/><stop offset="1" stop-color="#0d0819"/></linearGradient>'
+          + '<linearGradient id="'+uid+'s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d9a94f" stop-opacity="0"/><stop offset=".5" stop-color="#d9a94f" stop-opacity=".16"/><stop offset="1" stop-color="#d9a94f" stop-opacity="0"/></linearGradient>'
+          + '<clipPath id="'+uid+'c"><rect x="'+vx+'" y="'+padT+'" width="'+vw+'" height="'+plotH+'"/></clipPath></defs>');
+        parts.push('<rect class="cd-cr-veil" x="'+vx+'" y="'+padT+'" width="'+vw+'" height="'+plotH+'" fill="url(#'+uid+'g)"/>');
+        parts.push('<g clip-path="url(#'+uid+'c)"><rect class="cd-cr-sweep" x="'+vx+'" y="'+padT+'" width="110" height="'+plotH+'" fill="url(#'+uid+'s)"/>');
+        /* scantei determinist distribuite */
+        for(var k=0;k<16;k++){
+          var sx = vx + 14 + ((k*97)%Math.max(1,(vw-28))), sy = padT + 30 + ((k*61)%(plotH-40)), r = k%3===0?1.8:1.1;
+          parts.push('<circle class="cd-cr-spark" cx="'+sx.toFixed(1)+'" cy="'+sy.toFixed(1)+'" r="'+r+'" style="animation-delay:'+((k*0.37)%4.8).toFixed(2)+'s;animation-duration:'+(4.2+(k%4)*0.5)+'s"/>');
+        }
+        parts.push('</g>');
+        parts.push('<line class="cd-cr-edge" x1="'+vx+'" y1="'+padT+'" x2="'+vx+'" y2="'+(H-padB)+'"/>');
+        /* marcatoare „?” la varstele punctelor viitoare, pe linia de confort (nivelul ramane necunoscut) */
+        data.points.filter(function(p){ return p.plotAge > age && p.plotAge < maxAge; }).forEach(function(p, i){
+          var qx = xScale(p.plotAge);
+          parts.push('<circle class="cd-cr-q-ring" cx="'+qx.toFixed(1)+'" cy="'+avgY+'" r="7" style="animation-delay:'+(i*0.6)+'s"/><circle class="cd-cr-q-dot" cx="'+qx.toFixed(1)+'" cy="'+avgY+'" r="7"/><text class="cd-cr-q-txt" x="'+qx.toFixed(1)+'" y="'+(avgY+4)+'" text-anchor="middle">?</text>');
+        });
+        if(vw > 150){
+          var lxm = vx + vw/2;
+          parts.push('<text class="cd-cr-veil-label" x="'+lxm+'" y="'+(padT+22)+'" text-anchor="middle">'+esc(T.veilTop)+'</text>');
+          parts.push('<text class="cd-cr-veil-sub" x="'+lxm+'" y="'+(padT+plotH-14)+'" text-anchor="middle">'+esc(T.veilSub)+'</text>');
+        }
       }
       parts.push('<line class="now-line show" x1="'+mx+'" y1="'+padT+'" x2="'+mx+'" y2="'+(H-padB)+'"/>');
       var labelW=74, labelH=18, lx=mx-labelW/2; if(lx<padL) lx=padL; if(lx+labelW>W-padR) lx=W-padR-labelW; var ly=padT+2;
