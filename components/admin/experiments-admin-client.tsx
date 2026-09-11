@@ -46,6 +46,15 @@ const FUNNELS = [
     preview: "preview-birthday-first",
   },
   {
+    key: "date-age-fast-v1",
+    label: "Următorul prag",
+    eyebrow: "Data + Acum + Următorul prag",
+    summary: "Data nașterii confirmă imediat vârsta, numele urmează în același pas, iar previzualizarea arată direcția următorului prag fără să dezvăluie sensul lui.",
+    flow: ["Data nașterii", "Vârsta instant", "Nume", "Acum + direcția pragului", "Plată"],
+    form: "form-date-age-fast-v1",
+    preview: "preview-date-age-next-v1",
+  },
+  {
     key: "love-graph",
     label: "Love Graph",
     eyebrow: "Intenție: relații",
@@ -216,25 +225,11 @@ type Device = "desktop" | "mobile"
 type TrafficDraft = Record<FunnelKey, { active: boolean; percentage: number }>
 
 function defaultTraffic(): TrafficDraft {
-  const activeFunnels = new Set([
-    "control",
-    "birthday-first",
-    "career-graph",
-    "life-now",
-    "relationship-needs",
-    "life-timeline",
-    "career-future-v1",
-    "relationship-future-v1",
-    "money-future-v1",
-    "life-stage-now-v1",
-    "hidden-gift-v1",
-    "birthday-express-v1",
-    "day-arcana-v1",
-  ])
+  const activeFunnels = new Set(["control", "date-age-fast-v1"])
 
   return Object.fromEntries(FUNNELS.map((item) => [item.key, {
     active: activeFunnels.has(item.key),
-    percentage: item.key === "control" ? 10 : activeFunnels.has(item.key) ? 9 : 0,
+    percentage: activeFunnels.has(item.key) ? 50 : 0,
   }])) as TrafficDraft
 }
 
