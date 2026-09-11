@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
 import { startNumerologieCheckout, getNumerologieSessionStatus } from '@/app/actions/stripe'
 import { savePreviewLead, attachLeadEmail } from '@/app/actions/preview-lead'
+import { saveExperimentParticipant } from '@/app/actions/experiment-participants'
 import { saveRaportAndSendEmail } from '@/app/actions/raport'
 import { checkPromoCode } from '@/app/actions/promo'
 import { useCurrency } from '@/components/providers/currency-provider'
@@ -261,6 +262,27 @@ export default function CristalFunnel() {
     postToFrame(pricingMessage())
   }, [pricingMessage, postToFrame])
 
+  const persistParticipant = useCallback((
+    stage: 'form_submitted' | 'preview_seen',
+    values?: Partial<FormValues> | null,
+    email?: string | null,
+  ) => {
+    if (exp.previewMode) return
+    void saveExperimentParticipant({
+      stage,
+      first: values?.first || null,
+      last: values?.last || null,
+      middle: values?.middle || null,
+      day: values?.day || null,
+      month: values?.month || null,
+      year: values?.year || null,
+      email: email || null,
+      currency: cristal.currency,
+      displayedPrice: offer ? offer.finalPrice : cristal.displayPrice,
+      locale,
+    })
+  }, [cristal.currency, cristal.displayPrice, exp.previewMode, locale, offer])
+
   // Mesaje din iframe: înălțime, raport blurat randat, validare promo din formularul original.
   useEffect(() => {
     const onMessage = (event: MessageEvent) => {
@@ -315,6 +337,7 @@ export default function CristalFunnel() {
           setNativePreview(true)
           exp.track({ event: 'calculation_complete', dedupSuffix: 'birth-result' })
           exp.track({ event: 'preview_impression', meta: { native: true, stage: 'birth', motion: exp.previewMotion }, dedupSuffix: 'birth-result' })
+          persistParticipant('preview_seen')
           trackFunnel('free_result_viewed', { mode: 'birth_only_graph', entry: futureTopic })
           return
         }
@@ -336,6 +359,7 @@ export default function CristalFunnel() {
           formRef.current = values
           setForm(values)
           if (typeof p.email === 'string') setFormEmail(p.email.trim())
+          persistParticipant('preview_seen', values, p.email)
           try {
             sessionStorage.setItem(FUNNEL_STORAGE_KEY, JSON.stringify(values))
             if (p.email) sessionStorage.setItem(`${FUNNEL_STORAGE_KEY}:email`, p.email.trim())
@@ -348,6 +372,7 @@ export default function CristalFunnel() {
             void savePreviewLead({ ...values, email: p.email || undefined }, locale, cristal.currency.toLowerCase(), country)
           }
         }
+        if (!p) persistParticipant('preview_seen')
         setPreviewReady(true)
         setNativePreview(d.native === true)
         exp.track({ event: 'calculation_complete' })
@@ -390,6 +415,7 @@ export default function CristalFunnel() {
         const email = (p.email || '').trim()
         if (email) {
           setFormEmail(email)
+          persistParticipant('preview_seen', formRef.current, email)
           try { sessionStorage.setItem(`${FUNNEL_STORAGE_KEY}:email`, email) } catch {}
         }
         void handleCheckoutRef.current(email, p.discountCode)
@@ -397,7 +423,7 @@ export default function CristalFunnel() {
     }
     window.addEventListener('message', onMessage)
     return () => window.removeEventListener('message', onMessage)
-  }, [postToFrame, pricingMessage, locale, cristal.currency, cristal.amount, country, entry, exp, futureStage, futureTopic, isFutureFunnel])
+  }, [postToFrame, pricingMessage, persistParticipant, locale, cristal.currency, cristal.amount, country, entry, exp, futureStage, futureTopic, isFutureFunnel])
 
   // Restaurare după întoarcere de la Stripe (anulat): raport blurat direct, fără re-completare.
   useEffect(() => {
@@ -610,6 +636,7 @@ export default function CristalFunnel() {
               intent: `${exp.form.replace(/^form-/, '')}:0`,
             }
             formRef.current = birthValues
+            persistParticipant('form_submitted', { day, month, year })
             setForm(birthValues)
             setFutureStage('birth-result')
             setPreviewReady(false)
@@ -625,6 +652,7 @@ export default function CristalFunnel() {
           onSubmit={(values) => {
             const nextValues: FormValues = { ...values, gender: values.gender === 'm' ? 'm' : 'f', nameAlphabetKey: values.nameAlphabetKey || alphabet, ...(values.entry || entry ? { entry: values.entry || entry } : {}) }
             formRef.current = nextValues
+            persistParticipant('form_submitted', nextValues, formEmail)
             setForm(nextValues)
             setFutureStage('full-result')
             setFrameSrc(`${buildPreviewSrc(nextValues, { form: exp.form, preview: exp.preview }, { stage: 'full', locale })}&k=${Date.now()}`)

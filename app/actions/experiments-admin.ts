@@ -244,6 +244,85 @@ export async function getExperimentReport(password: string): Promise<{ ok: boole
   }
 }
 
+export interface ExperimentParticipantRow {
+  visitorId: string
+  stage: 'form_submitted' | 'preview_seen'
+  firstName: string | null
+  lastName: string | null
+  middleName: string | null
+  birthDay: number | null
+  birthMonth: number | null
+  birthYear: number | null
+  email: string | null
+  country: string | null
+  locale: string | null
+  currency: string | null
+  displayedPrice: string | null
+  lastActivityAt: string
+  previewSeenAt: string | null
+}
+
+export interface ExperimentParticipantsPage {
+  rows: ExperimentParticipantRow[]
+  total: number
+  hasMore: boolean
+}
+
+export async function getExperimentParticipants(
+  password: string,
+  formVariant: string,
+  offset = 0,
+  pageSize = 30,
+): Promise<{ ok: boolean; page?: ExperimentParticipantsPage }> {
+  if (!checkPassword(password) || !FORM_VARIANTS.some((variant) => variant.id === formVariant)) return { ok: false }
+  try {
+    const safeOffset = Math.max(0, Math.floor(offset))
+    const safeLimit = Math.max(1, Math.min(50, Math.floor(pageSize)))
+    const [countRow] = await db<{ total: number }[]>`
+      SELECT count(*)::int AS total FROM experiment_participants WHERE form_variant = ${formVariant}`
+    const rows = await db<{
+      visitor_id: string; stage: 'form_submitted' | 'preview_seen'; first_name: string | null; last_name: string | null;
+      middle_name: string | null; birth_day: number | null; birth_month: number | null; birth_year: number | null;
+      email: string | null; country: string | null; locale: string | null; currency: string | null;
+      displayed_price: string | null; last_activity_at: string; preview_seen_at: string | null
+    }[]>`
+      SELECT visitor_id, stage, first_name, last_name, middle_name, birth_day, birth_month, birth_year,
+             email, country, locale, currency, displayed_price, last_activity_at, preview_seen_at
+      FROM experiment_participants
+      WHERE form_variant = ${formVariant}
+      ORDER BY last_activity_at DESC
+      LIMIT ${safeLimit} OFFSET ${safeOffset}`
+    const total = countRow?.total ?? 0
+    return {
+      ok: true,
+      page: {
+        rows: rows.map((row) => ({
+          visitorId: row.visitor_id,
+          stage: row.stage,
+          firstName: row.first_name,
+          lastName: row.last_name,
+          middleName: row.middle_name,
+          birthDay: row.birth_day,
+          birthMonth: row.birth_month,
+          birthYear: row.birth_year,
+          email: row.email,
+          country: row.country,
+          locale: row.locale,
+          currency: row.currency,
+          displayedPrice: row.displayed_price,
+          lastActivityAt: new Date(row.last_activity_at).toISOString(),
+          previewSeenAt: row.preview_seen_at ? new Date(row.preview_seen_at).toISOString() : null,
+        })),
+        total,
+        hasMore: safeOffset + rows.length < total,
+      },
+    }
+  } catch (error) {
+    console.error('[v0] getExperimentParticipants error:', error)
+    return { ok: false }
+  }
+}
+
 export interface AllocationRecommendation {
   kind: ExperimentKind
   mode: 'uniform' | 'adaptive'
