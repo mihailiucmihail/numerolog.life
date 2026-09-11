@@ -69,6 +69,8 @@ const PREVIEW_ENGINE_VARIANTS: Record<string, string> = {
   'preview-instagram-direct-v1': 'preview-instagram-direct-v1',
   'preview-daria-continuity-v1': 'preview-daria-continuity-v1',
   'preview-topic-choice-v1': 'preview-topic-choice-v1',
+  'preview-life-stage-now-v1': 'preview-life-stage-now-v1',
+  'preview-hidden-gift-v1': 'preview-hidden-gift-v1',
 }
 
 type FutureStage = 'date' | 'birth-result' | 'full-result'
@@ -131,7 +133,17 @@ export default function CristalFunnel() {
   const exp = standardFlow
     ? { ...assignedExp, form: 'form-control', preview: 'preview-control' }
     : assignedExp
-  const futureTopic = exp.form === 'form-career-future-v1' ? 'career' : exp.form === 'form-relationship-future-v1' ? 'love' : exp.form === 'form-money-future-v1' ? 'money' : ''
+  const futureTopic = exp.form === 'form-career-future-v1'
+    ? 'career'
+    : exp.form === 'form-relationship-future-v1'
+      ? 'love'
+      : exp.form === 'form-money-future-v1'
+        ? 'money'
+        : exp.form === 'form-life-stage-now-v1'
+          ? 'relationships'
+          : exp.form === 'form-hidden-gift-v1'
+            ? 'birthday'
+            : ''
   const isFutureFunnel = Boolean(futureTopic)
   const formSrc = `${CALCULATOR_SRC}?alpha=${alphabet}&country=${country || ''}${emailParam ? `&email=${encodeURIComponent(emailParam)}` : ''}${entry ? `&entry=${entry}` : ''}&lang=${locale}&fv=${exp.form}&pv=${exp.preview}`
   const [futureStage, setFutureStage] = useState<FutureStage>('date')
@@ -591,7 +603,7 @@ export default function CristalFunnel() {
               middle: '', day, month, year, gender: 'f',
               nameAlphabetKey: locale === 'ro' ? 'ro' : 'ru',
               entry: futureTopic,
-              intent: `${futureTopic}-future-v1:0`,
+              intent: `${exp.form.replace(/^form-/, '')}:0`,
             }
             formRef.current = birthValues
             setForm(birthValues)
@@ -648,8 +660,8 @@ export default function CristalFunnel() {
                 ...values,
                 gender: values.gender === 'm' ? 'm' : 'f',
                 nameAlphabetKey: values.nameAlphabetKey || alphabet,
-                entry: futureTopic,
-                intent: `${futureTopic}-future-v1:0`,
+                entry: values.entry || futureTopic,
+                intent: values.intent || `${exp.form.replace(/^form-/, '')}:0`,
               }
               formRef.current = nextValues
               setForm(nextValues)

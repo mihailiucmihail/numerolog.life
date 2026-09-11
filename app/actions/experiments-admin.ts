@@ -321,9 +321,6 @@ export async function saveFunnelTraffic(
   if (settings.length !== known.size || new Set(settings.map((item) => item.key)).size !== known.size) {
     return { ok: false, error: "Configurația funnelurilor este incompletă." }
   }
-  const control = settings.find((item) => item.key === "control")
-  if (!control?.active) return { ok: false, error: "Varianta Control trebuie să rămână activă." }
-
   for (const item of settings) {
     if (!known.has(item.key)) return { ok: false, error: "A fost trimis un funnel necunoscut." }
     if (!Number.isInteger(item.percentage) || item.percentage < 0 || item.percentage > 100) {
@@ -397,8 +394,8 @@ export async function getVariantPreviewLinks(
       if (key === "love-graph" || key === "relationship-needs" || key === "relationship-future-v1") params.set("entry", "love")
       if (key === "career-graph" || key === "profession-match" || key === "career-future-v1") params.set("entry", "career")
       if (key === "money-flow" || key === "money-future-v1") params.set("entry", "money")
-      if (key === "life-now" || key === "life-timeline") params.set("entry", "relationships")
-      if (key === "birthday-first") params.set("entry", "birthday")
+      if (key === "life-now" || key === "life-timeline" || key === "life-stage-now-v1") params.set("entry", "relationships")
+      if (key === "birthday-first" || key === "hidden-gift-v1") params.set("entry", "birthday")
       links.funnel[key] = `/ru/numerologie?${params.toString()}`
     }),
   ])

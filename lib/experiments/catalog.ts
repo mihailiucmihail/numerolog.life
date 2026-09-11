@@ -31,7 +31,7 @@ export interface VariantDef {
 }
 
 export const FORM_VARIANTS: VariantDef[] = [
-  { id: 'form-control', kind: 'form', label: 'Control', hypothesis: 'Fluxul curent rămâne etalonul pentru toate mecanicile noi.', angle: 'control', motion: 1, active: true, weight: 1 },
+  { id: 'form-control', kind: 'form', label: 'Control', hypothesis: 'Fluxul curent rămâne etalonul pentru toate mecanicile noi.', angle: 'control', motion: 1, active: false, weight: 0 },
   { id: 'form-birthday-first', kind: 'form', label: 'Birthday First', hypothesis: 'Începerea cu data nașterii creează un angajament rapid înainte de cererea numelui.', angle: 'progressive profiling', motion: 2, active: false, weight: 1 },
   { id: 'form-love-graph', kind: 'form', label: 'Love Graph', hypothesis: 'O alegere despre relații urmată de un grafic tematic crește relevanța percepută.', angle: 'relații', motion: 2, active: false, weight: 1 },
   { id: 'form-career-graph', kind: 'form', label: 'Career Graph', hypothesis: 'O întrebare despre carieră urmată de graficul vocației crește intenția de cumpărare.', angle: 'carieră', motion: 2, active: false, weight: 1 },
@@ -44,13 +44,15 @@ export const FORM_VARIANTS: VariantDef[] = [
   { id: 'form-career-future-v1', kind: 'form', label: 'Career Future', hypothesis: 'Un rezultat profesional real obținut doar din data nașterii motivează completarea identității pentru următoarea etapă.', angle: 'viitor profesional', motion: 2, active: false, weight: 0 },
   { id: 'form-relationship-future-v1', kind: 'form', label: 'Relationship Future', hypothesis: 'Poziția relațională actuală creează suficientă relevanță pentru aprofundarea personală ulterioară.', angle: 'viitor relațional', motion: 2, active: false, weight: 0 },
   { id: 'form-money-future-v1', kind: 'form', label: 'Money Future', hypothesis: 'Direcția financiară actuală, calculată înaintea numelui, deschide natural întrebarea următorului prag.', angle: 'viitor financiar', motion: 2, active: false, weight: 0 },
-  { id: 'form-instagram-direct-v1', kind: 'form', label: 'Instagram Direct', hypothesis: 'O promisiune clară și formularul complet vizibil imediat reduc abandonul traficului rece din Instagram.', angle: 'rezultat imediat', motion: 1, active: true, weight: 1 },
-  { id: 'form-daria-continuity-v1', kind: 'form', label: 'Daria Continuity', hypothesis: 'Continuitatea vizuală cu reclama Dariei transferă încrederea din Reel către completarea datelor.', angle: 'continuitate reclamă', motion: 1, active: true, weight: 1 },
-  { id: 'form-topic-choice-v1', kind: 'form', label: 'Topic Choice', hypothesis: 'Alegerea întrebării personale înaintea datelor creează un angajament mic și crește relevanța rezultatului.', angle: 'curiozitate personală', motion: 2, active: true, weight: 1 },
+  { id: 'form-instagram-direct-v1', kind: 'form', label: 'Instagram Direct', hypothesis: 'O promisiune clară și formularul complet vizibil imediat reduc abandonul traficului rece din Instagram.', angle: 'rezultat imediat', motion: 1, active: false, weight: 0 },
+  { id: 'form-daria-continuity-v1', kind: 'form', label: 'Daria Continuity', hypothesis: 'Continuitatea vizuală cu reclama Dariei transferă încrederea din Reel către completarea datelor.', angle: 'continuitate reclamă', motion: 1, active: false, weight: 0 },
+  { id: 'form-topic-choice-v1', kind: 'form', label: 'Topic Choice', hypothesis: 'Alegerea întrebării personale înaintea datelor creează un angajament mic și crește relevanța rezultatului.', angle: 'curiozitate personală', motion: 2, active: false, weight: 0 },
+  { id: 'form-life-stage-now-v1', kind: 'form', label: 'Etapa vieții acum', hypothesis: 'O concluzie reală despre etapa actuală, obținută doar din data nașterii, creează întrebarea concretă despre următoarea schimbare.', angle: 'cronologie personală', motion: 2, active: true, weight: 50 },
+  { id: 'form-hidden-gift-v1', kind: 'form', label: 'Darul ascuns', hypothesis: 'Revelația darului personal înaintea alegerii domeniului transformă raportul complet într-o continuare naturală.', angle: 'revelație personală', motion: 2, active: true, weight: 50 },
 ]
 
 export const PREVIEW_VARIANTS: VariantDef[] = [
-  { id: 'preview-control', kind: 'preview', label: 'Control', hypothesis: 'Previzualizarea nativă actuală rămâne etalonul.', angle: 'control', motion: 1, active: true, weight: 1 },
+  { id: 'preview-control', kind: 'preview', label: 'Control', hypothesis: 'Previzualizarea nativă actuală rămâne etalonul.', angle: 'control', motion: 1, active: false, weight: 0 },
   { id: 'preview-birthday-first', kind: 'preview', label: 'Birthday First', hypothesis: 'Cardul personal al datei de naștere validează instant calculul.', angle: 'identitate', motion: 2, active: false, weight: 1 },
   { id: 'preview-love-graph', kind: 'preview', label: 'Love Graph', hypothesis: 'Graficul relațiilor în prim-plan oferă dovada vizuală potrivită intenției.', angle: 'relații', motion: 2, active: false, weight: 1 },
   { id: 'preview-career-graph', kind: 'preview', label: 'Career Graph', hypothesis: 'Graficul carierei în prim-plan conectează calculul cu întrebarea vizitatorului.', angle: 'carieră', motion: 2, active: false, weight: 1 },
@@ -63,9 +65,11 @@ export const PREVIEW_VARIANTS: VariantDef[] = [
   { id: 'preview-career-future-v1', kind: 'preview', label: 'Career Future', hypothesis: 'Graficul carierei arată trecutul și punctul actual, păstrând următoarea schimbare pentru continuare.', angle: 'viitor profesional', motion: 2, active: false, weight: 0 },
   { id: 'preview-relationship-future-v1', kind: 'preview', label: 'Relationship Future', hypothesis: 'Graficul relațional oferă o concluzie prezentă reală fără a dezvălui următoarea fază.', angle: 'viitor relațional', motion: 2, active: false, weight: 0 },
   { id: 'preview-money-future-v1', kind: 'preview', label: 'Money Future', hypothesis: 'Graficul financiar arată sensul actual al liniei și maschează vârsta următorului viraj.', angle: 'viitor financiar', motion: 2, active: false, weight: 0 },
-  { id: 'preview-instagram-direct-v1', kind: 'preview', label: 'Instagram Direct', hypothesis: 'Raportul nativ imediat confirmă promisiunea simplă făcută înaintea formularului.', angle: 'rezultat imediat', motion: 1, active: true, weight: 1 },
-  { id: 'preview-daria-continuity-v1', kind: 'preview', label: 'Daria Continuity', hypothesis: 'Aceeași previzualizare nativă izolează efectul continuității cu reclama asupra conversiei.', angle: 'continuitate reclamă', motion: 1, active: true, weight: 1 },
-  { id: 'preview-topic-choice-v1', kind: 'preview', label: 'Topic Choice', hypothesis: 'Tema aleasă apare prima în raport și transformă curiozitatea inițială într-o continuare personală.', angle: 'curiozitate personală', motion: 2, active: true, weight: 1 },
+  { id: 'preview-instagram-direct-v1', kind: 'preview', label: 'Instagram Direct', hypothesis: 'Raportul nativ imediat confirmă promisiunea simplă făcută înaintea formularului.', angle: 'rezultat imediat', motion: 1, active: false, weight: 0 },
+  { id: 'preview-daria-continuity-v1', kind: 'preview', label: 'Daria Continuity', hypothesis: 'Aceeași previzualizare nativă izolează efectul continuității cu reclama asupra conversiei.', angle: 'continuitate reclamă', motion: 1, active: false, weight: 0 },
+  { id: 'preview-topic-choice-v1', kind: 'preview', label: 'Topic Choice', hypothesis: 'Tema aleasă apare prima în raport și transformă curiozitatea inițială într-o continuare personală.', angle: 'curiozitate personală', motion: 2, active: false, weight: 0 },
+  { id: 'preview-life-stage-now-v1', kind: 'preview', label: 'Etapa vieții acum', hypothesis: 'Etapa actuală și traseul parcurs sunt vizibile, iar momentul următoarei schimbări rămâne în continuarea raportului.', angle: 'cronologie personală', motion: 2, active: true, weight: 50 },
+  { id: 'preview-hidden-gift-v1', kind: 'preview', label: 'Darul ascuns', hypothesis: 'Darul principal este dezvăluit gratuit, iar blocajul din domeniul ales deschide analiza completă.', angle: 'revelație personală', motion: 2, active: true, weight: 50 },
 ]
 
 export const ALL_VARIANTS: VariantDef[] = [...FORM_VARIANTS, ...PREVIEW_VARIANTS]

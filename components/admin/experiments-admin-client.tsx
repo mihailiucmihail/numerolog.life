@@ -168,6 +168,24 @@ const FUNNELS = [
     form: "form-topic-choice-v1",
     preview: "preview-topic-choice-v1",
   },
+  {
+    key: "life-stage-now-v1",
+    label: "Etapa vieții acum",
+    eyebrow: "Cronologie personală",
+    summary: "Data nașterii arată gratuit etapa actuală, iar următoarea schimbare conduce spre raportul complet.",
+    flow: ["Data nașterii", "Etapa actuală", "Identitate", "Următoarea schimbare", "Plată"],
+    form: "form-life-stage-now-v1",
+    preview: "preview-life-stage-now-v1",
+  },
+  {
+    key: "hidden-gift-v1",
+    label: "Darul ascuns",
+    eyebrow: "Revelație personală",
+    summary: "Data nașterii dezvăluie darul principal, apoi utilizatorul alege domeniul în care îl simte blocat.",
+    flow: ["Data nașterii", "Dar personal", "Alegere domeniu", "Preview personalizat", "Plată"],
+    form: "form-hidden-gift-v1",
+    preview: "preview-hidden-gift-v1",
+  },
 ] as const
 
 type FunnelKey = (typeof FUNNELS)[number]["key"]
@@ -178,8 +196,8 @@ type TrafficDraft = Record<FunnelKey, { active: boolean; percentage: number }>
 
 function defaultTraffic(): TrafficDraft {
   return Object.fromEntries(FUNNELS.map((item) => [item.key, {
-    active: item.key === "control",
-    percentage: item.key === "control" ? 100 : 0,
+    active: item.key === "life-stage-now-v1" || item.key === "hidden-gift-v1",
+    percentage: item.key === "life-stage-now-v1" || item.key === "hidden-gift-v1" ? 50 : 0,
   }])) as TrafficDraft
 }
 
