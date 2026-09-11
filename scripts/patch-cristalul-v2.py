@@ -32,6 +32,7 @@ PREVIEW = ROOT / 'scripts/cristalul-native-preview-snippet.html'
 VARIANTS = ROOT / 'scripts/cristalul-variants-snippet.html'
 DATE_AGE_PREVIEW = ROOT / 'scripts/cristalul-date-age-preview-snippet.html'
 THEME_PREVIEWS = ROOT / 'scripts/cristalul-theme-previews-snippet.html'
+CAREER_PREVIEWS = ROOT / 'scripts/cristalul-career-report-previews-snippet.html'
 PREMIUM_CSS = ROOT / 'scripts/cristalul-premium-report.css'
 
 s = SRC.read_text(encoding='utf-8')
@@ -445,7 +446,10 @@ assert date_age_preview.count('\ufffd') == 0, 'previewul Data + Acum contine U+F
 theme_previews = re.sub(r'(?m)^([ \t]*)> ', r'\1', THEME_PREVIEWS.read_text(encoding='utf-8'))
 assert 'preview-love-line-v1' in theme_previews and 'preview-money-age-v1' in theme_previews and 'renderPaywall(model)' in theme_previews
 assert theme_previews.count('\ufffd') == 0, 'previewurile tematice contin U+FFFD'
-rep('</body>', bridge.rstrip('\n') + '\n' + preview.rstrip('\n') + '\n' + variants.rstrip('\n') + '\n' + date_age_preview.rstrip('\n') + '\n' + theme_previews.rstrip('\n') + '\n</body>')
+career_previews = re.sub(r'(?m)^([ \t]*)> ', r'\1', CAREER_PREVIEWS.read_text(encoding='utf-8'))
+assert 'preview-career-report-v1' in career_previews and 'preview-career-dual-v1' in career_previews and 'renderPaywall(model)' in career_previews
+assert career_previews.count('\ufffd') == 0, 'previewurile carierei contin U+FFFD'
+rep('</body>', bridge.rstrip('\n') + '\n' + preview.rstrip('\n') + '\n' + variants.rstrip('\n') + '\n' + date_age_preview.rstrip('\n') + '\n' + theme_previews.rstrip('\n') + '\n' + career_previews.rstrip('\n') + '\n</body>')
 
 # 6. Fără surse/autori în text vizibil -------------------------------------------------------------
 rep("Сравнение Карта Рождения ↔ Карта Имени (метод Айрэн По / Джули По) — где цифры отличаются:",

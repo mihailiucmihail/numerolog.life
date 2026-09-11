@@ -59,6 +59,8 @@ const PREVIEW_ENGINE_VARIANTS: Record<string, string> = {
   'preview-date-age-next-v1': 'preview-date-age-next-v1',
   'preview-love-graph': 'preview-love-graph',
   'preview-love-line-v1': 'preview-love-line-v1',
+  'preview-career-report-v1': 'preview-career-report-v1',
+  'preview-career-dual-v1': 'preview-career-dual-v1',
   'preview-money-age-v1': 'preview-money-age-v1',
   'preview-career-graph': 'preview-career-graph',
   'preview-life-now': 'preview-life-now',

@@ -1,0 +1,198 @@
+<style id="cd-career-report">
+.cd-cr{display:flex;flex-direction:column;gap:14px}
+.cd-cr-head,.cd-cr-card,.cd-cr-locked{border:1px solid rgba(255,255,255,.1);border-radius:18px;background:rgba(16,10,31,.72)}
+.cd-cr-head{padding:18px 16px;border-color:rgba(217,169,79,.3)}
+.cd-cr-kicker{margin:0 0 7px;color:var(--brass-bright,#d9a94f);font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+.cd-cr-head h2{margin:0;color:var(--parchment,#fff3d6);font-family:var(--font-display,serif);font-size:26px;line-height:1.12}
+.cd-cr-meta{margin:7px 0 0;color:var(--parchment-dim,#c9bda3);font-size:13px}
+.cd-cr-card{padding:16px 14px}
+.cd-cr-card h3{margin:0 0 6px;color:var(--parchment,#fff3d6);font-family:var(--font-display,serif);font-size:20px;line-height:1.25}
+.cd-cr-intro{margin:0 0 12px;color:var(--parchment-dim,#c9bda3);font-size:13px;line-height:1.5}
+.cd-cr-legend{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 10px;color:var(--parchment-dim,#c9bda3);font-size:11px}
+.cd-cr-legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.cd-cr-legend .l1{background:var(--brass-bright,#d9a94f)}.cd-cr-legend .l2{background:#e8637d}.cd-cr-legend .l3{border:2px solid var(--brass-bright,#d9a94f);box-sizing:border-box}.cd-cr-legend .l4{border:2px solid #00f7ff;box-sizing:border-box}
+.cd-cr-svg{width:100%;height:auto;display:block;background:rgba(0,0,0,.15);border:1px solid var(--line,rgba(255,255,255,.12))}
+.cd-cr-svg .life-point,.cd-cr-svg .crossing-mark,.cd-cr-svg .now-marker,.cd-cr-svg .now-label-bg,.cd-cr-svg .now-label-text,.cd-cr-svg .avg-line,.cd-cr-svg .now-line{opacity:1;transform:none;transition:none}
+.cd-cr-svg .now-marker-ring{opacity:.55;animation:nowPulse 1.8s ease-out infinite}
+.cd-cr-svg .avg-line{opacity:.95}.cd-cr-svg .now-line{opacity:.9}
+.cd-cr-svg .cd-cr-fog{fill:rgba(16,10,31,.82)}
+.cd-cr-svg .cd-cr-fog-label{fill:var(--brass-bright,#d9a94f);font-family:var(--sans,sans-serif);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase}
+.cd-cr-text{color:var(--parchment,#fff3d6);font-size:15px;line-height:1.62}
+.cd-cr-text b{color:var(--brass-bright,#d9a94f);font-weight:600}
+.cd-cr-text p{margin:0 0 10px}
+.cd-cr-points{margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--line,rgba(255,255,255,.12));display:flex;flex-direction:column;gap:9px}
+.cd-cr-point{display:grid;grid-template-columns:52px minmax(0,1fr);gap:10px;font-size:13.5px;line-height:1.5;color:var(--parchment-dim,#c9bda3)}
+.cd-cr-point strong{color:var(--parchment,#fff3d6);font-family:monospace;font-size:13px;font-weight:600}
+.cd-cr-point em{font-style:normal;color:var(--parchment,#fff3d6)}
+.cd-cr-point.is-locked span{filter:blur(4px);user-select:none}
+.cd-cr-point.is-locked strong:after{content:"";display:inline-block;width:9px;height:8px;margin-left:6px;border:1.5px solid rgba(217,169,79,.7);border-radius:2px;vertical-align:0}
+.cd-cr-range{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:6px 0 0}
+.cd-cr-range strong{color:var(--parchment,#fff3d6);font-family:var(--font-display,serif);font-size:40px;line-height:1;letter-spacing:-.02em}
+.cd-cr-range span{color:var(--parchment-dim,#c9bda3);font-size:13px}
+.cd-cr-sphere{margin:12px 0 0;padding:14px;border:1px solid rgba(217,169,79,.4);border-radius:14px;background:linear-gradient(160deg,rgba(217,169,79,.14),rgba(16,10,31,.6) 70%)}
+.cd-cr-sphere p{margin:0;color:var(--parchment,#fff3d6);font-size:14.5px;line-height:1.55}
+.cd-cr-sphere .cd-cr-kicker{margin-bottom:6px}
+.cd-cr-locked{padding:16px 14px;border-color:rgba(217,169,79,.3)}
+.cd-cr-locked h3{margin:0 0 10px;color:var(--parchment,#fff3d6);font-family:var(--font-display,serif);font-size:19px}
+.cd-cr-locked ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.cd-cr-locked li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:9px;color:var(--parchment-dim,#c9bda3);font-size:13.5px;line-height:1.5}
+.cd-cr-locked li b{color:var(--parchment,#fff3d6);font-weight:600}
+.cd-cr-locked li i{display:inline-block;width:14px;height:14px;margin-top:3px;border:1.5px solid rgba(217,169,79,.7);border-radius:4px;position:relative}
+.cd-cr-locked li i:after{content:"";position:absolute;left:3px;top:-6px;width:5px;height:6px;border:1.5px solid rgba(217,169,79,.7);border-bottom:0;border-radius:4px 4px 0 0}
+@media(min-width:620px){.cd-cr{gap:16px}.cd-cr-head{padding:22px 20px}.cd-cr-card{padding:20px}.cd-cr-range strong{font-size:48px}}
+</style>
+<script>
+(function(){
+  'use strict';
+  var params = new URLSearchParams(location.search);
+  var pv = params.get('pv');
+  if(pv !== 'preview-career-report-v1' && pv !== 'preview-career-dual-v1') return;
+  var lang = params.get('lang') === 'ro' ? 'ro' : 'ru';
+  var baseRender = window.renderPreview || renderPreview;
+  var T = lang === 'ro' ? {
+    kicker:'Linia ta a carierei — ca în raport', years:'ani', chartTitle:{career:'Graficul carierei', selfrealization:'Graficul autorealizării'},
+    intro:{career:'Același grafic pe care îl vei vedea în raportul complet: nivelul tău pe ani, linia de confort și punctul de azi. Partea de după vârsta actuală este acoperită.', selfrealization:'Cele 7 puncte ale acestui grafic corespund sferelor profesionale. Este afișat vârful tău cel mai puternic; celelalte rămân în raport.'},
+    legend:['Nivelul tău','Nivelul tău de confort','Vârsta ta acum','Schimbare de tendință'], fog:'în raportul complet',
+    textTitle:'Ce spune graficul despre tine acum', pointsTitle:'Punctele deja trăite (poți verifica)', pointFuture:'urmează',
+    nextTitle:'Următoarea schimbare a tendinței', nextText:function(up){ return 'Conform graficului, în acest interval linia carierei trece '+(up?'peste':'sub')+' nivelul tău de confort — anul exact și ce aduce el sunt în raport.'; }, nextNone:'În intervalul afișat nu mai apare o schimbare bruscă de tendință — sensul actual se păstrează.',
+    sphereKicker:'Vârful tău profesional cel mai puternic', sphereAge:function(a,l){ return 'la '+a+' ani · nivel '+l+'/9'; },
+    lockedTitle:'Graficul l-ai văzut. Continuarea liniei — în raport.',
+    locked:function(nRest, hasEnergy){ var a=[['Anul exact al următoarei schimbări','și cum arată linia după el — vârfuri, pauze, până la capătul graficului.'],[nRest>0?('Celelalte '+nRest+' puncte ale graficului cu interpretarea lor'):'Interpretarea fiecărui punct al graficului','vârstele care abia urmează și ce înseamnă fiecare.'],['Energia Arhanghelului pentru cariera ta','cât de mult te ajută sau te încearcă perioada actuală.'],['Câte profesii sau direcții poți realiza într-o viață','numărul segmentelor ascendente din graficul tău.']]; if(!hasEnergy) a.splice(2,1); return a; },
+    lockedDual:[['Toate cele 7 sfere ale autorealizării','cu vârstele în care fiecare se aprinde și se stinge.'],['Anul exact al următoarei schimbări în carieră','și ce aduce el.'],['Unde se contrazic cariera și autorealizarea','anii în care lucrezi mult, dar nu în sfera ta.'],['Cea mai bună vârstă pentru schimbarea profesiei','după ambele grafice.']]
+  } : {
+    kicker:'Твоя линия карьеры — как в разборе', years:'лет', chartTitle:{career:'График карьеры', selfrealization:'График самореализации'},
+    intro:{career:'Тот же график, который ты увидишь в полном разборе: твой уровень по годам, линия комфорта и сегодняшняя точка. Часть после текущего возраста закрыта.', selfrealization:'7 точек этого графика соответствуют профессиональным сферам. Показана твоя самая сильная вершина; остальные остаются в разборе.'},
+    legend:['Твой уровень','Твой уровень комфорта','Твой возраст сейчас','Смена тенденции'], fog:'в полном разборе',
+    textTitle:'Что график говорит о тебе сейчас', pointsTitle:'Точки, которые ты уже прошёл (можно проверить)', pointFuture:'впереди',
+    nextTitle:'Следующая смена тенденции', nextText:function(up){ return 'По графику в этом интервале линия карьеры переходит '+(up?'выше':'ниже')+' твоего уровня комфорта — точный год и что он приносит, в разборе.'; }, nextNone:'В отображённом интервале больше не появляется резкой смены тенденции — текущее направление сохраняется.',
+    sphereKicker:'Твоя самая сильная профессиональная вершина', sphereAge:function(a,l){ return 'в '+a+' '+ruYears(a)+' · уровень '+l+'/9'; },
+    lockedTitle:'График ты увидел. Продолжение линии — в разборе.',
+    locked:function(nRest, hasEnergy){ var a=[['Точный год следующей смены','и как выглядит линия после него — вершины, паузы, до конца графика.'],[nRest>0?('Остальные '+nRest+' '+ruPoints(nRest)+' графика с трактовкой'):'Трактовка каждой точки графика','возрасты, которые только впереди, и что значит каждый.'],['Энергия Архангела для твоей карьеры','насколько текущий период помогает тебе или испытывает.'],['Сколько профессий или направлений ты реализуешь за жизнь','число восходящих отрезков твоего графика.']]; if(!hasEnergy) a.splice(2,1); return a; },
+    lockedDual:[['Все 7 сфер самореализации','с возрастами, когда каждая включается и затухает.'],['Точный год следующей смены в карьере','и что он приносит.'],['Где карьера и самореализация расходятся','годы, когда ты много работаешь, но не в своей сфере.'],['Лучший возраст для смены профессии','по обоим графикам вместе.']]
+  };
+  function ruYears(n){ n=Math.abs(Math.round(n)); var a=n%10,b=n%100; if(b>=11&&b<=19) return 'лет'; if(a===1) return 'год'; if(a>=2&&a<=4) return 'года'; return 'лет'; }
+  function ruPoints(n){ var a=n%10,b=n%100; if(b>=11&&b<=19) return 'точек'; if(a===1) return 'точка'; if(a>=2&&a<=4) return 'точки'; return 'точек'; }
+  function yearsL(n){ return lang==='ro'?(Math.round(n)===1?'an':'ani'):ruYears(n); }
+  function esc(v){ return String(v==null?'':v).replace(/[&<>"']/g,function(ch){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]; }); }
+  function charts(){ var r = window.__cdLastResult; return (r && r.lifeCharts) || (typeof currentLifeCharts !== 'undefined' ? currentLifeCharts : null); }
+  function curAge(){ return Math.max(0, computeCurrentAge(currentBirthYear, currentBirthMonth, currentBirthDay)); }
+  function crossAges(data){ return crossingsWithDirection(data.points, data.avg); }
+
+  /* Copie 1:1 a randarii din renderLifeChart (aceleasi dimensiuni, scale, clase), plus ceata peste viitor. */
+  function reportChart(data, age){
+    var W=640, H=320, padL=36, padR=20, padT=20, padB=34;
+    var plotW=W-padL-padR, plotH=H-padT-padB;
+    var maxAge = Math.max.apply(null, data.points.map(function(p){ return p.plotAge; })) * 1.06;
+    var xScale = function(a){ return padL + (a/maxAge)*plotW; };
+    var yScale = function(l){ return padT + plotH - (l/9)*plotH; };
+    var parts = [];
+    for(var lvl=0; lvl<=9; lvl+=3){
+      parts.push('<line class="axis-line" x1="'+padL+'" y1="'+yScale(lvl)+'" x2="'+(W-padR)+'" y2="'+yScale(lvl)+'"/>');
+      parts.push('<text class="axis-label" x="'+(padL-8)+'" y="'+(yScale(lvl)+3)+'" text-anchor="end">'+lvl+'</text>');
+    }
+    var maxRealAge = Math.max.apply(null, data.points.map(function(p){ return p.age; }));
+    for(var a=0; a<=maxRealAge+5; a+=10) parts.push('<text class="axis-label" x="'+xScale(a)+'" y="'+(H-padB+16)+'" text-anchor="middle">'+a+'</text>');
+    var avgY = yScale(data.avg);
+    parts.push('<line class="avg-line show" x1="'+padL+'" y1="'+avgY+'" x2="'+(W-padR)+'" y2="'+avgY+'"/>');
+    var d = data.points.map(function(p,i){ return (i===0?'M':'L')+xScale(p.plotAge).toFixed(1)+','+yScale(p.level).toFixed(1); }).join(' ');
+    parts.push('<path class="life-path" d="'+d+'"/>');
+    data.crossings.forEach(function(ca){ parts.push('<circle class="crossing-mark show" cx="'+xScale(ca)+'" cy="'+avgY+'" r="5.5"/>'); });
+    data.points.forEach(function(p){ parts.push('<circle class="life-point show" cx="'+xScale(p.plotAge).toFixed(1)+'" cy="'+yScale(p.level).toFixed(1)+'" r="5.5"/>'); });
+    if(age>=0 && age<=maxAge){
+      var lv = interpolateAtAge(data.points, age), mx = xScale(age), my = yScale(lv);
+      var fogX = mx + 8;
+      if(fogX < W-padR-40){
+        parts.push('<rect class="cd-cr-fog" x="'+fogX+'" y="'+padT+'" width="'+(W-padR-fogX)+'" height="'+plotH+'"/>');
+        parts.push('<text class="cd-cr-fog-label" x="'+((fogX+W-padR)/2)+'" y="'+(padT+plotH/2)+'" text-anchor="middle">'+esc(T.fog)+'</text>');
+      }
+      parts.push('<line class="now-line show" x1="'+mx+'" y1="'+padT+'" x2="'+mx+'" y2="'+(H-padB)+'"/>');
+      var labelW=74, labelH=18, lx=mx-labelW/2; if(lx<padL) lx=padL; if(lx+labelW>W-padR) lx=W-padR-labelW; var ly=padT+2;
+      parts.push('<circle class="now-marker-ring show" cx="'+mx.toFixed(1)+'" cy="'+my.toFixed(1)+'" r="6"/><rect class="now-label-bg show" x="'+lx+'" y="'+ly+'" width="'+labelW+'" height="'+labelH+'" rx="3"/><text class="now-label-text show" x="'+(lx+labelW/2)+'" y="'+(ly+13)+'" text-anchor="middle">'+(lang==='ro'?'Vârsta ':'Возраст ')+age+'</text><circle class="now-marker show" cx="'+mx.toFixed(1)+'" cy="'+my.toFixed(1)+'" r="6"/>');
+    }
+    return '<svg class="cd-cr-svg" viewBox="0 0 '+W+' '+H+'">'+parts.join('')+'</svg>';
+  }
+  function legend(){ return '<div class="cd-cr-legend"><span><i class="l1"></i>'+T.legend[0]+'</span><span><i class="l2"></i>'+T.legend[1]+'</span><span><i class="l3"></i>'+T.legend[2]+'</span><span><i class="l4"></i>'+T.legend[3]+'</span></div>'; }
+  function chartCard(key, data, age){
+    return '<section class="cd-cr-card"><h3>'+T.chartTitle[key]+'</h3><p class="cd-cr-intro">'+T.intro[key]+'</p>'+legend()+reportChart(data, age)+'</section>';
+  }
+  function head(model){
+    return '<header class="cd-cr-head"><p class="cd-cr-kicker">'+T.kicker+'</p><h2>'+esc(model.identity.name||model.identity.first||'')+'</h2><p class="cd-cr-meta">'+esc(model.identity.date)+' · '+esc(model.identity.age)+' '+T.years+'</p></header>';
+  }
+  function lockedBlock(title, items){
+    return '<section class="cd-cr-locked"><h3>'+title+'</h3><ul>'+items.map(function(it){ return '<li><i></i><span><b>'+esc(it[0])+'</b> — '+esc(it[1])+'</span></li>'; }).join('')+'</ul></section>';
+  }
+  /* Textul raportului: paragrafele principale din interpretChart, fara blocurile secundare (puncte, energie...). */
+  function reportSummary(key, data, age){
+    var html = '';
+    try { html = interpretChart(key, data, age) || ''; } catch(e){ return ''; }
+    var cut = html.indexOf('<div style="margin-top:14px');
+    if(cut > 0) html = html.slice(0, cut);
+    html = html.replace(/\s*Следующая смена тенденции ожидается около <b>\d+ лет<\/b>[^.]*\./, '').replace(/\s*В отображённом интервале больше не появляется[^.]*\./, '');
+    return html.split(/(?<=\.)\s+(?=[А-ЯA-Z«])/).map(function(p){ return '<p>'+p+'</p>'; }).join('');
+  }
+  function nextRange(data, age){
+    var next = crossAges(data).filter(function(c){ return c.age > age; })[0];
+    if(!next) return null;
+    var n = Math.round(next.age), lo = Math.floor((n-1)/5)*5+1; if(lo <= age) lo = age+1; var hi = lo+4;
+    return {lo:lo, hi:hi, up:next.up};
+  }
+  function pastPoints(data, age){
+    var real = data.points.slice(1), themes = (typeof POINT_THEMES !== 'undefined' && POINT_THEMES.career) || [];
+    var out = '', locked = 0;
+    real.forEach(function(p, i){
+      var vs = p.level - data.avg, cmp = vs > .4 ? 'выше уровня комфорта' : vs < -.4 ? 'ниже уровня комфорта' : 'на уровне комфорта';
+      var th = themes[i], extra = '';
+      if(th){ var dir = vs > .4 ? 'up' : vs < -.4 ? 'down' : 'flat'; try { extra = ' — '+th.theme+': '+(dir==='flat' ? th.flat(vs>=0) : th[dir]()); } catch(e){} }
+      if(p.plotAge <= age){
+        out += '<div class="cd-cr-point"><strong>'+p.plotAge+'</strong><span><em>'+p.level+'/9</em>, '+cmp+esc(extra)+'</span></div>';
+      } else {
+        locked++;
+        out += '<div class="cd-cr-point is-locked"><strong>'+p.plotAge+'</strong><span>'+T.pointFuture+' · '+cmp+esc(extra||' — трактовка этой точки в разборе')+'</span></div>';
+      }
+    });
+    return {html:out, locked:locked};
+  }
+  function renderReport(model){
+    var C = charts(), data = C && C.career; if(!data) return null;
+    var age = curAge(), html = head(model);
+    html += chartCard('career', data, age);
+    var pts = pastPoints(data, age), rng = nextRange(data, age);
+    html += '<section class="cd-cr-card"><h3>'+T.textTitle+'</h3><div class="cd-cr-text">'+reportSummary('career', data, age)+'</div>'
+      + '<p class="cd-cr-kicker" style="margin:14px 0 0">'+T.nextTitle+'</p>'
+      + (rng ? '<div class="cd-cr-range"><strong>'+rng.lo+'–'+rng.hi+'</strong><span>'+yearsL(rng.hi)+'</span></div><p class="cd-cr-intro" style="margin:8px 0 0">'+esc(T.nextText(rng.up))+'</p>' : '<p class="cd-cr-intro" style="margin:8px 0 0">'+T.nextNone+'</p>')
+      + '</section>';
+    html += '<section class="cd-cr-card"><h3>'+T.pointsTitle+'</h3><div class="cd-cr-points">'+pts.html+'</div></section>';
+    html += lockedBlock(T.lockedTitle, T.locked(pts.locked, typeof data.energy === 'number'));
+    return html;
+  }
+  function renderDual(model){
+    var C = charts(), career = C && C.career, self = C && C.selfrealization; if(!career) return null;
+    var age = curAge(), html = head(model);
+    html += chartCard('career', career, age);
+    var rng = nextRange(career, age);
+    html += '<section class="cd-cr-card"><h3>'+T.textTitle+'</h3><div class="cd-cr-text">'+reportSummary('career', career, age)+'</div>'
+      + '<p class="cd-cr-kicker" style="margin:14px 0 0">'+T.nextTitle+'</p>'
+      + (rng ? '<div class="cd-cr-range"><strong>'+rng.lo+'–'+rng.hi+'</strong><span>'+yearsL(rng.hi)+'</span></div><p class="cd-cr-intro" style="margin:8px 0 0">'+esc(T.nextText(rng.up))+'</p>' : '<p class="cd-cr-intro" style="margin:8px 0 0">'+T.nextNone+'</p>')
+      + '</section>';
+    if(self && self.points && self.points.length >= 7){
+      var top = [1,4,6].map(function(i){ return {i:i, p:self.points[i]}; }).filter(function(x){ return x.p; }).reduce(function(a,b){ return b.p.level > a.p.level ? b : a; });
+      var stage = '', dirTxt = '';
+      try { stage = (window.DB && DB.selfRealizationStages && DB.selfRealizationStages[String(top.i)]) || ''; } catch(e){}
+      try { var prev = self.points[top.i-1], nxt = self.points[top.i+1]; var dir = nxt ? (nxt.level > top.p.level ? 'up' : nxt.level < top.p.level ? 'down' : 'flat') : 'flat'; dirTxt = (window.DB && DB.selfRealizationDirection && DB.selfRealizationDirection[dir]) || ''; } catch(e){}
+      html += '<section class="cd-cr-card"><h3>'+T.chartTitle.selfrealization+'</h3><p class="cd-cr-intro">'+T.intro.selfrealization+'</p>'+legend()+reportChart(self, age)
+        + '<div class="cd-cr-sphere"><p class="cd-cr-kicker">'+T.sphereKicker+'</p><p><b style="color:var(--brass-bright)">'+esc(T.sphereAge(top.p.plotAge, top.p.level))+'</b>'+(stage?' — '+esc(stage):'')+(dirTxt?' <span style="color:var(--parchment-dim)">'+esc(dirTxt)+'</span>':'')+'</p></div></section>';
+    }
+    html += lockedBlock(T.lockedTitle, T.lockedDual);
+    return html;
+  }
+  window.renderPreview = renderPreview = function(model){
+    baseRender(model);
+    var layer = document.getElementById('previewLayer');
+    if(!layer || model.birthday) return;
+    var body = pv === 'preview-career-report-v1' ? renderReport(model) : renderDual(model);
+    if(!body) return;
+    layer.innerHTML = '<div class="pv-screen cd-cr pv-reveal">'+body+renderPaywall(model)+'</div>';
+    try { if(typeof applyGenderLayer === 'function') layer.querySelectorAll('.cd-cr-text').forEach(function(el){ applyGenderLayer(el); }); } catch(e){}
+  };
+})();
+</script>
