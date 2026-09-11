@@ -1,11 +1,32 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { Skeleton } from '@/components/ui/skeleton'
 
-// Funnel-ul Cristalului (formular original din HTML → raport blurat → plată). Include și gestionarea
-// întoarcerii de la Stripe (?payment=success&session_id=). Calculatorul HTML rămâne sursa unică a
-// formulelor ȘI a hero-ului (titlu + text + animația cristalului) — nu dublăm antetul în React.
-const CristalFunnel = dynamic(() => import('./funnel/cristal-funnel'), { ssr: false })
+function FunnelSkeleton() {
+  return (
+    <div className="min-h-144 px-4 py-8" aria-hidden="true">
+      <div className="mx-auto flex min-h-128 max-w-3xl flex-col gap-6 rounded-3xl border border-border bg-card/80 p-5 sm:p-8">
+        <div className="flex items-start gap-4">
+          <Skeleton className="size-10 shrink-0 rounded-xl" />
+          <div className="flex flex-1 flex-col gap-3">
+            <Skeleton className="h-7 w-4/5" />
+            <Skeleton className="h-5 w-full" />
+            <Skeleton className="h-5 w-2/3" />
+          </div>
+        </div>
+        <Skeleton className="h-12 w-full rounded-xl" />
+        <Skeleton className="h-12 w-full rounded-xl" />
+        <Skeleton className="h-12 w-full rounded-xl" />
+        <Skeleton className="h-12 w-full rounded-xl" />
+      </div>
+    </div>
+  )
+}
+
+// Randarea rămâne exclusiv în browser deoarece atribuirea experimentului vine din cookie. Scheletul
+// rezervă de la început spațiul formularului și elimină saltul footerului cât se descarcă bundle-ul.
+const CristalFunnel = dynamic(() => import('./funnel/cristal-funnel'), { ssr: false, loading: FunnelSkeleton })
 
 export default function NumerologieClient() {
   return (
