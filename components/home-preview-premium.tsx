@@ -77,7 +77,7 @@ const COPY: Record<Locale, Copy> = {
     nav: ['Метод', 'Что внутри', 'О Дарье'], eyebrow: 'Твоя персональная нумерологическая карта',
     title: 'Кристалл судьбы',
     intro: 'Твоя полная нумерологическая карта: личность, отношения, деньги, призвание и жизненные циклы, рассчитанные по дате рождения и имени.',
-    cta: 'Рассчитать мой Кристалл', ctaNote: 'Первый ключ бесплатно · нужна только дата рождения · без карты',
+    cta: 'Рассчитать мой Кристалл', ctaNote: 'Первый ключ бесплатно · нужна только дата рождени�� · без карты',
     trust: ['Расчёт по твоим данным', 'Система 22 Арканов', 'Результат доступен сразу', 'Безопасная оплата через Stripe'],
     mechanismEyebrow: 'Расчёт, а не случайный текст', mechanismTitle: 'Как создаётся твой Кристалл',
     mechanismIntro: 'Каждое значение строится по твоему имени и дате. Результаты занимают определённые позиции, а затем читаются вместе как единая карта.',
@@ -119,8 +119,8 @@ const COPY: Record<Locale, Copy> = {
       { q: 'Когда я получу разбор?', a: 'Сразу после подтверждения оплаты. Ты также получишь постоянную ссылку.' },
       { q: 'Можно рассчитать другого человека?', a: 'Да, если правильно указать его имя и дату и иметь согласие на использование этих данных.' },
       { q: 'Это нумерология или астрология?', a: 'Кристалл — нумерологический инструмент на системе 22 Арканов. Время и место рождения не используются.' },
-      { q: 'Как защищены данные и оплата?', a: 'Данные используются для расчёта и доставки разбора, а платёж безопасно обрабатывает Stripe.' },
-      { q: 'Можно вернуться позже?', a: 'Да. Полный разбор остаётся доступным по твоей постоянной ссылке.' },
+      { q: 'Как защище��ы данные и оплата?', a: 'Данные используются для расчёта и доставки разбора, а платёж безопасно обрабатывает Stripe.' },
+      { q: 'Можно вернуться позже?', a: 'Да. Полный разбор остаётся доступным по твоей ��остоянной ссылке.' },
     ],
   },
 }
@@ -135,10 +135,17 @@ export function HomePreviewPremium({ locale }: { locale: Locale }) {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
+    const previousScrollRestoration = window.history.scrollRestoration
+    window.history.scrollRestoration = 'manual'
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+
     const updateHeader = () => setScrolled(window.scrollY > 20)
     updateHeader()
     window.addEventListener('scroll', updateHeader, { passive: true })
-    return () => window.removeEventListener('scroll', updateHeader)
+    return () => {
+      window.removeEventListener('scroll', updateHeader)
+      window.history.scrollRestoration = previousScrollRestoration
+    }
   }, [])
 
   return (
