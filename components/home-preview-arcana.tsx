@@ -42,7 +42,7 @@ function detectAlphabet(name: string, fallback: string): string {
   return cyr >= lat ? 'ru' : 'ro'
 }
 
-const inputClass = 'h-12 w-full min-w-0 rounded-xl border border-border bg-card px-4 text-base text-foreground outline-none placeholder:text-muted-foreground/40 focus:border-primary focus:ring-4 focus:ring-primary/10'
+const inputClass = 'h-12 w-full min-w-0 rounded-xl border border-foreground/15 bg-foreground/10 px-4 text-base text-foreground shadow-inner outline-none placeholder:text-muted-foreground/80 focus:border-primary/70 focus:bg-foreground/15 focus:ring-4 focus:ring-primary/10'
 const labelClass = 'flex min-w-0 flex-col gap-1.5 text-xs text-muted-foreground'
 const captionClass = 'font-mono text-[10px] uppercase tracking-[0.14em]'
 
