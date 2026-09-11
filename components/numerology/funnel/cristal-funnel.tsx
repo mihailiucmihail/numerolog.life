@@ -56,6 +56,7 @@ function readSaved(): FormValues | null {
 const PREVIEW_ENGINE_VARIANTS: Record<string, string> = {
   'preview-control': 'preview-control',
   'preview-birthday-first': 'preview-birthday-first',
+  'preview-date-age-next-v1': 'preview-date-age-next-v1',
   'preview-love-graph': 'preview-love-graph',
   'preview-love-line-v1': 'preview-love-line-v1',
   'preview-money-age-v1': 'preview-money-age-v1',

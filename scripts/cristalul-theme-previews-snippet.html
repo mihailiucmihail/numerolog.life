@@ -62,8 +62,9 @@
     },
     money:{
       kicker:'Independența ta financiară', heroLabel:'Vârsta independenței financiare',
-      past:function(age,year,n){ return 'Linia banilor a traversat pentru prima dată nivelul tău de confort la '+age+' ani ('+year+'). Acest punct este deja în urmă — '+T.agoYears(n)+'.'; },
-      future:function(age,year,n){ return 'Linia banilor traversează pentru prima dată nivelul tău de confort la '+age+' ani ('+year+') — '+T.inYears(n)+'.'; },
+      past:function(age,year,n){ return 'Linia banilor a traversat pentru prima dată nivelul tău de confort în jur de '+age+' ani ('+year+'). Acest punct este deja în urmă — '+T.agoYears(n)+'.'; },
+      early:function(age,year){ return 'Linia ta a banilor s-a deschis foarte devreme — prima traversare a nivelului de confort cade în jur de '+age+' ani ('+year+'). Este un desen rar: independența nu „vine” pentru tine, ci a fost pusă din copilărie — întrebarea e cum se comportă linia mai departe.'; },
+      future:function(age,year,n){ return 'Linia banilor traversează pentru prima dată nivelul tău de confort în jur de '+age+' ani ('+year+') — '+T.inYears(n)+'.'; },
       none:'Pe linia ta, banii nu traversează brusc nivelul de confort: independența vine treptat, nu printr-un salt. Raportul arată de ce.',
       heroSub:'Calculat pe linia ta financiară, din data nașterii.',
       nowTitle:'Linia banilor acum',
@@ -102,8 +103,9 @@
     },
     money:{
       kicker:'Твоя финансовая самостоятельность', heroLabel:'Возраст финансовой самостоятельности',
-      past:function(age,year,n){ return 'Денежная линия впервые пересекла твой уровень комфорта в '+age+' '+ruYearsAcc(age)+' ('+year+'). Эта точка уже позади — '+T.agoYears(n)+'.'; },
-      future:function(age,year,n){ return 'Денежная линия впервые пересекает твой уровень комфорта в '+age+' '+ruYearsAcc(age)+' ('+year+') — '+T.inYears(n)+'.'; },
+      past:function(age,year,n){ return 'Денежная линия впервые пересекла твой уровень комфорта около '+age+' '+ruYearsAcc(age)+' ('+year+'). Эта точка уже позади — '+T.agoYears(n)+'.'; },
+      early:function(age,year){ return 'Твоя денежная линия открылась очень рано — первое пересечение с уровнем комфорта приходится примерно на '+age+' '+ruYearsAcc(age)+' ('+year+'). Это редкий рисунок: самостоятельность для тебя не «наступает», а была заложена с детства — вопрос в том, как линия ведёт себя дальше.'; },
+      future:function(age,year,n){ return 'Денежная линия впервые пересекает твой уровень комфорта около '+age+' '+ruYearsAcc(age)+' ('+year+') — '+T.inYears(n)+'.'; },
       none:'На твоей линии деньги не пересекают уровень комфорта резко: самостоятельность приходит постепенно, а не рывком. Почему так — показывает разбор.',
       heroSub:'Рассчитано по твоей финансовой линии, только по дате рождения.',
       nowTitle:'Денежная линия сейчас',
@@ -128,7 +130,8 @@
   function phaseLabel(d,rising){ if(d>.4) return rising?T.phaseUp:T.phaseHigh; if(d>-.4) return T.phaseFlat; return rising?T.phaseRecover:T.phaseLow; }
   function yearOf(age){ return currentBirthYear + Math.round(age); }
   function lineData(key){
-    var charts = window.currentLifeCharts; var data = charts && charts[key]; if(!data) return null;
+    var r = window.__cdLastResult; var charts = (r && r.lifeCharts) || (typeof currentLifeCharts !== 'undefined' ? currentLifeCharts : null);
+    var data = charts && charts[key]; if(!data || !data.points || data.points.length < 2) return null;
     var curAge = computeCurrentAge(currentBirthYear, currentBirthMonth, currentBirthDay);
     var pts = data.points, last = pts[pts.length-1].plotAge;
     var outside = curAge >= last;
@@ -200,10 +203,11 @@
     var html = head(C.kicker, model);
     var lastAge = Math.round(L.last);
     var cross = L.points && crossingsWithDirection(L.points, L.avg) || [];
-    var ind = cross.filter(function(c){ return c.up; })[0] || cross[0] || null;
+    var ind = cross[0] || null;
+    var early = ind && ind.age < 14;
     if(ind){
       var age = Math.round(ind.age), yr = yearOf(ind.age), passed = ind.age <= L.curAge, n = Math.abs(Math.round(ind.age - L.curAge));
-      html += '<section class="cd-tp-hero"><p class="cd-tp-label">'+C.heroLabel+'</p><div class="cd-tp-big"><strong>'+age+'</strong><span>'+yearsWordL(age)+'</span><em>'+yr+'</em></div><p>'+esc(passed?C.past(age,yr,n):C.future(age,yr,n))+'</p><p class="cd-tp-sub">'+C.heroSub+'</p></section>';
+      html += '<section class="cd-tp-hero"><p class="cd-tp-label">'+C.heroLabel+'</p><div class="cd-tp-big"><strong>'+age+'</strong><span>'+yearsWordL(age)+'</span><em>'+yr+'</em></div><p>'+esc(early?C.early(age,yr):passed?C.past(age,yr,n):C.future(age,yr,n))+'</p><p class="cd-tp-sub">'+C.heroSub+'</p></section>';
     } else {
       html += '<section class="cd-tp-hero"><p class="cd-tp-label">'+C.heroLabel+'</p><p>'+esc(C.none)+'</p><p class="cd-tp-sub">'+C.heroSub+'</p></section>';
     }
