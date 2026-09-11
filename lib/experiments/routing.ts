@@ -41,15 +41,17 @@ function newVisitorId(): string {
 }
 
 /**
- * Atribuirea pentru traficul fără marker: păstrează cookie-ul dacă e valid și încă are sens
- * (Standard sau un funnel activ), altfel atribuie Standard.
+ * Atribuirea pentru traficul fără marker: ÎNTOTDEAUNA Standard. Un vizitator alocat anterior unui
+ * experiment (prin link de promovare) care revine printr-un link intern (homepage, navbar) vede
+ * formularul Standard; visitorId-ul se păstrează pentru statistici. Doar linkul cu marker îl
+ * poate trimite din nou în distribuția experimentelor.
  */
 export async function resolveStandardAssignment(
   raw: string | undefined | null,
-  funnels: RuntimeFunnel[],
+  _funnels: RuntimeFunnel[],
 ): Promise<{ assignment: Assignment; changed: boolean }> {
   const existing = await readAssignment(raw)
-  if (existing && (isStandardAssignment(existing) || funnels.some((f) => f.form === existing.form && f.preview === existing.preview))) {
+  if (existing && isStandardAssignment(existing)) {
     return { assignment: existing, changed: false }
   }
   return {
