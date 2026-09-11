@@ -11,8 +11,8 @@ type Locale = 'ro' | 'ru'
 const COPY = {
   ro: {
     label: 'Cristalul destinului · 22 de arcane · 14 fațete', title: 'Calculează Cristalul Destinului',
-    body: 'Calculul complet se construiește din nume, prenume, al doilea prenume și data nașterii. Vei descoperi întreg Cristalul — fațetă cu fațetă, prin sensuri personale care ți se dezvăluie numai ție.',
-    last: 'Nume', first: 'Prenume', middle: 'Al doilea prenume', optional: 'dacă există',
+    body: 'Calculul complet se construiește din nume, prenume, al doilea prenume și data nașterii. Vei descoperi întreg Cristalul — fațetă cu fațetă, pentru a-ți înțelege punctele forte, a depăși obstacolele interioare și a afla ce ți-a pregătit destinul.',
+    last: 'Nume', first: 'Prenume', middle: 'Al doilea prenume', middleNote: 'Opțional. Îl recomandăm pentru un calcul mai exact.',
     date: 'Data nașterii', day: 'Zi', month: 'Lună', year: 'An',
     email: 'Email', emailNote: 'Aici primești linkul permanent către Cristalul tău.',
     submit: 'Arată-mi Cristalul',
@@ -21,8 +21,8 @@ const COPY = {
   },
   ru: {
     label: 'Кристалл судьбы · 22 аркана · 14 граней', title: 'Рассчитай свой Кристалл судьбы',
-    body: 'Полный расчёт строится по фамилии, имени, отчеству и дате рождения. Ты увидишь весь Кристалл — грань за гранью, с персональными смыслами, которые открываются только тебе.',
-    last: 'Фамилия', first: 'Имя', middle: 'Отчество', optional: 'если есть',
+    body: 'Полный расчёт строится по фамилии, имени, отчеству и дате рождения. Ты увидишь весь Кристалл — грань за гранью, чтобы понять свои сильные стороны, преодолеть внутренние препятствия и узнать, что приготовила для тебя судьба.',
+    last: 'Фамилия', first: 'Имя', middle: 'Отчество', middleNote: 'Необязательно. Рекомендуем для более точного расчёта.',
     date: 'Дата рождения', day: 'День', month: 'Месяц', year: 'Год',
     email: 'Email', emailNote: 'Сюда придёт постоянная ссылка на твой Кристалл.',
     submit: 'Показать мой Кристалл',
@@ -117,7 +117,11 @@ export function HomePreviewArcana({ locale }: { locale: Locale }) {
             <label className={labelClass}><span className={captionClass}>{c.last}</span><input className={inputClass} value={values.last} onChange={(e) => update('last', e.target.value)} autoComplete="family-name" required /></label>
             <label className={labelClass}><span className={captionClass}>{c.first}</span><input className={inputClass} value={values.first} onChange={(e) => update('first', e.target.value)} autoComplete="given-name" required /></label>
           </div>
-          <label className={labelClass}><span className={captionClass}>{c.middle} <span className="normal-case tracking-normal opacity-60">({c.optional})</span></span><input className={inputClass} value={values.middle} onChange={(e) => update('middle', e.target.value)} autoComplete="additional-name" /></label>
+          <label className={labelClass}>
+            <span className={captionClass}>{c.middle}</span>
+            <input className={inputClass} value={values.middle} onChange={(e) => update('middle', e.target.value)} autoComplete="additional-name" />
+            <span className="normal-case leading-relaxed tracking-normal opacity-75">{c.middleNote}</span>
+          </label>
         </fieldset>
 
         <fieldset className="flex flex-col gap-3">
