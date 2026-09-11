@@ -393,9 +393,10 @@ export async function saveFunnelTraffic(
 ): Promise<{ ok: boolean; error?: string }> {
   if (!checkPassword(password)) return { ok: false, error: "Parolă incorectă." }
 
-  const known = new Map(FORM_VARIANTS.map((form, index) => [
+  // Funnelul Standard (ruta implicită pentru traficul fără marker) nu face parte din distribuție.
+  const known = new Map(FORM_VARIANTS.filter((form) => !form.standard).map((form, index) => [
     form.id.replace("form-", ""),
-    { form: form.id, preview: PREVIEW_VARIANTS[index]?.id },
+    { form: form.id, preview: PREVIEW_VARIANTS[FORM_VARIANTS.indexOf(form)]?.id },
   ]))
   if (settings.length !== known.size || new Set(settings.map((item) => item.key)).size !== known.size) {
     return { ok: false, error: "Configurația funnelurilor este incompletă." }
@@ -470,11 +471,6 @@ export async function getVariantPreviewLinks(
         pv: previewVariant.id,
         [PREVIEW_TOKEN_PARAM]: await signPreviewToken(formVariant.id, previewVariant.id),
       })
-      if (key === "love-graph" || key === "relationship-needs" || key === "relationship-future-v1") params.set("entry", "love")
-      if (key === "career-graph" || key === "profession-match" || key === "career-future-v1") params.set("entry", "career")
-      if (key === "money-flow" || key === "money-future-v1") params.set("entry", "money")
-      if (key === "life-now" || key === "life-timeline" || key === "life-stage-now-v1") params.set("entry", "relationships")
-      if (key === "birthday-first" || key === "hidden-gift-v1") params.set("entry", "birthday")
       links.funnel[key] = `/ru/numerologie?${params.toString()}`
     }),
   ])

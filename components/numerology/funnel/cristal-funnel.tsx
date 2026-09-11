@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
 import { startNumerologieCheckout, getNumerologieSessionStatus } from '@/app/actions/stripe'
+import { startGraniBlockCheckout } from '@/app/actions/grani-blocks'
 import { savePreviewLead, attachLeadEmail } from '@/app/actions/preview-lead'
 import { saveExperimentParticipant } from '@/app/actions/experiment-participants'
 import { saveRaportAndSendEmail } from '@/app/actions/raport'
@@ -16,6 +17,8 @@ import { CristalLoading } from '@/components/numerology/cristal-loading'
 import { CHECKOUT_STORAGE_KEY, FUNNEL_STORAGE_KEY, type FunnelForm as FormValues } from './types'
 import { useLandingView, type InitialExperimentAssignment } from '@/lib/experiments/use-experiment'
 import { CrystalReactForm } from './crystal-react-form'
+import { StandardCrystalForm } from './standard-crystal-form'
+import { STANDARD_FORM_VARIANT, STANDARD_PREVIEW_VARIANT } from '@/lib/experiments/catalog'
 
 const PAYWALL_ID = 'funnel-paywall'
 const CALCULATOR_SRC = '/cristalul-calculator.html'
@@ -56,7 +59,12 @@ function readSaved(): FormValues | null {
 const PREVIEW_ENGINE_VARIANTS: Record<string, string> = {
   'preview-control': 'preview-control',
   'preview-birthday-first': 'preview-birthday-first',
+  'preview-date-age-next-v1': 'preview-date-age-next-v1',
   'preview-love-graph': 'preview-love-graph',
+  'preview-love-line-v1': 'preview-love-line-v1',
+  'preview-career-report-v1': 'preview-career-report-v1',
+  'preview-career-dual-v1': 'preview-career-dual-v1',
+  'preview-money-age-v1': 'preview-money-age-v1',
   'preview-career-graph': 'preview-career-graph',
   'preview-life-now': 'preview-life-now',
   'preview-content-first': 'preview-content-first',
@@ -74,6 +82,7 @@ const PREVIEW_ENGINE_VARIANTS: Record<string, string> = {
   'preview-hidden-gift-v1': 'preview-hidden-gift-v1',
   'preview-birthday-express-v1': 'preview-birthday-express-v1',
   'preview-day-arcana-v1': 'preview-day-arcana-v1',
+  'preview-grani-v1': 'preview-grani-v1',
 }
 
 type FutureStage = 'date' | 'birth-result' | 'full-result'
@@ -120,7 +129,7 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const locale = pathname?.split('/')[1] || 'ro'
-  const { country, cristal, alphabet } = useCurrency()
+  const { country, cristal, alphabet, graniUnit } = useCurrency()
 
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const didUnlock = useRef(false)
@@ -138,9 +147,11 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
   // transmitem formularului (?fv=/?pv=) și raportăm parcursul.
   const assignedExp = useLandingView(entry, initialExperiment)
   const exp = standardFlow
-    ? { ...assignedExp, form: 'form-control', preview: 'preview-control' }
+    ? { ...assignedExp, form: STANDARD_FORM_VARIANT, preview: STANDARD_PREVIEW_VARIANT }
     : assignedExp
-  const futureTopic = exp.form === 'form-career-future-v1'
+  // Funnelul Standard (trafic fără marker de promovare): formular complet cu email, apoi raportul pe Grani.
+  const isStandardFunnel = exp.form === STANDARD_FORM_VARIANT
+  const futureTopic = exp.form === 'form-career-future-v1' || exp.form === 'form-career-report-v1' || exp.form === 'form-career-dual-v1'
     ? 'career'
     : exp.form === 'form-relationship-future-v1'
       ? 'love'
@@ -258,9 +269,11 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
         currency: cristal.currency,
         formattedPrice: offer ? offer.finalPrice : cristal.displayPrice,
         country: country || null,
+        // Previzualizarea „Grani”: prețul unei fațete, afișat pe butoanele native ale cardurilor.
+        graniUnit,
       },
     }),
-    [offer, cristal.amount, cristal.currency, cristal.displayPrice, country],
+    [offer, cristal.amount, cristal.currency, cristal.displayPrice, country, graniUnit],
   )
   useEffect(() => {
     postToFrame(pricingMessage())
@@ -424,6 +437,17 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
         }
         void handleCheckoutRef.current(email, p.discountCode)
       }
+
+      // Previzualizarea „Grani”: o singură fațetă → Stripe cu prețul fațetei (decis pe server).
+      if (d.type === 'requestGraniPayment' && typeof d.graniId === 'number') {
+        const p = (d.data || {}) as PreviewData
+        const email = (p.email || formEmail || '').trim()
+        if (email) {
+          setFormEmail(email)
+          try { sessionStorage.setItem(`${FUNNEL_STORAGE_KEY}:email`, email) } catch {}
+        }
+        void handleGraniCheckoutRef.current(d.graniId, email)
+      }
     }
     window.addEventListener('message', onMessage)
     return () => window.removeEventListener('message', onMessage)
@@ -545,6 +569,54 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
     handleCheckoutRef.current = handleCheckout
   }, [handleCheckout])
 
+  // O fațetă („Grani”) a Cristalului: același flux ca raportul întreg (aceeași cheie localStorage, același
+  // success_url) — `saveRaportAndSendEmail` citește `graniId` din metadata Stripe și salvează un raport parțial.
+  const handleGraniCheckout = useCallback(
+    async (graniId: number, email: string) => {
+      if (!form) return
+      if (!email) {
+        const message = t('errorCheckout')
+        setCheckoutError(message)
+        postToFrame({ type: 'paymentError', message })
+        return
+      }
+      setCheckoutError('')
+      setCheckoutBusy(true)
+      trackFunnel('grani_checkout_clicked', { currency: cristal.currency, grani_id: graniId })
+      const reportData = {
+        last: form.last,
+        first: form.first,
+        middle: form.middle,
+        day: form.day,
+        month: form.month,
+        year: form.year,
+        email,
+        gender: form.gender,
+        nameAlphabetKey: form.nameAlphabetKey,
+        ...(form.entry ? { entry: form.entry } : {}),
+      }
+      try {
+        localStorage.setItem(CHECKOUT_STORAGE_KEY, JSON.stringify(reportData))
+        await Promise.race([attachLeadEmail(reportData, email), new Promise((r) => setTimeout(r, 1500))])
+        const url = await startGraniBlockCheckout({ email, locale, graniId, formData: reportData })
+        trackFunnel('numerology_checkout_start', { product: `grani_${graniId}`, country: country || undefined, currency: cristal.currency, language: locale })
+        window.location.href = url
+      } catch (err) {
+        localStorage.removeItem(CHECKOUT_STORAGE_KEY)
+        setCheckoutBusy(false)
+        const message = err instanceof Error && err.message ? err.message : t('errorCheckout')
+        setCheckoutError(message)
+        postToFrame({ type: 'paymentError', message })
+        postToFrame({ type: 'paymentCancelled' })
+      }
+    },
+    [form, locale, cristal.currency, country, t, postToFrame],
+  )
+  const handleGraniCheckoutRef = useRef(handleGraniCheckout)
+  useEffect(() => {
+    handleGraniCheckoutRef.current = handleGraniCheckout
+  }, [handleGraniCheckout])
+
   // Ecranul de formare s-a încheiat → dezvăluim raportul blurat de la început.
   const handleFormingDone = useCallback(() => {
     // Poziționăm pagina pe raport cât ecranul e încă opac, apoi iframe-ul își arată conținutul (fade) și
@@ -621,7 +693,33 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
         </p>
       )}
 
-      {!previewRequested && !cancelledNotice ? (
+      {!previewRequested && !cancelledNotice && isStandardFunnel ? (
+        <StandardCrystalForm
+          initialEmail={formEmail || emailParam}
+          initialValues={form || undefined}
+          locale={locale}
+          onFirstInteraction={() => exp.track({ event: 'form_first_interaction' })}
+          onSubmit={(values) => {
+            const email = values.email.trim()
+            const nextValues: FormValues = { ...values, gender: 'f', nameAlphabetKey: values.nameAlphabetKey || alphabet }
+            formRef.current = nextValues
+            setFormEmail(email)
+            try { sessionStorage.setItem(`${FUNNEL_STORAGE_KEY}:email`, email) } catch {}
+            persistParticipant('form_submitted', nextValues, email)
+            setForm(nextValues)
+            setFutureStage('full-result')
+            setPreviewReady(false)
+            setNativePreview(false)
+            setFrameSrc(`${buildPreviewSrc(nextValues, { form: exp.form, preview: exp.preview }, { stage: 'full', locale })}&email=${encodeURIComponent(email)}&k=${Date.now()}`)
+            setPreviewRequested(true)
+            setForming(true)
+            exp.track({ event: 'form_submit' })
+            exp.track({ event: 'calculation_start' })
+            window.scrollTo({ top: 0 })
+            trackFunnel('birth_data_submitted', { has_middle: Boolean(nextValues.middle), alphabet: nextValues.nameAlphabetKey, funnel: 'standard' })
+          }}
+        />
+      ) : !previewRequested && !cancelledNotice ? (
         <CrystalReactForm
           initialEmail={emailParam}
           initialValues={form || undefined}

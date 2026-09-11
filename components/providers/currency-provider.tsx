@@ -12,6 +12,7 @@ import {
   type NameAlphabet,
 } from '@/lib/currency'
 import { FALLBACK_PRICE, formatDiscounted, type CountryPrice } from '@/lib/country-pricing'
+import { graniRemainderDisplay, graniUnitDisplay } from '@/lib/grani-pricing'
 
 interface CurrencyContextValue {
   /** Moneda Grani (EUR / KZT / MDL) — Grani nu este localizat pe țări. */
@@ -24,6 +25,10 @@ interface CurrencyContextValue {
   cristal: CountryPrice
   /** Prețul Cristalului redus cu `percent`, formatat exact ca displayPrice. */
   cristalDiscounted: (percent: number) => string
+  /** Prețul unei fațete („Grani”) a Cristalului, formatat ca displayPrice (ex. „3 RON”, „1,00 €”). */
+  graniUnit: string
+  /** Restul Cristalului după `unlockedCount` fațete plătite, formatat. */
+  cristalRemainder: (unlockedCount: number) => string
   prices: (typeof PRICES)[Currency]
   /** Formatează o sumă Grani (în unități minime) în moneda vizitatorului. */
   format: (minor: number) => string
@@ -50,6 +55,8 @@ export function CurrencyProvider({
     alphabet: alphabetFromCountry(country),
     cristal,
     cristalDiscounted: (percent) => formatDiscounted(cristal, percent),
+    graniUnit: graniUnitDisplay(cristal),
+    cristalRemainder: (unlockedCount) => graniRemainderDisplay(cristal, unlockedCount),
     prices: PRICES[currency],
     format: (minor) => formatPrice(minor, currency),
     formatDiscounted: (minor, percent) => formatPrice(applyDiscountMinor(minor, percent, currency), currency),
@@ -67,6 +74,8 @@ export function useCurrency(): CurrencyContextValue {
     alphabet: DEFAULT_ALPHABET,
     cristal: FALLBACK_PRICE,
     cristalDiscounted: (percent) => formatDiscounted(FALLBACK_PRICE, percent),
+    graniUnit: graniUnitDisplay(FALLBACK_PRICE),
+    cristalRemainder: (unlockedCount) => graniRemainderDisplay(FALLBACK_PRICE, unlockedCount),
     prices: PRICES[DEFAULT_CURRENCY],
     format: (minor) => formatPrice(minor, DEFAULT_CURRENCY),
     formatDiscounted: (minor, percent) => formatPrice(applyDiscountMinor(minor, percent, DEFAULT_CURRENCY), DEFAULT_CURRENCY),

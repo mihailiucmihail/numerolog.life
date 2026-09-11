@@ -36,7 +36,7 @@ interface CrystalReactFormProps {
   onSubmit: (values: CrystalFormValues) => void
 }
 
-type FunnelMode = 'control' | 'birthday-first' | 'love-graph' | 'career-graph' | 'life-now' | 'content-first' | 'money-flow' | 'profession-match' | 'relationship-needs' | 'life-timeline' | 'career-future' | 'relationship-future' | 'money-future' | 'instagram-direct' | 'daria-continuity' | 'topic-choice' | 'life-stage-now' | 'hidden-gift' | 'birthday-express' | 'day-arcana'
+type FunnelMode = 'control' | 'birthday-first' | 'date-age-fast' | 'love-line' | 'money-age' | 'love-graph' | 'career-graph' | 'life-now' | 'content-first' | 'money-flow' | 'profession-match' | 'relationship-needs' | 'life-timeline' | 'career-future' | 'relationship-future' | 'money-future' | 'instagram-direct' | 'daria-continuity' | 'topic-choice' | 'life-stage-now' | 'hidden-gift' | 'birthday-express' | 'day-arcana'
 
 type FutureTopic = 'career' | 'relationship' | 'money' | 'life' | 'gift' | 'express' | 'arcana'
 
@@ -55,12 +55,15 @@ const COPY = {
     professionTitle: 'Какую профессиональную развилку ты проходишь?', professionOptions: ['Какое направление мне подходит', 'Какой тип роли использует мои сильные стороны', 'Почему работа не даёт ощущения реализации'],
     needsTitle: 'Чего тебе сейчас не хватает в отношениях?', needsOptions: ['Безопасности и опоры', 'Близости и понимания', 'Свободы и движения'],
     timelineTitle: 'Какой отрезок жизни хочется увидеть яснее?', timelineOptions: ['Где я нахожусь сейчас', 'Что меняется следующим', 'Какая сфера станет главной'],
-    directTitle: 'Узнай, что твоя дата рождения говорит о тебе', directBody: 'Введи данные — первый персональный фрагмент Кристалла откроется бесплатно.',
+    directTitle: 'Узнай, что твоя дата рождения говорит о тебе', directBody: 'Введи данные — расчёт подготовит первый персональный фрагмент Кристалла.',
     dariaTitle: 'Продолжим расчёт вместе с Дарьей', dariaBody: 'Ты уже видела, как работает Кристалл. Теперь введи свои данные и открой личный результат.', dariaCaption: 'Дарья · Кристалл Судьбы',
     topicTitle: 'Что ты хочешь узнать о себе прямо сейчас?', topicBody: 'Выбери тему — она откроется первой в твоём персональном результате.', topicOptions: ['Мой главный дар', 'Любовь и отношения', 'Деньги и потенциал', 'Призвание и карьера'],
     giftOptions: ['Отношения', 'Деньги', 'Карьера'],
     expressDate: 'Твоя дата рождения', expressHint: 'Один шаг — имя пока не нужно',
     arcanaDay: 'Введи день рождения', arcanaResult: 'Твоя Аркана дня', arcanaContinue: 'Теперь добавь месяц и год',
+    fastTitle: 'Сначала — твоя дата рождения', fastBody: 'Она покажет твой возраст и текущую точку на личной линии. Имя понадобится только на следующем шаге.', fastAge: 'Сейчас тебе',
+    loveLineTitle: 'Что сейчас происходит с твоей линией отношений — и когда следующий поворот?', loveLineBody: 'Линия отношений рассчитывается по дате рождения: расчёт покажет, на подъёме ты сейчас или на паузе, и назовёт возраст следующего поворота.',
+    moneyAgeTitle: 'С какого возраста ты выходишь на финансовую самостоятельность?', moneyAgeBody: 'У денежной линии есть точка, где она впервые пересекает твой уровень комфорта. Расчёт назовёт этот возраст по дате рождения.',
     step: 'Шаг 1 из 2', chosen: 'Выбери один вариант, чтобы продолжить',
   },
   ro: {
@@ -77,12 +80,15 @@ const COPY = {
     professionTitle: 'Prin ce răscruce profesională treci?', professionOptions: ['Ce direcție mi se potrivește', 'Ce tip de rol îmi folosește punctele forte', 'De ce munca nu îmi oferă împlinire'],
     needsTitle: 'Ce îți lipsește acum într-o relație?', needsOptions: ['Siguranță și sprijin', 'Apropiere și înțelegere', 'Libertate și mișcare'],
     timelineTitle: 'Ce etapă a vieții vrei să vezi mai clar?', timelineOptions: ['Unde mă aflu acum', 'Ce se schimbă în continuare', 'Ce domeniu va deveni principal'],
-    directTitle: 'Descoperă ce spune data nașterii despre tine', directBody: 'Introdu datele — primul fragment personal al Cristalului se deschide gratuit.',
+    directTitle: 'Descoperă ce spune data nașterii despre tine', directBody: 'Introdu datele — calculul pregătește primul fragment personal al Cristalului.',
     dariaTitle: 'Continuă calculul alături de Daria', dariaBody: 'Ai văzut deja cum funcționează Cristalul. Acum introdu datele și deschide rezultatul tău personal.', dariaCaption: 'Daria · Cristalul Destinului',
     topicTitle: 'Ce vrei să afli despre tine chiar acum?', topicBody: 'Alege tema — aceasta se va deschide prima în rezultatul tău personal.', topicOptions: ['Darul meu principal', 'Iubire și relații', 'Bani și potențial', 'Vocație și carieră'],
     giftOptions: ['Relații', 'Bani', 'Carieră'],
     expressDate: 'Data ta de naștere', expressHint: 'Un singur pas — numele nu este necesar încă',
     arcanaDay: 'Introdu ziua nașterii', arcanaResult: 'Arcana zilei tale', arcanaContinue: 'Acum adaugă luna și anul',
+    fastTitle: 'Mai întâi — data ta de naștere', fastBody: 'Îți arată vârsta și punctul actual pe linia personală. Numele este necesar doar la pasul următor.', fastAge: 'Acum ai',
+    loveLineTitle: 'Ce se întâmplă acum cu linia ta a relațiilor — și când vine următoarea cotitură?', loveLineBody: 'Linia relațiilor se calculează din data nașterii: calculul arată dacă ești acum în creștere sau în pauză și numește vârsta următoarei cotituri.',
+    moneyAgeTitle: 'De la ce vârstă ajungi la independență financiară?', moneyAgeBody: 'Linia banilor are un punct în care traversează pentru prima dată nivelul tău de confort. Calculul numește această vârstă din data nașterii.',
     step: 'Pasul 1 din 2', chosen: 'Alege o variantă pentru a continua',
   },
 }
@@ -94,7 +100,7 @@ const FUTURE_COPY = {
     money: { title: 'Куда сейчас движется твоя финансовая линия?', body: 'Дата рождения покажет направление текущего периода. Имя на первом шаге не требуется.', cta: 'Построить денежный график', identityTitle: 'Уточним твою финансовую карту', identityBody: 'Направление линии уже рассчитано. Имя свяжет его с качествами, которые усиливают или замедляют доход.', submit: 'Показать углублённый результат' },
     life: { title: 'Какой этап жизни ты проходишь сейчас?', body: 'Введи дату рождения и узнай, что завершается, что начинается и где появляется следующая перемена.', cta: 'Показать мой текущий этап', identityTitle: 'Уточним твою линию жизни', identityBody: 'Текущий этап уже рассчитан. Добавь имя, чтобы увидеть, как следующая перемена проявится в отношениях, деньгах и личном направлении.', submit: 'Показать следующую перемену' },
     gift: { title: 'Твоя дата рождения скрывает дар, который ты можешь не замечать', body: 'Узнай свой естественный талант и что мешает использовать его в полную силу.', cta: 'Открыть мой дар', identityTitle: 'Где этот дар сейчас заблокирован сильнее?', identityBody: 'Главный дар уже определён. Выбери сферу и добавь имя, чтобы получить персональное продолжение.', submit: 'Показать мой личный результат' },
-    express: { title: 'Что твоя дата рождения говорит о тебе?', body: 'Введи одну дату и сразу получи первый персональный фрагмент Кристалла. Без имени и регистрации.', cta: 'Получить результат бесплатно', identityTitle: 'Твой первый результат готов', identityBody: 'Добавь имя, чтобы соединить расчёт даты рождения с личными качествами и продолжить разбор.', submit: 'Продолжить мой разбор' },
+    express: { title: 'Что твоя дата рождения говорит о тебе?', body: 'Введи одну дату — расчёт подготовит первый персональный фрагмент Кристалла. Без имени и регистрации.', cta: 'Начать мой расчёт', identityTitle: 'Твой первый результат готов', identityBody: 'Добавь имя, чтобы соединить расчёт даты рождения с личными качествами и продолжить разбор.', submit: 'Продолжить мой разбор' },
     arcana: { title: 'Узнай свою Аркану дня рождения', body: 'Начни только с дня — первую личную подсказку увидишь сразу.', cta: 'Открыть результат по дате', identityTitle: 'Твоя Аркана уже определена', identityBody: 'Добавь имя, чтобы связать её с полной персональной картой и продолжить разбор.', submit: 'Продолжить мой разбор' },
   },
   ro: {
@@ -103,15 +109,15 @@ const FUTURE_COPY = {
     money: { title: 'În ce direcție merge acum linia ta financiară?', body: 'Data nașterii arată sensul perioadei actuale. Numele nu este necesar la primul pas.', cta: 'Construiește graficul banilor', identityTitle: 'Personalizăm harta ta financiară', identityBody: 'Direcția liniei este deja calculată. Numele o conectează cu trăsăturile care susțin sau încetinesc veniturile.', submit: 'Arată-mi rezultatul aprofundat' },
     life: { title: 'Ce etapă a vieții traversezi acum?', body: 'Introdu data nașterii și descoperă ce se încheie, ce începe și unde apare următoarea schimbare.', cta: 'Arată-mi etapa mea actuală', identityTitle: 'Personalizăm linia vieții tale', identityBody: 'Etapa actuală este deja calculată. Adaugă numele pentru a vedea cum se manifestă următoarea schimbare în relații, bani și direcția personală.', submit: 'Arată-mi următoarea schimbare' },
     gift: { title: 'Data ta de naștere ascunde un dar pe care îl poți folosi fără să-l observi', body: 'Descoperă talentul tău natural și ce te împiedică să-l valorifici pe deplin.', cta: 'Descoperă darul meu', identityTitle: 'Unde simți că acest dar este cel mai blocat?', identityBody: 'Darul principal este deja calculat. Alege domeniul și adaugă numele pentru continuarea personală.', submit: 'Arată-mi rezultatul personal' },
-    express: { title: 'Ce spune data nașterii despre tine?', body: 'Introdu o singură dată și primește imediat primul fragment personal al Cristalului. Fără nume și fără cont.', cta: 'Primește rezultatul gratuit', identityTitle: 'Primul tău rezultat este gata', identityBody: 'Adaugă numele pentru a conecta data nașterii cu trăsăturile personale și a continua analiza.', submit: 'Continuă analiza mea' },
+    express: { title: 'Ce spune data nașterii despre tine?', body: 'Introdu o singură dată — calculul pregătește primul fragment personal al Cristalului. Fără nume și fără cont.', cta: 'Începe calculul meu', identityTitle: 'Primul tău rezultat este gata', identityBody: 'Adaugă numele pentru a conecta data nașterii cu trăsăturile personale și a continua analiza.', submit: 'Continuă analiza mea' },
     arcana: { title: 'Descoperă Arcana zilei tale de naștere', body: 'Începe doar cu ziua — prima indicație personală apare imediat.', cta: 'Deschide rezultatul datei', identityTitle: 'Arcana ta este deja calculată', identityBody: 'Adaugă numele pentru a o conecta cu harta personală completă și a continua analiza.', submit: 'Continuă analiza mea' },
   },
 }
 
 const MODE_BY_VARIANT: Record<string, FunnelMode> = {
-  'form-control': 'control', 'form-birthday-first': 'birthday-first', 'form-love-graph': 'love-graph', 'form-career-graph': 'career-graph',
+  'form-control': 'control', 'form-birthday-first': 'birthday-first', 'form-date-age-fast-v1': 'date-age-fast', 'form-love-line-v1': 'love-line', 'form-money-age-v1': 'money-age', 'form-love-graph': 'love-graph', 'form-career-graph': 'career-graph',
   'form-life-now': 'life-now', 'form-content-first': 'content-first', 'form-money-flow': 'money-flow', 'form-profession-match': 'profession-match',
-  'form-relationship-needs': 'relationship-needs', 'form-life-timeline': 'life-timeline', 'form-career-future-v1': 'career-future',
+  'form-relationship-needs': 'relationship-needs', 'form-life-timeline': 'life-timeline', 'form-career-future-v1': 'career-future', 'form-career-report-v1': 'career-future', 'form-career-dual-v1': 'career-future',
   'form-relationship-future-v1': 'relationship-future', 'form-money-future-v1': 'money-future',
   'form-instagram-direct-v1': 'instagram-direct', 'form-daria-continuity-v1': 'daria-continuity', 'form-topic-choice-v1': 'topic-choice',
   'form-life-stage-now-v1': 'life-stage-now', 'form-hidden-gift-v1': 'hidden-gift',
@@ -155,7 +161,9 @@ export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'r
                 ? 'arcana'
                 : null
   const futureCopy = futureTopic ? FUTURE_COPY[locale === 'ro' ? 'ro' : 'ru'][futureTopic] : null
-  const [step, setStep] = useState(mode === 'birthday-first' ? 0 : 1)
+  const isFastDate = mode === 'date-age-fast' || mode === 'love-line' || mode === 'money-age'
+  const isDateFirst = mode === 'birthday-first' || isFastDate
+  const [step, setStep] = useState(isDateFirst ? 0 : 1)
   const [intent, setIntent] = useState('')
   const [values, setValues] = useState({
     last: initialValues?.last || '', first: initialValues?.first || '', middle: initialValues?.middle || '',
@@ -164,6 +172,7 @@ export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'r
   })
   const [error, setError] = useState('')
   const dateRefs = useRef<Array<HTMLInputElement | null>>([])
+  const firstNameRef = useRef<HTMLInputElement | null>(null)
   const interactionTracked = useRef(false)
   const dateStepTracked = useRef(false)
   const arcanaStepTracked = useRef(false)
@@ -179,6 +188,13 @@ export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'r
     const date = new Date(year, month - 1, day)
     return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day && date <= new Date()
   }, [values.day, values.month, values.year])
+  const calculatedAge = useMemo(() => {
+    if (!dateValid) return null
+    const today = new Date()
+    let age = today.getFullYear() - Number(values.year)
+    if (today.getMonth() + 1 < Number(values.month) || (today.getMonth() + 1 === Number(values.month) && today.getDate() < Number(values.day))) age -= 1
+    return age
+  }, [dateValid, values.day, values.month, values.year])
 
   const update = (key: keyof typeof values, value: string) => {
     trackFirstInteraction()
@@ -210,11 +226,11 @@ export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'r
     : null
 
   const options = mode === 'love-graph' ? c.loveOptions : mode === 'career-graph' ? c.careerOptions : mode === 'life-now' ? c.lifeOptions : mode === 'money-flow' ? c.moneyOptions : mode === 'profession-match' ? c.professionOptions : mode === 'relationship-needs' ? c.needsOptions : mode === 'life-timeline' ? c.timelineOptions : mode === 'topic-choice' ? c.topicOptions : mode === 'hidden-gift' ? c.giftOptions : []
-  const standardTitle = mode === 'birthday-first' ? c.birthdayTitle : mode === 'love-graph' ? c.loveTitle : mode === 'career-graph' ? c.careerTitle : mode === 'life-now' ? c.lifeTitle : mode === 'content-first' ? c.contentTitle : mode === 'money-flow' ? c.moneyTitle : mode === 'profession-match' ? c.professionTitle : mode === 'relationship-needs' ? c.needsTitle : mode === 'life-timeline' ? c.timelineTitle : mode === 'instagram-direct' ? c.directTitle : mode === 'daria-continuity' ? c.dariaTitle : mode === 'topic-choice' ? c.topicTitle : c.title
-  const standardBody = mode === 'birthday-first' ? c.birthdayBody : mode === 'content-first' ? c.contentBody : mode === 'instagram-direct' ? c.directBody : mode === 'daria-continuity' ? c.dariaBody : mode === 'topic-choice' ? c.topicBody : c.body
+  const standardTitle = mode === 'birthday-first' ? c.birthdayTitle : mode === 'date-age-fast' ? c.fastTitle : mode === 'love-line' ? c.loveLineTitle : mode === 'money-age' ? c.moneyAgeTitle : mode === 'love-graph' ? c.loveTitle : mode === 'career-graph' ? c.careerTitle : mode === 'life-now' ? c.lifeTitle : mode === 'content-first' ? c.contentTitle : mode === 'money-flow' ? c.moneyTitle : mode === 'profession-match' ? c.professionTitle : mode === 'relationship-needs' ? c.needsTitle : mode === 'life-timeline' ? c.timelineTitle : mode === 'instagram-direct' ? c.directTitle : mode === 'daria-continuity' ? c.dariaTitle : mode === 'topic-choice' ? c.topicTitle : c.title
+  const standardBody = mode === 'birthday-first' ? c.birthdayBody : mode === 'date-age-fast' ? c.fastBody : mode === 'love-line' ? c.loveLineBody : mode === 'money-age' ? c.moneyAgeBody : mode === 'content-first' ? c.contentBody : mode === 'instagram-direct' ? c.directBody : mode === 'daria-continuity' ? c.dariaBody : mode === 'topic-choice' ? c.topicBody : c.body
   const title = futureCopy ? (futureStage === 'date' ? futureCopy.title : futureCopy.identityTitle) : standardTitle
   const body = futureCopy ? (futureStage === 'date' ? futureCopy.body : futureCopy.identityBody) : standardBody
-  const Icon = mode === 'love-graph' || mode === 'relationship-needs' || mode === 'relationship-future' ? Heart : mode === 'career-graph' || mode === 'profession-match' || mode === 'career-future' ? BriefcaseBusiness : mode === 'content-first' ? Layers3 : mode === 'money-flow' || mode === 'money-future' ? CircleDollarSign : mode === 'life-timeline' || mode === 'life-stage-now' ? Route : mode === 'life-now' || mode === 'hidden-gift' || mode === 'day-arcana' ? Sparkles : mode === 'birthday-express' ? CalendarDays : UserRound
+  const Icon = mode === 'love-graph' || mode === 'relationship-needs' || mode === 'relationship-future' || mode === 'love-line' ? Heart : mode === 'money-age' ? CircleDollarSign : mode === 'career-graph' || mode === 'profession-match' || mode === 'career-future' ? BriefcaseBusiness : mode === 'content-first' ? Layers3 : mode === 'money-flow' || mode === 'money-future' ? CircleDollarSign : mode === 'life-timeline' || mode === 'life-stage-now' ? Route : mode === 'life-now' || mode === 'hidden-gift' || mode === 'day-arcana' ? Sparkles : mode === 'birthday-express' ? CalendarDays : UserRound
 
   const dateFields = (
     <div className="flex flex-col gap-3">
@@ -224,6 +240,12 @@ export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'r
           <label key={key} className="flex min-w-0 flex-col gap-2 text-xs text-muted-foreground"><span className="font-mono uppercase tracking-[0.12em]">{label}</span><input ref={(el) => { dateRefs.current[index] = el }} className={`${inputClass} min-w-0 px-2 text-center tabular-nums`} value={values[key]} onChange={(event) => updateDate(index, key, event.target.value, max)} placeholder={placeholder} inputMode="numeric" aria-label={label} /></label>
         ))}
       </div>
+      {isFastDate && calculatedAge !== null && (
+        <div role="status" aria-live="polite" className="flex items-center justify-between rounded-xl border border-primary/35 bg-primary/10 px-4 py-3">
+          <span className="text-sm text-muted-foreground">{c.fastAge}</span>
+          <strong className="font-mono text-base text-primary">{calculatedAge} {locale === 'ro' ? 'ani' : 'лет'}</strong>
+        </div>
+      )}
     </div>
   )
 
@@ -269,7 +291,14 @@ export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'r
       onBirthSubmit?.({ day: Number(values.day), month: Number(values.month), year: Number(values.year) })
       return
     }
-    if (mode === 'birthday-first' && step === 0) { if (!dateValid) return setError(c.dateError); setError(''); setStep(1); onStepComplete?.(1); return }
+    if (isDateFirst && step === 0) {
+      if (!dateValid) return setError(c.dateError)
+      setError('')
+      setStep(1)
+      onStepComplete?.(1)
+      window.requestAnimationFrame(() => firstNameRef.current?.focus())
+      return
+    }
     if (!values.first.trim() || !values.last.trim()) return setError(c.nameError)
     if (!dateValid) return setError(c.dateError)
     if (futureTopic && !values.gender) return setError(c.genderError)
@@ -288,12 +317,12 @@ export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'r
     onSubmit({ ...values, nameAlphabetKey: detectAlphabet(`${values.last}${values.first}${values.middle}`, values.nameAlphabetKey), day: Number(values.day), month: Number(values.month), year: Number(values.year), entry, ...(intentIndex >= 0 ? { intent: `${mode}:${intentIndex}` } : futureTopic ? { intent: `${futureTopic}-future-v1:0` } : {}) })
   }
 
-  const identityFields = <><div className="grid gap-4 sm:grid-cols-2"><label className="flex flex-col gap-2 text-xs text-muted-foreground"><span className="font-mono uppercase tracking-[0.14em]">{c.first}</span><input className={inputClass} value={values.first} onChange={(event) => update('first', event.target.value)} autoComplete="given-name" /></label><label className="flex flex-col gap-2 text-xs text-muted-foreground"><span className="font-mono uppercase tracking-[0.14em]">{c.last}</span><input className={inputClass} value={values.last} onChange={(event) => update('last', event.target.value)} autoComplete="family-name" /></label></div><label className="flex flex-col gap-2 text-xs text-muted-foreground"><span className="font-mono uppercase tracking-[0.14em]">{c.middle} <span className="normal-case tracking-normal opacity-60">({c.optional})</span></span><input className={inputClass} value={values.middle} onChange={(event) => update('middle', event.target.value)} /></label></>
+  const identityFields = <><div className="grid gap-4 sm:grid-cols-2"><label className="flex flex-col gap-2 text-xs text-muted-foreground"><span className="font-mono uppercase tracking-[0.14em]">{c.first}</span><input ref={firstNameRef} className={inputClass} value={values.first} onChange={(event) => update('first', event.target.value)} autoComplete="given-name" /></label><label className="flex flex-col gap-2 text-xs text-muted-foreground"><span className="font-mono uppercase tracking-[0.14em]">{c.last}</span><input className={inputClass} value={values.last} onChange={(event) => update('last', event.target.value)} autoComplete="family-name" /></label></div><label className="flex flex-col gap-2 text-xs text-muted-foreground"><span className="font-mono uppercase tracking-[0.14em]">{c.middle} <span className="normal-case tracking-normal opacity-60">({c.optional})</span></span><input className={inputClass} value={values.middle} onChange={(event) => update('middle', event.target.value)} /></label></>
 
   return (
     <section className="min-w-0 w-full overflow-hidden rounded-2xl border border-border bg-card/60 shadow-2xl shadow-background/40">
       <header className="flex flex-col gap-4 border-b border-border bg-card/70 px-5 py-6 sm:px-8">
-        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-primary"><span className="size-1.5 rounded-full bg-primary" />{futureTopic ? (futureStage === 'date' ? (locale === 'ro' ? 'Rezultat gratuit' : 'Бесплатный результат') : (locale === 'ro' ? 'Pasul 2 din 2' : 'Шаг 2 из 2')) : mode === 'birthday-first' ? c.step : c.eyebrow}</div>
+        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-primary"><span className="size-1.5 rounded-full bg-primary" />{futureTopic ? (futureStage === 'date' ? (locale === 'ro' ? 'Calcul personal' : 'Персональный расчёт') : (locale === 'ro' ? 'Pasul 2 din 2' : 'Шаг 2 из 2')) : isDateFirst ? (step === 0 ? c.step : (locale === 'ro' ? 'Pasul 2 din 2' : 'Шаг 2 из 2')) : c.eyebrow}</div>
         <div className="flex items-start gap-4"><div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-background/30 text-primary"><Icon className="size-5" /></div><div><h2 className="text-balance text-xl font-semibold tracking-tight text-foreground">{title}</h2><p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">{body}</p></div></div>
         {mode === 'daria-continuity' && (
           <figure className="overflow-hidden rounded-xl border border-border bg-background/30">
@@ -307,9 +336,9 @@ export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'r
       </header>
       <form onSubmit={submit} onFocusCapture={trackFirstInteraction} onClickCapture={trackFirstInteraction} className="flex flex-col gap-6 p-5 sm:p-8">
         {options.length > 0 && (!futureTopic || futureStage === 'identity') && <fieldset className="flex flex-col gap-3"><legend className="sr-only">{title}</legend>{options.map((option) => <button key={option} type="button" onClick={() => { setIntent(option); setError(''); onStepComplete?.(1) }} aria-pressed={intent === option} className={`flex min-h-12 items-center justify-between rounded-xl border px-4 py-3 text-left text-sm transition ${intent === option ? 'border-primary bg-primary/10 text-foreground' : 'border-border bg-background/30 text-muted-foreground hover:border-primary/40 hover:text-foreground'}`}><span>{option}</span>{intent === option && <Check className="size-4 text-primary" />}</button>)}</fieldset>}
-        {futureTopic ? (futureStage === 'date' ? (mode === 'birthday-express' ? expressDateField : mode === 'day-arcana' ? arcanaDateFields : dateFields) : <>{identityFields}<fieldset className="flex flex-col gap-3"><legend className="font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">{c.gender}</legend><div className="grid grid-cols-2 gap-3">{([['f', c.female], ['m', c.male]] as const).map(([value, label]) => <button key={value} type="button" onClick={() => update('gender', value)} aria-pressed={values.gender === value} className={`h-12 rounded-xl border text-sm transition ${values.gender === value ? 'border-primary bg-primary/10 text-foreground' : 'border-border bg-background/30 text-muted-foreground hover:border-primary/40 hover:text-foreground'}`}>{label}</button>)}</div></fieldset></>) : mode === 'birthday-first' && step === 0 ? dateFields : <>{identityFields}{mode !== 'birthday-first' && dateFields}</>}
+        {futureTopic ? (futureStage === 'date' ? (mode === 'birthday-express' ? expressDateField : mode === 'day-arcana' ? arcanaDateFields : dateFields) : <>{identityFields}<fieldset className="flex flex-col gap-3"><legend className="font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">{c.gender}</legend><div className="grid grid-cols-2 gap-3">{([['f', c.female], ['m', c.male]] as const).map(([value, label]) => <button key={value} type="button" onClick={() => update('gender', value)} aria-pressed={values.gender === value} className={`h-12 rounded-xl border text-sm transition ${values.gender === value ? 'border-primary bg-primary/10 text-foreground' : 'border-border bg-background/30 text-muted-foreground hover:border-primary/40 hover:text-foreground'}`}>{label}</button>)}</div></fieldset></>) : isDateFirst && step === 0 ? dateFields : <>{identityFields}{!isDateFirst && dateFields}</>}
         {error && <p role="alert" className="rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2.5 text-sm text-destructive">{error}</p>}
-        <div className="flex gap-3">{mode === 'birthday-first' && step === 1 && <button type="button" onClick={() => setStep(0)} className="h-12 rounded-xl border border-border px-4 text-sm text-muted-foreground hover:text-foreground">{c.back}</button>}<button type="submit" disabled={(futureTopic && futureStage === 'date') || (mode === 'birthday-first' && step === 0) ? !dateValid : false} className="group flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40">{futureCopy ? (futureStage === 'date' ? futureCopy.cta : futureCopy.submit) : mode === 'birthday-first' && step === 0 ? c.next : c.submit}<ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></button></div>
+        <div className="flex gap-3">{isDateFirst && step === 1 && <button type="button" onClick={() => setStep(0)} className="h-12 rounded-xl border border-border px-4 text-sm text-muted-foreground hover:text-foreground">{c.back}</button>}<button type="submit" disabled={(futureTopic && futureStage === 'date') || (isDateFirst && step === 0) ? !dateValid : false} className="group flex h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40">{futureCopy ? (futureStage === 'date' ? futureCopy.cta : futureCopy.submit) : isDateFirst && step === 0 ? c.next : c.submit}<ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></button></div>
         <p className="text-center font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground/60">{c.privacy}</p>
       </form>
     </section>

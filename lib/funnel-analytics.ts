@@ -17,6 +17,9 @@ export type FunnelEvent =
   | 'offer_link_opened'
   | 'stripe_checkout_started'
   | 'purchase_completed'
+  // Funnelul „Standard” pe Grani: click pe o fațetă și cumpărarea ei.
+  | 'grani_checkout_clicked'
+  | 'grani_purchase'
   // Pâlnia standard (cerută pentru rapoarte): Free Result → Paywall View → Unlock Click → Checkout → Purchase.
   | 'numerology_free_result_view'
   | 'numerology_paywall_view'

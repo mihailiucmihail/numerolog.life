@@ -28,7 +28,8 @@ export async function getRuntimeFunnels(): Promise<RuntimeFunnel[]> {
       const preview = PREVIEW_VARIANTS[index]
       const formState = registry.get(form.id)
       const previewState = preview ? registry.get(preview.id) : null
-      if (!preview || !formState?.active || !previewState?.active) return []
+      if (!preview || form.standard || preview.standard) return []
+      if (!formState?.active || !previewState?.active) return []
       const weight = Math.max(0, Math.min(Number(formState.weight) || 0, Number(previewState.weight) || 0))
       return weight > 0 ? [{ form: form.id, preview: preview.id, weight }] : []
     })

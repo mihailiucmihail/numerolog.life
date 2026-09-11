@@ -46,6 +46,51 @@ const FUNNELS = [
     preview: "preview-birthday-first",
   },
   {
+    key: "date-age-fast-v1",
+    label: "Următorul prag",
+    eyebrow: "Data + Acum + Următorul prag",
+    summary: "Data nașterii confirmă imediat vârsta, numele urmează în același pas, iar previzualizarea arată direcția următorului prag fără să dezvăluie sensul lui.",
+    flow: ["Data nașterii", "Vârsta instant", "Nume", "Acum + direcția pragului", "Plată"],
+    form: "form-date-age-fast-v1",
+    preview: "preview-date-age-next-v1",
+  },
+  {
+    key: "career-report-v1",
+    label: "Carieră: graficul din raport",
+    eyebrow: "Același formular Career Future",
+    summary: "Graficul carierei desenat cu codul raportului (axe, puncte, linia de confort, marcajul vârstei) și paragraful de interpretare al raportului. Punctele deja trăite sunt explicate, cele viitoare blurate; următoarea schimbare apare ca interval de 5 ani.",
+    flow: ["Data nașterii", "Nume", "Graficul real + textul raportului", "Interval următoarea schimbare", "Plată"],
+    form: "form-career-report-v1",
+    preview: "preview-career-report-v1",
+  },
+  {
+    key: "career-dual-v1",
+    label: "Carieră + Autorealizare",
+    eyebrow: "Același formular Career Future",
+    summary: "Două grafice reale ca în raport: cariera (cu textul raportului și intervalul următoarei schimbări) și autorealizarea, cu vârful profesional cel mai puternic (T1/T4/T6) numit și explicat. Celelalte sfere și anul exact rămân în raport.",
+    flow: ["Data nașterii", "Nume", "Grafic carieră + grafic autorealizare", "Sfera cea mai puternică", "Plată"],
+    form: "form-career-dual-v1",
+    preview: "preview-career-dual-v1",
+  },
+  {
+    key: "love-line-v1",
+    label: "Linia relațiilor",
+    eyebrow: "Relații: acum + următoarea cotitură",
+    summary: "Doar data nașterii pe primul ecran; previzualizarea arată starea reală a liniei relațiilor și vârsta exactă a următoarei cotituri, iar sensul cotiturii rămâne în raport.",
+    flow: ["Data nașterii", "Vârsta instant", "Nume", "Linia relațiilor acum + vârsta cotiturii", "Plată"],
+    form: "form-love-line-v1",
+    preview: "preview-love-line-v1",
+  },
+  {
+    key: "money-age-v1",
+    label: "Independența financiară",
+    eyebrow: "Bani: vârsta independenței",
+    summary: "Promisiunea este o cifră: vârsta la care linia banilor traversează prima dată nivelul de confort. Previzualizarea o afișează mare, apoi arată starea actuală și ascunde vârful și următoarea schimbare.",
+    flow: ["Data nașterii", "Vârsta instant", "Nume", "Vârsta independenței + linia acum", "Plată"],
+    form: "form-money-age-v1",
+    preview: "preview-money-age-v1",
+  },
+  {
     key: "love-graph",
     label: "Love Graph",
     eyebrow: "Intenție: relații",
@@ -207,34 +252,32 @@ const FUNNELS = [
     form: "form-day-arcana-v1",
     preview: "preview-day-arcana-v1",
   },
+  {
+    key: "standard-v1",
+    label: "Standard: Cristalul pe Grani",
+    eyebrow: "Trafic organic / intern (fără UTM)",
+    summary: "Funnelul implicit pentru orice link fără marker de promovare: formular complet premium (nume, prenume, patronimic, dată, email), apoi raportul întreg ca 14 Grani cu fapte reale despre persoană; fiecare Grani se deschide la 1 € echivalent, iar raportul complet apare redus cu suma plătită.",
+    flow: ["Formular complet", "Cristal", "14 Grani", "1 € / Grani", "Raport complet redus"],
+    form: "form-standard-v1",
+    preview: "preview-grani-v1",
+  },
 ] as const
 
 type FunnelKey = (typeof FUNNELS)[number]["key"]
+const STANDARD_FUNNEL_KEY: FunnelKey = "standard-v1"
+/** Funnelurile care intră în distribuția de trafic (Standard este ruta implicită, nu un experiment). */
+const TRAFFIC_FUNNELS = FUNNELS.filter((item) => item.key !== STANDARD_FUNNEL_KEY)
 type PreviewStage = "start" | "birth" | "result"
 type PreviewLocale = "ru" | "ro"
 type Device = "desktop" | "mobile"
 type TrafficDraft = Record<FunnelKey, { active: boolean; percentage: number }>
 
 function defaultTraffic(): TrafficDraft {
-  const activeFunnels = new Set([
-    "control",
-    "birthday-first",
-    "career-graph",
-    "life-now",
-    "relationship-needs",
-    "life-timeline",
-    "career-future-v1",
-    "relationship-future-v1",
-    "money-future-v1",
-    "life-stage-now-v1",
-    "hidden-gift-v1",
-    "birthday-express-v1",
-    "day-arcana-v1",
-  ])
+  const activeFunnels = new Set(["control", "date-age-fast-v1"])
 
   return Object.fromEntries(FUNNELS.map((item) => [item.key, {
     active: activeFunnels.has(item.key),
-    percentage: item.key === "control" ? 10 : activeFunnels.has(item.key) ? 9 : 0,
+    percentage: activeFunnels.has(item.key) ? 50 : 0,
   }])) as TrafficDraft
 }
 
@@ -389,8 +432,9 @@ export function ExperimentsAdminClient() {
   const row = report?.form.find((item) => item.id === funnel.form)
   const baseUrl = links?.funnel?.[funnel.key]
   const previewUrl = useMemo(() => localizedUrl(baseUrl, locale, stage), [baseUrl, locale, stage])
-  const trafficTotal = FUNNELS.reduce((sum, item) => sum + (traffic[item.key].active ? traffic[item.key].percentage : 0), 0)
-  const activeCount = FUNNELS.filter((item) => traffic[item.key].active).length
+  const isStandard = selected === STANDARD_FUNNEL_KEY
+  const trafficTotal = TRAFFIC_FUNNELS.reduce((sum, item) => sum + (traffic[item.key].active ? traffic[item.key].percentage : 0), 0)
+  const activeCount = TRAFFIC_FUNNELS.filter((item) => traffic[item.key].active).length
 
   async function load(pw = password) {
     setLoading(true)
@@ -446,7 +490,7 @@ export function ExperimentsAdminClient() {
   }
 
   function toggleFunnel(key: FunnelKey) {
-    if (key === "control") return
+    if (key === "control" || key === STANDARD_FUNNEL_KEY) return
     setTrafficMessage("")
     setTrafficError("")
     setTraffic((current) => {
@@ -456,11 +500,11 @@ export function ExperimentsAdminClient() {
   }
 
   function distributeEvenly() {
-    const active = FUNNELS.filter((item) => traffic[item.key].active)
+    const active = TRAFFIC_FUNNELS.filter((item) => traffic[item.key].active)
     const base = Math.floor(100 / active.length)
     let remainder = 100 - base * active.length
     setTraffic(Object.fromEntries(FUNNELS.map((item) => {
-      if (!traffic[item.key].active) return [item.key, { active: false, percentage: 0 }]
+      if (!traffic[item.key].active || item.key === STANDARD_FUNNEL_KEY) return [item.key, { active: false, percentage: 0 }]
       const percentage = base + (remainder > 0 ? 1 : 0)
       remainder = Math.max(0, remainder - 1)
       return [item.key, { active: true, percentage }]
@@ -473,7 +517,7 @@ export function ExperimentsAdminClient() {
     setSavingTraffic(true)
     setTrafficMessage("")
     setTrafficError("")
-    const result = await saveFunnelTraffic(password, FUNNELS.map((item) => ({
+    const result = await saveFunnelTraffic(password, TRAFFIC_FUNNELS.map((item) => ({
       key: item.key,
       active: traffic[item.key].active,
       percentage: traffic[item.key].active ? traffic[item.key].percentage : 0,
@@ -560,7 +604,9 @@ export function ExperimentsAdminClient() {
                 <button key={item.key} type="button" onClick={() => void selectFunnel(item.key)} className={`rounded-xl border p-3 text-left transition ${active ? "border-primary/45 bg-primary/10" : "border-transparent bg-background/25 hover:border-border hover:bg-muted/50"}`}>
                   <div className="flex items-center justify-between gap-2">
                     <span className={`font-mono text-xs ${active ? "text-primary" : "text-muted-foreground"}`}>0{index + 1}</span>
-                    <span className={`rounded-full px-2 py-0.5 text-[10px] ${traffic[item.key].active ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>{traffic[item.key].active ? `${traffic[item.key].percentage}% Public` : "Privat"}</span>
+                    {item.key === STANDARD_FUNNEL_KEY
+                      ? <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] text-primary">Implicit</span>
+                      : <span className={`rounded-full px-2 py-0.5 text-[10px] ${traffic[item.key].active ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>{traffic[item.key].active ? `${traffic[item.key].percentage}% Public` : "Privat"}</span>}
                   </div>
                   <p className="mt-2 font-semibold text-foreground">{item.label}</p>
                   <p className="mt-1 text-xs leading-5 text-muted-foreground">{item.summary}</p>
@@ -582,6 +628,12 @@ export function ExperimentsAdminClient() {
             {baseUrl && <a href={localizedUrl(baseUrl, locale, "start")} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-foreground transition hover:bg-muted"><ExternalLink className="size-4" />Deschide separat</a>}
           </div>
 
+          {isStandard ? (
+            <div className="my-4 rounded-xl border border-primary/30 bg-primary/5 p-4">
+              <p className="text-sm font-medium text-foreground">Ruta implicită — nu intră în distribuția experimentelor</p>
+              <p className="mt-1 text-xs leading-5 text-muted-foreground">Primesc acest funnel toți vizitatorii care ajung pe /numerologie fără marker de promovare (utm_*, fbclid, gclid, ttclid, entry=, src=). Linkurile de promovare intră în distribuția de mai sus. Statisticile de mai jos sunt reale.</p>
+            </div>
+          ) : (
           <div className="my-4 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-background/35 p-4">
             <div>
               <p className="text-sm font-medium text-foreground">Stare în traficul public</p>
@@ -601,6 +653,7 @@ export function ExperimentsAdminClient() {
               <span className={`min-w-12 text-sm font-medium ${traffic[selected].active ? "text-primary" : "text-muted-foreground"}`}>{traffic[selected].active ? "Activ" : "Privat"}</span>
             </div>
           </div>
+          )}
 
           <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
             <div className="flex rounded-lg border border-border bg-background/35 p-1">
