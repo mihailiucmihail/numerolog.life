@@ -38,6 +38,13 @@ function readPreviewOverride(): { form: string; preview: string } | null {
   return { form: form as string, preview: preview as string }
 }
 
+export interface InitialExperimentAssignment {
+  visitorId: string
+  form: string
+  preview: string
+  previewMode?: boolean
+}
+
 export interface ExperimentContext {
   visitorId: string
   form: string
@@ -50,12 +57,19 @@ export interface ExperimentContext {
   track: (input: ExperimentEventInput) => void
 }
 
-export function useExperiment(entry?: string | null): ExperimentContext {
-  const override = useMemo(readPreviewOverride, [])
+export function useExperiment(
+  entry?: string | null,
+  initialAssignment?: InitialExperimentAssignment,
+): ExperimentContext {
+  const override = useMemo(
+    () => initialAssignment ? null : readPreviewOverride(),
+    [initialAssignment],
+  )
   const assignment = useMemo(() => {
+    if (initialAssignment) return initialAssignment
     const base = readCookieAssignment()
     return override ? { ...base, form: override.form, preview: override.preview } : base
-  }, [override])
+  }, [initialAssignment, override])
   // Evităm dublurile în aceeași sesiune de pagină, înainte să ajungă la server
   // (deduplicarea finală rămâne în DB, pe `dedup_key`).
   const sent = useRef<Set<string>>(new Set())
@@ -74,7 +88,7 @@ export function useExperiment(entry?: string | null): ExperimentContext {
 
   return {
     ...assignment,
-    previewMode: Boolean(override),
+    previewMode: initialAssignment?.previewMode ?? Boolean(override),
     formMotion: motionLevel(assignment.form),
     previewMotion: motionLevel(assignment.preview),
     track,
@@ -82,8 +96,11 @@ export function useExperiment(entry?: string | null): ExperimentContext {
 }
 
 /** Marchează prima afișare a paginii de intrare. */
-export function useLandingView(entry?: string | null): ExperimentContext {
-  const ctx = useExperiment(entry)
+export function useLandingView(
+  entry?: string | null,
+  initialAssignment?: InitialExperimentAssignment,
+): ExperimentContext {
+  const ctx = useExperiment(entry, initialAssignment)
   useEffect(() => {
     ctx.track({ event: 'landing_view' })
     ctx.track({ event: 'form_impression', meta: { motion: ctx.formMotion } })
