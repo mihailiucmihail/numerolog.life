@@ -14,19 +14,19 @@ const ARCANA = {
 
 const COPY = {
   ro: {
-    label: 'Prima ta cheie', title: 'Descoperă gratuit Arcana zilei de naștere',
-    body: 'Este primul reper al Cristalului. Pentru harta completă, calculul folosește și numele tău.',
-    date: 'Data nașterii', reveal: 'Arată-mi Arcana', result: 'Arcana zilei tale',
-    meaning: 'Ea dă tonul energiei cu care intri în experiențele importante. Este doar începutul, nu întregul tău Cristal.',
-    continue: 'Continuă cu harta completă', reset: 'Alege altă dată', price: 'Raport complet',
+    label: 'Prima cheie din Cristal', title: 'Începe gratuit Cristalul tău',
+    body: 'Data nașterii dezvăluie prima Arcană. Apoi, numele tău deschide harta completă cu toate cele 22 de poziții.',
+    date: 'Data nașterii', reveal: 'Dezvăluie prima cheie', result: 'Prima cheie din Cristalul tău',
+    meaning: 'Această Arcană dă tonul energiei cu care intri în experiențele importante. Este prima piesă din harta ta completă.',
+    continue: 'Deschide Cristalul complet', reset: 'Alege altă dată', price: 'Cristalul complet',
     note: 'plată unică · fără abonament', privacy: 'Data este folosită numai pentru acest calcul.',
   },
   ru: {
-    label: 'Твой первый ключ', title: 'Узнай бесплатно Аркан дня рождения',
-    body: 'Это первая точка Кристалла. Для полной карты расчёт использует также твоё имя.',
-    date: 'Дата рождения', reveal: 'Показать мой Аркан', result: 'Аркан твоего дня',
-    meaning: 'Он задаёт тон энергии, с которой ты входишь в важные события. Это только начало, а не весь твой Кристалл.',
-    continue: 'Продолжить к полной карте', reset: 'Выбрать другую дату', price: 'Полный разбор',
+    label: 'Первый ключ Кристалла', title: 'Начни свой Кристалл бесплатно',
+    body: 'Дата рождения раскрывает первый Аркан. Затем имя открывает полную карту со всеми 22 позициями.',
+    date: 'Дата рождения', reveal: 'Раскрыть первый ключ', result: 'Первый ключ твоего Кристалла',
+    meaning: 'Этот Аркан задаёт тон энергии, с которой ты входишь в важные события. Это первая часть твоей полной карты.',
+    continue: 'Открыть полный Кристалл', reset: 'Выбрать другую дату', price: 'Полный Кристалл',
     note: 'один платёж · без подписки', privacy: 'Дата используется только для этого расчёта.',
   },
 }
