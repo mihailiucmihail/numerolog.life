@@ -195,9 +195,23 @@ type Device = "desktop" | "mobile"
 type TrafficDraft = Record<FunnelKey, { active: boolean; percentage: number }>
 
 function defaultTraffic(): TrafficDraft {
+  const activeFunnels = new Set([
+    "control",
+    "birthday-first",
+    "career-graph",
+    "life-now",
+    "relationship-needs",
+    "life-timeline",
+    "career-future-v1",
+    "relationship-future-v1",
+    "money-future-v1",
+    "life-stage-now-v1",
+    "hidden-gift-v1",
+  ])
+
   return Object.fromEntries(FUNNELS.map((item) => [item.key, {
-    active: item.key === "life-stage-now-v1" || item.key === "hidden-gift-v1",
-    percentage: item.key === "life-stage-now-v1" || item.key === "hidden-gift-v1" ? 50 : 0,
+    active: activeFunnels.has(item.key),
+    percentage: item.key === "control" ? 10 : activeFunnels.has(item.key) ? 9 : 0,
   }])) as TrafficDraft
 }
 
