@@ -3,6 +3,7 @@ import { ArrowRight, BookOpen, Check, CreditCard, Fingerprint, Layers3, LockKeyh
 import { Link } from '@/i18n/navigation'
 import { Footer } from '@/components/footer'
 import { HomePreviewArcana, HomePreviewPrice } from '@/components/home-preview-arcana'
+import { StarField } from '@/components/star-field'
 
 type Locale = 'ro' | 'ru'
 
@@ -130,6 +131,7 @@ export function HomePreviewPremium({ locale }: { locale: Locale }) {
   const anchors = ['metoda', 'raport', 'daria']
   return (
     <main className="relative min-h-screen overflow-hidden bg-card text-foreground">
+      <StarField />
       <NumerologyField />
       <header className="fixed inset-x-0 top-0 z-50 border-b border-primary/10 bg-card/85 backdrop-blur-xl"><nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8" aria-label={locale === 'ro' ? 'Navigație principală' : 'Основная навигация'}><Link href="/" className="font-serif text-xl tracking-[0.08em]">NUMEROLOG<span className="text-primary">.life</span></Link><div className="hidden items-center gap-7 md:flex">{c.nav.map((label, index) => <a key={label} href={`#${anchors[index]}`} className="text-sm text-muted-foreground transition-colors hover:text-foreground">{label}</a>)}</div><Link href="/numerologie?entry=birthday" className="rounded-full border border-primary/35 px-4 py-2 text-sm text-primary transition-colors hover:bg-primary/10">{locale === 'ro' ? 'Începe calculul' : 'Начать расчёт'}</Link></nav></header>
 
