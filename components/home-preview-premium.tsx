@@ -1,224 +1,159 @@
-import Image from "next/image"
-import { ArrowRight, Check, CreditCard, Fingerprint, Infinity, LockKeyhole, Orbit, Sparkles } from "lucide-react"
-import { Link } from "@/i18n/navigation"
-import { Footer } from "@/components/footer"
-import { Navbar } from "@/components/navbar"
-import { StarField } from "@/components/star-field"
+import Image from 'next/image'
+import { ArrowRight, BookOpen, Check, CreditCard, Fingerprint, Layers3, LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react'
+import { Link } from '@/i18n/navigation'
+import { Footer } from '@/components/footer'
+import { HomePreviewArcana, HomePreviewPrice } from '@/components/home-preview-arcana'
 
-type Locale = "ro" | "ru"
+type Locale = 'ro' | 'ru'
 
 type Copy = {
-  eyebrow: string
-  title: string
-  intro: string
-  cta: string
-  ctaNote: string
-  trust: string[]
-  mechanismEyebrow: string
-  mechanismTitle: string
-  mechanismIntro: string
-  steps: { title: string; text: string }[]
-  dimensionsEyebrow: string
-  dimensionsTitle: string
-  dimensions: { value: string; title: string; text: string }[]
-  reportEyebrow: string
-  reportTitle: string
-  reportText: string
-  reportPoints: string[]
-  authorEyebrow: string
-  authorTitle: string
-  authorText: string
-  authorCta: string
-  processTitle: string
-  process: { title: string; text: string }[]
-  finalTitle: string
-  finalText: string
-  graniEyebrow: string
-  graniTitle: string
-  graniText: string
-  graniCta: string
-  faqTitle: string
-  faqs: { q: string; a: string }[]
+  nav: string[]; eyebrow: string; title: string; intro: string; cta: string; ctaNote: string; trust: string[]
+  mechanismEyebrow: string; mechanismTitle: string; mechanismIntro: string; steps: { label: string; title: string; text: string }[]
+  questionsTitle: string; questions: string[]; dimensionsEyebrow: string; dimensionsTitle: string; dimensions: { label: string; title: string; text: string }[]
+  reportEyebrow: string; reportTitle: string; reportText: string; reportPoints: string[]; reportCaption: string
+  methodTitle: string; methodText: string; methodFacts: { title: string; text: string }[]
+  authorEyebrow: string; authorTitle: string; authorText: string; authorQuote: string; authorCta: string
+  offerEyebrow: string; offerTitle: string; offerText: string; priceNote: string
+  graniEyebrow: string; graniTitle: string; graniText: string; graniCta: string
+  faqTitle: string; faqs: { q: string; a: string }[]
 }
 
 const COPY: Record<Locale, Copy> = {
   ro: {
-    eyebrow: "Observator numerologic personal",
-    title: "Destinul tău are o arhitectură. Descoperă-i forma.",
-    intro: "Cristalul Destinului transformă data nașterii și numele într-o hartă personală a Arcanelor, etapelor și alegerilor care îți modelează viața.",
-    cta: "Construiește Cristalul meu",
-    ctaNote: "Calcul personal · rezultat imediat · acces permanent",
-    trust: ["Sistem cu 22 de Arcane", "Calcul bazat pe datele tale", "Plată securizată prin Stripe", "Raport disponibil permanent"],
-    mechanismEyebrow: "Din date în semnificație",
-    mechanismTitle: "Cum se formează Cristalul tău",
-    mechanismIntro: "Nu primești un text generic. Fiecare poziție este construită din datele introduse și ocupă un loc distinct în harta personală.",
+    nav: ['Metodă', 'În raport', 'Despre Daria'], eyebrow: 'Observator numerologic personal',
+    title: 'Destinul tău are o arhitectură. Descoperă-i forma.',
+    intro: 'Cristalul Destinului transformă data nașterii și numele într-o hartă personală a Arcanelor, etapelor și tiparelor care îți modelează viața.',
+    cta: 'Vezi gratuit prima mea Arcană', ctaNote: 'Începi doar cu data nașterii · fără card',
+    trust: ['Calcul din datele tale', 'Sistem cu 22 de Arcane', 'Raport disponibil imediat', 'Plată securizată prin Stripe'],
+    mechanismEyebrow: 'Un calcul, nu un text ales la întâmplare', mechanismTitle: 'Cum se formează Cristalul tău',
+    mechanismIntro: 'Fiecare valoare pornește din numele și data ta. Rezultatele sunt așezate în poziții distincte, apoi interpretate împreună ca o singură hartă.',
     steps: [
-      { title: "Data nașterii", text: "Definește ritmurile și etapele fundamentale." },
-      { title: "Numele complet", text: "Completează structura identității personale." },
-      { title: "Arcanele", text: "Cele 22 de energii sunt așezate în pozițiile lor." },
-      { title: "Ciclurile", text: "Harta arată prezentul și succesiunea etapelor." },
-      { title: "Raportul", text: "Primești interpretarea completă, într-un singur loc." },
+      { label: 'Intrare', title: 'Data și numele', text: 'Data definește ritmurile vieții, iar numele adaugă structura identității.' },
+      { label: 'Calcul', title: 'Pozițiile Cristalului', text: 'Valorile sunt reduse în sistemul celor 22 de Arcane și așezate în hartă.' },
+      { label: 'Context', title: 'Legăturile dintre valori', text: 'O Arcană nu este citită izolat, ci în relație cu locul și axele ei.' },
+      { label: 'Sens', title: 'Raportul personal', text: 'Primești capitole clare despre resurse, tipare, relații și perioade.' },
     ],
-    dimensionsEyebrow: "O singură hartă, cinci perspective",
-    dimensionsTitle: "Ce îți arată Cristalul",
+    questionsTitle: 'Poate ai ajuns aici întrebându-te…', questions: ['De ce repet aceleași tipare?', 'Ce îmi consumă energia în această etapă?', 'Unde este direcția mea firească?', 'Ce se schimbă în următorul ciclu?'],
+    dimensionsEyebrow: 'Cinci axe ale aceleiași povești', dimensionsTitle: 'Nu ești un singur număr',
     dimensions: [
-      { value: "I", title: "Identitate", text: "Resursele tale interioare și felul în care te exprimi." },
-      { value: "VI", title: "Relații", text: "Tiparele de apropiere, nevoile și dinamica legăturilor." },
-      { value: "X", title: "Destin", text: "Direcțiile recurente și lecțiile care cer atenție." },
-      { value: "XV", title: "Bani și carieră", text: "Raportarea la valoare, responsabilitate și realizare." },
-      { value: "XXI", title: "Ciclurile vieții", text: "Poziția actuală și etapele care îi urmează." },
+      { label: 'Axa sinelui', title: 'Identitate', text: 'Resursele interioare, felul în care te exprimi și ce te readuce la centru.' },
+      { label: 'Axa legăturilor', title: 'Relații', text: 'Nevoi de apropiere, limite și scenariile care tind să reapară.' },
+      { label: 'Axa drumului', title: 'Direcție', text: 'Alegerile recurente și lecțiile care îți cer atenția.' },
+      { label: 'Axa realizării', title: 'Bani și vocație', text: 'Relația cu valoarea, responsabilitatea și forma potrivită de contribuție.' },
+      { label: 'Linia timpului', title: 'Ciclurile vieții', text: 'Poziția perioadei actuale și succesiunea etapelor personale.' },
     ],
-    reportEyebrow: "Nu doar un calcul",
-    reportTitle: "O hartă pe care o poți consulta în timp",
-    reportText: "Raportul ordonează informația pe capitole clare și leagă fiecare interpretare de poziția ei din Cristal.",
-    reportPoints: ["Cristalul personal complet", "Interpretarea Arcanelor", "Relații, bani și vocație", "Cicluri și perioade personale", "Link permanent către raport"],
-    authorEyebrow: "Prezență umană",
-    authorTitle: "Numerologia explicată cu claritate",
-    authorText: "Daria Mihailiuc este fondatoarea NUMEROLOG.life. În materialele sale, apropie simbolistica numerologică de întrebările reale despre identitate, relații și direcție personală.",
-    authorCta: "Descoperă universul Dariei",
-    processTitle: "Trei pași până la harta ta",
-    process: [
-      { title: "Introduci datele", text: "Completezi data nașterii și numele folosit în calcul." },
-      { title: "Vezi prima structură", text: "Cristalul este construit și îți arată primele repere personale." },
-      { title: "Deschizi raportul", text: "După plată primești imediat analiza completă și linkul permanent." },
-    ],
-    finalTitle: "Uneori, claritatea începe cu un singur număr.",
-    finalText: "Construiește-ți Cristalul și privește-ți povestea dintr-o perspectivă nouă.",
-    graniEyebrow: "Explorare punctuală",
-    graniTitle: "Preferi să începi cu o singură întrebare?",
-    graniText: "Grani îți permite să explorezi separat o dimensiune precum profesia, relațiile, finanțele sau vocația.",
-    graniCta: "Explorează Grani",
-    faqTitle: "Întrebări firești înainte de început",
+    reportEyebrow: 'Dovada produsului', reportTitle: 'Vezi structura înainte să alegi raportul complet',
+    reportText: 'Calculatorul îți arată gratuit primul strat. Raportul complet leagă toate pozițiile într-o lectură coerentă, pe care o poți consulta oricând.',
+    reportPoints: ['Cristalul personal complet', 'Interpretarea pozițiilor și Arcanelor', 'Relații, bani, vocație și resurse', 'Cicluri și perioade personale', 'Link permanent către raport'],
+    reportCaption: 'Exemplu din experiența reală a Cristalului Destinului',
+    methodTitle: 'Ce este calcul și ce este interpretare',
+    methodText: 'Numele și data sunt transformate în valori numerice, apoi reduse în sistemul celor 22 de Arcane. Pozițiile și relațiile dintre ele sunt calculate; textul explică simbolic rezultatul.',
+    methodFacts: [{ title: 'Nu cere ora nașterii', text: 'Acesta este un calcul numerologic, nu o hartă natală astrologică.' }, { title: 'Rezultatul este personal', text: 'Harta pornește de la combinația exactă dintre data și numele introduse.' }, { title: 'Un instrument de reflecție', text: 'Raportul oferă o perspectivă simbolică pentru autocunoaștere și claritate.' }],
+    authorEyebrow: 'Omul din spatele experienței', authorTitle: 'Complexitatea explicată într-un limbaj clar',
+    authorText: 'Daria Mihailiuc a creat NUMEROLOG.life pentru ca o hartă numerologică amplă să poată fi înțeleasă fără limbaj greu și fără interpretări fragmentate.',
+    authorQuote: 'O hartă bună nu îți spune cine trebuie să fii. Te ajută să observi mai clar ceea ce trăiești deja.', authorCta: 'Descoperă universul Dariei',
+    offerEyebrow: 'Raportul complet', offerTitle: 'Întregul tău Cristal, într-un singur loc',
+    offerText: 'Primești harta completă, interpretarea pozițiilor, relațiile dintre Arcane și capitole dedicate identității, relațiilor, banilor, vocației și ciclurilor.',
+    priceNote: 'Preț adaptat țării tale · plată unică · fără abonament',
+    graniEyebrow: 'Explorare punctuală', graniTitle: 'Preferi să începi cu o singură întrebare?',
+    graniText: 'Grani îți permite să explorezi separat profesia, relațiile, finanțele sau vocația.', graniCta: 'Explorează Grani',
+    faqTitle: 'Tot ce e firesc să întrebi înainte',
     faqs: [
-      { q: "Este un rezultat personal?", a: "Da. Structura este calculată din data nașterii și numele introduse de tine." },
-      { q: "Când primesc raportul?", a: "Raportul complet devine disponibil imediat după confirmarea plății." },
-      { q: "Pot reveni la el?", a: "Da. Primești un link permanent către raportul tău personal." },
-      { q: "Ce date sunt necesare?", a: "Calculatorul folosește numele complet, data nașterii și alfabetul în care este scris numele." },
+      { q: 'Este o plată unică?', a: 'Da. Nu există abonament sau taxă recurentă. Prețul este afișat înainte de checkout.' },
+      { q: 'Ce primesc gratuit?', a: 'Poți vedea primul strat al calculului înainte de a decide dacă deschizi raportul complet.' },
+      { q: 'Am nevoie de ora nașterii?', a: 'Nu. Cristalul folosește data nașterii, numele complet și alfabetul în care este scris numele.' },
+      { q: 'Când primesc raportul?', a: 'Imediat după confirmarea plății. Primești și un link permanent pentru a reveni la el.' },
+      { q: 'Pot face un calcul pentru altă persoană?', a: 'Da, dacă introduci numele și data acelei persoane corect și ai acordul ei pentru folosirea datelor.' },
+      { q: 'Este numerologie sau astrologie?', a: 'Cristalul este un instrument numerologic construit pe sistemul celor 22 de Arcane. Nu folosește ora sau locul nașterii.' },
+      { q: 'Cum sunt protejate datele și plata?', a: 'Datele sunt folosite pentru calcul și livrarea raportului, iar plata este procesată securizat prin Stripe.' },
+      { q: 'Pot reveni mai târziu?', a: 'Da. Raportul complet rămâne disponibil prin linkul tău permanent.' },
     ],
   },
   ru: {
-    eyebrow: "Персональная нумерологическая обсерватория",
-    title: "У твоей судьбы есть архитектура. Увидь её форму.",
-    intro: "«Кристалл судьбы» превращает дату рождения и имя в личную карту Арканов, жизненных этапов и выборов, которые формируют твой путь.",
-    cta: "Построить мой Кристалл",
-    ctaNote: "Персональный расчёт · результат сразу · постоянный доступ",
-    trust: ["Система 22 Арканов", "Расчёт по твоим данным", "Безопасная оплата через Stripe", "Постоянный доступ к разбору"],
-    mechanismEyebrow: "От данных к смыслу",
-    mechanismTitle: "Как создаётся твой Кристалл",
-    mechanismIntro: "Это не универсальный текст. Каждая позиция рассчитывается по введённым данным и занимает своё место в личной карте.",
+    nav: ['Метод', 'Что внутри', 'О Дарье'], eyebrow: 'Персональная нумерологическая обсерватория',
+    title: 'У твоей судьбы есть архитектура. Увидь её форму.',
+    intro: '«Кристалл судьбы» превращает дату рождения и имя в личную карту Арканов, этапов и сценариев, которые формируют твою жизнь.',
+    cta: 'Бесплатно узнать мой первый Аркан', ctaNote: 'Для начала нужна только дата рождения · без карты',
+    trust: ['Расчёт по твоим данным', 'Система 22 Арканов', 'Результат доступен сразу', 'Безопасная оплата через Stripe'],
+    mechanismEyebrow: 'Расчёт, а не случайный текст', mechanismTitle: 'Как создаётся твой Кристалл',
+    mechanismIntro: 'Каждое значение строится по твоему имени и дате. Результаты занимают определённые позиции, а затем читаются вместе как единая карта.',
     steps: [
-      { title: "Дата рождения", text: "Определяет основные ритмы и жизненные этапы." },
-      { title: "Полное имя", text: "Дополняет структуру личной идентичности." },
-      { title: "Арканы", text: "22 энергии занимают свои позиции в карте." },
-      { title: "Циклы", text: "Карта показывает настоящее и последовательность этапов." },
-      { title: "Разбор", text: "Полная интерпретация собрана в одном месте." },
+      { label: 'Входные данные', title: 'Дата и имя', text: 'Дата задаёт жизненные ритмы, а имя добавляет структуру личности.' },
+      { label: 'Расчёт', title: 'Позиции Кристалла', text: 'Значения приводятся к системе 22 Арканов и занимают места в карте.' },
+      { label: 'Контекст', title: 'Связи значений', text: 'Аркан читается не отдельно, а через его позицию и связи с другими точками.' },
+      { label: 'Смысл', title: 'Личный разбор', text: 'Ты получаешь ясные главы о ресурсах, сценариях, отношениях и периодах.' },
     ],
-    dimensionsEyebrow: "Одна карта, пять перспектив",
-    dimensionsTitle: "Что показывает Кристалл",
+    questionsTitle: 'Возможно, ты пришёл с вопросом…', questions: ['Почему повторяются одни и те же сценарии?', 'Куда уходит моя энергия сейчас?', 'В каком направлении мне легче реализоваться?', 'Что меняется в следующем цикле?'],
+    dimensionsEyebrow: 'Пять осей одной истории', dimensionsTitle: 'Ты — больше, чем одно число',
     dimensions: [
-      { value: "I", title: "Личность", text: "Внутренние ресурсы и способ проявлять себя." },
-      { value: "VI", title: "Отношения", text: "Потребности, близость и повторяющиеся сценарии." },
-      { value: "X", title: "Судьба", text: "Основные направления и уроки, требующие внимания." },
-      { value: "XV", title: "Деньги и карьера", text: "Отношение к ценности, ответственности и реализации." },
-      { value: "XXI", title: "Циклы жизни", text: "Твоя текущая позиция и следующие этапы." },
+      { label: 'Ось личности', title: 'Идентичность', text: 'Внутренние ресурсы, способ проявляться и возвращаться к своему центру.' },
+      { label: 'Ось связей', title: 'Отношения', text: 'Потребности в близости, границы и повторяющиеся сценарии.' },
+      { label: 'Ось пути', title: 'Направление', text: 'Повторяющиеся выборы и уроки, которые требуют внимания.' },
+      { label: 'Ось реализации', title: 'Деньги и призвание', text: 'Отношение к ценности, ответственности и подходящей форме вклада.' },
+      { label: 'Линия времени', title: 'Циклы жизни', text: 'Точка текущего периода и последовательность личных этапов.' },
     ],
-    reportEyebrow: "Больше, чем расчёт",
-    reportTitle: "Карта, к которой можно возвращаться",
-    reportText: "Разбор разделён на понятные главы и связывает каждое значение с его позицией в Кристалле.",
-    reportPoints: ["Полный личный Кристалл", "Толкование Арканов", "Отношения, деньги и призвание", "Личные циклы и периоды", "Постоянная ссылка на разбор"],
-    authorEyebrow: "Живой проводник",
-    authorTitle: "Нумерология, объяснённая ясно",
-    authorText: "Дарья Михайлюк — основательница NUMEROLOG.life. В своих материалах она связывает нумерологическую символику с реальными вопросами о личности, отношениях и направлении жизни.",
-    authorCta: "Открыть мир Дарьи",
-    processTitle: "Три шага до твоей карты",
-    process: [
-      { title: "Вводишь данные", text: "Указываешь дату рождения и имя для расчёта." },
-      { title: "Видишь структуру", text: "Кристалл строится и показывает первые личные ориентиры." },
-      { title: "Открываешь разбор", text: "После оплаты сразу получаешь полный анализ и постоянную ссылку." },
-    ],
-    finalTitle: "Иногда ясность начинается с одного числа.",
-    finalText: "Построй свой Кристалл и посмотри на собственную историю с новой точки зрения.",
-    graniEyebrow: "Точечное исследование",
-    graniTitle: "Хочешь начать с одного вопроса?",
-    graniText: "«Грани» позволяют отдельно исследовать профессию, отношения, финансы или призвание.",
-    graniCta: "Исследовать Грани",
-    faqTitle: "Естественные вопросы перед началом",
+    reportEyebrow: 'Доказательство продукта', reportTitle: 'Увидь структуру до выбора полного разбора',
+    reportText: 'Калькулятор бесплатно показывает первый слой. Полный разбор соединяет позиции в понятную картину, к которой можно возвращаться.',
+    reportPoints: ['Полный личный Кристалл', 'Толкование позиций и Арканов', 'Отношения, деньги, призвание и ресурсы', 'Личные циклы и периоды', 'Постоянная ссылка на разбор'],
+    reportCaption: 'Фрагмент реального опыта «Кристалла судьбы»',
+    methodTitle: 'Где расчёт, а где интерпретация',
+    methodText: 'Имя и дата преобразуются в числовые значения и приводятся к системе 22 Арканов. Позиции и связи рассчитываются, а текст символически объясняет результат.',
+    methodFacts: [{ title: 'Время рождения не нужно', text: 'Это нумерологический расчёт, а не астрологическая натальная карта.' }, { title: 'Результат персональный', text: 'Карта строится по точному сочетанию введённых имени и даты.' }, { title: 'Инструмент для рефлексии', text: 'Разбор предлагает символическую перспективу для самопознания и ясности.' }],
+    authorEyebrow: 'Человек за этой системой', authorTitle: 'Сложное — ясным языком',
+    authorText: 'Дарья Михайлюк создала NUMEROLOG.life, чтобы объёмную нумерологическую карту можно было понять без тяжёлого языка и разрозненных трактовок.',
+    authorQuote: 'Хорошая карта не говорит, кем тебе нужно быть. Она помогает яснее увидеть то, что уже происходит в твоей жизни.', authorCta: 'Открыть мир Дарьи',
+    offerEyebrow: 'Полный разбор', offerTitle: 'Весь твой Кристалл в одном месте',
+    offerText: 'Ты получаешь полную карту, толкование позиций, связи Арканов и главы о личности, отношениях, деньгах, призвании и жизненных циклах.',
+    priceNote: 'Цена для твоей страны · один платёж · без подписки',
+    graniEyebrow: 'Точечное исследование', graniTitle: 'Хочешь начать с одного вопроса?',
+    graniText: '«Грани» позволяют отдельно исследовать профессию, отношения, финансы или призвание.', graniCta: 'Исследовать Грани',
+    faqTitle: 'Всё, что естественно спросить до начала',
     faqs: [
-      { q: "Результат действительно персональный?", a: "Да. Структура рассчитывается по дате рождения и имени, которые ты вводишь." },
-      { q: "Когда я получу разбор?", a: "Полный разбор становится доступен сразу после подтверждения оплаты." },
-      { q: "Можно вернуться к нему позже?", a: "Да. Ты получаешь постоянную ссылку на свой персональный разбор." },
-      { q: "Какие данные нужны?", a: "Калькулятор использует полное имя, дату рождения и алфавит, на котором написано имя." },
+      { q: 'Это один платёж?', a: 'Да. Подписки и повторных списаний нет. Цена показана до перехода к оплате.' },
+      { q: 'Что я увижу бесплатно?', a: 'Ты увидишь первый слой расчёта и сможешь решить, открывать ли полный разбор.' },
+      { q: 'Нужно время рождения?', a: 'Нет. Кристалл использует дату рождения, полное имя и алфавит, на котором оно написано.' },
+      { q: 'Когда я получу разбор?', a: 'Сразу после подтверждения оплаты. Ты также получишь постоянную ссылку.' },
+      { q: 'Можно рассчитать другого человека?', a: 'Да, если правильно указать его имя и дату и иметь согласие на использование этих данных.' },
+      { q: 'Это нумерология или астрология?', a: 'Кристалл — нумерологический инструмент на системе 22 Арканов. Время и место рождения не используются.' },
+      { q: 'Как защищены данные и оплата?', a: 'Данные используются для расчёта и доставки разбора, а платёж безопасно обрабатывает Stripe.' },
+      { q: 'Можно вернуться позже?', a: 'Да. Полный разбор остаётся доступным по твоей постоянной ссылке.' },
     ],
   },
 }
 
-function CrystalArtifact({ locale }: { locale: Locale }) {
-  return (
-    <div className="relative mx-auto flex aspect-square w-full max-w-md items-center justify-center" aria-label={locale === "ro" ? "Reprezentare a Cristalului Destinului" : "Изображение Кристалла судьбы"}>
-      <div className="absolute inset-[13%] rotate-45 border border-primary/35" />
-      <div className="absolute inset-[24%] rotate-45 border border-primary/60" />
-      <div className="absolute inset-[34%] rounded-full border border-primary/50" />
-      <div className="absolute left-1/2 top-[13%] h-[74%] w-px bg-primary/25" />
-      <div className="absolute left-[13%] top-1/2 h-px w-[74%] bg-primary/25" />
-      {["3", "7", "12", "18"].map((number, index) => (
-        <span key={number} className={`absolute flex size-11 items-center justify-center rounded-full border border-primary/45 bg-background font-serif text-xl text-primary shadow-lg ${index === 0 ? "top-[5%]" : index === 1 ? "right-[5%]" : index === 2 ? "bottom-[5%]" : "left-[5%]"}`}>{number}</span>
-      ))}
-      <div className="relative flex size-28 flex-col items-center justify-center rounded-full border border-primary/60 bg-card shadow-2xl">
-        <Orbit className="size-7 text-primary" aria-hidden="true" />
-        <span className="mt-1 font-serif text-2xl text-foreground">10</span>
-        <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{locale === "ro" ? "Arcană" : "Аркан"}</span>
-      </div>
-    </div>
-  )
+function NumerologyField() {
+  return <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true"><div className="absolute inset-0 opacity-[.06] [background-image:linear-gradient(to_right,hsl(var(--primary))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--primary))_1px,transparent_1px)] [background-size:72px_72px]" />{[3, 7, 10, 12, 18, 22].map((number, index) => <span key={number} className="absolute font-serif text-primary/10" style={{ left: `${8 + index * 17}%`, top: `${12 + (index % 3) * 31}%`, fontSize: `${32 + (index % 2) * 18}px` }}>{number}</span>)}</div>
 }
 
 export function HomePreviewPremium({ locale }: { locale: Locale }) {
   const c = COPY[locale]
+  const anchors = ['metoda', 'raport', 'daria']
   return (
     <main className="relative min-h-screen overflow-hidden bg-card text-foreground">
-      <StarField />
-      <Navbar />
-      <section className="relative z-10 flex min-h-[88vh] items-center px-5 pb-20 pt-32 sm:px-8 lg:px-12">
-        <div className="mx-auto grid w-full max-w-7xl items-center gap-14 lg:grid-cols-[1.08fr_.92fr]">
-          <div className="max-w-3xl">
-            <p className="mb-6 text-xs font-medium uppercase tracking-[0.28em] text-primary">{c.eyebrow}</p>
-            <h1 className="text-balance font-serif text-5xl leading-[1.02] sm:text-6xl lg:text-7xl">{c.title}</h1>
-            <p className="mt-7 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">{c.intro}</p>
-            <div className="mt-9 flex flex-col items-start gap-3">
-              <Link href="/numerologie" className="inline-flex items-center gap-3 rounded-full bg-primary px-7 py-4 font-medium text-primary-foreground shadow-xl transition-transform hover:-translate-y-0.5">{c.cta}<ArrowRight className="size-4" /></Link>
-              <p className="text-sm text-muted-foreground">{c.ctaNote}</p>
-            </div>
-          </div>
-          <CrystalArtifact locale={locale} />
-        </div>
-      </section>
+      <NumerologyField />
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-primary/10 bg-card/85 backdrop-blur-xl"><nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8" aria-label={locale === 'ro' ? 'Navigație principală' : 'Основная навигация'}><Link href="/" className="font-serif text-xl tracking-[0.08em]">NUMEROLOG<span className="text-primary">.life</span></Link><div className="hidden items-center gap-7 md:flex">{c.nav.map((label, index) => <a key={label} href={`#${anchors[index]}`} className="text-sm text-muted-foreground transition-colors hover:text-foreground">{label}</a>)}</div><Link href="/numerologie?entry=birthday" className="rounded-full border border-primary/35 px-4 py-2 text-sm text-primary transition-colors hover:bg-primary/10">{locale === 'ro' ? 'Începe calculul' : 'Начать расчёт'}</Link></nav></header>
 
-      <section className="relative z-10 border-y border-primary/20 bg-card/70 px-5 py-6 backdrop-blur-xl">
-        <div className="mx-auto grid max-w-7xl gap-5 sm:grid-cols-2 lg:grid-cols-4">{c.trust.map((item, index) => <div key={item} className="flex items-center gap-3 text-sm text-muted-foreground">{index === 0 ? <Sparkles className="size-4 text-primary" /> : index === 1 ? <Fingerprint className="size-4 text-primary" /> : index === 2 ? <CreditCard className="size-4 text-primary" /> : <LockKeyhole className="size-4 text-primary" />}<span>{item}</span></div>)}</div>
-      </section>
+      <section className="relative z-10 px-5 pb-20 pt-28 sm:px-8 lg:pb-28 lg:pt-36"><div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.08fr_.92fr]"><div><p className="text-xs font-medium uppercase tracking-[0.25em] text-primary">{c.eyebrow}</p><h1 className="mt-6 max-w-4xl text-balance font-serif text-5xl leading-[1.02] sm:text-6xl lg:text-7xl">{c.title}</h1><p className="mt-7 max-w-2xl text-pretty text-base leading-7 text-muted-foreground sm:text-lg">{c.intro}</p><div className="mt-9 flex flex-col items-start gap-3"><a href="#prima-cheie" className="inline-flex min-h-12 items-center gap-3 rounded-full bg-primary px-7 font-medium text-primary-foreground shadow-xl transition-transform hover:-translate-y-0.5">{c.cta}<ArrowRight className="size-4" aria-hidden="true" /></a><p className="text-sm text-muted-foreground">{c.ctaNote}</p></div></div><div id="prima-cheie" className="scroll-mt-24"><HomePreviewArcana locale={locale} /></div></div></section>
 
-      <section className="relative z-10 px-5 py-24 sm:px-8 lg:py-32">
-        <div className="mx-auto max-w-7xl">
-          <div className="max-w-3xl"><p className="text-xs uppercase tracking-[0.25em] text-primary">{c.mechanismEyebrow}</p><h2 className="mt-4 text-balance font-serif text-4xl sm:text-5xl">{c.mechanismTitle}</h2><p className="mt-5 text-pretty leading-relaxed text-muted-foreground">{c.mechanismIntro}</p></div>
-          <div className="mt-14 grid gap-px overflow-hidden rounded-3xl border border-border bg-border md:grid-cols-5">{c.steps.map((step, index) => <article key={step.title} className="bg-card p-6"><span className="font-serif text-3xl text-primary/70">{index + 1}</span><h3 className="mt-8 font-serif text-xl">{step.title}</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">{step.text}</p></article>)}</div>
-        </div>
-      </section>
+      <section className="relative z-10 border-y border-primary/15 bg-background/45 px-5 py-6 backdrop-blur-xl"><div className="mx-auto grid max-w-7xl gap-5 sm:grid-cols-2 lg:grid-cols-4">{c.trust.map((item, index) => <div key={item} className="flex items-center gap-3 text-sm text-muted-foreground">{index === 0 ? <Fingerprint className="size-4 text-primary" /> : index === 1 ? <Sparkles className="size-4 text-primary" /> : index === 2 ? <BookOpen className="size-4 text-primary" /> : <CreditCard className="size-4 text-primary" />}<span>{item}</span></div>)}</div></section>
 
-      <section className="relative z-10 border-y border-border bg-card/35 px-5 py-24 sm:px-8 lg:py-32">
-        <div className="mx-auto max-w-7xl"><p className="text-center text-xs uppercase tracking-[0.25em] text-primary">{c.dimensionsEyebrow}</p><h2 className="mt-4 text-center font-serif text-4xl sm:text-5xl">{c.dimensionsTitle}</h2><div className="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-5">{c.dimensions.map((item) => <article key={item.title} className="rounded-3xl border border-primary/15 bg-background/65 p-6 transition-colors hover:border-primary/40"><span className="font-serif text-3xl text-primary">{item.value}</span><h3 className="mt-10 font-serif text-xl">{item.title}</h3><p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.text}</p></article>)}</div></div>
-      </section>
+      <section id="metoda" className="relative z-10 scroll-mt-20 px-5 py-16 sm:px-8 lg:py-28"><div className="mx-auto max-w-7xl"><div className="grid gap-10 lg:grid-cols-[.8fr_1.2fr]"><div><p className="text-xs uppercase tracking-[0.25em] text-primary">{c.mechanismEyebrow}</p><h2 className="mt-4 text-balance font-serif text-4xl sm:text-5xl">{c.mechanismTitle}</h2><p className="mt-5 text-pretty leading-7 text-muted-foreground">{c.mechanismIntro}</p></div><div className="grid gap-px overflow-hidden rounded-3xl border border-border bg-border sm:grid-cols-2">{c.steps.map((step, index) => <article key={step.title} className="bg-card p-6"><div className="flex items-center justify-between"><span className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">{step.label}</span><span className="font-serif text-2xl text-primary/40">0{index + 1}</span></div><h3 className="mt-9 font-serif text-2xl">{step.title}</h3><p className="mt-3 text-sm leading-6 text-muted-foreground">{step.text}</p></article>)}</div></div></div></section>
 
-      <section className="relative z-10 px-5 py-24 sm:px-8 lg:py-32"><div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2"><div className="relative overflow-hidden rounded-3xl border border-primary/20 bg-card p-4 shadow-2xl"><Image src="/images/email/cristal-offer.png" alt={locale === "ro" ? "Exemplu vizual al raportului Cristalul Destinului" : "Пример отчёта Кристалл судьбы"} width={1200} height={800} className="h-auto w-full rounded-2xl" /></div><div><p className="text-xs uppercase tracking-[0.25em] text-primary">{c.reportEyebrow}</p><h2 className="mt-4 text-balance font-serif text-4xl sm:text-5xl">{c.reportTitle}</h2><p className="mt-5 leading-relaxed text-muted-foreground">{c.reportText}</p><ul className="mt-8 flex flex-col gap-4">{c.reportPoints.map((point) => <li key={point} className="flex items-center gap-3"><span className="flex size-7 items-center justify-center rounded-full border border-primary/30"><Check className="size-4 text-primary" /></span><span>{point}</span></li>)}</ul></div></div></section>
+      <section className="relative z-10 border-y border-border bg-background/35 px-5 py-20 sm:px-8"><div className="mx-auto max-w-7xl"><h2 className="max-w-xl text-balance font-serif text-4xl">{c.questionsTitle}</h2><div className="mt-10 grid gap-3 sm:grid-cols-2">{c.questions.map((question) => <p key={question} className="flex items-center gap-4 rounded-2xl border border-primary/15 bg-card/60 p-5 text-lg"><span className="size-1.5 shrink-0 rounded-full bg-primary" />{question}</p>)}</div></div></section>
 
-      <section className="relative z-10 border-y border-border bg-card/40 px-5 py-24 sm:px-8"><div className="mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-[.65fr_1.35fr]"><div className="relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-[2.5rem] border border-primary/25"><Image src="/images/instagram-daria-profile.jpg" alt="Daria Mihailiuc" fill sizes="380px" className="object-cover" /></div><div><p className="text-xs uppercase tracking-[0.25em] text-primary">{c.authorEyebrow}</p><h2 className="mt-4 text-balance font-serif text-4xl sm:text-5xl">{c.authorTitle}</h2><p className="mt-6 max-w-2xl text-pretty leading-relaxed text-muted-foreground">{c.authorText}</p><a href="https://instagram.com/mihailiucdaria" target="_blank" rel="noopener noreferrer" className="mt-8 inline-flex items-center gap-2 border-b border-primary/50 pb-1 text-sm text-primary">{c.authorCta}<ArrowRight className="size-4" /></a></div></div></section>
+      <section className="relative z-10 px-5 py-16 sm:px-8 lg:py-28"><div className="mx-auto max-w-7xl"><p className="text-xs uppercase tracking-[0.25em] text-primary">{c.dimensionsEyebrow}</p><h2 className="mt-4 font-serif text-4xl sm:text-5xl">{c.dimensionsTitle}</h2><div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-6">{c.dimensions.map((item, index) => <article key={item.title} className={`rounded-3xl border border-primary/15 bg-background/55 p-6 ${index < 2 ? 'lg:col-span-3' : 'lg:col-span-2'}`}><span className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">{item.label}</span><h3 className="mt-8 font-serif text-2xl">{item.title}</h3><p className="mt-3 max-w-md text-sm leading-6 text-muted-foreground">{item.text}</p></article>)}</div></div></section>
 
-      <section className="relative z-10 px-5 py-24 sm:px-8 lg:py-32"><div className="mx-auto max-w-7xl"><h2 className="text-center font-serif text-4xl sm:text-5xl">{c.processTitle}</h2><div className="mt-14 grid gap-5 md:grid-cols-3">{c.process.map((step, index) => <article key={step.title} className="rounded-3xl border border-border bg-card/60 p-7"><span className="text-xs uppercase tracking-widest text-primary">0{index + 1}</span><h3 className="mt-8 font-serif text-2xl">{step.title}</h3><p className="mt-4 leading-relaxed text-muted-foreground">{step.text}</p></article>)}</div></div></section>
+      <section id="raport" className="relative z-10 scroll-mt-20 border-y border-border bg-background/35 px-5 py-16 sm:px-8 lg:py-28"><div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.1fr_.9fr]"><figure><div className="overflow-hidden rounded-3xl border border-primary/20 bg-card p-3 shadow-2xl"><video className="aspect-[4/3] w-full rounded-2xl bg-background object-cover" controls muted playsInline preload="metadata" poster="/videos/cristalul-premium-poster.jpg"><source src="/videos/razbor-preview.mp4" type="video/mp4" /></video></div><figcaption className="mt-3 text-center text-xs text-muted-foreground">{c.reportCaption}</figcaption></figure><div><p className="text-xs uppercase tracking-[0.25em] text-primary">{c.reportEyebrow}</p><h2 className="mt-4 text-balance font-serif text-4xl sm:text-5xl">{c.reportTitle}</h2><p className="mt-5 leading-7 text-muted-foreground">{c.reportText}</p><ul className="mt-8 flex flex-col gap-4">{c.reportPoints.map((point) => <li key={point} className="flex items-center gap-3"><span className="flex size-7 items-center justify-center rounded-full border border-primary/30"><Check className="size-4 text-primary" /></span><span>{point}</span></li>)}</ul></div></div></section>
 
-      <section className="relative z-10 px-5 pb-28 sm:px-8"><div className="mx-auto max-w-5xl rounded-[2.5rem] border border-primary/25 bg-card px-6 py-16 text-center shadow-2xl sm:px-14"><Infinity className="mx-auto size-8 text-primary" /><h2 className="mt-6 text-balance font-serif text-4xl sm:text-5xl">{c.finalTitle}</h2><p className="mx-auto mt-5 max-w-2xl text-pretty text-muted-foreground">{c.finalText}</p><Link href="/numerologie" className="mt-9 inline-flex items-center gap-3 rounded-full bg-primary px-7 py-4 font-medium text-primary-foreground">{c.cta}<ArrowRight className="size-4" /></Link></div></section>
+      <section className="relative z-10 px-5 py-16 sm:px-8 lg:py-28"><div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[.8fr_1.2fr]"><div><Layers3 className="size-7 text-primary" aria-hidden="true" /><h2 className="mt-6 text-balance font-serif text-4xl sm:text-5xl">{c.methodTitle}</h2><p className="mt-5 leading-7 text-muted-foreground">{c.methodText}</p></div><div className="flex flex-col gap-3">{c.methodFacts.map((fact) => <article key={fact.title} className="rounded-2xl border border-border bg-background/50 p-6"><h3 className="font-serif text-2xl">{fact.title}</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">{fact.text}</p></article>)}</div></div></section>
 
-      <section className="relative z-10 border-y border-border bg-card/35 px-5 py-20 sm:px-8"><div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-8 md:flex-row md:items-end"><div className="max-w-3xl"><p className="text-xs uppercase tracking-[0.25em] text-primary">{c.graniEyebrow}</p><h2 className="mt-4 font-serif text-4xl">{c.graniTitle}</h2><p className="mt-4 leading-relaxed text-muted-foreground">{c.graniText}</p></div><Link href="/grani" className="inline-flex shrink-0 items-center gap-2 rounded-full border border-primary/40 px-6 py-3 text-primary">{c.graniCta}<ArrowRight className="size-4" /></Link></div></section>
+      <section id="daria" className="relative z-10 scroll-mt-20 border-y border-border bg-background/35 px-5 py-24 sm:px-8"><div className="mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-[.7fr_1.3fr]"><div className="relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-[2.5rem] border border-primary/25"><Image src="/images/instagram-daria-profile.jpg" alt={locale === 'ro' ? 'Daria Mihailiuc, fondatoarea NUMEROLOG.life' : 'Дарья Михайлюк, основательница NUMEROLOG.life'} fill priority sizes="(max-width: 768px) 90vw, 380px" className="object-cover" /></div><div><p className="text-xs uppercase tracking-[0.25em] text-primary">{c.authorEyebrow}</p><h2 className="mt-4 text-balance font-serif text-4xl sm:text-5xl">{c.authorTitle}</h2><p className="mt-6 max-w-2xl leading-7 text-muted-foreground">{c.authorText}</p><div className="mt-7 border-l border-primary pl-5"><p className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">{locale === 'ro' ? 'Principiul nostru' : 'Наш принцип'}</p><p className="mt-3 font-serif text-2xl leading-relaxed text-foreground/90">{c.authorQuote}</p></div><a href="https://instagram.com/mihailiucdaria" target="_blank" rel="noopener noreferrer" className="mt-8 inline-flex items-center gap-2 border-b border-primary/50 pb-1 text-sm text-primary">{c.authorCta}<ArrowRight className="size-4" /></a></div></div></section>
 
-      <section className="relative z-10 px-5 py-24 sm:px-8"><div className="mx-auto max-w-4xl"><h2 className="text-center font-serif text-4xl sm:text-5xl">{c.faqTitle}</h2><div className="mt-12 flex flex-col gap-3">{c.faqs.map((item) => <details key={item.q} className="group rounded-2xl border border-border bg-card/60 p-5"><summary className="cursor-pointer list-none font-medium">{item.q}</summary><p className="mt-4 border-t border-border pt-4 leading-relaxed text-muted-foreground">{item.a}</p></details>)}</div></div></section>
+      <section className="relative z-10 px-5 py-24 sm:px-8"><div className="mx-auto max-w-5xl overflow-hidden rounded-[2.5rem] border border-primary/25 bg-background/65 shadow-2xl"><div className="grid gap-0 lg:grid-cols-[1.3fr_.7fr]"><div className="p-7 sm:p-12"><p className="text-xs uppercase tracking-[0.25em] text-primary">{c.offerEyebrow}</p><h2 className="mt-4 text-balance font-serif text-4xl sm:text-5xl">{c.offerTitle}</h2><p className="mt-5 max-w-2xl leading-7 text-muted-foreground">{c.offerText}</p><p className="mt-6 flex items-center gap-2 text-sm text-muted-foreground"><ShieldCheck className="size-4 text-primary" />{c.priceNote}</p></div><div className="flex flex-col items-center justify-center border-t border-primary/15 bg-card/70 p-8 text-center lg:border-l lg:border-t-0"><LockKeyhole className="size-7 text-primary" /><p className="mt-5 text-sm text-muted-foreground">{locale === 'ro' ? 'Începi gratuit' : 'Начало бесплатно'}</p><div className="mt-4"><HomePreviewPrice locale={locale} /></div><Link href="/numerologie?entry=birthday" className="mt-5 inline-flex min-h-12 items-center gap-2 rounded-full bg-primary px-6 font-medium text-primary-foreground">{c.cta}<ArrowRight className="size-4" /></Link></div></div></div></section>
+
+      <section className="relative z-10 border-y border-border bg-background/35 px-5 py-20 sm:px-8"><div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-8 md:flex-row md:items-end"><div className="max-w-3xl"><p className="text-xs uppercase tracking-[0.25em] text-primary">{c.graniEyebrow}</p><h2 className="mt-4 font-serif text-4xl">{c.graniTitle}</h2><p className="mt-4 leading-7 text-muted-foreground">{c.graniText}</p></div><Link href="/grani" className="inline-flex shrink-0 items-center gap-2 rounded-full border border-primary/40 px-6 py-3 text-primary">{c.graniCta}<ArrowRight className="size-4" /></Link></div></section>
+
+      <section className="relative z-10 px-5 py-24 sm:px-8"><div className="mx-auto max-w-4xl"><h2 className="text-center font-serif text-4xl sm:text-5xl">{c.faqTitle}</h2><div className="mt-12 flex flex-col gap-3">{c.faqs.map((item) => <details key={item.q} className="group rounded-2xl border border-border bg-background/55 p-5"><summary className="cursor-pointer list-none font-medium marker:hidden">{item.q}</summary><p className="mt-4 border-t border-border pt-4 leading-7 text-muted-foreground">{item.a}</p></details>)}</div></div></section>
       <Footer />
     </main>
   )
