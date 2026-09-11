@@ -31,6 +31,7 @@ BRIDGE = ROOT / 'scripts/cristalul-bridge-snippet.html'
 PREVIEW = ROOT / 'scripts/cristalul-native-preview-snippet.html'
 VARIANTS = ROOT / 'scripts/cristalul-variants-snippet.html'
 DATE_AGE_PREVIEW = ROOT / 'scripts/cristalul-date-age-preview-snippet.html'
+THEME_PREVIEWS = ROOT / 'scripts/cristalul-theme-previews-snippet.html'
 PREMIUM_CSS = ROOT / 'scripts/cristalul-premium-report.css'
 
 s = SRC.read_text(encoding='utf-8')
@@ -441,7 +442,10 @@ assert variants.count('\ufffd') == 0, 'stratul de variante contine U+FFFD'
 date_age_preview = re.sub(r'(?m)^([ \t]*)> ', r'\1', DATE_AGE_PREVIEW.read_text(encoding='utf-8'))
 assert 'preview-date-age-next-v1' in date_age_preview and 'renderPaywall(model)' in date_age_preview
 assert date_age_preview.count('\ufffd') == 0, 'previewul Data + Acum contine U+FFFD'
-rep('</body>', bridge.rstrip('\n') + '\n' + preview.rstrip('\n') + '\n' + variants.rstrip('\n') + '\n' + date_age_preview.rstrip('\n') + '\n</body>')
+theme_previews = re.sub(r'(?m)^([ \t]*)> ', r'\1', THEME_PREVIEWS.read_text(encoding='utf-8'))
+assert 'preview-love-line-v1' in theme_previews and 'preview-money-age-v1' in theme_previews and 'renderPaywall(model)' in theme_previews
+assert theme_previews.count('\ufffd') == 0, 'previewurile tematice contin U+FFFD'
+rep('</body>', bridge.rstrip('\n') + '\n' + preview.rstrip('\n') + '\n' + variants.rstrip('\n') + '\n' + date_age_preview.rstrip('\n') + '\n' + theme_previews.rstrip('\n') + '\n</body>')
 
 # 6. Fără surse/autori în text vizibil -------------------------------------------------------------
 rep("Сравнение Карта Рождения ↔ Карта Имени (метод Айрэн По / Джули По) — где цифры отличаются:",
