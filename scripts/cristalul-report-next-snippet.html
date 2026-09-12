@@ -59,8 +59,8 @@
     if(state.ready) return;
     const results = document.getElementById('results');
     const result = window.__cdLastResult;
-    const identity = document.getElementById('personalDataSummary');
-    if(!results || !result || !identity || getComputedStyle(identity).display === 'none') return;
+    const sections = results?.querySelectorAll(':scope > .card .section-title');
+    if(!results || !result || !sections || sections.length < 4) return;
     state.ready = true;
     buildCover(results, result);
     state.cards = Array.from(results.querySelectorAll(':scope > .card')).filter(function(card){ return card.id !== 'personalDataSummary' && getComputedStyle(card).display !== 'none'; });
