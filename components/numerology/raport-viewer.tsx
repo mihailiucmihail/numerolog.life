@@ -239,6 +239,10 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
           colorScheme: 'normal',
         }}
         title={reportType === 'grani' ? 'Грани Судьбы — Отчёт' : 'Cristalul Destinului — Raport'}
+        onLoad={() => {
+          if (!designPreview) return
+          window.setTimeout(() => iframeRef.current?.contentWindow?.postMessage({ type: 'cdNextRefresh' }, '*'), 1800)
+        }}
         scrolling="no"
       />
 
