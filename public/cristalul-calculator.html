@@ -1279,6 +1279,7 @@ html.cd-next-design .pyth-cell.opornaya { border-color: var(--cdn-gold) !importa
 html.cd-next-design .pyth-cell.transferred { border-color: var(--cdn-teal) !important; background: color-mix(in srgb, var(--cdn-teal) 9%, transparent) !important; }
 html.cd-next-design .pyth-cell::after { display: none !important; }
 html.cd-next-design .pyth-cell .chan, html.cd-next-design .pyth-cell .status { max-width: 100%; font: 14px/1.4 Manrope, sans-serif !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--cdn-muted) !important; white-space: normal; overflow-wrap: anywhere; }
+html.cd-next-design .pyth-cell .chan { display: block; width: 100%; white-space: nowrap !important; overflow: hidden; text-overflow: ellipsis; }
 html.cd-next-design .pyth-cell .digits { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; max-width: 100%; min-width: 0; }
 html.cd-next-design .pyth-cell .digit { font: 600 22px/1.4 Manrope, sans-serif !important; color: var(--cdn-gold) !important; }
 html.cd-next-design .pyth-cell.transferred .digit { color: var(--cdn-teal) !important; }
@@ -1290,6 +1291,11 @@ html.cd-next-design #results .chart-legend { display: none !important; }
 html.cd-next-design .chart-interpret-main { padding: 16px !important; border: 1px solid var(--cdn-border) !important; border-radius: 12px !important; background: var(--cdn-panel) !important; box-shadow: none !important; }
 html.cd-next-design .mandala-past-line { stroke-dasharray: none !important; stroke-dashoffset: 0 !important; opacity: 1 !important; }
 html.cd-next-design .cd-next-life-tools { padding-bottom: 16px; }
+@media (max-width: 359px) {
+  html.cd-next-design .cd-next-metrics { grid-template-columns: minmax(0, 1fr); }
+  html.cd-next-design .cd-next-metric { flex-direction: row; align-items: center; gap: 12px; }
+  html.cd-next-design .cd-next-metric strong { min-width: 48px; }
+}
 html.cd-next-design .cd-next-data-target { cursor: pointer; }
 html.cd-next-design .cd-next-data-target:hover, html.cd-next-design .cd-next-data-target[aria-pressed="true"] { filter: brightness(1.2); }
 html.cd-next-design .cd-next-data-target[aria-pressed="true"] { outline: 2px solid var(--cdn-teal); outline-offset: 2px; }
