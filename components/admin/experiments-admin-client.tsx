@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { SocialAdminClient } from "./social-admin-client"
 import {
   BarChart3,
   Check,
@@ -570,6 +571,8 @@ export function ExperimentsAdminClient() {
           Actualizează datele
         </button>
       </header>
+
+      <div className="mb-5"><SocialAdminClient password={password} /></div>
 
       <section className="mb-5 rounded-2xl border border-primary/25 bg-card/70 p-4 sm:p-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
