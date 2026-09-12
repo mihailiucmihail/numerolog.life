@@ -31,11 +31,11 @@ export default async function CristalulDesignPreviewPage({
     <main className="relative min-h-screen bg-background">
       <StarField />
       <Navbar />
-      <div className="relative z-10 px-1.5 pb-20 pt-20 sm:px-4 md:px-6">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-3">
+      <div className="relative z-10 px-4 pb-20 pt-20 md:px-6">
+        <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-3">
           <div className="flex items-center justify-between gap-3 px-2 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground/70">
             <span>Copie privată</span>
-            <span className="text-primary/80">Design concept · V2</span>
+            <span className="text-primary/80">Design concept · V3</span>
           </div>
           <Suspense fallback={null}>
             <RaportViewer formData={record.formData} designPreview />

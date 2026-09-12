@@ -1144,102 +1144,160 @@ body.has-sticky #previewLayer{padding-bottom:78px;}
 <style id="cd-report-next">
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
-html.cd-next-design{
-  --cdn-bg:#0b1020;
-  --cdn-panel:#111a30;
-  --cdn-text:#f4efe6;
-  --cdn-muted:#a8b0c3;
-  --cdn-gold:#d8ad55;
-  scroll-behavior:smooth;
-  background:var(--cdn-bg)!important;
+html.cd-next-design {
+  --cdn-bg: #0b1020;
+  --cdn-text: #ffffff;
+  --cdn-muted: rgb(255 255 255 / .72);
+  --cdn-gold: #d8ad55;
+  --cdn-teal: #70c8c0;
+  --cdn-rose: #e59aab;
+  --cdn-border: rgb(255 255 255 / .1);
+  --cdn-panel: rgb(255 255 255 / .02);
+  --brass: var(--cdn-gold);
+  --brass-bright: var(--cdn-gold);
+  --wine: var(--cdn-rose);
+  --violet: var(--cdn-teal);
+  --parchment: var(--cdn-text);
+  --parchment-dim: var(--cdn-muted);
+  --line: var(--cdn-border);
+  --sans: Manrope, system-ui, sans-serif;
+  --num: Manrope, system-ui, sans-serif;
+  scroll-behavior: smooth;
 }
-html.cd-next-design,html.cd-next-design body{overflow-x:hidden!important;}
-html.cd-next-design body{
-  color:var(--cdn-text)!important;
-  font-family:Manrope,Inter,system-ui,sans-serif!important;
-  background:
-    radial-gradient(circle at 12% 7%,rgba(216,173,85,.09) 0 1px,transparent 1.5px) 0 0/72px 72px,
-    radial-gradient(circle at 82% 18%,rgba(244,239,230,.08) 0 1px,transparent 1.5px) 0 0/118px 118px,
-    linear-gradient(180deg,#111a30 0,var(--cdn-bg) 28%,#0d1529 72%,var(--cdn-bg) 100%)!important;
-  background-attachment:fixed!important;
+html.cd-next-design, html.cd-next-design body, html.cd-next-design .wrap, html.cd-next-design #results {
+  background: transparent !important;
+  background-image: none !important;
+  box-sizing: border-box !important;
 }
-html.cd-next-design .wrap{max-width:1120px!important;padding:10px 6px 104px!important;}
-html.cd-next-design #results{counter-reset:none!important;display:flex!important;flex-direction:column;gap:12px!important;max-width:100%!important;}
-html.cd-next-design #results:before,html.cd-next-design #results:after{display:none!important;}
-html.cd-next-design #personalDataSummary{display:none!important;}
-
-html.cd-next-design .cd-next-cover{position:relative;overflow:hidden;min-height:500px;padding:18px 14px;border:1px solid rgba(216,173,85,.28);border-radius:24px;background:linear-gradient(145deg,rgba(17,26,48,.98),rgba(11,16,32,.98));box-shadow:0 30px 80px rgba(0,0,0,.35);}
-html.cd-next-design .cd-next-cover:before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 0 45%,rgba(216,173,85,.06) 46%,transparent 48%);pointer-events:none;}
-html.cd-next-design .cd-next-cover:after{content:"";position:absolute;right:-80px;top:70px;width:220px;height:220px;border:1px solid rgba(216,173,85,.14);border-radius:50%;box-shadow:0 0 0 28px rgba(216,173,85,.025),0 0 0 62px rgba(216,173,85,.018);pointer-events:none;}
-html.cd-next-design .cd-next-cover-top{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.09);}
-html.cd-next-design .cd-next-kicker,html.cd-next-design .cd-next-edition{font:700 9px/1.4 Manrope,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--cdn-gold);}
-html.cd-next-design .cd-next-edition{color:var(--cdn-muted);letter-spacing:.08em;}
-html.cd-next-design .cd-next-cover-main{position:relative;z-index:1;display:flex;min-height:300px;flex-direction:column;justify-content:flex-end;gap:10px;padding:44px 0 30px;}
-html.cd-next-design .cd-next-cover h1{max-width:760px;margin:0;font:800 clamp(38px,10vw,76px)/.95 Manrope,sans-serif!important;letter-spacing:-.065em;color:var(--cdn-text)!important;text-wrap:balance;}
-html.cd-next-design .cd-next-name{margin:0;font:600 17px/1.4 Manrope,sans-serif;color:var(--cdn-gold);}
-html.cd-next-design .cd-next-date{margin:0;font:600 10px/1.5 Manrope,sans-serif;letter-spacing:.11em;text-transform:uppercase;color:var(--cdn-muted);}
-html.cd-next-design .cd-next-metrics{position:relative;z-index:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));overflow:hidden;border:1px solid rgba(255,255,255,.1);border-radius:16px;background:rgba(255,255,255,.1);gap:1px;}
-html.cd-next-design .cd-next-metric{display:flex;min-height:94px;flex-direction:column;justify-content:space-between;gap:8px;padding:14px;background:var(--cdn-panel);}
-html.cd-next-design .cd-next-metric strong{font:800 32px/1 Manrope,sans-serif;color:var(--cdn-gold)!important;}
-html.cd-next-design .cd-next-metric span{font:700 8px/1.45 Manrope,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--cdn-muted);overflow-wrap:anywhere;}
-
-html.cd-next-design #results>.card{--mx:50%;--my:20%;position:relative!important;isolation:isolate;margin:0!important;padding:0!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:18px!important;background:linear-gradient(160deg,rgba(17,26,48,.96),rgba(11,16,32,.96))!important;box-shadow:0 18px 54px rgba(0,0,0,.2)!important;overflow:hidden!important;opacity:.2;transform:translateY(18px);transition:opacity .55s ease,transform .55s cubic-bezier(.2,.8,.2,1),border-color .25s ease!important;}
-html.cd-next-design #results>.card:before{content:""!important;position:absolute!important;z-index:-1!important;inset:0!important;width:auto!important;height:auto!important;margin:0!important;background:radial-gradient(440px circle at var(--mx) var(--my),rgba(216,173,85,.085),transparent 42%)!important;opacity:0;transition:opacity .25s ease;}
-html.cd-next-design #results>.card.cd-next-visible{opacity:1;transform:none;}
-html.cd-next-design #results>.card.cd-next-focused{border-color:rgba(216,173,85,.38)!important;}
-html.cd-next-design #results>.card.cd-next-focused:before{opacity:1;}
-html.cd-next-design #results>.card:after{display:none!important;}
-html.cd-next-design .cd-next-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:14px;border-bottom:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.018);}
-html.cd-next-design .cd-next-title-wrap{display:flex;min-width:0;flex:1;flex-direction:column;gap:6px;}
-html.cd-next-design .cd-next-section-label{font:700 8px/1.3 Manrope,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--cdn-gold);}
-html.cd-next-design #results>.card .section-title{margin:0!important;padding:0!important;border:0!important;font:700 clamp(20px,6vw,32px)/1.2 Manrope,sans-serif!important;letter-spacing:-.035em!important;color:var(--cdn-text)!important;text-wrap:balance;}
-html.cd-next-design #results>.card .section-title:before,html.cd-next-design #results>.card .section-title:after{display:none!important;}
-html.cd-next-design .cd-next-toggle{display:grid;flex:0 0 38px;width:38px;height:38px;place-items:center;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:rgba(255,255,255,.025);color:var(--cdn-gold);cursor:pointer;transition:background .2s ease,transform .25s ease,border-color .2s ease;}
-html.cd-next-design .cd-next-toggle:hover{background:rgba(216,173,85,.09);border-color:rgba(216,173,85,.35);}
-html.cd-next-design .cd-next-toggle svg{width:16px;height:16px;transition:transform .25s ease;}
-html.cd-next-design .cd-next-collapsed .cd-next-toggle svg{transform:rotate(-90deg);}
-html.cd-next-design .cd-next-card-body{display:block;padding:16px 14px 20px;}
-html.cd-next-design .cd-next-collapsed .cd-next-card-body{display:none;}
-html.cd-next-design #results>.card p,html.cd-next-design #results>.card li,html.cd-next-design #results>.card .hint{font-family:Manrope,sans-serif!important;font-size:15px!important;line-height:1.68!important;color:var(--cdn-muted)!important;}
-html.cd-next-design #results>.card b,html.cd-next-design #results>.card strong{font-family:Manrope,sans-serif;color:var(--cdn-text)!important;}
-html.cd-next-design #results>.card .num,html.cd-next-design #results>.card [class*="number"]{color:var(--cdn-gold)!important;}
-
-html.cd-next-design #results .chart-stage{position:relative!important;isolation:isolate;overflow:hidden!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:16px!important;background:linear-gradient(180deg,rgba(17,26,48,.82),rgba(11,16,32,.92))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)!important;}
-html.cd-next-design #results .chart-stage:after{content:"";position:absolute;z-index:2;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 0 43%,rgba(216,173,85,.1) 50%,transparent 57%);transform:translateX(-125%);animation:cdNextSweep 6s ease-in-out infinite;}
-html.cd-next-design #lifeChartSvg{position:relative;z-index:1;border:0!important;background:transparent!important;}
-html.cd-next-design #lifeChartSvg .axis-line{stroke:rgba(168,176,195,.16)!important;}
-html.cd-next-design #lifeChartSvg .axis-label{fill:var(--cdn-muted)!important;font-family:Manrope,sans-serif!important;font-size:9px!important;}
-html.cd-next-design #lifeChartSvg .life-path{stroke:url(#cdNextLineGradient)!important;stroke-width:4!important;filter:url(#cdNextLineGlow)!important;}
-html.cd-next-design #lifeChartSvg .cd-next-underlay{fill:none;stroke:rgba(216,173,85,.16);stroke-width:12;filter:url(#cdNextLineBlur);}
-html.cd-next-design #lifeChartSvg .cd-next-area{fill:url(#cdNextAreaGradient);opacity:.8;}
-html.cd-next-design #lifeChartSvg .life-point,html.cd-next-design #lifeChartSvg .crossing-mark{fill:var(--cdn-bg)!important;stroke:var(--cdn-gold)!important;filter:url(#cdNextPointGlow)!important;}
-html.cd-next-design #lifeChartSvg .now-line{stroke:var(--cdn-gold)!important;}
-html.cd-next-design #lifeChartSvg .now-marker{fill:var(--cdn-gold)!important;stroke:var(--cdn-bg)!important;}
-html.cd-next-design #lifeChartSvg .cd-next-orbit{fill:var(--cdn-text);filter:url(#cdNextPointGlow);}
-html.cd-next-design .chart-tabs{display:flex!important;gap:8px!important;max-width:100%!important;overflow-x:auto!important;padding-bottom:8px!important;scrollbar-width:none;}
-html.cd-next-design .chart-tab{flex:0 0 auto!important;border:1px solid rgba(255,255,255,.1)!important;border-radius:10px!important;background:rgba(255,255,255,.025)!important;color:var(--cdn-muted)!important;}
-html.cd-next-design .chart-tab.active{border-color:rgba(216,173,85,.46)!important;background:rgba(216,173,85,.12)!important;color:var(--cdn-text)!important;}
-html.cd-next-design svg path.cd-next-draw,html.cd-next-design svg polyline.cd-next-draw{transition:stroke-dashoffset 1.7s cubic-bezier(.2,.8,.2,1);}
-html.cd-next-design .cd-next-visible svg path.cd-next-draw,html.cd-next-design .cd-next-visible svg polyline.cd-next-draw{stroke-dashoffset:0!important;}
-html.cd-next-design .meta-track,html.cd-next-design .yc-scroll{border:1px solid rgba(255,255,255,.1)!important;border-radius:14px!important;background:rgba(255,255,255,.025)!important;}
-html.cd-next-design .meta-seg{background:linear-gradient(90deg,rgba(216,173,85,.28),var(--cdn-gold),rgba(216,173,85,.28))!important;background-size:200% 100%!important;animation:cdNextFlow 4s linear infinite;}
-html.cd-next-design .yc-bar{border-radius:7px 7px 2px 2px!important;background:linear-gradient(180deg,var(--cdn-gold),rgba(216,173,85,.22))!important;box-shadow:0 0 16px rgba(216,173,85,.13);transform-origin:bottom;}
-html.cd-next-design .mandala-chart-svg{overflow:hidden;border:1px solid rgba(255,255,255,.1)!important;border-radius:16px!important;background:rgba(255,255,255,.018);}
-html.cd-next-design .pyth-dual{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:16px!important;width:100%!important;overflow:hidden!important;}
-html.cd-next-design #pythDual .pyth-block{width:100%!important;max-width:270px!important;margin:auto!important;padding:10px!important;border:1px solid rgba(255,255,255,.1);border-radius:14px;background:rgba(255,255,255,.018);}
-html.cd-next-design .pyth-grid{width:100%!important;max-width:270px!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important;}
-html.cd-next-design .pyth-cell{min-width:0!important;overflow:hidden!important;border:1px solid rgba(255,255,255,.08)!important;border-radius:9px!important;background:rgba(11,16,32,.7)!important;opacity:0;transform:scale(.92);transition:opacity .4s ease,transform .4s ease!important;}
-html.cd-next-design .cd-next-visible .pyth-cell{opacity:1;transform:none;}
-html.cd-next-design .pyth-cell.opornaya{border-color:rgba(216,173,85,.42)!important;}
-html.cd-next-design .pyth-cell .chan{max-width:100%!important;font-size:8px!important;line-height:1.15!important;white-space:normal!important;overflow-wrap:anywhere!important;}
-html.cd-next-design .pyth-cell .digit{font-size:13px!important;color:var(--cdn-gold)!important;}
-html.cd-next-design .pyth-cell .status{font-size:7px!important;line-height:1.15!important;white-space:normal!important;overflow-wrap:anywhere!important;}
-html.cd-next-design table{display:block!important;max-width:100%!important;overflow-x:auto!important;}
-html.cd-next-design .cd-next-backtop{display:flex;align-items:center;justify-content:center;width:100%;min-height:50px;border:1px solid rgba(216,173,85,.25);border-radius:14px;background:rgba(216,173,85,.07);font:700 10px/1 Manrope,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--cdn-gold);cursor:pointer;}
-@keyframes cdNextSweep{0%,18%{transform:translateX(-125%)}65%,100%{transform:translateX(125%)}}
-@keyframes cdNextFlow{to{background-position:-200% 0}}
-@media(min-width:720px){html.cd-next-design .wrap{padding-inline:12px!important;}html.cd-next-design .cd-next-cover{padding:28px;min-height:560px;}html.cd-next-design .cd-next-cover-main{padding:76px 0 50px;}html.cd-next-design .cd-next-metrics{grid-template-columns:repeat(4,minmax(0,1fr));}html.cd-next-design .cd-next-card-head{padding:20px 22px;}html.cd-next-design .cd-next-card-body{padding:22px 22px 28px;}html.cd-next-design #pythDual{grid-template-columns:repeat(3,minmax(0,1fr))!important;}html.cd-next-design #pythDual .pyth-block{max-width:none!important;}}
-@media(prefers-reduced-motion:reduce){html.cd-next-design{scroll-behavior:auto;}html.cd-next-design #results>.card,html.cd-next-design .pyth-cell{opacity:1!important;transform:none!important;transition:none!important;}html.cd-next-design svg path.cd-next-draw,html.cd-next-design svg polyline.cd-next-draw{stroke-dashoffset:0!important;transition:none!important;}html.cd-next-design .chart-stage:after,html.cd-next-design .meta-seg,html.cd-next-design .cd-next-orbit{animation:none!important;}}
+html.cd-next-design body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  color: var(--cdn-text);
+  font-family: Manrope, system-ui, sans-serif !important;
+}
+html.cd-next-design *, html.cd-next-design *::before, html.cd-next-design *::after { box-sizing: border-box; }
+html.cd-next-design .wrap { width: 100% !important; max-width: 1120px !important; margin: 0 auto !important; padding: 0 0 32px !important; }
+html.cd-next-design #results { display: flex !important; flex-direction: column; gap: 20px !important; width: 100% !important; max-width: none !important; margin: 0 auto !important; padding: 0 !important; counter-reset: none !important; }
+html.cd-next-design #results::before, html.cd-next-design #results::after, html.cd-next-design #personalDataSummary { display: none !important; }
+html.cd-next-design .cd-next-cover, html.cd-next-design #results > .card {
+  width: 100% !important; min-width: 0; margin: 0 !important; padding: 0 !important;
+  border: 1px solid var(--cdn-border) !important; border-radius: 12px !important;
+  background: var(--cdn-panel) !important; box-shadow: none !important;
+  opacity: 1 !important; transform: none !important; overflow: clip;
+}
+html.cd-next-design #results > .card::before, html.cd-next-design #results > .card::after { display: none !important; }
+html.cd-next-design .cd-next-cover { padding: 24px !important; }
+html.cd-next-design .cd-next-cover-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
+html.cd-next-design .cd-next-kicker, html.cd-next-design .cd-next-edition, html.cd-next-design .cd-next-section-label { font: 600 14px/1.5 Manrope, sans-serif; color: var(--cdn-gold); }
+html.cd-next-design .cd-next-edition { color: var(--cdn-muted); }
+html.cd-next-design .cd-next-cover-main { display: flex; flex-direction: column; gap: 12px; padding-block: 32px; }
+html.cd-next-design .cd-next-cover h1 { margin: 0; font: 700 clamp(36px, 7vw, 68px)/1.08 Manrope, sans-serif !important; letter-spacing: -.045em; color: var(--cdn-text) !important; text-wrap: balance; }
+html.cd-next-design .cd-next-name { margin: 0; font: 500 20px/1.5 Manrope, sans-serif; color: var(--cdn-gold); overflow-wrap: anywhere; }
+html.cd-next-design .cd-next-date { margin: 0; font: 400 14px/1.5 Manrope, sans-serif; color: var(--cdn-muted); }
+html.cd-next-design .cd-next-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+html.cd-next-design .cd-next-metric { display: flex; flex-direction: column; gap: 8px; padding: 16px; border: 1px solid var(--cdn-border); border-radius: 12px; background: var(--cdn-panel); }
+html.cd-next-design .cd-next-metric strong { font: 600 32px/1.2 Manrope, sans-serif; color: var(--cdn-gold); }
+html.cd-next-design .cd-next-metric span { font: 400 14px/1.4 Manrope, sans-serif; color: var(--cdn-muted); overflow-wrap: anywhere; }
+html.cd-next-design .cd-next-card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 20px; border-bottom: 1px solid var(--cdn-border); }
+html.cd-next-design .cd-next-title-wrap { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 8px; }
+html.cd-next-design #results .section-title { margin: 0 !important; padding: 0 !important; border: 0 !important; font: 600 clamp(22px, 4vw, 30px)/1.25 Manrope, sans-serif !important; letter-spacing: -.025em; color: var(--cdn-text) !important; text-wrap: balance; }
+html.cd-next-design #results .section-title::before, html.cd-next-design #results .section-title::after { display: none !important; }
+html.cd-next-design .cd-next-toggle { display: grid; flex: 0 0 44px; width: 44px; height: 44px; place-items: center; border: 1px solid var(--cdn-border); border-radius: 8px; background: var(--cdn-panel); color: var(--cdn-muted); cursor: pointer; }
+html.cd-next-design .cd-next-toggle svg { width: 20px; height: 20px; }
+html.cd-next-design .cd-next-collapsed .cd-next-toggle svg { transform: rotate(-90deg); }
+html.cd-next-design .cd-next-card-body { min-width: 0; padding: 20px; }
+html.cd-next-design .cd-next-collapsed .cd-next-card-body { display: none; }
+html.cd-next-design #results p, html.cd-next-design #results li, html.cd-next-design #results .hint { max-width: none !important; font: 400 16px/1.6 Manrope, sans-serif !important; color: var(--cdn-muted) !important; overflow-wrap: anywhere; }
+html.cd-next-design #results b, html.cd-next-design #results strong { color: var(--cdn-text); }
+html.cd-next-design #results .num { color: var(--cdn-gold) !important; }
+html.cd-next-design #results [style*="border-left:2px"], html.cd-next-design #results [style*="border-left: 2px"], html.cd-next-design .meta-block, html.cd-next-design .mini-grid > div { background: var(--cdn-panel) !important; border: 1px solid var(--cdn-border) !important; border-radius: 12px !important; box-shadow: none !important; }
+html.cd-next-design #results .mini-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)) !important; }
+html.cd-next-design #results .chart-stage, html.cd-next-design .cd-next-chart-scroll, html.cd-next-design .yc-scroll { width: 100%; max-width: 100%; margin-inline: auto; overflow-x: auto !important; overflow-y: hidden; overscroll-behavior-x: contain; border: 1px solid var(--cdn-border) !important; border-radius: 12px !important; background: var(--cdn-panel) !important; box-shadow: none !important; scrollbar-color: var(--cdn-gold) transparent; scrollbar-width: thin; }
+html.cd-next-design #lifeChartSvg { display: block; min-width: 600px; width: 100% !important; height: auto !important; aspect-ratio: 2; border: 0 !important; background: transparent !important; }
+html.cd-next-design #lifeChartSvg .axis-line { stroke: var(--cdn-border) !important; }
+html.cd-next-design #lifeChartSvg .axis-label { fill: var(--cdn-muted) !important; font: 14px Manrope, sans-serif !important; }
+html.cd-next-design #lifeChartSvg .life-path { stroke: var(--cdn-gold) !important; stroke-width: 3 !important; filter: none !important; }
+html.cd-next-design #lifeChartSvg .life-path-2 { stroke: var(--cdn-teal) !important; stroke-width: 3 !important; }
+html.cd-next-design #lifeChartSvg .avg-line, html.cd-next-design #lifeChartSvg .avg-line-2 { stroke: var(--cdn-rose) !important; opacity: .8 !important; }
+html.cd-next-design #lifeChartSvg .life-point { fill: var(--cdn-bg) !important; stroke: var(--cdn-gold) !important; }
+html.cd-next-design #lifeChartSvg .life-point-2 { fill: var(--cdn-bg) !important; stroke: var(--cdn-teal) !important; }
+html.cd-next-design #lifeChartSvg .now-line, html.cd-next-design #lifeChartSvg .now-marker { stroke: var(--cdn-teal) !important; }
+html.cd-next-design #lifeChartSvg .now-marker { fill: var(--cdn-teal) !important; }
+html.cd-next-design #lifeChartSvg .crossing-mark { stroke: var(--cdn-rose) !important; }
+html.cd-next-design #lifeChartSvg .now-label-bg { fill: var(--cdn-bg) !important; }
+html.cd-next-design #lifeChartSvg .now-label-text { fill: var(--cdn-teal) !important; }
+html.cd-next-design .chart-tabs { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; }
+html.cd-next-design .chart-tab { min-height: 44px; border: 1px solid var(--cdn-border) !important; border-radius: 8px !important; background: var(--cdn-panel) !important; color: var(--cdn-muted) !important; font-size: 14px !important; }
+html.cd-next-design .chart-tab.active { border-color: var(--cdn-gold) !important; color: var(--cdn-gold) !important; }
+html.cd-next-design .cd-next-legend { display: flex; flex-wrap: wrap; gap: 12px 20px; padding-block: 12px; font: 14px/1.5 Manrope, sans-serif; color: var(--cdn-muted); }
+html.cd-next-design .cd-next-legend span { display: inline-flex; align-items: center; gap: 8px; }
+html.cd-next-design .cd-next-legend i { width: 16px; height: 3px; background: var(--cdn-gold); }
+html.cd-next-design .cd-next-legend [data-tone="teal"] i { background: var(--cdn-teal); }
+html.cd-next-design .cd-next-legend [data-tone="rose"] i { background: var(--cdn-rose); }
+html.cd-next-design .cd-next-readout { display: block; min-height: 48px; padding: 12px; margin-block: 12px 0; border: 1px solid var(--cdn-border); border-radius: 8px; background: var(--cdn-panel); color: var(--cdn-text); font: 14px/1.5 Manrope, sans-serif; overflow-wrap: anywhere; }
+html.cd-next-design .cd-next-chart-control { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding-block: 12px; color: var(--cdn-muted); font: 14px/1.5 Manrope, sans-serif; }
+html.cd-next-design .cd-next-chart-control input { min-width: 0; width: auto; flex: 1 1 160px; height: 32px; accent-color: var(--cdn-teal); }
+html.cd-next-design .meta-timeline { padding-inline: 12px; }
+html.cd-next-design .meta-track { height: 28px; border: 1px solid var(--cdn-border) !important; border-radius: 8px !important; background: var(--cdn-panel) !important; }
+html.cd-next-design .meta-seg { background: var(--cdn-gold) !important; animation: none !important; border-right: 2px solid var(--cdn-bg); }
+html.cd-next-design .meta-seg[data-i="1"] { background: var(--cdn-teal) !important; }
+html.cd-next-design .meta-seg[data-i="2"] { background: var(--cdn-rose) !important; }
+html.cd-next-design .meta-now { width: 3px !important; height: 100% !important; background: var(--cdn-text) !important; box-shadow: 0 0 0 2px var(--cdn-bg) !important; }
+html.cd-next-design .meta-marks { height: 32px; font-size: 14px; }
+html.cd-next-design .meta-block-head { min-height: 48px; }
+html.cd-next-design .meta-block.active .meta-block-body { max-height: none !important; }
+html.cd-next-design .yc-scroll { padding: 32px 16px 16px !important; }
+html.cd-next-design .yc-grid { height: 208px !important; gap: 12px !important; }
+html.cd-next-design .yc-bar-wrap { min-width: 44px !important; }
+html.cd-next-design .yc-bar { background: var(--cdn-gold) !important; border-radius: 6px 6px 0 0 !important; box-shadow: none !important; }
+html.cd-next-design .yc-bar.past { opacity: .45; }
+html.cd-next-design .yc-bar.q-bad, html.cd-next-design .yc-bar.q-low { background: var(--cdn-rose) !important; }
+html.cd-next-design .yc-bar.q-low { opacity: .6; }
+html.cd-next-design .yc-bar.q-high, html.cd-next-design #yearlyCycleChart .yc-bar.now { background: var(--cdn-teal) !important; }
+html.cd-next-design .yc-bar.now { outline: 2px solid var(--cdn-text); outline-offset: 3px; }
+html.cd-next-design .yc-num, html.cd-next-design .yc-year, html.cd-next-design .yc-pn { font: 14px/1.4 Manrope, sans-serif !important; color: var(--cdn-muted) !important; }
+html.cd-next-design .yc-bar .yc-num { top: -24px; color: var(--cdn-text) !important; }
+html.cd-next-design .mandala-chart-svg { display: block; min-width: 900px; width: 100%; height: auto; border: 0 !important; border-radius: 0 !important; background: transparent !important; }
+html.cd-next-design .mandala-chart-svg rect[fill^="url(#mandalaCosmicBg"] { fill: transparent !important; }
+html.cd-next-design .mandala-starfield, html.cd-next-design .mandala-pulse, html.cd-next-design .mandala-tip-glow, html.cd-next-design .mandala-tip-dot, html.cd-next-design .mandala-here-glow { display: none !important; }
+html.cd-next-design .mandala-past-line { stroke: var(--cdn-gold) !important; stroke-width: 2.5; filter: none !important; }
+html.cd-next-design .mandala-future-line { stroke: var(--cdn-teal) !important; stroke-width: 2.5; stroke-dasharray: 5 3 !important; opacity: 1 !important; }
+html.cd-next-design .mandala-zone-poly { opacity: 1 !important; }
+html.cd-next-design .mandala-here-line { stroke: var(--cdn-text) !important; opacity: 1 !important; }
+html.cd-next-design .mandala-here-dot { fill: var(--cdn-text) !important; filter: none !important; opacity: 1 !important; }
+html.cd-next-design .mandala-here-label { fill: var(--cdn-text) !important; opacity: 1 !important; }
+html.cd-next-design .mandala-chart-svg text { font-family: Manrope, sans-serif; font-size: 14px; }
+html.cd-next-design .cd-next-selected-point { fill: var(--cdn-teal); stroke: var(--cdn-text); stroke-width: 2; pointer-events: none; }
+html.cd-next-design .pyth-dual { display: grid !important; width: 100% !important; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)) !important; gap: 20px !important; justify-items: center; }
+html.cd-next-design .pyth-block { min-width: 0 !important; width: 100% !important; max-width: 360px !important; margin: 0 auto !important; padding: 0 !important; background: transparent !important; }
+html.cd-next-design .pyth-grid { width: 100% !important; max-width: none !important; margin-inline: auto !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 8px !important; }
+html.cd-next-design .pyth-cell { width: 100% !important; height: auto !important; min-width: 0 !important; min-height: 100px !important; padding: 10px 4px !important; border: 1px solid var(--cdn-border) !important; border-radius: 8px !important; background: var(--cdn-panel) !important; color: var(--cdn-text) !important; opacity: 1 !important; transform: none !important; box-shadow: none !important; }
+html.cd-next-design .pyth-cell.empty { background: transparent !important; border-style: dashed !important; }
+html.cd-next-design .pyth-cell.opornaya { border-color: var(--cdn-gold) !important; background: color-mix(in srgb, var(--cdn-gold) 9%, transparent) !important; }
+html.cd-next-design .pyth-cell.transferred { border-color: var(--cdn-teal) !important; background: color-mix(in srgb, var(--cdn-teal) 9%, transparent) !important; }
+html.cd-next-design .pyth-cell::after { display: none !important; }
+html.cd-next-design .pyth-cell .chan, html.cd-next-design .pyth-cell .status { max-width: 100%; font: 14px/1.4 Manrope, sans-serif !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--cdn-muted) !important; white-space: normal; overflow-wrap: anywhere; }
+html.cd-next-design .pyth-cell .digits { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; max-width: 100%; min-width: 0; }
+html.cd-next-design .pyth-cell .digit { font: 600 22px/1.4 Manrope, sans-serif !important; color: var(--cdn-gold) !important; }
+html.cd-next-design .pyth-cell.transferred .digit { color: var(--cdn-teal) !important; }
+html.cd-next-design #matrixCellBox table { width: 100%; font: 14px/1.5 Manrope, sans-serif !important; }
+html.cd-next-design #matrixCellBox td, html.cd-next-design #matrixCellBox th { padding: 12px !important; }
+html.cd-next-design #results table { max-width: 100%; }
+html.cd-next-design #results :is(div, span, label, button, td, th) { font-family: Manrope, system-ui, sans-serif !important; }
+html.cd-next-design #results .chart-legend { display: none !important; }
+html.cd-next-design .chart-interpret-main { padding: 16px !important; border: 1px solid var(--cdn-border) !important; border-radius: 12px !important; background: var(--cdn-panel) !important; box-shadow: none !important; }
+html.cd-next-design .mandala-past-line { stroke-dasharray: none !important; stroke-dashoffset: 0 !important; opacity: 1 !important; }
+html.cd-next-design .cd-next-life-tools { padding-bottom: 16px; }
+html.cd-next-design .cd-next-data-target { cursor: pointer; }
+html.cd-next-design .cd-next-data-target:hover, html.cd-next-design .cd-next-data-target[aria-pressed="true"] { filter: brightness(1.2); }
+html.cd-next-design .cd-next-data-target[aria-pressed="true"] { outline: 2px solid var(--cdn-teal); outline-offset: 2px; }
+html.cd-next-design button:focus-visible, html.cd-next-design input:focus-visible, html.cd-next-design [tabindex]:focus-visible { outline: 2px solid var(--cdn-teal) !important; outline-offset: 3px; }
+html.cd-next-design .cd-next-backtop { width: 100%; min-height: 48px; border: 1px solid var(--cdn-border); border-radius: 12px; background: var(--cdn-panel); color: var(--cdn-gold); font: 600 14px/1.5 Manrope, sans-serif; cursor: pointer; }
+@media (min-width: 720px) { html.cd-next-design .cd-next-metrics { grid-template-columns: repeat(4, minmax(0, 1fr)); } html.cd-next-design .cd-next-cover { padding: 32px !important; } html.cd-next-design .cd-next-card-head, html.cd-next-design .cd-next-card-body { padding: 28px; } }
+@media (max-width: 359px) { html.cd-next-design .cd-next-cover { padding: 16px !important; } html.cd-next-design .cd-next-card-head, html.cd-next-design .cd-next-card-body { padding: 16px; } html.cd-next-design .cd-next-metric { padding: 12px; } html.cd-next-design .pyth-cell .digit { font-size: 18px !important; } }
+@media (prefers-reduced-motion: reduce) { html.cd-next-design { scroll-behavior: auto; } html.cd-next-design #results *, html.cd-next-design #results *::before, html.cd-next-design #results *::after { animation: none !important; transition: none !important; } }
 
 </style></head>
 <body>
@@ -9594,126 +9652,252 @@ function startPdfExport(){
 })();
 </script>
 <script id="cd-report-next-script">
-(function(){
-  const params=new URLSearchParams(location.search);
-  if(params.get('design') !== 'next') return;
+(function () {
+  const params = new URLSearchParams(location.search);
+  if (params.get('design') !== 'next') return;
   document.documentElement.classList.add('cd-next-design');
-  const ns='http://www.w3.org/2000/svg';
-  const state={ready:false,cards:[],chartTimer:0};
-  const clean=value=>String(value==null?'':value).trim();
-  const svg=(tag,attrs)=>{const el=document.createElementNS(ns,tag);Object.entries(attrs||{}).forEach(([key,value])=>el.setAttribute(key,String(value)));return el;};
-
-  function prepareDrawing(root){
-    root.querySelectorAll('svg path,svg polyline').forEach(line=>{
-      if(line.classList.contains('cd-next-draw')||line.classList.contains('cd-next-area')||line.classList.contains('cd-next-underlay'))return;
-      const stroke=line.getAttribute('stroke')||getComputedStyle(line).stroke;
-      if(!stroke||stroke==='none')return;
-      try{const length=line.getTotalLength();if(!Number.isFinite(length)||length<20)return;line.classList.add('cd-next-draw');line.style.strokeDasharray=String(length);line.style.strokeDashoffset=String(length);}catch(error){}
-    });
-  }
-
-  function gradient(defs,id,stops,attrs){
-    const node=svg('linearGradient',{id,...attrs});
-    stops.forEach(stop=>node.appendChild(svg('stop',stop)));
-    defs.appendChild(node);
-  }
-
-  function upgradeLifeChart(){
-    const chart=document.getElementById('lifeChartSvg');
-    const line=chart?.querySelector('.life-path');
-    const path=line?.getAttribute('d');
-    if(!chart||!line||!path||line.dataset.nextPremium===path)return;
-    line.dataset.nextPremium=path;
-    chart.querySelectorAll('.cd-next-generated').forEach(node=>node.remove());
-    let defs=chart.querySelector('defs');
-    if(!defs){defs=svg('defs');chart.insertBefore(defs,chart.firstChild);}
-    defs.querySelectorAll('[id^="cdNext"]').forEach(node=>node.remove());
-    gradient(defs,'cdNextLineGradient',[{offset:'0%','stop-color':'#a8b0c3'},{offset:'45%','stop-color':'#d8ad55'},{offset:'100%','stop-color':'#f4efe6'}],{x1:'0',y1:'0',x2:'1',y2:'0'});
-    gradient(defs,'cdNextAreaGradient',[{offset:'0%','stop-color':'#d8ad55','stop-opacity':'.34'},{offset:'72%','stop-color':'#d8ad55','stop-opacity':'.05'},{offset:'100%','stop-color':'#d8ad55','stop-opacity':'0'}],{x1:'0',y1:'0',x2:'0',y2:'1'});
-    const glow=svg('filter',{id:'cdNextLineGlow',x:'-30%',y:'-30%',width:'160%',height:'160%'});glow.innerHTML='<feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>';defs.appendChild(glow);
-    const blur=svg('filter',{id:'cdNextLineBlur',x:'-30%',y:'-30%',width:'160%',height:'160%'});blur.appendChild(svg('feGaussianBlur',{stdDeviation:'6'}));defs.appendChild(blur);
-    const point=svg('filter',{id:'cdNextPointGlow',x:'-100%',y:'-100%',width:'300%',height:'300%'});point.innerHTML='<feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>';defs.appendChild(point);
-    const coords=[...path.matchAll(/[ML]\s*([\d.]+),([\d.]+)/g)].map(match=>({x:Number(match[1]),y:Number(match[2])}));
-    if(coords.length>1){
-      const area=svg('path',{d:path+' L'+coords.at(-1).x+',286 L'+coords[0].x+',286 Z',class:'cd-next-area cd-next-generated'});
-      const underlay=svg('path',{d:path,class:'cd-next-underlay cd-next-generated'});
-      chart.insertBefore(area,line);chart.insertBefore(underlay,line);
+  const state = { ready: false, cards: [], timer: 0 };
+  const clean = value => String(value == null ? '' : value).trim();
+  const ns = 'http://www.w3.org/2000/svg';
+  const send = data => parent.postMessage(data, location.origin);
+  const node = (tag, className, text) => {
+    const el = document.createElement(tag);
+    if (className) el.className = className;
+    if (text != null) el.textContent = text;
+    return el;
+  };
+  function readout(host, instruction) {
+    let output = host.querySelector(':scope > .cd-next-readout');
+    if (!output) {
+      output = node('output', 'cd-next-readout', instruction);
+      output.setAttribute('aria-live', 'polite');
+      host.append(output);
     }
-    const orbit=svg('circle',{r:'3.5',class:'cd-next-orbit cd-next-generated'});
-    orbit.appendChild(svg('animateMotion',{dur:'5.2s',repeatCount:'indefinite',path,calcMode:'linear'}));
-    chart.appendChild(orbit);
-    prepareDrawing(chart.closest('.card')||chart);
+    return output;
   }
-
-  function upgradeDataVisuals(results){
-    results.querySelectorAll('.pyth-cell').forEach((cell,index)=>cell.style.transitionDelay=((index%9)*42)+'ms');
-    results.querySelectorAll('.yc-bar').forEach((bar,index)=>{
-      if(bar.dataset.nextAnimated)return;
-      bar.dataset.nextAnimated='true';
-      const height=bar.style.height||((bar.dataset.h||0)+'%');
-      bar.style.height='0%';bar.style.transition='height .9s cubic-bezier(.2,.8,.2,1) '+(index*45)+'ms';
-      requestAnimationFrame(()=>requestAnimationFrame(()=>bar.style.height=height));
+  function legend(host, items) {
+    if (host.querySelector(':scope > .cd-next-legend')) return;
+    const row = node('div', 'cd-next-legend');
+    items.forEach(([tone, label]) => {
+      const item = node('span');
+      item.dataset.tone = tone;
+      const swatch = node('i');
+      swatch.setAttribute('aria-hidden', 'true');
+      item.append(swatch, document.createTextNode(label));
+      row.append(item);
     });
-    upgradeLifeChart();
+    host.append(row);
   }
-
-  function buildCover(results,result){
-    const name=clean(document.getElementById('pds-name')?.textContent)||[result.lastCyr,result.firstCyr,result.middleCyr].filter(Boolean).join(' ');
-    const details=clean(document.getElementById('pds-details')?.textContent);
-    const cover=document.createElement('section');
-    cover.className='cd-next-cover';cover.setAttribute('aria-label','Обложка персонального отчёта');
-    cover.innerHTML='<div class="cd-next-cover-top"><span class="cd-next-kicker">Персональная карта</span><span class="cd-next-edition">NUMEROLOG · 2026</span></div><div class="cd-next-cover-main"><h1>Кристалл<br>Судьбы</h1><p class="cd-next-name"></p><p class="cd-next-date"></p></div><div class="cd-next-metrics" aria-label="Ключевые числа"><div class="cd-next-metric"><strong>'+clean(result.TP)+'</strong><span>Точка предназначения</span></div><div class="cd-next-metric"><strong>'+clean(result.SZ_num)+'</strong><span>Суть задачи</span></div><div class="cd-next-metric"><strong>'+clean(result.Prof_num)+'</strong><span>Профессия</span></div><div class="cd-next-metric"><strong>'+clean(result.Prizvanie_num)+'</strong><span>Призвание</span></div></div>';
-    cover.querySelector('.cd-next-name').textContent=name;cover.querySelector('.cd-next-date').textContent=details;
-    results.insertBefore(cover,results.firstChild);
-  }
-
-  function wrapCard(card,index){
-    const title=card.querySelector('.section-title');
-    if(!title||card.querySelector(':scope>.cd-next-card-head'))return;
-    const head=document.createElement('header');head.className='cd-next-card-head';
-    const titleWrap=document.createElement('div');titleWrap.className='cd-next-title-wrap';
-    const label=document.createElement('span');label.className='cd-next-section-label';label.textContent='Раздел '+String(index+1).padStart(2,'0');
-    const toggle=document.createElement('button');toggle.type='button';toggle.className='cd-next-toggle';toggle.setAttribute('aria-expanded','true');toggle.setAttribute('aria-label','Свернуть раздел');toggle.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-    const body=document.createElement('div');body.className='cd-next-card-body';
-    [...card.childNodes].forEach(node=>{if(node!==title)body.appendChild(node);});
-    titleWrap.append(label,title);head.append(titleWrap,toggle);card.append(head,body);
-    toggle.addEventListener('click',()=>{
-      const collapsed=card.classList.toggle('cd-next-collapsed');
-      toggle.setAttribute('aria-expanded',String(!collapsed));toggle.setAttribute('aria-label',collapsed?'Развернуть раздел':'Свернуть раздел');
-      setTimeout(()=>{publishChapters();window.__cdSendHeight?.();},40);
+  function selectData(target, output, label, onSelect) {
+    if (target.dataset.nextInteractive) return;
+    target.dataset.nextInteractive = '1';
+    target.classList.add('cd-next-data-target');
+    target.setAttribute('tabindex', '0');
+    target.setAttribute('role', 'button');
+    target.setAttribute('aria-label', label);
+    target.setAttribute('aria-pressed', 'false');
+    const activate = () => {
+      const region = target.closest('.cd-next-card-body');
+      region?.querySelectorAll('[aria-pressed="true"]').forEach(el => el.setAttribute('aria-pressed', 'false'));
+      target.setAttribute('aria-pressed', 'true');
+      output.textContent = label;
+      onSelect?.();
+    };
+    target.addEventListener('click', activate);
+    target.addEventListener('focus', () => { output.textContent = label; });
+    target.addEventListener('pointerenter', () => { output.textContent = label; });
+    target.addEventListener('keydown', event => {
+      if (event.isComposing || event.keyCode === 229) return;
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); activate(); }
     });
-    card.addEventListener('pointermove',event=>{const rect=card.getBoundingClientRect();card.style.setProperty('--mx',(event.clientX-rect.left)+'px');card.style.setProperty('--my',(event.clientY-rect.top)+'px');});
-    card.addEventListener('pointerenter',()=>card.classList.add('cd-next-focused'));
-    card.addEventListener('pointerleave',()=>card.classList.remove('cd-next-focused'));
-    card.addEventListener('click',event=>{if(!event.target.closest('button,a,input,select,textarea')){state.cards.forEach(item=>item.classList.remove('cd-next-focused'));card.classList.add('cd-next-focused');}});
   }
-
-  function publishChapters(){
-    const chapters=state.cards.map((card,index)=>({id:card.id,title:clean(card.querySelector('.section-title')?.textContent)||('Раздел '+(index+1)),top:card.offsetTop,height:card.offsetHeight}));
-    parent.postMessage({type:'cdNextChapters',chapters,documentHeight:document.documentElement.scrollHeight},'*');
+  function upgradeLifeChart() {
+    const chart = document.getElementById('lifeChartSvg');
+    const host = chart?.closest('.chart-stage')?.parentElement;
+    if (!chart || !host || !chart.querySelector('.life-path')) return;
+    document.querySelectorAll('.chart-tab').forEach(tab => tab.setAttribute('aria-pressed', String(tab.classList.contains('active'))));
+    let tools = host.querySelector('.cd-next-life-tools');
+    if (!tools) { tools = node('div', 'cd-next-life-tools'); chart.closest('.chart-stage').after(tools); }
+    legend(tools, [['gold', 'Основная линия'], ['teal', 'Сейчас / сравнение'], ['rose', 'Среднее значение']]);
+    const output = readout(tools, 'Выберите точку: возраст и значение появятся здесь. На узком экране график можно прокрутить.');
+    chart.querySelectorAll('.life-point, .life-point-2').forEach(point => {
+      const age = Number(point.dataset.plotage || point.dataset.age);
+      const level = Number(point.dataset.level);
+      if (!Number.isFinite(age) || !Number.isFinite(level)) return;
+      const series = point.classList.contains('life-point-2') ? 'Сравнение' : 'Основная линия';
+      selectData(point, output, series + ' · Возраст: ' + age.toFixed(1).replace(/\.0$/, '') + ' · Значение: ' + level);
+    });
   }
-  function reveal(index){state.cards.forEach((card,i)=>{if(i<=index+1)card.classList.add('cd-next-visible');});}
-
-  function initialize(){
-    if(state.ready)return;
-    const results=document.getElementById('results');const result=window.__cdLastResult;
-    const sections=results?.querySelectorAll(':scope>.card .section-title');
-    if(!results||!result||!sections||sections.length<4)return;
-    state.ready=true;buildCover(results,result);
-    state.cards=Array.from(results.querySelectorAll(':scope>.card')).filter(card=>card.id!=='personalDataSummary'&&getComputedStyle(card).display!=='none');
-    state.cards.forEach((card,index)=>{card.id=card.id||('cd-next-section-'+index);wrapCard(card,index);prepareDrawing(card);});
-    const revealObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('cd-next-visible');revealObserver.unobserve(entry.target);}}),{rootMargin:'180px 0px',threshold:.02});
-    state.cards.forEach(card=>revealObserver.observe(card));
-    upgradeDataVisuals(results);reveal(0);
-    const back=document.createElement('button');back.type='button';back.className='cd-next-backtop';back.textContent='Вернуться к началу';back.addEventListener('click',()=>parent.postMessage({type:'cdNextTop'},'*'));results.appendChild(back);
-    document.getElementById('chartTabs')?.addEventListener('click',()=>setTimeout(upgradeLifeChart,80));
-    requestAnimationFrame(()=>{publishChapters();window.__cdSendHeight?.();});setTimeout(publishChapters,900);
+  function upgradeBars(results) {
+    results.querySelectorAll('#yearlyCycleChart, #qualityOfLifeChart').forEach(host => {
+      const quality = host.id === 'qualityOfLifeChart';
+      legend(host, quality
+        ? [['rose', '0–3'], ['gold', '4–6'], ['teal', '7–9 · текущий возраст обведён']]
+        : [['gold', 'Годы цикла'], ['teal', 'Текущий год']]);
+      const output = readout(host, 'Выберите столбец, чтобы увидеть его значения. График прокручивается по горизонтали.');
+      host.querySelectorAll('.yc-bar-wrap').forEach(wrap => {
+        const value = clean(wrap.querySelector('.yc-num')?.textContent);
+        const period = clean(wrap.querySelector('.yc-year')?.textContent);
+        const extra = clean(wrap.querySelector('.yc-pn')?.textContent);
+        selectData(wrap, output, (quality ? 'Возраст: ' : 'Год: ') + period + ' · Значение: ' + value + (extra ? ' · ' + extra : ''));
+      });
+    });
   }
-
-  window.addEventListener('message',event=>{if(event.data?.type==='cdNextViewport')reveal(Number(event.data.activeIndex)||0);if(event.data?.type==='cdNextRefresh')publishChapters();});
-  const observer=new MutationObserver(records=>{initialize();if(state.ready&&records.some(record=>record.target.id==='lifeChartSvg'||record.target.closest?.('#lifeChartSvg')))clearTimeout(state.chartTimer),state.chartTimer=setTimeout(upgradeLifeChart,80);});
-  observer.observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['style']});
-  window.addEventListener('load',()=>{initialize();setTimeout(initialize,500);setTimeout(initialize,1400);});
+  function upgradeMatrices(results) {
+    results.querySelectorAll('.pyth-grid').forEach(grid => {
+      const host = grid.parentElement;
+      const output = readout(host, 'Выберите ячейку для просмотра значений.');
+      const items = [];
+      if (grid.querySelector('.opornaya')) items.push(['gold', 'Опорная ячейка']);
+      if (grid.querySelector('.transferred')) items.push(['teal', 'Перенос']);
+      if (items.length) legend(host, items);
+      grid.querySelectorAll('.pyth-cell').forEach(cell => {
+        const channel = clean(cell.querySelector('.chan')?.textContent);
+        const digits = [...cell.querySelectorAll('.digit')].map(el => clean(el.textContent)).join(', ');
+        const status = cell.classList.contains('empty') ? 'Нет чисел' : cell.classList.contains('transferred') ? 'Перенос' : cell.classList.contains('opornaya') ? 'Опорная ячейка' : 'Числа';
+        selectData(cell, output, [channel, status, digits].filter(Boolean).join(' · '));
+      });
+    });
+  }
+  function upgradeMandala(chart) {
+    if (chart.dataset.nextInteractive) return;
+    chart.dataset.nextInteractive = '1';
+    const frame = node('div', 'cd-next-chart-scroll');
+    chart.before(frame);
+    frame.append(chart);
+    const host = node('div', 'cd-next-mandala');
+    frame.before(host);
+    host.append(frame);
+    chart.querySelectorAll('polygon.mandala-zone-poly').forEach(zone => {
+      const negative = (zone.getAttribute('fill') || '').includes('192,57,43');
+      zone.style.fill = negative ? 'var(--cdn-rose)' : 'var(--cdn-teal)';
+      zone.style.fillOpacity = '.18';
+    });
+    legend(host, [['gold', 'Пройденный путь'], ['teal', 'Продолжение / выше оси'], ['rose', 'Ниже оси']]);
+    const points = [...chart.querySelectorAll('.mandala-past-line, .mandala-future-line')].flatMap(line =>
+      clean(line.getAttribute('points')).split(/\s+/).map(pair => pair.split(',').map(Number))
+    ).filter(pair => pair.length === 2 && pair.every(Number.isFinite)).sort((a, b) => a[0] - b[0]);
+    const axisTick = [...chart.querySelectorAll('text')].find(text => Number(text.getAttribute('y')) === 232 && Number(text.textContent) > 0);
+    if (!points.length || !axisTick) return;
+    // Read the scale from the rendered ticks; do not recalculate report data.
+    const pixelsPerYear = (Number(axisTick.getAttribute('x')) - 34) / Number(axisTick.textContent);
+    if (!Number.isFinite(pixelsPerYear) || pixelsPerYear <= 0) return;
+    const output = readout(host, '');
+    const label = node('label', 'cd-next-chart-control', 'Возраст');
+    const input = node('input');
+    input.type = 'range'; input.min = '0'; input.max = String(Math.round((points.at(-1)[0] - 34) / pixelsPerYear));
+    input.step = '1'; input.value = chart.dataset.curAge || '0';
+    label.append(input); output.before(label);
+    const marker = document.createElementNS(ns, 'circle');
+    marker.setAttribute('class', 'cd-next-selected-point'); marker.setAttribute('r', '5');
+    chart.append(marker);
+    const update = () => {
+      const x = 34 + Number(input.value) * pixelsPerYear;
+      const point = points.reduce((best, p) => Math.abs(p[0] - x) < Math.abs(best[0] - x) ? p : best, points[0]);
+      const age = Math.round((point[0] - 34) / pixelsPerYear);
+      const value = Math.max(0, Math.min(9, Math.round((214 - point[1]) * 9 / 202)));
+      marker.setAttribute('cx', point[0]); marker.setAttribute('cy', point[1]);
+      output.textContent = 'Возраст: ' + age + ' · Значение: ' + value;
+      input.setAttribute('aria-valuetext', output.textContent);
+      const scale = chart.getBoundingClientRect().width / 1000;
+      frame.scrollLeft = Math.max(0, point[0] * scale - frame.clientWidth / 2);
+    };
+    input.addEventListener('input', update);
+    chart.addEventListener('click', event => {
+      const rect = chart.getBoundingClientRect();
+      input.value = String(Math.round(((event.clientX - rect.left) * 1000 / rect.width - 34) / pixelsPerYear));
+      update();
+    });
+    update();
+  }
+  function upgradeTimeline() {
+    const host = document.getElementById('metaTimeline');
+    if (!host) return;
+    legend(host, [['gold', 'МЦ1'], ['teal', 'МЦ2'], ['rose', 'МЦ3']]);
+    host.closest('.card').querySelectorAll('.meta-block-head').forEach(head => {
+      if (head.style.cursor === 'default') return;
+      head.setAttribute('role', 'button'); head.tabIndex = 0;
+      const expanded = () => head.setAttribute('aria-expanded', String(head.closest('.meta-block').classList.contains('active')));
+      expanded(); head.addEventListener('click', expanded);
+      head.addEventListener('keydown', event => {
+        if (event.isComposing || event.keyCode === 229) return;
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); head.click(); }
+      });
+    });
+  }
+  function buildCover(results, result) {
+    const cover = node('section', 'cd-next-cover');
+    cover.setAttribute('aria-label', 'Персональный отчёт');
+    const top = node('div', 'cd-next-cover-top');
+    top.append(node('span', 'cd-next-kicker', 'Персональная карта'), node('span', 'cd-next-edition', 'NUMEROLOG'));
+    const main = node('div', 'cd-next-cover-main');
+    const name = clean(document.getElementById('pds-name')?.textContent) || [result.lastCyr, result.firstCyr, result.middleCyr].filter(Boolean).join(' ');
+    main.append(node('h1', '', 'Кристалл Судьбы'), node('p', 'cd-next-name', name), node('p', 'cd-next-date', clean(document.getElementById('pds-details')?.textContent)));
+    const metrics = node('div', 'cd-next-metrics');
+    [[result.TP, 'Точка предназначения'], [result.SZ_num, 'Суть задачи'], [result.Prof_num, 'Профессия'], [result.Prizvanie_num, 'Призвание']].forEach(([value, title]) => {
+      const metric = node('div', 'cd-next-metric');
+      metric.append(node('strong', '', clean(value)), node('span', '', title)); metrics.append(metric);
+    });
+    cover.append(top, main, metrics); results.prepend(cover);
+  }
+  function wrapCard(card, index) {
+    const title = card.querySelector('.section-title');
+    if (!title || card.querySelector(':scope > .cd-next-card-head')) return;
+    const head = node('header', 'cd-next-card-head');
+    const titles = node('div', 'cd-next-title-wrap');
+    const toggle = node('button', 'cd-next-toggle');
+    toggle.type = 'button'; toggle.setAttribute('aria-expanded', 'true');
+    toggle.setAttribute('aria-label', 'Свернуть: ' + clean(title.textContent));
+    toggle.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
+    const body = node('div', 'cd-next-card-body');
+    body.id = 'cd-next-body-' + index; toggle.setAttribute('aria-controls', body.id);
+    [...card.childNodes].forEach(child => { if (child !== title) body.append(child); });
+    titles.append(node('span', 'cd-next-section-label', 'Раздел ' + (index + 1)), title);
+    head.append(titles, toggle); card.append(head, body);
+    toggle.addEventListener('click', () => {
+      const collapsed = card.classList.toggle('cd-next-collapsed');
+      toggle.setAttribute('aria-expanded', String(!collapsed));
+      toggle.setAttribute('aria-label', (collapsed ? 'Развернуть: ' : 'Свернуть: ') + clean(title.textContent));
+      schedulePublish();
+    });
+  }
+  function publishChapters() {
+    const chapters = state.cards.map((card, index) => ({ id: card.id, title: clean(card.querySelector('.section-title')?.textContent) || ('Раздел ' + (index + 1)), top: card.getBoundingClientRect().top + window.scrollY, height: card.offsetHeight }));
+    const documentHeight = window.__cdContentHeight ? window.__cdContentHeight() : Math.ceil(document.querySelector('.wrap').getBoundingClientRect().bottom + window.scrollY);
+    send({ type: 'cdNextChapters', chapters, documentHeight });
+    window.__cdSendHeight?.();
+  }
+  function schedulePublish() {
+    if (state.timer) return;
+    state.timer = setTimeout(() => { state.timer = 0; publishChapters(); }, 100);
+  }
+  function initialize() {
+    if (state.ready) return;
+    const results = document.getElementById('results');
+    const result = window.__cdLastResult;
+    if (!results || !result || results.querySelectorAll(':scope > .card .section-title').length < 4) return;
+    state.ready = true;
+    buildCover(results, result);
+    state.cards = [...results.querySelectorAll(':scope > .card')].filter(card => card.id !== 'personalDataSummary' && card.querySelector('.section-title') && getComputedStyle(card).display !== 'none');
+    state.cards.forEach((card, index) => { card.id = card.id || ('cd-next-section-' + index); wrapCard(card, index); });
+    upgradeLifeChart(); upgradeBars(results); upgradeMatrices(results); upgradeTimeline();
+    results.querySelectorAll('.mandala-chart-svg').forEach(upgradeMandala);
+    const back = node('button', 'cd-next-backtop', 'Вернуться к началу');
+    back.type = 'button'; back.addEventListener('click', () => send({ type: 'cdNextTop' })); results.append(back);
+    const resize = new ResizeObserver(schedulePublish); resize.observe(results);
+    const life = document.getElementById('lifeChartSvg');
+    if (life) new MutationObserver(upgradeLifeChart).observe(life, { childList: true });
+    document.fonts.ready.then(schedulePublish);
+    schedulePublish();
+  }
+  const observer = new MutationObserver(() => { initialize(); if (state.ready) observer.disconnect(); });
+  observer.observe(document.documentElement, { childList: true, subtree: true });
+  window.addEventListener('message', event => {
+    if (event.source !== parent || event.origin !== location.origin) return;
+    if (event.data?.type === 'cdNextRefresh' && state.ready) schedulePublish();
+  });
+  window.addEventListener('load', initialize);
+  initialize();
 })();
 </script>
 </body>

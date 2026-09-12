@@ -2,12 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronUp, List } from 'lucide-react'
 import { Mail } from 'lucide-react'
 import { CristalLoading } from '@/components/numerology/cristal-loading'
-import { AdminExperimentsSurface } from '@/components/numerology/admin-experiments-surface'
+import { AdminExperimentsSurface, adminSurface } from '@/components/numerology/admin-experiments-surface'
 import { Button } from '@/components/ui/button'
 import {
   Sheet,
@@ -55,6 +55,7 @@ const REVEAL_KEY = 'cd:revealed'
 
 export default function RaportViewer({ formData, reportType = 'cristal', reveal = false, designPreview = false }: RaportViewerProps) {
   const t = useTranslations('funnel')
+  const isRussian = useLocale() === 'ru'
   const searchParams = useSearchParams()
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [height, setHeight] = useState(800)
@@ -94,7 +95,9 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
     : `/cristalul-calculator.html?${params.toString()}`
 
   useEffect(() => {
+    let refreshTimer: ReturnType<typeof setInterval> | undefined
     const handleMessage = (event: MessageEvent) => {
+      if (designPreview && (event.source !== iframeRef.current?.contentWindow || event.origin !== window.location.origin)) return
       if (event.data?.type === 'resize' && typeof event.data.height === 'number') {
         setHeight(event.data.height + 40)
       }
@@ -102,7 +105,8 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
         setHeight(event.data.height + 40)
         setRendered(true)
       }
-      if (designPreview && event.data?.type === 'cdNextChapters' && Array.isArray(event.data.chapters)) {
+      if (designPreview && event.data?.type === 'cdNextChapters' && Array.isArray(event.data.chapters) && event.data.chapters.length > 0) {
+        clearInterval(refreshTimer)
         setChapters(event.data.chapters as ReportChapter[])
         if (typeof event.data.documentHeight === 'number') setHeight(event.data.documentHeight + 40)
       }
@@ -111,7 +115,20 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
       }
     }
     window.addEventListener('message', handleMessage)
-    return () => window.removeEventListener('message', handleMessage)
+    if (designPreview) {
+      // A cached iframe can finish loading before React installs its message listener.
+      let attempts = 0
+      const requestChapters = () => {
+        iframeRef.current?.contentWindow?.postMessage({ type: 'cdNextRefresh' }, window.location.origin)
+        if (++attempts >= 20) clearInterval(refreshTimer)
+      }
+      refreshTimer = setInterval(requestChapters, 500)
+      requestChapters()
+    }
+    return () => {
+      clearInterval(refreshTimer)
+      window.removeEventListener('message', handleMessage)
+    }
   }, [designPreview])
 
   useEffect(() => {
@@ -138,11 +155,15 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
   }, [chapters, designPreview, height])
 
   const navigateToChapter = (chapter: ReportChapter, index: number) => {
-    const iframe = iframeRef.current
-    if (!iframe) return
-    const iframeTop = iframe.getBoundingClientRect().top + window.scrollY
-    window.scrollTo({ top: iframeTop + chapter.top - 104, behavior: 'smooth' })
     setActiveChapter(index)
+    requestAnimationFrame(() => {
+      const iframe = iframeRef.current
+      if (!iframe) return
+      const iframeTop = iframe.getBoundingClientRect().top + window.scrollY
+      const element = iframe.contentDocument?.getElementById(chapter.id)
+      const chapterTop = element ? element.getBoundingClientRect().top + (iframe.contentWindow?.scrollY ?? 0) : chapter.top
+      window.scrollTo({ top: iframeTop + chapterTop - 144, behavior: 'smooth' })
+    })
   }
 
   const navigateToTop = () => {
@@ -166,7 +187,7 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
   const numeFull = [formData.first, formData.last].filter(Boolean).join(' ')
 
   return (
-    <AdminExperimentsSurface className="w-full overflow-hidden !border-0 !bg-transparent !p-0">
+    <AdminExperimentsSurface className={`w-full !border-0 !bg-transparent !p-0 ${designPreview ? 'min-w-0 overflow-visible' : 'overflow-hidden'}`}>
       {/* Banner informativ */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -182,28 +203,28 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
       </motion.div>
 
       {designPreview && chapters.length > 0 && (
-        <div className="sticky top-16 z-30 mb-3 overflow-hidden rounded-xl border border-white/10 bg-[#0b1020]/95 shadow-[0_18px_48px_rgba(0,0,0,.28)] backdrop-blur-xl">
+        <div className={`${adminSurface} sticky top-16 z-30 mb-3 overflow-hidden !p-0 backdrop-blur-xl`}>
           <div className="h-0.5 bg-muted">
             <div className="h-full bg-primary transition-[width] duration-300" style={{ width: `${readingProgress}%` }} />
           </div>
           <div className="flex min-h-14 items-center justify-between gap-2 px-2.5 py-2">
             <div className="min-w-0 flex-1 px-1">
-              <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-primary">Capitolul {activeChapter + 1} din {chapters.length}</p>
+              <p className="font-sans text-sm text-primary">{isRussian ? 'Раздел' : 'Capitolul'} {activeChapter + 1} {isRussian ? 'из' : 'din'} {chapters.length}</p>
               <p className="truncate text-sm font-medium text-foreground">{chapters[activeChapter]?.title}</p>
             </div>
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="outline" size="sm" aria-label="Deschide cuprinsul">
+                <Button variant="outline" size="sm" aria-label={isRussian ? 'Открыть содержание' : 'Deschide cuprinsul'}>
                   <List data-icon="inline-start" />
-                  Cuprins
+                  <span className="hidden sm:inline">{isRussian ? 'Содержание' : 'Cuprins'}</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="bottom" className="max-h-[82vh] rounded-t-3xl border-border bg-background px-2 pb-5">
+              <SheetContent side="bottom" onCloseAutoFocus={event => event.preventDefault()} className={`${adminSurface} max-h-[82vh] !rounded-b-none px-2 pb-5 backdrop-blur-3xl`}>
                 <SheetHeader className="px-3 pb-2 pt-5 text-left">
                   <SheetTitle className="font-sans text-3xl font-semibold tracking-tight">Содержание</SheetTitle>
                   <SheetDescription>Выберите раздел персонального отчёта.</SheetDescription>
                 </SheetHeader>
-                <nav className="flex max-h-[62vh] flex-col gap-1 overflow-y-auto px-1" aria-label="Cuprinsul raportului">
+                <nav className="flex max-h-[62vh] flex-col gap-1 overflow-y-auto px-1" aria-label={isRussian ? 'Содержание отчёта' : 'Cuprinsul raportului'}>
                   {chapters.map((chapter, index) => (
                     <SheetClose asChild key={chapter.id}>
                       <Button
@@ -211,7 +232,7 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
                         className="h-auto min-h-11 justify-start whitespace-normal px-3 py-2 text-left"
                         onClick={() => navigateToChapter(chapter, index)}
                       >
-                        <span className="w-7 shrink-0 font-mono text-[10px] text-primary">{String(index + 1).padStart(2, '0')}</span>
+                        <span className="w-7 shrink-0 font-sans text-sm text-primary">{index + 1}</span>
                         <span className="text-pretty">{chapter.title}</span>
                       </Button>
                     </SheetClose>
@@ -219,7 +240,7 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
                 </nav>
               </SheetContent>
             </Sheet>
-            <Button variant="ghost" size="icon" onClick={navigateToTop} aria-label="Revino la început">
+            <Button variant="ghost" size="icon" onClick={navigateToTop} aria-label={isRussian ? 'Вернуться к началу' : 'Revino la început'}>
               <ChevronUp />
             </Button>
           </div>
