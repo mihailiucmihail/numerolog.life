@@ -182,7 +182,7 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
       </motion.div>
 
       {designPreview && chapters.length > 0 && (
-        <div className="sticky top-16 z-30 mb-3 overflow-hidden rounded-2xl border border-border/70 bg-background/90 shadow-lg backdrop-blur-xl">
+        <div className="sticky top-16 z-30 mb-3 overflow-hidden rounded-xl border border-white/10 bg-[#0b1020]/95 shadow-[0_18px_48px_rgba(0,0,0,.28)] backdrop-blur-xl">
           <div className="h-0.5 bg-muted">
             <div className="h-full bg-primary transition-[width] duration-300" style={{ width: `${readingProgress}%` }} />
           </div>
@@ -200,7 +200,7 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
               </SheetTrigger>
               <SheetContent side="bottom" className="max-h-[82vh] rounded-t-3xl border-border bg-background px-2 pb-5">
                 <SheetHeader className="px-3 pb-2 pt-5 text-left">
-                  <SheetTitle className="font-serif text-3xl font-medium">Содержание</SheetTitle>
+                  <SheetTitle className="font-sans text-3xl font-semibold tracking-tight">Содержание</SheetTitle>
                   <SheetDescription>Выберите раздел персонального отчёта.</SheetDescription>
                 </SheetHeader>
                 <nav className="flex max-h-[62vh] flex-col gap-1 overflow-y-auto px-1" aria-label="Cuprinsul raportului">
