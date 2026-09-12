@@ -462,6 +462,10 @@ grani_facts = (ROOT / 'scripts/cristalul-grani-facts.js').read_text(encoding='ut
 assert grani_preview.count('/*__CD_GRANI_FACTS__*/') == 1
 assert '\ufffd' not in grani_facts
 grani_preview = grani_preview.replace('/*__CD_GRANI_FACTS__*/', grani_facts)
+grani_styles = (ROOT / 'scripts/cristalul-grani-preview.css').read_text(encoding='utf-8')
+assert grani_preview.count('</style>') == 1
+assert '\ufffd' not in grani_styles
+grani_preview = grani_preview.replace('</style>', grani_styles + '\n</style>')
 report_next = re.sub(r'(?m)^([ \t]*)> ', r'\1', REPORT_NEXT.read_text(encoding='utf-8'))
 assert 'cd-report-next-script' in report_next and "params.get('design') !== 'next'" in report_next
 assert report_next.count('\ufffd') == 0, 'scriptul nou al raportului conține U+FFFD'
