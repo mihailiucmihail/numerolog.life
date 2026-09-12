@@ -17,10 +17,9 @@ import {
 
 interface NavbarProps {
   hideStart?: boolean
-  links?: Array<{ label: string; href: string }>
 }
 
-export function Navbar({ hideStart = false, links = [] }: NavbarProps) {
+export function Navbar({ hideStart = false }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false)
   const lastUpdateRef = useRef(0)
   const { user, profile, loading, signOut } = useAuth()
@@ -181,11 +180,9 @@ export function Navbar({ hideStart = false, links = [] }: NavbarProps) {
           `}</style>
 
           <div className="hidden items-center gap-7 md:flex">
-            {links.map((link) => (
-              <Link key={link.href} href={link.href} className="text-sm text-white/70 transition-colors hover:text-white">
-                {link.label}
-              </Link>
-            ))}
+            <Link href="/#metoda" className="text-sm text-white/70 transition-colors hover:text-white">{t("features")}</Link>
+            <Link href="/#raport" className="text-sm text-white/70 transition-colors hover:text-white">{t("pricing")}</Link>
+            <Link href="/#daria" className="text-sm text-white/70 transition-colors hover:text-white">{t("faq")}</Link>
           </div>
           {!hideStart && (
             <Link href="/numerologie?flow=standard" className="hidden rounded-full border border-primary/35 px-4 py-2 text-sm text-primary transition-colors hover:bg-primary/10 md:block">
