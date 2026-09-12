@@ -52,6 +52,7 @@ function roundNice(value: number): number {
 
 /** Suma (unitate majoră) a unei fațete în moneda țării. */
 export function graniUnitAmount(price: CountryPrice): number {
+  if (price.countryCode === 'KZ' && price.currency === 'KZT') return 250
   const raw = price.amount * UNIT_RATIO
   if (Number.isInteger(price.amount)) return roundNice(raw)
   // Prețuri cu zecimale (14,99 €, $9.99): sub 1 → 0,99 (peste minimul Stripe), altfel 2 zecimale.

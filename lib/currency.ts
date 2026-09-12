@@ -156,7 +156,7 @@ export const CRISTAL_PRICES: Record<Currency, number> = {
   gel: 4900,      // ≈ 60 ₾ → 49 ₾ (−18 %)
   amd: 699000,    // ≈ 8 550 ֏ → 6 990 ֏ (−18 %)
   azn: 3099,      // ≈ 38,00 ₼ → 30,99 ₼ (−18 %)
-  kzt: 799000,    // ≈ 10 000 ₸ → 7 990 ₸ (−20 %)
+  kzt: 349000,    // 3 490 ₸ — preț fix pentru Kazahstan
   uzs: 22900000,  // ≈ 279 000 сум → 229 000 сум (−18 %)
   kgs: 159000,    // ≈ 1 940 сом → 1 590 сом (−18 %)
   mdl: 30900,     // ≈ 382 lei → 309 lei (−19 %)
@@ -170,7 +170,7 @@ export type GraniCurrency = (typeof GRANI_CURRENCIES)[number]
 
 const GRANI_PRICES: Record<GraniCurrency, { graniStandard: number; graniGraph: number }> = {
   eur: { graniStandard: 199, graniGraph: 499 }, // 1,99 € / 4,99 €
-  kzt: { graniStandard: 105000, graniGraph: 265000 }, // 1 050 ₸ / 2 650 ₸
+  kzt: { graniStandard: 25000, graniGraph: 25000 }, // 250 ₸ pentru fiecare fațetă
   mdl: { graniStandard: 3900, graniGraph: 9900 }, // 39 lei / 99 lei
 }
 
