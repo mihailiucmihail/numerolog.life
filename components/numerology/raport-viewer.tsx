@@ -40,7 +40,7 @@ interface RaportViewerProps {
   reportType?: 'cristal' | 'grani'
   /** Arată ecranul „Deschidem Cristalul” (≈5 s) înainte de raport — folosit imediat după plată. */
   reveal?: boolean
-  /** Activează conceptul vizual izolat numai în ruta privată de previzualizare. */
+  /** Activează designul aprobat, cu grafice compacte și cuprins, pentru raportul complet. */
   designPreview?: boolean
 }
 
@@ -75,6 +75,15 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
     }
   })
 
+  // Rapoartele vechi nu salvau alfabetul; nu lăsăm geolocația curentă să blocheze restaurarea lor.
+  const reportName = [formData.last, formData.first, formData.middle].filter(Boolean).join(' ')
+  const cyrillicLetters = (reportName.match(/[\u0400-\u04FF]/g) || []).length
+  const latinLetters = (reportName.match(/[A-Za-z\u00C0-\u024F]/g) || []).length
+  const savedAlphabet = formData.nameAlphabetKey || formData.alpha
+  const reportAlphabet = savedAlphabet || (reportType === 'cristal'
+    ? cyrillicLetters > 0 && cyrillicLetters >= latinLetters ? 'ru' : latinLetters > 0 ? 'ro' : undefined
+    : undefined)
+
   // Construim URL-ul iframe cu datele în query params (auto-completare fiabilă)
   const params = new URLSearchParams({
     auto: '1',
@@ -85,7 +94,7 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
     month: String(formData.month),
     year: String(formData.year),
     ...(formData.gender ? { gender: formData.gender } : {}),
-    ...((formData.nameAlphabetKey || formData.alpha) ? { alpha: (formData.nameAlphabetKey || formData.alpha) as string } : {}),
+    ...(reportAlphabet ? { alpha: reportAlphabet } : {}),
     ...(reportType === 'cristal' && formData.entry ? { entry: formData.entry } : {}),
     ...(reportType === 'cristal' && designPreview ? { design: 'next' } : {}),
     ...(reportType === 'grani' ? { report: '1', email: formData.email || '', facet: formData.facet || 'professiya' } : {}),
