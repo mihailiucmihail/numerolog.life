@@ -7,6 +7,7 @@ import { fromStripeMinor } from '@/lib/country-pricing'
 import { recordCheckoutAttempt } from '@/lib/checkout-attempts'
 import { getRequestAssignment } from '@/lib/experiments/server'
 import { recordPurchaseFromSession } from '@/lib/experiments/purchase'
+import { socialCheckoutMetadata, recordSocialSession } from '@/lib/experiments/social-server'
 import { buildRaportUrl, sendRaportEmail } from '@/lib/raport-email'
 import {
   GRANI_COUNT,
@@ -79,6 +80,7 @@ export async function startGraniBlockCheckout(params: {
   const currency = price.currency.toLowerCase()
   const unitAmount = graniUnitMinor(price)
   const assignment = await getRequestAssignment()
+  const socialMetadata = await socialCheckoutMetadata()
   const attempt = (status: 'started' | 'failed', sessionId: string | null, error?: string) =>
     recordCheckoutAttempt({
       email,
@@ -121,6 +123,7 @@ export async function startGraniBlockCheckout(params: {
         ...(assignment.visitorId ? { expVisitor: assignment.visitorId } : {}),
         expForm: assignment.form,
         expPreview: assignment.preview,
+        ...socialMetadata,
       },
       success_url: params.token
         ? reportSuccessUrl(locale, params.token)
@@ -138,6 +141,7 @@ export async function startGraniBlockCheckout(params: {
     throw new Error('Nu s-a putut genera URL-ul de plată.')
   }
   await attempt('started', session.id)
+  await recordSocialSession(session, 'checkout_start')
   return session.url
 }
 
@@ -167,11 +171,12 @@ export async function startRemainderCheckout(params: { token: string; locale?: s
     mode: 'payment',
     line_items: [{ price_data: { currency, product_data: { name }, unit_amount: unitAmount }, quantity: 1 }],
     ...(email ? { customer_email: email } : {}),
-    metadata: { reportType: 'cristal', token: params.token, unlockAll: '1', currency, country: price.countryCode, displayPrice: price.displayPrice },
+    metadata: { reportType: 'cristal', token: params.token, unlockAll: '1', currency, country: price.countryCode, displayPrice: price.displayPrice, ...await socialCheckoutMetadata() },
     success_url: reportSuccessUrl(locale, params.token),
     cancel_url: `${BASE_URL}/${locale}/numerologie/cristalul-raport/${params.token}?grani_payment=cancelled`,
   })
   if (!session.url) throw new Error('Nu s-a putut genera URL-ul de plată.')
+  await recordSocialSession(session, 'checkout_start')
   return session.url
 }
 
@@ -183,6 +188,7 @@ export async function completeGraniPurchase(sessionId: string, locale: string = 
   const stripe = getStripe()
   const session = await stripe.checkout.sessions.retrieve(sessionId)
   if (session.payment_status !== 'paid') return null
+  await recordSocialSession(session, 'purchase')
   const token = session.metadata?.token
   if (!token) return null
   const row = await loadRaport(token)

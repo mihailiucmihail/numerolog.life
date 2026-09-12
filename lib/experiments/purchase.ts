@@ -2,6 +2,7 @@ import 'server-only'
 import type Stripe from 'stripe'
 import { db } from '@/lib/db'
 import { isKnownVariant } from './catalog'
+import { recordSocialSession } from './social-server'
 
 /**
  * Atribuirea CUMPĂRĂRII către variante, pe baza sesiunii Stripe.
@@ -21,6 +22,7 @@ export async function recordPurchaseFromSession(
   try {
     if (session.payment_status !== 'paid') return { recorded: false }
 
+    await recordSocialSession(session, 'purchase')
     const meta = session.metadata || {}
     const form = isKnownVariant('form', meta.expForm) ? meta.expForm! : null
     const preview = isKnownVariant('preview', meta.expPreview) ? meta.expPreview! : null

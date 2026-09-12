@@ -3,6 +3,7 @@
 import { db } from '@/lib/db'
 import { getRequestAssignment, getRequestExperimentContext } from '@/lib/experiments/server'
 import type { Assignment } from '@/lib/experiments/assignment'
+import { recordSocialFunnelEvent } from '@/lib/experiments/social-server'
 
 /**
  * Evenimentele de funnel pentru experimentele FORM / PREVIEW.
@@ -89,6 +90,7 @@ export async function recordExperimentEvent(input: ExperimentEventInput): Promis
 
     const assignment = await getRequestAssignment()
     if (!assignment.visitorId) return { ok: false }
+    await recordSocialFunnelEvent(input.event, assignment)
     const ctx = await getRequestExperimentContext()
 
     const entry = (input.entry || '').trim().slice(0, 40) || null

@@ -10,6 +10,7 @@ import { fromStripeMinor, toStripeMinor } from "@/lib/country-pricing"
 import { recordCheckoutAttempt } from "@/lib/checkout-attempts"
 import { getRequestAssignment } from "@/lib/experiments/server"
 import { recordExperimentEvent } from "@/app/actions/experiment-events"
+import { socialCheckoutMetadata, recordSocialSession } from '@/lib/experiments/social-server'
 
 const PROMO_ERRORS = {
   ro: {
@@ -46,6 +47,7 @@ export async function startNumerologieCheckout(
   // Atribuirea experimentului vine din cookie-ul SEMNAT, nu din browser: altfel un vizitator
   // ar putea raporta cumpărarea pe altă variantă decât cea pe care a văzut-o.
   const assignment = await getRequestAssignment()
+  const socialMetadata = await socialCheckoutMetadata()
   let unitAmount = toStripeMinor(price.amount, price.currency)
   let appliedPromo: string | null = null
   let appliedPercent = 0
@@ -103,6 +105,7 @@ export async function startNumerologieCheckout(
     throw new Error('Nu s-a putut genera URL-ul de plată.')
   }
   await attempt('started', session.id)
+  await recordSocialSession(session, 'checkout_start')
   // Tentativă efectivă de plată (sesiune Stripe creată) — diferită de simplul click pe buton.
   await recordExperimentEvent({
     event: 'checkout_start',
@@ -141,6 +144,7 @@ export async function startNumerologieCheckout(
       ...(assignment.visitorId ? { expVisitor: assignment.visitorId } : {}),
       expForm: assignment.form,
       expPreview: assignment.preview,
+      ...socialMetadata,
     },
     success_url: `${baseUrl}/${locale}/numerologie?payment=success&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${baseUrl}/${locale}/numerologie?payment=cancelled`,
