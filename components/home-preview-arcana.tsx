@@ -127,10 +127,10 @@ export function HomePreviewArcana({ locale }: { locale: Locale }) {
         <fieldset className="flex flex-col gap-3">
           <legend className="mb-3 flex items-center gap-2 text-sm text-foreground"><CalendarDays className="size-4 text-primary" aria-hidden="true" />{c.date}</legend>
           <div className="grid min-w-0 grid-cols-[minmax(0,.8fr)_minmax(0,.8fr)_minmax(0,1.4fr)] gap-2">
-            {([['day', c.day, '05', 2], ['month', c.month, '10', 2], ['year', c.year, '1992', 4]] as const).map(([key, label, placeholder, max], index) => (
+            {([['day', c.day, 2], ['month', c.month, 2], ['year', c.year, 4]] as const).map(([key, label, max], index) => (
               <label key={key} className={labelClass}>
                 <span className={captionClass}>{label}</span>
-                <input ref={(el) => { dateRefs.current[index] = el }} className={`${inputClass} px-2 text-center tabular-nums`} value={values[key]} onChange={(e) => updateDate(index, key, e.target.value, max)} placeholder={placeholder} inputMode="numeric" aria-label={label} required />
+                <input ref={(el) => { dateRefs.current[index] = el }} className={`${inputClass} px-2 text-center tabular-nums`} value={values[key]} onChange={(e) => updateDate(index, key, e.target.value, max)} inputMode="numeric" aria-label={label} required />
               </label>
             ))}
           </div>
