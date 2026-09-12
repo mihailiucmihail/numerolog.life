@@ -1,0 +1,91 @@
+<script id="cd-report-next-script">
+(function(){
+  const params = new URLSearchParams(location.search);
+  if(params.get('design') !== 'next') return;
+  document.documentElement.classList.add('cd-next-design');
+
+  const state = { ready:false, cards:[] };
+  const clean = (value) => String(value == null ? '' : value).trim();
+  const sectionNumber = (index) => 'Раздел ' + String(index + 1).padStart(2, '0');
+
+  function prepareDrawing(card){
+    card.querySelectorAll('svg path,svg polyline').forEach(function(line){
+      if(line.classList.contains('cd-next-draw')) return;
+      const stroke = line.getAttribute('stroke');
+      if(!stroke || stroke === 'none') return;
+      try{
+        const length = line.getTotalLength();
+        if(!Number.isFinite(length) || length < 20) return;
+        line.classList.add('cd-next-draw');
+        line.style.strokeDasharray = String(length);
+        line.style.strokeDashoffset = String(length);
+      }catch(error){}
+    });
+  }
+
+  function buildCover(results, result){
+    const name = clean(document.getElementById('pds-name')?.textContent) || [result.lastCyr,result.firstCyr,result.middleCyr].filter(Boolean).join(' ');
+    const details = clean(document.getElementById('pds-details')?.textContent);
+    const cover = document.createElement('section');
+    cover.className = 'cd-next-cover';
+    cover.setAttribute('aria-label', 'Обложка персонального отчёта');
+    cover.innerHTML = '<div class="cd-next-cover-top"><span class="cd-next-kicker">Персональный код судьбы</span><span class="cd-next-edition">NUMEROLOG · 2026</span></div>' +
+      '<div class="cd-next-cover-main"><h1>Кристалл Судьбы</h1><p class="cd-next-name"></p><p class="cd-next-date"></p></div>' +
+      '<div class="cd-next-metrics" aria-label="Ключевые числа">' +
+      '<div class="cd-next-metric"><strong>' + clean(result.TP) + '</strong><span>Точка предназначения</span></div>' +
+      '<div class="cd-next-metric"><strong>' + clean(result.SZ_num) + '</strong><span>Суть задачи</span></div>' +
+      '<div class="cd-next-metric"><strong>' + clean(result.Prof_num) + '</strong><span>Профессия</span></div>' +
+      '<div class="cd-next-metric"><strong>' + clean(result.Prizvanie_num) + '</strong><span>Призвание</span></div>' +
+      '</div>';
+    cover.querySelector('.cd-next-name').textContent = name;
+    cover.querySelector('.cd-next-date').textContent = details;
+    results.insertBefore(cover, results.firstChild);
+  }
+
+  function publishChapters(){
+    const chapters = state.cards.map(function(card,index){
+      return { id:card.id, title:clean(card.querySelector('.section-title')?.textContent) || ('Раздел ' + (index + 1)), top:card.offsetTop, height:card.offsetHeight };
+    });
+    parent.postMessage({ type:'cdNextChapters', chapters:chapters, documentHeight:document.documentElement.scrollHeight }, '*');
+  }
+
+  function reveal(index){
+    state.cards.forEach(function(card,cardIndex){
+      if(cardIndex <= index + 1) card.classList.add('cd-next-visible');
+    });
+  }
+
+  function initialize(){
+    if(state.ready) return;
+    const results = document.getElementById('results');
+    const result = window.__cdLastResult;
+    const identity = document.getElementById('personalDataSummary');
+    if(!results || !result || !identity || getComputedStyle(identity).display === 'none') return;
+    state.ready = true;
+    buildCover(results, result);
+    state.cards = Array.from(results.querySelectorAll(':scope > .card')).filter(function(card){ return card.id !== 'personalDataSummary' && getComputedStyle(card).display !== 'none'; });
+    state.cards.forEach(function(card,index){
+      card.id = card.id || ('cd-next-section-' + index);
+      card.dataset.nextNumber = sectionNumber(index);
+      prepareDrawing(card);
+    });
+    reveal(0);
+    const back = document.createElement('button');
+    back.type = 'button';
+    back.className = 'cd-next-backtop';
+    back.textContent = 'Вернуться к началу';
+    back.addEventListener('click', function(){ parent.postMessage({ type:'cdNextTop' }, '*'); });
+    results.appendChild(back);
+    requestAnimationFrame(function(){ publishChapters(); window.__cdSendHeight?.(); });
+    setTimeout(publishChapters, 800);
+  }
+
+  window.addEventListener('message', function(event){
+    if(event.data?.type === 'cdNextViewport') reveal(Number(event.data.activeIndex) || 0);
+    if(event.data?.type === 'cdNextRefresh') publishChapters();
+  });
+  const observer = new MutationObserver(initialize);
+  observer.observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['style']});
+  window.addEventListener('load', function(){ initialize(); setTimeout(initialize,500); setTimeout(initialize,1400); });
+})();
+</script>
