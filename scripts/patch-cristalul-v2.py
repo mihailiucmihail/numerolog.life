@@ -458,6 +458,10 @@ assert career_previews.count('\ufffd') == 0, 'previewurile carierei contin U+FFF
 grani_preview = re.sub(r'(?m)^([ \t]*)> ', r'\1', GRANI_PREVIEW.read_text(encoding='utf-8'))
 assert 'preview-grani-v1' in grani_preview and 'requestGraniPayment' in grani_preview and 'renderPaywall(model)' in grani_preview
 assert grani_preview.count('\ufffd') == 0, 'previewul Grani contine U+FFFD'
+grani_facts = (ROOT / 'scripts/cristalul-grani-facts.js').read_text(encoding='utf-8')
+assert grani_preview.count('/*__CD_GRANI_FACTS__*/') == 1
+assert '\ufffd' not in grani_facts
+grani_preview = grani_preview.replace('/*__CD_GRANI_FACTS__*/', grani_facts)
 report_next = re.sub(r'(?m)^([ \t]*)> ', r'\1', REPORT_NEXT.read_text(encoding='utf-8'))
 assert 'cd-report-next-script' in report_next and "params.get('design') !== 'next'" in report_next
 assert report_next.count('\ufffd') == 0, 'scriptul nou al raportului conține U+FFFD'

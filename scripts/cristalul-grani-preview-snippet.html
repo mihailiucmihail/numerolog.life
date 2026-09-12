@@ -1,4 +1,5 @@
 <style id="cd-grani-preview">
+body.cd-grani-preview #results{margin-inline:0!important;width:100%!important;max-width:100%!important}
 .cd-gr{display:flex;flex-direction:column;gap:14px}
 .cd-gr-head{padding:20px 16px 18px;border:1px solid rgba(217,169,79,.32);border-radius:18px;background:linear-gradient(170deg,rgba(217,169,79,.12),rgba(16,10,31,.78) 60%)}
 .cd-gr-kicker{margin:0 0 7px;color:var(--brass-bright,#d9a94f);font-size:10px;letter-spacing:.16em;text-transform:uppercase}
@@ -15,7 +16,14 @@
 .cd-gr-card h3{margin:0;color:var(--parchment,#fff3d6);font-family:var(--font-display,serif);font-size:22px;line-height:1.2;font-weight:500}
 .cd-gr-card.is-open h3{color:var(--brass-bright,#d9a94f)}
 .cd-gr-fact{margin:14px 0 0;padding:14px 14px 14px 16px;border-radius:12px;background:rgba(217,169,79,.08);border:1px solid rgba(217,169,79,.22);color:var(--parchment,#fff3d6);font-size:15px;line-height:1.6}
-.cd-gr-fact .cd-gr-kicker{margin-bottom:6px}
+.cd-gr-fact .cd-gr-kicker{margin-bottom:8px;font-size:14px;letter-spacing:.04em}
+.cd-gr-question{margin:14px 0 0;color:var(--parchment,#fff3d6);font-size:15px;line-height:1.6}
+.cd-gr-chart-list{display:flex;flex-wrap:wrap;gap:8px 16px;padding:0;list-style:none;color:var(--parchment-dim,#c9bda3);font-size:14px;line-height:1.6}
+.cd-gr-chart-list li{border-bottom:1px solid rgba(217,169,79,.22)}
+.cd-gr-compact{border-color:rgba(217,169,79,.42)}
+.cd-gr-compact-price{margin:14px 0 0;color:var(--brass-bright,#d9a94f);font-size:24px}
+.cd-gr-btn:disabled{opacity:.55;cursor:wait}
+.cd-gr-btn:focus-visible{outline:2px solid var(--parchment,#fff3d6);outline-offset:4px}
 .cd-gr-fact p{margin:0}
 .cd-gr-fact b{color:var(--brass-bright,#d9a94f);font-weight:600}
 .cd-gr-nums{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 0}
@@ -55,13 +63,14 @@
   var params = new URLSearchParams(location.search);
   var pv = params.get('pv');
   if(pv !== 'preview-grani-v1') return;
+  document.body.classList.add('cd-grani-preview');
   var lang = params.get('lang') === 'ro' ? 'ro' : 'ru';
   var unlocked = (params.get('unlocked') || '').split(',').map(function(v){ return parseInt(v, 10); }).filter(function(n){ return n >= 1 && n <= 14; });
   var emailParam = params.get('email') || '';
   /* Emailul e cerut deja in formularul standard: paywall-ul nativ nu trebuie sa-l mai ceara. */
   if(emailParam){ try{ localStorage.setItem('crystal_last_email', emailParam); }catch(e){} }
   var baseRender = window.renderPreview || renderPreview;
-  var graniPrice = null, unlockedCount = unlocked.length;
+  var graniPrice = null, fullPrice = null, unlockedCount = unlocked.length;
 
   /* Cele 14 Grani: potrivire pe inceputul titlului real al sectiunii din raport. */
   var GRANI = [
@@ -73,29 +82,36 @@
     { id:6, ru:'Характер', ro:'Caracter', keys:['Отрицательные черты характера','Положительные черты характера'] },
     { id:7, ru:'Отношения', ro:'Relații', keys:['Совместные задачи в партнёрстве','Отрицательные эмоции в отношениях','Решение конфликтов'] },
     { id:8, ru:'География и подсознание', ro:'Geografie și subconștient', keys:['Планета и Кармическая география','Страх подсознания'] },
-    { id:9, ru:'Метациклы и Графики Судьбы', ro:'Metacicluri și Graficele Destinului', keys:['Метациклы жизни','Графики Судьбы'], chart:'career' },
+    { id:9, ru:'Твои метациклы и 9 графиков жизни', ro:'Metaciclurile tale și cele 9 grafice ale vieții', keys:['Метациклы жизни','Графики Судьбы'], chart:'career' },
     { id:10, ru:'Твои годы', ro:'Anii tăi', keys:['Календарь личного года','Годичные циклы','Качество Жизни по Годам','Циклы Лилит'] },
     { id:11, ru:'Род', ro:'Neamul', keys:['Кармические задачи перед Родом','Родовые таланты','Кармический след Рода','Кармический кон Рода','Возрасты кармических слоёв'] },
     { id:12, ru:'Мандала', ro:'Mandala', keys:['Мандала: Грань и Корень','Мандала: 4 сферы жизни','Графики мандалы'] },
     { id:13, ru:'Карты', ro:'Hărțile', keys:['Карта Рождения и Карта Имени','Мантический квадрат Ло-Шу','Карта Души','Карта Инклюзий','Векторная Карта'] },
     { id:14, ru:'Ещё немного о тебе', ro:'Încă puțin despre tine', keys:['Дополнительное Число Года','Ещё немного о тебе'] }
   ];
+  var DISPLAY_ORDER = [1,9,2,3,4,5,6,7,8,10,11,12,13,14];
   var T = lang === 'ro' ? {
     kicker:'Cristalul destinului · 14 fațete', years:function(n){ return n===1?'an':'ani'; },
-    lead:'Întregul tău raport este deja calculat. Fiecare fațetă de mai jos arată un fapt real despre tine; o deschizi separat sau deschizi tot Cristalul deodată.',
+    lead:'Întregul tău raport este deja calculat. Fiecare fațetă de mai jos îți arată un fragment personal din calcul; o deschizi separat sau deschizi tot Cristalul deodată.',
     progress:function(o){ return o+' din 14 fațete deschise'; }, grani:function(i,n){ return 'Fațeta '+i+' · '+n+(n===1?' secțiune':' secțiuni'); },
     fact:'Din analiza ta', inside:'Ce este înăuntru', chartVeilTop:'Linia continuă', chartVeilSub:'Ce urmează după această vârstă — în fațetă',
     veil:'Text, grafice și hărți — după deschidere', open:'Deschide fațeta', openTag:'Deschisă', note:'Plată unică. Fațeta rămâne deschisă permanent, pe linkul tău.',
     fullKicker:'Sau tot Cristalul deodată', saved:function(n){ return 'Fațetele deja deschise ('+n+') se scad din preț.'; },
-    legend:['Nivelul tău','Nivelul tău de confort','Vârsta ta acum','Schimbare de tendință'], chartTitle:'Graficul carierei — ca în raport'
+    legend:['Nivelul tău','Nivelul tău de confort','Vârsta ta acum','Schimbare de tendință'], chartTitle:'Miniatura arată cariera. Fațeta deschide metaciclurile și toate cele 9 grafice.',
+    charts:['Carieră','Viață personală','Carieră + viață personală','Flux financiar','Autorealizare','Karmă','Destin','Karmă + destin','Voință'],
+    compactTitle:'Toate cele 14 fațete, într-un singur Cristal', compactBody:'Continuă de la aceste prime fragmente la întregul tău raport: interpretări, metacicluri, grafice și hărți.',
+    fullCta:'Deschide Cristalul complet', fullNote:'Plată unică. Acces permanent la întregul raport, pe linkul tău.', pricePending:'Se încarcă prețul…'
   } : {
     kicker:'Кристалл судьбы · 14 граней', years:function(n){ var a=n%10,b=n%100; if(b>=11&&b<=19) return 'лет'; if(a===1) return 'год'; if(a>=2&&a<=4) return 'года'; return 'лет'; },
-    lead:'Твой полный разбор уже рассчитан. Каждая грань ниже показывает реальный факт о тебе; её можно открыть отдельно — или открыть весь Кристалл сразу.',
+    lead:'Твой полный разбор уже рассчитан. Каждая грань ниже показывает персональный фрагмент расчёта; её можно открыть отдельно — или открыть весь Кристалл сразу.',
     progress:function(o){ return 'Открыто '+o+' из 14 граней'; }, grani:function(i,n){ var a=n%10; return 'Грань '+i+' · '+n+(a===1&&n!==11?' раздел':(a>=2&&a<=4&&(n<10||n>20))?' раздела':' разделов'); },
     fact:'Из твоего разбора', inside:'Что внутри', chartVeilTop:'Линия продолжается', chartVeilSub:'Что после этого возраста — в грани',
     veil:'Текст, графики и карты — после открытия', open:'Открыть грань', openTag:'Открыто', note:'Разовая оплата. Грань остаётся открытой навсегда по твоей ссылке.',
     fullKicker:'Или весь Кристалл сразу', saved:function(n){ return 'Уже открытые грани ('+n+') вычитаются из цены.'; },
-    legend:['Твой уровень','Твой уровень комфорта','Твой возраст сейчас','Смена тенденции'], chartTitle:'График карьеры — как в разборе'
+    legend:['Твой уровень','Твой уровень комфорта','Твой возраст сейчас','Смена тенденции'], chartTitle:'В миниатюре — карьера. Открытие грани включает метациклы и все 9 графиков.',
+    charts:['Карьера','Личная жизнь','Карьера + личная жизнь','Финансовый поток','Самореализация','Карма','Судьба','Карма + судьба','Воля'],
+    compactTitle:'Все 14 граней — в одном Кристалле', compactBody:'Продолжи от первых фрагментов к целому разбору: трактовкам, метациклам, графикам и картам.',
+    fullCta:'Открыть весь Кристалл', fullNote:'Разовая оплата. Постоянный доступ ко всему разбору по твоей ссылке.', pricePending:'Загружаем цену…'
   };
 
   function esc(v){ return String(v==null?'':v).replace(/[&<>"']/g,function(ch){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]; }); }
@@ -106,36 +122,7 @@
   }
   function btnLabel(){ return T.open + (graniPrice ? ' · ' + esc(graniPrice) : ''); }
 
-  /* Un fapt real: primele 1–2 propozitii din primul bloc de text substantial al sectiunii (fara titlu, fara text de ajutor). */
-  function extractFact(cards){
-    for(var c=0;c<cards.length;c++){
-      var nodes = cards[c].querySelectorAll('p, .hint, .text, .desc, li, div');
-      for(var i=0;i<nodes.length;i++){
-        var el = nodes[i];
-        if(el.closest('.section-title') || el.querySelector('svg, canvas, table') || el.children.length > 3) continue;
-        var txt = el.textContent.replace(/\s+/g,' ').trim();
-        if(txt.length < 60 || txt.length > 1400 || /^Источник/.test(txt)) continue;
-        var sentences = txt.match(/[^.!?…]+[.!?…]+/g) || [txt];
-        var out = sentences[0].trim();
-        if(out.length < 110 && sentences[1]) out += ' ' + sentences[1].trim();
-        if(out.length > 260) out = out.slice(0, 250).replace(/\s+\S*$/, '') + '…';
-        return out;
-      }
-    }
-    return '';
-  }
-  /* Numere reale (medalioane) din sectiune, cu etichetele lor. */
-  function extractNums(cards, limit){
-    var out = [];
-    cards.forEach(function(card){
-      card.querySelectorAll('.medallion, .namearc-item').forEach(function(m){
-        var n = m.querySelector('.num'), l = m.querySelector('.label');
-        var v = n ? n.textContent.trim() : '';
-        if(v && v !== '—' && l && out.length < limit) out.push({ v:v, l:l.textContent.replace(/\s+/g,' ').trim() });
-      });
-    });
-    return out;
-  }
+  /*__CD_GRANI_FACTS__*/
   function lifeCharts(){ var r = window.__cdLastResult; return (r && r.lifeCharts) || (typeof currentLifeCharts !== 'undefined' ? currentLifeCharts : null); }
   function curAge(){ try{ return Math.max(0, computeCurrentAge(currentBirthYear, currentBirthMonth, currentBirthDay)); }catch(e){ return 0; } }
 
@@ -181,22 +168,24 @@
     return '<div class="cd-gr-veil" aria-hidden="true">'+sparks+'<span>'+T.veil+'</span></div>';
   }
 
-  function lockedCard(g, cards){
-    var titles = cards.map(titleOf);
-    var fact = extractFact(cards), nums = extractNums(cards, 5);
-    var html = '<section class="cd-gr-card is-locked cd-gr-reveal" data-grani="'+g.id+'"><p class="cd-gr-kicker">'+T.grani(g.id, cards.length)+'</p><h3>'+esc(g[lang])+'</h3>';
-    if(nums.length){ html += '<div class="cd-gr-nums">'+nums.map(function(n){ return '<div class="cd-gr-num"><strong>'+esc(n.v)+'</strong><span>'+esc(n.l)+'</span></div>'; }).join('')+'</div>'; }
-    if(fact){ html += '<div class="cd-gr-fact"><p class="cd-gr-kicker">'+T.fact+'</p><p>'+esc(fact)+'</p></div>'; }
-    if(g.chart){ var C = lifeCharts(), data = C && C[g.chart]; if(data && data.points) html += '<div style="margin-top:14px">'+veiledChart(data, curAge())+'</div>'; }
-    else html += veilHtml();
+  function lockedCard(g, cards, position){
+    var titles = lang === 'ro' ? RO_SECTIONS[g.id] : cards.map(titleOf);
+    var fact = graniFact(g.id);
+    var html = '<section class="cd-gr-card is-locked cd-gr-reveal" data-grani="'+g.id+'"><p class="cd-gr-kicker">'+T.grani(position, cards.length)+'</p><h3>'+esc(g[lang])+'</h3>';
+    html += '<div class="cd-gr-fact"><p class="cd-gr-kicker">'+esc(fact.hint)+'</p><p>'+esc(fact.text)+'</p></div>';
+    if(g.chart){
+      html += '<ul class="cd-gr-chart-list">'+T.charts.map(function(t){ return '<li>'+esc(t)+'</li>'; }).join('')+'</ul><p class="cd-gr-note">'+T.chartTitle+'</p>';
+      var C = lifeCharts(), data = C && C[g.chart]; if(data && data.points) html += '<div style="margin-top:14px">'+veiledChart(data, curAge())+'</div>';
+    } else html += veilHtml();
+    html += '<p class="cd-gr-question">'+esc(fact.question)+'</p>';
     html += '<p class="cd-gr-kicker" style="margin:16px 0 0">'+T.inside+'</p><ul class="cd-gr-inside">'+titles.map(function(t){ return '<li><i></i><em>'+esc(t)+'</em></li>'; }).join('')+'</ul>';
     html += '<div class="cd-gr-actions"><button type="button" class="cd-gr-btn" data-grani-btn="'+g.id+'" onclick="__cdGraniUnlock('+g.id+')">'+btnLabel()+'</button><p class="cd-gr-note">'+T.note+'</p></div></section>';
     return html;
   }
-  function openCard(g, cards){
+  function openCard(g, cards, position){
     var sec = document.createElement('section');
     sec.className = 'cd-gr-card is-open cd-gr-reveal'; sec.setAttribute('data-grani', String(g.id));
-    sec.innerHTML = '<p class="cd-gr-open-tag">'+T.openTag+'</p><h3>'+esc(g[lang])+'</h3><div class="cd-gr-body"></div>';
+    sec.innerHTML = '<p class="cd-gr-kicker">'+T.grani(position,cards.length)+'</p><p class="cd-gr-open-tag">'+T.openTag+'</p><h3>'+esc(g[lang])+'</h3><div class="cd-gr-body"></div>';
     var body = sec.querySelector('.cd-gr-body');
     cards.forEach(function(card){ body.appendChild(card); });
     return sec;
@@ -208,8 +197,28 @@
     try{ if(typeof track === 'function') track('grani_unlock_click', { graniId:id }); }catch(e){}
     window.parent.postMessage({ type:'requestGraniPayment', graniId:id, data:data, source:'grani_card' }, '*');
   };
+  function compactPaywall(){
+    var el = document.createElement('section'); el.className = 'cd-gr-card cd-gr-compact cd-gr-reveal'; el.setAttribute('data-grani-full','');
+    el.innerHTML = '<p class="cd-gr-kicker">'+T.fullKicker+'</p><h3>'+T.compactTitle+'</h3><p class="cd-gr-question">'+T.compactBody+'</p><p class="cd-gr-compact-price" data-grani-full-price aria-live="polite">'+T.pricePending+'</p>'+(unlockedCount?'<p class="cd-gr-note">'+T.saved(unlockedCount)+'</p>':'')+'<div class="cd-gr-actions"><button type="button" class="cd-gr-btn" data-grani-full-btn disabled onclick="__cdGraniFullUnlock()">'+T.fullCta+'</button><p class="cd-gr-note">'+T.fullNote+'</p></div>';
+    return el;
+  }
+  window.__cdGraniFullUnlock = function(){
+    if(!fullPrice) return;
+    var gate = document.getElementById('pwMail');
+    if(gate && !gate.value.trim()) gate.scrollIntoView({behavior:'smooth',block:'center'});
+    startCheckout('grani_after_graphs');
+  };
+  function refreshFullPrice(){
+    var state = window.CrystalReport && window.CrystalReport.getState();
+    if(state && state.pricing && state.pricing.formattedPrice) fullPrice = state.pricing.formattedPrice;
+    document.querySelectorAll('[data-grani-full-price]').forEach(function(el){el.textContent = fullPrice || T.pricePending;});
+    document.querySelectorAll('[data-grani-full-btn]').forEach(function(el){el.disabled = !fullPrice;});
+  }
+  var baseSetPricing = window.CrystalReport.setPricing;
+  window.CrystalReport.setPricing = function(p){ baseSetPricing.call(this,p); refreshFullPrice(); };
   function refreshGraniButtons(){
     document.querySelectorAll('[data-grani-btn]').forEach(function(b){ b.textContent = btnLabel(); });
+    refreshFullPrice();
   }
   window.addEventListener('message', function(ev){
     var d = ev.data; if(!d || typeof d !== 'object') return;
@@ -241,10 +250,12 @@
       + '<div class="cd-gr-progress"><i><b style="width:'+Math.round(unlockedCount/14*100)+'%"></b></i><span>'+T.progress(unlockedCount)+'</span></div></header>';
     var wrap = document.createElement('div'); wrap.className = 'pv-screen cd-gr pv-reveal';
     wrap.innerHTML = head;
-    GRANI.forEach(function(g){
+    DISPLAY_ORDER.forEach(function(id, index){
+      var g = GRANI.find(function(item){return item.id === id;});
       var cards = groups[g.id]; if(!cards.length) return;
-      if(unlocked.indexOf(g.id) >= 0){ wrap.appendChild(openCard(g, cards)); }
-      else { var tmp = document.createElement('div'); tmp.innerHTML = lockedCard(g, cards); wrap.appendChild(tmp.firstElementChild); }
+      if(unlocked.indexOf(g.id) >= 0){ wrap.appendChild(openCard(g, cards, index+1)); }
+      else { var tmp = document.createElement('div'); tmp.innerHTML = lockedCard(g, cards, index+1); wrap.appendChild(tmp.firstElementChild); }
+      if(g.id === 9 && unlockedCount < 14) wrap.appendChild(compactPaywall());
     });
     var full = document.createElement('div'); full.className = 'cd-gr-full';
     full.innerHTML = '<p class="cd-gr-kicker">'+T.fullKicker+'</p>'+(unlockedCount ? '<p class="cd-gr-saved">'+T.saved(unlockedCount)+'</p>' : '')+renderPaywall(model);
