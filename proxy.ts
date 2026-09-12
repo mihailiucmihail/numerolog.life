@@ -14,6 +14,9 @@ import {
 import { PREVIEW_TOKEN_PARAM, verifyPreviewToken } from './lib/experiments/preview-token'
 import { getRuntimeFunnels } from './lib/experiments/runtime-config'
 import { hasPromoMarker, resolveStandardAssignment } from './lib/experiments/routing'
+import { readAssignment } from './lib/experiments/assignment'
+import { SOCIAL_COOKIE, SOCIAL_TTL, captureSocialTouch, readSocialAttribution, signSocialAttribution, trackingExcluded } from './lib/experiments/social-attribution'
+import { resolveSocialAssignment } from './lib/experiments/social-server'
 
 const handleI18nRouting = createMiddleware(routing)
 
@@ -94,6 +97,30 @@ async function withGeoCookies(
 }
 
 export default async function proxy(request: NextRequest) {
+  let socialCookie: string | null = null
+  let maxAge = 0
+  const cleanHeaders = new Headers(request.headers)
+  for (const key of ['x-exp-visitor', 'x-exp-form', 'x-exp-preview']) cleanHeaders.delete(key)
+  request = new NextRequest(request, { headers: cleanHeaders })
+  if (request.method === 'GET' && !request.headers.has('next-router-prefetch') && request.headers.get('purpose') !== 'prefetch' && !trackingExcluded(request.nextUrl, request.headers)) {
+    const previous = await readSocialAttribution(request.cookies.get(SOCIAL_COOKIE)?.value)
+    const existing = await readAssignment(request.cookies.get(EXPERIMENT_COOKIE)?.value)
+    const visitorId = previous?.visitorId || existing?.visitorId || crypto.randomUUID().replaceAll('-', '')
+    const attribution = captureSocialTouch(previous, request.nextUrl, visitorId, request.headers.get('referer'))
+    if (attribution && attribution !== previous) {
+      socialCookie = await signSocialAttribution(attribution)
+      maxAge = Math.max(1, Math.floor((attribution.last.at + SOCIAL_TTL - Date.now()) / 1000))
+      request.cookies.set(SOCIAL_COOKIE, socialCookie)
+    }
+  }
+  const response = await routeRequest(request)
+  if (!socialCookie) return response
+  const result = response instanceof NextResponse ? response : new NextResponse(response.body, response)
+  result.cookies.set(SOCIAL_COOKIE, socialCookie, { path: '/', maxAge, httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' })
+  return result
+}
+
+async function routeRequest(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const resolved = await resolveCountry(request)
 
@@ -141,9 +168,12 @@ export default async function proxy(request: NextRequest) {
       // experimentelor; orice altă intrare (link intern/organic) primește funnelul Standard.
       const funnels = await getRuntimeFunnels()
       const rawCookie = request.cookies.get(EXPERIMENT_COOKIE)?.value
-      const experiment = hasPromoMarker(sp) || previewToken
-        ? await resolveAssignment(rawCookie, funnels)
-        : await resolveStandardAssignment(rawCookie, funnels)
+      const social = trackingExcluded(request.nextUrl, request.headers) ? null : await readSocialAttribution(request.cookies.get(SOCIAL_COOKIE)?.value)
+      const experiment = social && !previewToken
+        ? await resolveSocialAssignment(social, rawCookie)
+        : hasPromoMarker(sp) || previewToken
+          ? await resolveAssignment(rawCookie, funnels)
+          : await resolveStandardAssignment(rawCookie, funnels)
       headers.set('x-exp-visitor', experiment.assignment.visitorId)
       headers.set('x-exp-form', experiment.assignment.form)
       headers.set('x-exp-preview', experiment.assignment.preview)

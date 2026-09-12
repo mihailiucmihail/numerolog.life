@@ -22,12 +22,12 @@ const COPY = {
     eyebrow: 'Персональный разбор · 22 аркана · 14 граней',
     title: 'Кристалл судьбы',
     titleFor: (name: string) => `Кристалл судьбы ${name}`,
-    body: 'Полный расчёт строится по фамилии, имени, отчеству и дате рождения. Ты увидишь весь Кристалл — по граням, с реальными фактами о себе.',
+    body: 'Полный расчёт строится по фамилии, имени, отчеству и дате рождения. Ты увидишь весь Кристалл — грань за гранью, чтобы понять свои сильные стороны, преодолеть внутренние препятствия и узнать, что приготовила для тебя судьба.',
     identity: 'Кто ты',
     last: 'Фамилия',
     first: 'Имя',
     middle: 'Отчество',
-    optional: 'если есть',
+    middleNote: 'Необязательно. Рекомендуем для более точного расчёта.',
     date: 'Дата рождения',
     day: 'День',
     month: 'Месяц',
@@ -45,12 +45,12 @@ const COPY = {
     eyebrow: 'Analiză personală · 22 de arcane · 14 fațete',
     title: 'Cristalul destinului',
     titleFor: (name: string) => `Cristalul destinului · ${name}`,
-    body: 'Calculul complet se construiește din nume, prenume, al doilea prenume și data nașterii. Vei vedea întreg Cristalul — pe fațete, cu fapte reale despre tine.',
+    body: 'Calculul complet se construiește din nume, prenume, al doilea prenume și data nașterii. Vei descoperi întreg Cristalul — fațetă cu fațetă, pentru a-ți înțelege punctele forte, a depăși obstacolele interioare și a afla ce ți-a pregătit destinul.',
     identity: 'Cine ești',
     last: 'Nume',
     first: 'Prenume',
     middle: 'Al doilea prenume',
-    optional: 'dacă există',
+    middleNote: 'Opțional. Îl recomandăm pentru un calcul mai exact.',
     date: 'Data nașterii',
     day: 'Zi',
     month: 'Lună',
@@ -179,10 +179,9 @@ export function StandardCrystalForm({ initialEmail = '', initialValues, locale =
             </label>
           </div>
           <label className="flex flex-col gap-2 text-xs text-muted-foreground">
-            <span className="font-mono uppercase tracking-[0.14em]">
-              {c.middle} <span className="normal-case tracking-normal opacity-60">({c.optional})</span>
-            </span>
+            <span className="font-mono uppercase tracking-[0.14em]">{c.middle}</span>
             <input className={inputClass} value={values.middle} onChange={(e) => update('middle', e.target.value)} autoComplete="additional-name" />
+            <span className="normal-case leading-relaxed tracking-normal opacity-75">{c.middleNote}</span>
           </label>
         </fieldset>
 

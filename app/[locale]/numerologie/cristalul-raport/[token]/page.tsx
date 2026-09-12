@@ -31,14 +31,14 @@ export default async function CristalulRaportPage({
       <StarField />
       <Navbar />
       <div className="relative z-10 px-3 pb-16 pt-20 md:px-6">
-        <div className="mx-auto w-full max-w-6xl">
+        <div className={`mx-auto w-full ${unlockedGrani === null ? 'max-w-[1120px]' : 'max-w-6xl'}`}>
           <div className="mb-4 flex items-center justify-between gap-4 px-1 text-[10px] uppercase tracking-[0.24em] text-muted-foreground/70">
             <span>NUMEROLOG</span>
             <span className="font-mono tracking-[0.12em] text-primary/70">CRISTALUL DESTINULUI · RAPORT</span>
           </div>
           <Suspense fallback={null}>
             {unlockedGrani === null
-              ? <RaportViewer formData={formData} />
+              ? <RaportViewer formData={formData} designPreview />
               : <GraniReportViewer token={token} formData={formData} unlockedGrani={unlockedGrani} />}
           </Suspense>
         </div>

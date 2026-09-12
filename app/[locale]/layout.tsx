@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
+import { SocialTracker } from '@/components/analytics/social-tracker'
 import { Inter, Cormorant_Garamond } from 'next/font/google'
 import Script from 'next/script'
 import { NextIntlClientProvider, hasLocale } from 'next-intl'
@@ -79,6 +81,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider locale={locale} messages={messages}>
           <CurrencyProvider currency={currency} country={country} cristal={cristal}>
             <RootLayoutClient>
+              <Suspense fallback={null}><SocialTracker /></Suspense>
               {children}
             </RootLayoutClient>
           </CurrencyProvider>

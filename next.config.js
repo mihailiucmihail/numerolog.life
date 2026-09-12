@@ -22,6 +22,10 @@ const nextConfig = {
         ],
       },
       {
+        source: '/:locale/numerologie/cristalul-design-preview/:path*',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' }],
+      },
+      {
         source: '/videos/:path*',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
       },

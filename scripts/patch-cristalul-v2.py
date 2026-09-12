@@ -34,7 +34,9 @@ DATE_AGE_PREVIEW = ROOT / 'scripts/cristalul-date-age-preview-snippet.html'
 THEME_PREVIEWS = ROOT / 'scripts/cristalul-theme-previews-snippet.html'
 CAREER_PREVIEWS = ROOT / 'scripts/cristalul-career-report-previews-snippet.html'
 GRANI_PREVIEW = ROOT / 'scripts/cristalul-grani-preview-snippet.html'
+REPORT_NEXT = ROOT / 'scripts/cristalul-report-next-snippet.html'
 PREMIUM_CSS = ROOT / 'scripts/cristalul-premium-report.css'
+REPORT_NEXT_CSS = ROOT / 'scripts/cristalul-report-next.css'
 
 s = SRC.read_text(encoding='utf-8')
 # Unele uploaduri au primit accidental prefixul `> ` la începutul liniilor; îl eliminăm înainte de orice inserare.
@@ -334,7 +336,10 @@ rep('</head>', """<style>
 # 1c. Strat de design premium pentru raport (doar #results) — sursa: scripts/cristalul-premium-report.css
 premium_css = PREMIUM_CSS.read_text(encoding='utf-8')
 assert premium_css.count('\ufffd') == 0, 'CSS-ul premium conține U+FFFD'
-rep('</style></head>', '</style>\n<style id="cd-premium">\n' + premium_css + '\n</style></head>')
+report_next_css = REPORT_NEXT_CSS.read_text(encoding='utf-8')
+assert report_next_css.count('\ufffd') == 0, 'CSS-ul nou al raportului conține U+FFFD'
+assert 'html.cd-next-design' in report_next_css
+rep('</style></head>', '</style>\n<style id="cd-premium">\n' + premium_css + '\n</style>\n<style id="cd-report-next">\n' + report_next_css + '\n</style></head>')
 rep('</body>', '''<script>
   (function(){
     const day = document.getElementById('day');
@@ -453,7 +458,18 @@ assert career_previews.count('\ufffd') == 0, 'previewurile carierei contin U+FFF
 grani_preview = re.sub(r'(?m)^([ \t]*)> ', r'\1', GRANI_PREVIEW.read_text(encoding='utf-8'))
 assert 'preview-grani-v1' in grani_preview and 'requestGraniPayment' in grani_preview and 'renderPaywall(model)' in grani_preview
 assert grani_preview.count('\ufffd') == 0, 'previewul Grani contine U+FFFD'
-rep('</body>', bridge.rstrip('\n') + '\n' + preview.rstrip('\n') + '\n' + variants.rstrip('\n') + '\n' + date_age_preview.rstrip('\n') + '\n' + theme_previews.rstrip('\n') + '\n' + career_previews.rstrip('\n') + '\n' + grani_preview.rstrip('\n') + '\n</body>')
+grani_facts = (ROOT / 'scripts/cristalul-grani-facts.js').read_text(encoding='utf-8')
+assert grani_preview.count('/*__CD_GRANI_FACTS__*/') == 1
+assert '\ufffd' not in grani_facts
+grani_preview = grani_preview.replace('/*__CD_GRANI_FACTS__*/', grani_facts)
+grani_styles = (ROOT / 'scripts/cristalul-grani-preview.css').read_text(encoding='utf-8')
+assert grani_preview.count('</style>') == 1
+assert '\ufffd' not in grani_styles
+grani_preview = grani_preview.replace('</style>', grani_styles + '\n</style>')
+report_next = re.sub(r'(?m)^([ \t]*)> ', r'\1', REPORT_NEXT.read_text(encoding='utf-8'))
+assert 'cd-report-next-script' in report_next and "params.get('design') !== 'next'" in report_next
+assert report_next.count('\ufffd') == 0, 'scriptul nou al raportului conține U+FFFD'
+rep('</body>', bridge.rstrip('\n') + '\n' + preview.rstrip('\n') + '\n' + variants.rstrip('\n') + '\n' + date_age_preview.rstrip('\n') + '\n' + theme_previews.rstrip('\n') + '\n' + career_previews.rstrip('\n') + '\n' + grani_preview.rstrip('\n') + '\n' + report_next.rstrip('\n') + '\n</body>')
 
 # 6. Fără surse/autori în text vizibil -------------------------------------------------------------
 rep("Сравнение Карта Рождения ↔ Карта Имени (метод Айрэн По / Джули По) — где цифры отличаются:",
@@ -472,6 +488,7 @@ s = re.sub(r'(?m)^([ \t]*)> ', r'\1', s)
 for marker in ('id="emailAddr"', 'id="promoCode"', 'id="mainCalcBtn"', 'function requestPayment',
                "params.get('auto')", 'reportRendered', 'validatePromo', 'paymentSuccess',
                "params.get('preview')", 'window.CrystalReport', 'previewRendered', 'window.__cdSkipMail', 'getEntryContext',
+               'id="cd-report-next"', 'id="cd-report-next-script"', "params.get('design') !== 'next'",
                'function cdMainAction', 'onclick="cdMainAction()"', 'data-cd-form', "params.get('fv')", 'cristalul-premium.mp4', 'hero-video',
                ':root{color-scheme:light;}', '.bg-anim{display:none !important;}'):
     assert marker in s, f'marker lipsă după patch: {marker}'
