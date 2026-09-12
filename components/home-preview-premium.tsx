@@ -132,6 +132,7 @@ function NumerologyField() {
 
 export function HomePreviewPremium({ locale }: { locale: Locale }) {
   const c = COPY[locale]
+  const anchors = ['metoda', 'raport', 'daria']
   const [showReportExample, setShowReportExample] = useState(false)
   const reportExampleRef = useRef<HTMLElement>(null)
 
@@ -152,7 +153,7 @@ export function HomePreviewPremium({ locale }: { locale: Locale }) {
     <main className="relative min-h-screen overflow-hidden bg-card text-foreground">
       <StarField />
       <NumerologyField />
-      <Navbar />
+      <Navbar links={c.nav.map((label, index) => ({ label, href: `#${anchors[index]}` }))} />
 
       <section className="relative z-10 px-5 pb-20 pt-28 sm:px-8 lg:pb-28 lg:pt-36">
         <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.08fr_.92fr]">
