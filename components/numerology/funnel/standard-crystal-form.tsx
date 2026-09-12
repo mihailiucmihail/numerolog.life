@@ -78,8 +78,7 @@ function detectAlphabet(name: string, fallback: string): string {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
-const inputClass =
-  'h-12 w-full rounded-xl border border-border/70 bg-background/40 px-4 text-base text-foreground outline-none transition placeholder:text-muted-foreground/40 focus:border-primary/70 focus:bg-background/60 focus:ring-2 focus:ring-primary/20'
+const inputClass = 'h-12 w-full min-w-0 rounded-xl border border-foreground/15 bg-foreground/10 px-4 text-base text-foreground shadow-inner outline-none placeholder:text-muted-foreground/80 focus:border-primary/70 focus:bg-foreground/15 focus:ring-4 focus:ring-primary/10'
 
 export function StandardCrystalForm({ initialEmail = '', initialValues, locale = 'ru', onFirstInteraction, onSubmit }: StandardCrystalFormProps) {
   const c = locale === 'ro' ? COPY.ro : COPY.ru
@@ -152,9 +151,9 @@ export function StandardCrystalForm({ initialEmail = '', initialValues, locale =
   }
 
   return (
-    <section className="relative mx-auto w-full max-w-2xl overflow-hidden rounded-3xl border border-primary/25 bg-card/60 shadow-2xl shadow-background/50 backdrop-blur-md">
+    <section className="relative mx-auto w-full max-w-2xl overflow-hidden rounded-[2rem] border border-primary/25 bg-background/70 p-5 shadow-2xl backdrop-blur-xl sm:p-7">
       <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
-      <header className="flex flex-col gap-4 px-6 pb-6 pt-8 text-center sm:px-10">
+      <header className="flex flex-col gap-4 pb-2 pt-2 text-left">
         <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-primary">{c.eyebrow}</p>
         <h2 className="text-balance font-serif text-3xl font-light leading-tight tracking-tight text-foreground sm:text-4xl" aria-live="polite">
           {title}
@@ -162,7 +161,7 @@ export function StandardCrystalForm({ initialEmail = '', initialValues, locale =
         <p className="mx-auto max-w-xl text-pretty text-sm leading-relaxed text-muted-foreground">{c.body}</p>
       </header>
 
-      <form onSubmit={submit} onFocusCapture={trackFirstInteraction} noValidate className="flex flex-col gap-7 px-6 pb-8 sm:px-10 sm:pb-10">
+      <form onSubmit={submit} onFocusCapture={trackFirstInteraction} noValidate className="flex flex-col gap-5">
         <fieldset className="flex flex-col gap-4">
           <legend className="mb-4 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
             <UserRound className="size-4 text-primary" aria-hidden="true" />
@@ -191,7 +190,7 @@ export function StandardCrystalForm({ initialEmail = '', initialValues, locale =
             {c.date}
           </legend>
           <div className="grid min-w-0 grid-cols-[minmax(0,.8fr)_minmax(0,.8fr)_minmax(0,1.4fr)] gap-2 sm:gap-3">
-            {([['day', c.day, '05', 2], ['month', c.month, '10', 2], ['year', c.year, '1992', 4]] as const).map(([key, label, placeholder, max], index) => (
+            {([['day', c.day, 2], ['month', c.month, 2], ['year', c.year, 4]] as const).map(([key, label, max], index) => (
               <label key={key} className="flex min-w-0 flex-col gap-2 text-xs text-muted-foreground">
                 <span className="font-mono uppercase tracking-[0.12em]">{label}</span>
                 <input
@@ -199,7 +198,6 @@ export function StandardCrystalForm({ initialEmail = '', initialValues, locale =
                   className={`${inputClass} min-w-0 px-2 text-center tabular-nums`}
                   value={values[key]}
                   onChange={(e) => updateDate(index, key, e.target.value, max)}
-                  placeholder={placeholder}
                   inputMode="numeric"
                   aria-label={label}
                   required

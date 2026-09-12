@@ -15,7 +15,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-export function Navbar() {
+interface NavbarProps {
+  hideStart?: boolean
+  links?: Array<{ label: string; href: string }>
+}
+
+export function Navbar({ hideStart = false, links = [] }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false)
   const lastUpdateRef = useRef(0)
   const { user, profile, loading, signOut } = useAuth()
@@ -174,6 +179,19 @@ export function Navbar() {
               50%       { opacity: 0.7; transform: scaleX(1); }
             }
           `}</style>
+
+          <div className="hidden items-center gap-7 md:flex">
+            {links.map((link) => (
+              <Link key={link.href} href={link.href} className="text-sm text-white/70 transition-colors hover:text-white">
+                {link.label}
+              </Link>
+            ))}
+          </div>
+          {!hideStart && (
+            <Link href="/numerologie?flow=standard" className="hidden rounded-full border border-primary/35 px-4 py-2 text-sm text-primary transition-colors hover:bg-primary/10 md:block">
+              {t("start")}
+            </Link>
+          )}
 
           {/* Desktop Auth */}
           <div className="hidden md:flex items-center gap-4">

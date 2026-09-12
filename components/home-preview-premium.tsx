@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { ArrowRight, BookOpen, Check, CreditCard, Fingerprint, Layers3, LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
 import { Footer } from '@/components/footer'
+import { Navbar } from '@/components/navbar'
 import { HomePreviewArcana, HomePreviewPrice } from '@/components/home-preview-arcana'
 import { StarField } from '@/components/star-field'
 
@@ -132,7 +133,6 @@ function NumerologyField() {
 export function HomePreviewPremium({ locale }: { locale: Locale }) {
   const c = COPY[locale]
   const anchors = ['metoda', 'raport', 'daria']
-  const [scrolled, setScrolled] = useState(false)
   const [showReportExample, setShowReportExample] = useState(false)
   const reportExampleRef = useRef<HTMLElement>(null)
 
@@ -149,25 +149,11 @@ export function HomePreviewPremium({ locale }: { locale: Locale }) {
     return () => observer.disconnect()
   }, [])
 
-  useEffect(() => {
-    const previousScrollRestoration = window.history.scrollRestoration
-    window.history.scrollRestoration = 'manual'
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
-
-    const updateHeader = () => setScrolled(window.scrollY > 20)
-    updateHeader()
-    window.addEventListener('scroll', updateHeader, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', updateHeader)
-      window.history.scrollRestoration = previousScrollRestoration
-    }
-  }, [])
-
   return (
     <main className="relative min-h-screen overflow-hidden bg-card text-foreground">
       <StarField />
       <NumerologyField />
-      <header className={`fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,border-color] duration-300 ${scrolled ? 'border-b border-primary/10 bg-card/75 backdrop-blur-xl' : 'border-b border-transparent bg-transparent backdrop-blur-none'}`}><nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8" aria-label={locale === 'ro' ? 'Navigație principală' : 'Основная навигация'}><Link href="/" className="font-serif text-xl tracking-[0.08em]">NUMEROLOG<span className="text-primary">.life</span></Link><div className="hidden items-center gap-7 md:flex">{c.nav.map((label, index) => <a key={label} href={`#${anchors[index]}`} className="text-sm text-muted-foreground transition-colors hover:text-foreground">{label}</a>)}</div><Link href="/numerologie?flow=standard" className="rounded-full border border-primary/35 px-4 py-2 text-sm text-primary transition-colors hover:bg-primary/10">{locale === 'ro' ? 'Începe calculul' : 'Начать расчёт'}</Link></nav></header>
+      <Navbar links={c.nav.map((label, index) => ({ label, href: `#${anchors[index]}` }))} />
 
       <section className="relative z-10 px-5 pb-20 pt-28 sm:px-8 lg:pb-28 lg:pt-36">
         <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.08fr_.92fr]">

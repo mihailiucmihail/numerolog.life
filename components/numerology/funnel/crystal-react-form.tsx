@@ -236,8 +236,8 @@ export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'r
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-2 text-xs text-muted-foreground"><CalendarDays className="size-4 text-primary" /><span className="font-mono uppercase tracking-[0.14em]">{c.date}</span></div>
       <div className="grid min-w-0 grid-cols-[minmax(0,.8fr)_minmax(0,.8fr)_minmax(0,1.4fr)] gap-2 sm:gap-3">
-        {([['day', c.day, '05', 2], ['month', c.month, '10', 2], ['year', c.year, '1992', 4]] as const).map(([key, label, placeholder, max], index) => (
-          <label key={key} className="flex min-w-0 flex-col gap-2 text-xs text-muted-foreground"><span className="font-mono uppercase tracking-[0.12em]">{label}</span><input ref={(el) => { dateRefs.current[index] = el }} className={`${inputClass} min-w-0 px-2 text-center tabular-nums`} value={values[key]} onChange={(event) => updateDate(index, key, event.target.value, max)} placeholder={placeholder} inputMode="numeric" aria-label={label} /></label>
+        {([['day', c.day, 2], ['month', c.month, 2], ['year', c.year, 4]] as const).map(([key, label, max], index) => (
+          <label key={key} className="flex min-w-0 flex-col gap-2 text-xs text-muted-foreground"><span className="font-mono uppercase tracking-[0.12em]">{label}</span><input ref={(el) => { dateRefs.current[index] = el }} className={`${inputClass} min-w-0 px-2 text-center tabular-nums`} value={values[key]} onChange={(event) => updateDate(index, key, event.target.value, max)} inputMode="numeric" aria-label={label} /></label>
         ))}
       </div>
       {isFastDate && calculatedAge !== null && (
@@ -261,7 +261,7 @@ export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'r
     <div className="flex flex-col gap-4">
       <label className="flex flex-col gap-2 text-xs text-muted-foreground">
         <span className="font-mono uppercase tracking-[0.14em]">{c.arcanaDay}</span>
-        <input ref={(el) => { dateRefs.current[0] = el }} className={`${inputClass} min-h-14 text-center text-xl font-semibold tabular-nums`} value={values.day} onChange={(event) => updateDate(0, 'day', event.target.value, 2)} placeholder="05" inputMode="numeric" aria-label={c.day} />
+        <input ref={(el) => { dateRefs.current[0] = el }} className={`${inputClass} min-h-14 text-center text-xl font-semibold tabular-nums`} value={values.day} onChange={(event) => updateDate(0, 'day', event.target.value, 2)} inputMode="numeric" aria-label={c.day} />
       </label>
       {arcanaNumber && (
         <div role="status" aria-live="polite" className="flex items-center gap-4 rounded-xl border border-primary/35 bg-primary/10 p-4">
@@ -273,8 +273,8 @@ export function CrystalReactForm({ initialEmail = '', initialValues, locale = 'r
         <div className="flex flex-col gap-3">
           <p className="text-center text-sm text-muted-foreground">{c.arcanaContinue}</p>
           <div className="grid grid-cols-2 gap-3">
-            {([['month', c.month, '10', 2], ['year', c.year, '1992', 4]] as const).map(([key, label, placeholder, max], index) => (
-              <label key={key} className="flex min-w-0 flex-col gap-2 text-xs text-muted-foreground"><span className="font-mono uppercase tracking-[0.12em]">{label}</span><input ref={(el) => { dateRefs.current[index + 1] = el }} className={`${inputClass} min-w-0 text-center tabular-nums`} value={values[key]} onChange={(event) => updateDate(index + 1, key, event.target.value, max)} placeholder={placeholder} inputMode="numeric" aria-label={label} /></label>
+            {([['month', c.month, 2], ['year', c.year, 4]] as const).map(([key, label, max], index) => (
+              <label key={key} className="flex min-w-0 flex-col gap-2 text-xs text-muted-foreground"><span className="font-mono uppercase tracking-[0.12em]">{label}</span><input ref={(el) => { dateRefs.current[index + 1] = el }} className={`${inputClass} min-w-0 text-center tabular-nums`} value={values[key]} onChange={(event) => updateDate(index + 1, key, event.target.value, max)} inputMode="numeric" aria-label={label} /></label>
             ))}
           </div>
         </div>
