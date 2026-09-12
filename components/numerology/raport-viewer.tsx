@@ -59,7 +59,7 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [height, setHeight] = useState(800)
   const [rendered, setRendered] = useState(false)
-  const [chapters, setChapters] = useState<ReportChapter[]>([])
+  const [chapters, setChapters] = useState<ReportChapter[]>(() => designPreview ? [{ id: 'loading', title: 'Загрузка содержания', top: 0, height: 1 }] : [])
   const [activeChapter, setActiveChapter] = useState(0)
   const [readingProgress, setReadingProgress] = useState(0)
 
