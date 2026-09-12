@@ -71,7 +71,9 @@ html.cd-next-design #results .num { color: var(--cdn-gold) !important; }
 html.cd-next-design #results [style*="border-left:2px"], html.cd-next-design #results [style*="border-left: 2px"], html.cd-next-design .meta-block, html.cd-next-design .mini-grid > div { background: var(--cdn-panel) !important; border: 1px solid var(--cdn-border) !important; border-radius: 12px !important; box-shadow: none !important; }
 html.cd-next-design #results .mini-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)) !important; }
 html.cd-next-design #results .chart-stage, html.cd-next-design .cd-next-chart-scroll, html.cd-next-design .yc-scroll { width: 100%; max-width: 100%; margin-inline: auto; overflow-x: auto !important; overflow-y: hidden; overscroll-behavior-x: contain; border: 1px solid var(--cdn-border) !important; border-radius: 12px !important; background: var(--cdn-panel) !important; box-shadow: none !important; scrollbar-color: var(--cdn-gold) transparent; scrollbar-width: thin; }
-html.cd-next-design #lifeChartSvg { display: block; min-width: 600px; width: 100% !important; height: auto !important; aspect-ratio: 2; border: 0 !important; background: transparent !important; }
+html.cd-next-design #lifeChartSvg { display: block; min-width: 0 !important; width: 100% !important; max-width: 720px; margin-inline: auto; height: auto !important; aspect-ratio: 2; border: 0 !important; background: transparent !important; }
+html.cd-next-design #results .chart-stage { max-width: 720px !important; }
+html.cd-next-design #pdfDownloadCard { display: none !important; }
 html.cd-next-design #lifeChartSvg .axis-line { stroke: var(--cdn-border) !important; }
 html.cd-next-design #lifeChartSvg .axis-label { fill: var(--cdn-muted) !important; font: 14px Manrope, sans-serif !important; }
 html.cd-next-design #lifeChartSvg .life-path { stroke: var(--cdn-gold) !important; stroke-width: 3 !important; filter: none !important; }
@@ -85,8 +87,9 @@ html.cd-next-design #lifeChartSvg .crossing-mark { stroke: var(--cdn-rose) !impo
 html.cd-next-design #lifeChartSvg .now-label-bg { fill: var(--cdn-bg) !important; }
 html.cd-next-design #lifeChartSvg .now-label-text { fill: var(--cdn-teal) !important; }
 html.cd-next-design .chart-tabs { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; }
-html.cd-next-design .chart-tab { min-height: 44px; border: 1px solid var(--cdn-border) !important; border-radius: 8px !important; background: var(--cdn-panel) !important; color: var(--cdn-muted) !important; font-size: 14px !important; }
-html.cd-next-design .chart-tab.active { border-color: var(--cdn-gold) !important; color: var(--cdn-gold) !important; }
+html.cd-next-design #results .card .chart-tab { flex: 0 1 auto !important; width: auto !important; min-width: 0 !important; min-height: 36px !important; padding: 6px 10px !important; border: 1px solid var(--cdn-border) !important; border-radius: 6px !important; background: var(--cdn-panel) !important; color: var(--cdn-muted) !important; font-size: 14px !important; line-height: 1.4 !important; letter-spacing: 0 !important; text-transform: none !important; }
+html.cd-next-design #results .chart-tabs { gap: 6px !important; margin-bottom: 12px !important; }
+html.cd-next-design #results .card .chart-tab.active { border-color: var(--cdn-gold) !important; color: var(--cdn-gold) !important; }
 html.cd-next-design .cd-next-legend { display: flex; flex-wrap: wrap; gap: 12px 20px; padding-block: 12px; font: 14px/1.5 Manrope, sans-serif; color: var(--cdn-muted); }
 html.cd-next-design .cd-next-legend span { display: inline-flex; align-items: center; gap: 8px; }
 html.cd-next-design .cd-next-legend i { width: 16px; height: 3px; background: var(--cdn-gold); }
@@ -115,7 +118,8 @@ html.cd-next-design .yc-bar.q-high, html.cd-next-design #yearlyCycleChart .yc-ba
 html.cd-next-design .yc-bar.now { outline: 2px solid var(--cdn-text); outline-offset: 3px; }
 html.cd-next-design .yc-num, html.cd-next-design .yc-year, html.cd-next-design .yc-pn { font: 14px/1.4 Manrope, sans-serif !important; color: var(--cdn-muted) !important; }
 html.cd-next-design .yc-bar .yc-num { top: -24px; color: var(--cdn-text) !important; }
-html.cd-next-design .mandala-chart-svg { display: block; min-width: 900px; width: 100%; height: auto; border: 0 !important; border-radius: 0 !important; background: transparent !important; }
+html.cd-next-design .mandala-chart-svg { display: block; min-width: 0 !important; width: 100% !important; max-width: 800px; margin-inline: auto; height: auto !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; }
+html.cd-next-design .cd-next-chart-scroll { max-width: 800px !important; }
 html.cd-next-design .mandala-chart-svg rect[fill^="url(#mandalaCosmicBg"] { fill: transparent !important; }
 html.cd-next-design .mandala-starfield, html.cd-next-design .mandala-pulse, html.cd-next-design .mandala-tip-glow, html.cd-next-design .mandala-tip-dot, html.cd-next-design .mandala-here-glow { display: none !important; }
 html.cd-next-design .mandala-past-line { stroke: var(--cdn-gold) !important; stroke-width: 2.5; filter: none !important; }

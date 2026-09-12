@@ -66,7 +66,7 @@
     let tools = host.querySelector('.cd-next-life-tools');
     if (!tools) { tools = node('div', 'cd-next-life-tools'); chart.closest('.chart-stage').after(tools); }
     legend(tools, [['gold', 'Основная линия'], ['teal', 'Сейчас / сравнение'], ['rose', 'Среднее значение']]);
-    const output = readout(tools, 'Выберите точку: возраст и значение появятся здесь. На узком экране график можно прокрутить.');
+    const output = readout(tools, 'Выберите точку: возраст и значение появятся здесь.');
     chart.querySelectorAll('.life-point, .life-point-2').forEach(point => {
       const age = Number(point.dataset.plotage || point.dataset.age);
       const level = Number(point.dataset.level);

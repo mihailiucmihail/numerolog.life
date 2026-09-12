@@ -186,9 +186,7 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
 
   const numeFull = [formData.first, formData.last].filter(Boolean).join(' ')
 
-  return (
-    <AdminExperimentsSurface className={`w-full !border-0 !bg-transparent !p-0 ${designPreview ? 'min-w-0 overflow-visible' : 'overflow-hidden'}`}>
-      {/* Banner informativ */}
+  const accessBanner = (
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -201,7 +199,11 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
           {t('raportBanner', { name: numeFull ? ` — ${numeFull}` : '' })}
         </p>
       </motion.div>
+  )
 
+  return (
+    <AdminExperimentsSurface className={`w-full !border-0 !bg-transparent !p-0 ${designPreview ? 'min-w-0 overflow-visible' : 'overflow-hidden'}`}>
+      {!designPreview && accessBanner}
       {designPreview && chapters.length > 0 && (
         <div className={`${adminSurface} sticky top-16 z-30 mb-3 overflow-hidden !p-0 backdrop-blur-xl`}>
           <div className="h-0.5 bg-muted">
@@ -266,6 +268,8 @@ export default function RaportViewer({ formData, reportType = 'cristal', reveal 
         }}
         scrolling="no"
       />
+
+      {designPreview && accessBanner}
 
       {/* După plată: cristalul animat ≈5 s, apoi raportul complet este dezvăluit. */}
       <AnimatePresence>
