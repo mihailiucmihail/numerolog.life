@@ -97,7 +97,7 @@ body.cd-grani-preview #results{margin-inline:0!important;width:100%!important;ma
     fact:'Din analiza ta', inside:'Ce este înăuntru', chartVeilTop:'Linia continuă', chartVeilSub:'Ce urmează după această vârstă — în fațetă',
     veil:'Text, grafice și hărți — după deschidere', open:'Deschide fațeta', openTag:'Deschisă', note:'Plată unică. Fațeta rămâne deschisă permanent, pe linkul tău.',
     fullKicker:'Sau tot Cristalul deodată', saved:function(n){ return 'Fațetele deja deschise ('+n+') se scad din preț.'; },
-    legend:['Nivelul tău','Nivelul tău de confort','Vârsta ta acum','Schimbare de tendință'], chartTitle:'Miniatura arată cariera. Fațeta deschide metaciclurile și toate cele 9 grafice.',
+    legend:['Nivelul tău','Nivelul tău de confort','Vârsta ta acum','Schimbare de tendință'], chartTitle:'Apasă pe un buton pentru a schimba graficul. Vezi calculul tău până la vârsta actuală; continuarea se deschide în fațetă.',
     charts:['Carieră','Viață personală','Carieră + viață personală','Flux financiar','Autorealizare','Karmă','Destin','Karmă + destin','Voință'],
     compactTitle:'Toate cele 14 fațete, într-un singur Cristal', compactBody:'Continuă de la aceste prime fragmente la întregul tău raport: interpretări, metacicluri, grafice și hărți.',
     fullCta:'Deschide Cristalul complet', fullNote:'Plată unică. Acces permanent la întregul raport, pe linkul tău.', pricePending:'Se încarcă prețul…'
@@ -108,7 +108,7 @@ body.cd-grani-preview #results{margin-inline:0!important;width:100%!important;ma
     fact:'Из твоего разбора', inside:'Что внутри', chartVeilTop:'Линия продолжается', chartVeilSub:'Что после этого возраста — в грани',
     veil:'Текст, графики и карты — после открытия', open:'Открыть грань', openTag:'Открыто', note:'Разовая оплата. Грань остаётся открытой навсегда по твоей ссылке.',
     fullKicker:'Или весь Кристалл сразу', saved:function(n){ return 'Уже открытые грани ('+n+') вычитаются из цены.'; },
-    legend:['Твой уровень','Твой уровень комфорта','Твой возраст сейчас','Смена тенденции'], chartTitle:'В миниатюре — карьера. Открытие грани включает метациклы и все 9 графиков.',
+    legend:['Твой уровень','Твой уровень комфорта','Твой возраст сейчас','Смена тенденции'], chartTitle:'Нажми на кнопку, чтобы сменить график. Здесь — твой расчёт до текущего возраста; продолжение открывается в грани.',
     charts:['Карьера','Личная жизнь','Карьера + личная жизнь','Финансовый поток','Самореализация','Карма','Судьба','Карма + судьба','Воля'],
     compactTitle:'Все 14 граней — в одном Кристалле', compactBody:'Продолжи от первых фрагментов к целому разбору: трактовкам, метациклам, графикам и картам.',
     fullCta:'Открыть весь Кристалл', fullNote:'Разовая оплата. Постоянный доступ ко всему разбору по твоей ссылке.', pricePending:'Загружаем цену…'
@@ -126,25 +126,33 @@ body.cd-grani-preview #results{margin-inline:0!important;width:100%!important;ma
   function lifeCharts(){ var r = window.__cdLastResult; return (r && r.lifeCharts) || (typeof currentLifeCharts !== 'undefined' ? currentLifeCharts : null); }
   function curAge(){ try{ return Math.max(0, computeCurrentAge(currentBirthYear, currentBirthMonth, currentBirthDay)); }catch(e){ return 0; } }
 
-  /* Graficul carierei ca in raport, cu viitorul voalat (aceleasi clase ca previewurile carierei: cd-cr-svg). */
+  /* Aceleasi date si scari ca in raport; coordonatele viitoare nu se introduc in SVG. */
   var chartSeq = 0;
-  function veiledChart(data, age){
+  function veiledChart(data, age, dataB, labelA, labelB){
     var W=640, H=320, padL=36, padR=20, padT=20, padB=34, plotW=W-padL-padR, plotH=H-padT-padB;
-    var maxAge = Math.max.apply(null, data.points.map(function(p){ return p.plotAge; })) * 1.06;
+    var allPoints = data.points.concat(dataB ? dataB.points : []);
+    var maxAge = Math.max.apply(null, allPoints.map(function(p){ return p.plotAge; })) * 1.06;
     var xS = function(a){ return padL + (a/maxAge)*plotW; }, yS = function(l){ return padT + plotH - (l/9)*plotH; };
     var uid = 'cdgr'+(++chartSeq), parts = [];
     for(var lvl=0; lvl<=9; lvl+=3){ parts.push('<line class="axis-line" x1="'+padL+'" y1="'+yS(lvl)+'" x2="'+(W-padR)+'" y2="'+yS(lvl)+'"/><text class="axis-label" x="'+(padL-8)+'" y="'+(yS(lvl)+3)+'" text-anchor="end">'+lvl+'</text>'); }
-    var maxReal = Math.max.apply(null, data.points.map(function(p){ return p.age; }));
+    var maxReal = Math.max.apply(null, allPoints.map(function(p){ return p.age; }));
     for(var a=0; a<=maxReal+5; a+=10) parts.push('<text class="axis-label" x="'+xS(a)+'" y="'+(H-padB+16)+'" text-anchor="middle">'+a+'</text>');
     var avgY = yS(data.avg);
-    parts.push('<line class="avg-line show" x1="'+padL+'" y1="'+avgY+'" x2="'+(W-padR)+'" y2="'+avgY+'"/>');
     var hasFuture = age >= 0 && age < maxAge;
-    var past = hasFuture ? data.points.filter(function(p){ return p.plotAge <= age; }) : data.points.slice();
     var nowLv = hasFuture ? interpolateAtAge(data.points, age) : null;
-    var pts = past.map(function(p){ return {x:xS(p.plotAge), y:yS(p.level)}; });
-    if(hasFuture) pts.push({x:xS(age), y:yS(nowLv)});
-    parts.push('<path class="life-path" d="'+pts.map(function(pt,i){ return (i===0?'M':'L')+pt.x.toFixed(1)+','+pt.y.toFixed(1); }).join(' ')+'"/>');
-    past.forEach(function(p){ parts.push('<circle class="life-point show" cx="'+xS(p.plotAge).toFixed(1)+'" cy="'+yS(p.level).toFixed(1)+'" r="5.5"/>'); });
+    function drawSeries(series, secondary){
+      var suffix = secondary ? '-2' : '';
+      var endX = hasFuture ? xS(age) : W-padR;
+      parts.push('<line class="avg-line'+suffix+' show" x1="'+padL+'" y1="'+yS(series.avg)+'" x2="'+endX+'" y2="'+yS(series.avg)+'"/>');
+      var past = hasFuture ? series.points.filter(function(p){ return p.plotAge <= age; }) : series.points.slice();
+      var pts = past.map(function(p){ return {x:xS(p.plotAge), y:yS(p.level)}; });
+      if(hasFuture) pts.push({x:xS(age), y:yS(interpolateAtAge(series.points, age))});
+      parts.push('<path class="life-path'+suffix+'" d="'+pts.map(function(pt,i){ return (i===0?'M':'L')+pt.x.toFixed(1)+','+pt.y.toFixed(1); }).join(' ')+'"/>');
+      past.forEach(function(p){ parts.push('<circle class="life-point'+suffix+' show" cx="'+xS(p.plotAge).toFixed(1)+'" cy="'+yS(p.level).toFixed(1)+'" r="5.5"><title>'+esc(secondary?labelB:labelA)+' · '+p.plotAge+' · '+p.level+'/9</title></circle>'); });
+      (series.crossings || []).filter(function(a){ return !hasFuture || a <= age; }).forEach(function(a){ parts.push('<circle class="crossing-mark '+(secondary?'cross-b':'cross-a')+' show" cx="'+xS(a)+'" cy="'+yS(series.avg)+'" r="4"/>'); });
+    }
+    drawSeries(data, false);
+    if(dataB) drawSeries(dataB, true);
     if(hasFuture){
       var mx = xS(age), my = yS(nowLv), vx = mx + 6, vw = W - padR - vx;
       if(vw > 40){
@@ -159,8 +167,35 @@ body.cd-grani-preview #results{margin-inline:0!important;width:100%!important;ma
       var lw=74, lh=18, lx=Math.min(Math.max(mx-lw/2, padL), W-padR-lw), ly=padT+2;
       parts.push('<circle class="now-marker-ring show" cx="'+mx.toFixed(1)+'" cy="'+my.toFixed(1)+'" r="6"/><rect class="now-label-bg show" x="'+lx+'" y="'+ly+'" width="'+lw+'" height="'+lh+'" rx="3"/><text class="now-label-text show" x="'+(lx+lw/2)+'" y="'+(ly+13)+'" text-anchor="middle">'+(lang==='ro'?'Vârsta ':'Возраст ')+age+'</text><circle class="now-marker show" cx="'+mx.toFixed(1)+'" cy="'+my.toFixed(1)+'" r="6"/>');
     }
-    return '<div class="cd-cr-legend"><span><i class="l1"></i>'+T.legend[0]+'</span><span><i class="l2"></i>'+T.legend[1]+'</span><span><i class="l3"></i>'+T.legend[2]+'</span><span><i class="l4"></i>'+T.legend[3]+'</span></div><svg class="cd-cr-svg" viewBox="0 0 '+W+' '+H+'">'+parts.join('')+'</svg>';
+    var legend = '<span><i class="gr-line-a"></i>'+esc(labelA)+'</span>'+(dataB?'<span><i class="gr-line-b"></i>'+esc(labelB)+'</span>':'')+'<span><i class="gr-now"></i>'+T.legend[2]+'</span><span><i class="gr-average"></i>'+T.legend[1]+(dataB?(lang==='ro'?' · culoarea fiecărei linii':' · цвет каждой линии'):'')+'</span>';
+    return '<div class="cd-gr-chart-legend">'+legend+'</div><svg role="img" aria-label="'+esc(labelA+(labelB?' + '+labelB:''))+'" class="cd-cr-svg" viewBox="0 0 '+W+' '+H+'">'+parts.join('')+'</svg>';
+
   }
+
+  var CHART_KEYS = ['career','personal','career_personal','financial','selfrealization','karma','destiny','karma_destiny','will'];
+  function chartContent(key){
+    var C = lifeCharts();
+    if(!C) return '';
+    var keys = key === 'career_personal' ? ['career','personal'] : key === 'karma_destiny' ? ['karma','destiny'] : [key];
+    var data = C[keys[0]] || (keys[0] === 'selfrealization' && window.__cdLastResult && window.__cdLastResult.selfRealizationChart);
+    var dataB = keys[1] ? C[keys[1]] : null;
+    if(!data || !data.points || (keys[1] && !dataB)) return '';
+    var labelA = T.charts[CHART_KEYS.indexOf(keys[0])], labelB = keys[1] ? T.charts[CHART_KEYS.indexOf(keys[1])] : '';
+    return '<p class="cd-gr-chart-title" aria-live="polite" aria-atomic="true">'+esc(T.charts[CHART_KEYS.indexOf(key)])+'</p>'+veiledChart(data,curAge(),dataB,labelA,labelB);
+  }
+  document.addEventListener('click', function(event){
+    var button = event.target.closest('[data-gr-chart]');
+    if(!button) return;
+    var explorer = button.closest('.cd-gr-chart-explorer');
+    var key = button.getAttribute('data-gr-chart');
+    if(!explorer || CHART_KEYS.indexOf(key) < 0) return;
+    explorer.classList.add('has-interacted');
+    if(button.getAttribute('aria-pressed') === 'true') return;
+    var content = chartContent(key);
+    if(!content) return;
+    explorer.querySelectorAll('[data-gr-chart]').forEach(function(b){b.setAttribute('aria-pressed',String(b===button));});
+    explorer.querySelector('.cd-gr-chart-panel').innerHTML = content;
+  });
 
   function veilHtml(){
     var sparks = '';
@@ -174,8 +209,8 @@ body.cd-grani-preview #results{margin-inline:0!important;width:100%!important;ma
     var html = '<section class="cd-gr-card is-locked cd-gr-reveal" data-grani="'+g.id+'"><p class="cd-gr-kicker">'+T.grani(position, cards.length)+'</p><h3>'+esc(g[lang])+'</h3>';
     html += '<div class="cd-gr-fact"><p class="cd-gr-kicker">'+esc(fact.hint)+'</p><p>'+esc(fact.text)+'</p></div>';
     if(g.chart){
-      html += '<ul class="cd-gr-chart-list">'+T.charts.map(function(t){ return '<li>'+esc(t)+'</li>'; }).join('')+'</ul><p class="cd-gr-note">'+T.chartTitle+'</p>';
-      var C = lifeCharts(), data = C && C[g.chart]; if(data && data.points) html += '<div style="margin-top:14px">'+veiledChart(data, curAge())+'</div>';
+      html += '<div class="cd-gr-chart-explorer"><p class="cd-gr-note cd-gr-chart-hint">'+T.chartTitle+'</p><div class="cd-gr-chart-tabs" role="group" aria-label="'+(lang==='ro'?'Alege graficul':'Выбери график')+'">'+CHART_KEYS.map(function(key,i){return '<button type="button" class="cd-gr-chart-tab" data-gr-chart="'+key+'" aria-pressed="'+(i===0?'true':'false')+'" aria-controls="cd-gr-chart-panel">'+esc(T.charts[i])+'</button>';}).join('')+'</div><div class="cd-gr-chart-panel" id="cd-gr-chart-panel">'+chartContent('career')+'</div></div>';
+
     } else html += veilHtml();
     html += '<p class="cd-gr-question">'+esc(fact.question)+'</p>';
     html += '<p class="cd-gr-kicker" style="margin:16px 0 0">'+T.inside+'</p><ul class="cd-gr-inside">'+titles.map(function(t){ return '<li><i></i><em>'+esc(t)+'</em></li>'; }).join('')+'</ul>';
