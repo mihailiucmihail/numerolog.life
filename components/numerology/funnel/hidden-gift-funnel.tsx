@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { StandardCrystalForm } from './standard-crystal-form'
+import { CrystalReactForm } from './crystal-react-form'
 import { IdentityCompletionDialog } from './identity-completion-dialog'
 import type { FunnelForm } from './types'
 import { calculateDateOnlyCrystal } from '@/lib/numerology/date-only-crystal'
@@ -75,13 +75,15 @@ export function HiddenGiftFunnel({ locale, onSubmit, onTrack }: {
   }, [birth, attempt])
 
 
-  if (!birth) return <StandardCrystalForm locale={locale} onFirstInteraction={() => onTrack('date_started')} onSubmit={(value) => {
-    const next = calculateDateOnlyCrystal({ day: value.day, month: value.month, year: value.year }).birth
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next))
-    setBirth(next)
-    onTrack('date_submitted')
-    window.scrollTo({ top: 0 })
-  }} />
+  if (!birth) return <div className="mx-auto w-full max-w-2xl [&>section]:rounded-[2rem] [&>section]:border-primary/25 [&>section]:bg-background/70 [&>section]:p-5 [&>section]:backdrop-blur-xl sm:[&>section]:p-7 [&_header]:border-0 [&_header]:bg-transparent [&_header]:px-0 [&_header]:pb-5 [&_header]:pt-2 [&_header>div:first-child]:tracking-[0.24em] [&_header>div:first-child>span]:hidden [&_header>div:nth-child(2)>div:first-child]:hidden [&_h2]:font-serif [&_h2]:text-3xl [&_h2]:font-light [&_h2]:leading-tight sm:[&_h2]:text-4xl [&_header_p]:mt-4 [&_header_p]:leading-relaxed [&_form]:gap-5 [&_form]:p-0 [&_input]:border-foreground/15 [&_input]:bg-foreground/10 [&_input]:text-base [&_input]:text-foreground [&_input]:shadow-inner [&_input]:placeholder:text-muted-foreground/80 [&_input:focus]:border-primary/70 [&_input:focus]:bg-foreground/15 [&_button[type=submit]]:h-14 [&_button[type=submit]]:px-6 [&_button[type=submit]]:text-base [&_button[type=submit]]:shadow-lg [&_button[type=submit]]:shadow-primary/25 [&_form>p:last-child]:font-sans [&_form>p:last-child]:text-sm [&_form>p:last-child]:normal-case [&_form>p:last-child]:tracking-normal">
+    <CrystalReactForm locale={locale} variant="form-hidden-gift-v1" futureStage="date" onSubmit={() => {}} onFirstInteraction={() => onTrack('date_started')} onBirthSubmit={(value) => {
+      const next = calculateDateOnlyCrystal(value).birth
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next))
+      setBirth(next)
+      onTrack('date_submitted')
+      window.scrollTo({ top: 0 })
+    }} />
+  </div>
 
   return <div className="flex flex-col gap-8">
     <div className="flex items-center justify-between gap-4">
