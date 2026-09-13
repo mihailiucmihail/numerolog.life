@@ -1189,7 +1189,7 @@ html.cd-next-design .cd-next-example-cta:focus-visible { outline: 2px solid var(
 html.cd-next-design .wrap { width: 100% !important; max-width: 1120px !important; margin: 0 auto !important; padding: 0 0 32px !important; }
 html.cd-next-design #results { display: flex !important; flex-direction: column; gap: 20px !important; width: 100% !important; max-width: none !important; margin: 0 auto !important; padding: 0 !important; counter-reset: none !important; }
 html.cd-next-design #results::before, html.cd-next-design #results::after, html.cd-next-design #personalDataSummary { display: none !important; }
-html.cd-next-design .cd-next-cover, html.cd-next-design #results > .card {
+html.cd-next-design .cd-next-cover, html.cd-next-design #results > .card, html.cd-next-design #previewLayer.cd-standard-full > .card {
   width: 100% !important; min-width: 0; margin: 0 !important; padding: 0 !important;
   border: 1px solid var(--cdn-border) !important; border-radius: 12px !important;
   background: var(--cdn-panel) !important; box-shadow: none !important;
@@ -1197,6 +1197,33 @@ html.cd-next-design .cd-next-cover, html.cd-next-design #results > .card {
 }
 html.cd-next-design #results > .card::before, html.cd-next-design #results > .card::after { display: none !important; }
 html.cd-next-design .cd-next-cover { padding: 24px !important; }
+html.cd-next-design #previewLayer.cd-standard-full { --gr-text: var(--cdn-text); --gr-muted: var(--cdn-muted); --gr-gold: var(--cdn-gold); --gr-ink: var(--cdn-bg); --gr-surface: var(--cdn-panel); --gr-inset: var(--cdn-panel); --gr-border: var(--cdn-border); --gr-gold-line: var(--cdn-gold); display: flex !important; flex-direction: column; gap: 20px; min-width: 0; width: 100%; }
+html.cd-next-design .cd-standard-full .cd-gr-chart-tab { font-family: Manrope, sans-serif; }
+@media(max-width:800px) { html.cd-next-design .cd-standard-full .cd-next-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+html.cd-next-design #previewLayer.cd-standard-full > .card::before,
+html.cd-next-design #previewLayer.cd-standard-full > .card::after { display: none !important; }
+.cd-standard-full .cd-standard-intro { margin: 0; padding: 20px; border: 1px solid var(--cdn-border); border-radius: 12px; }
+.cd-standard-full .cd-premium-ink { user-select: none; pointer-events: none; opacity: .36; filter: blur(3px); }
+.cd-standard-full .cd-premium-depth-1 { filter: blur(5px); opacity: .3; }
+.cd-standard-full .cd-premium-depth-2 { filter: blur(7px); opacity: .24; }
+.cd-standard-full .cd-premium-ink i { display: inline-block; height: .65em; max-width: 100%; border-radius: 3px; background: var(--cdn-muted); vertical-align: baseline; }
+.cd-standard-full .cd-premium-graphic { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; min-height: 220px; padding: 20px; border: 1px solid var(--cdn-border); border-radius: 12px; }
+.cd-standard-full .cd-premium-graphic i { display: block; width: var(--ink-size); height: 40px; align-self: center; justify-self: center; border-radius: 8px; border: 2px solid var(--cdn-gold); opacity: .3; filter: blur(5px); }
+.cd-standard-full .cd-standard-excerpt { margin: 0 0 24px; }
+.cd-standard-full .cd-standard-actions { border-top: 1px solid var(--cdn-border); padding-top: 20px; }
+.cd-standard-full .cd-gr-btn { font-family: Manrope, sans-serif; font-size: 14px; }
+.cd-standard-full .cd-gr-chart-tabs { position: static !important; }
+.cd-standard-full .cd-gr-full { min-width: 0; }
+.cd-standard-full .cd-standard-contents { padding: 20px; border: 1px solid var(--cdn-border); border-radius: 12px; font: 500 16px/1.5 Manrope, sans-serif; }
+.cd-standard-full .cd-standard-contents summary { cursor: pointer; color: var(--cdn-gold); }
+.cd-standard-full .cd-standard-contents nav { display: flex; flex-direction: column; gap: 8px; padding-top: 16px; }
+.cd-standard-full .cd-standard-contents button { text-align: start; border: 0; border-bottom: 1px solid var(--cdn-border); padding: 10px 0; background: transparent; color: var(--cdn-muted); font: inherit; cursor: pointer; }
+.cd-standard-full .cd-standard-contents button:hover { color: var(--cdn-gold); }
+.cd-standard-full .cd-standard-contents button:focus-visible { outline: 2px solid var(--cdn-gold); outline-offset: 4px; }
+.cd-standard-full .card { scroll-margin-top: 100px; }
+.cd-standard-full .cd-cr-spark, .cd-standard-full .cd-cr-sweep { display: none; }
+.cd-standard-full .cd-cr-q-ring { animation: none; }
+
 html.cd-next-design .cd-next-cover-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
 html.cd-next-design .cd-next-kicker, html.cd-next-design .cd-next-edition, html.cd-next-design .cd-next-section-label { font: 600 14px/1.5 Manrope, sans-serif; color: var(--cdn-gold); }
 html.cd-next-design .cd-next-edition { color: var(--cdn-muted); }
@@ -10403,11 +10430,179 @@ if (progressiveCheck) {
 
   if(progressiveCheck) return;
 
+function renderStandardFull(model, layer, results) {
+  document.documentElement.classList.add('cd-next-design');
+  document.body.classList.add('cd-standard-report');
+  var cards = Array.from(results.children).filter(function(card) {
+    return card.classList.contains('card') && card.querySelector('.section-title') && card.id !== 'personalDataSummary';
+  });
+  var groups = {};
+  cards.forEach(function(card) {
+    var group = matchGrani(titleOf(card));
+    var id = group ? group.id : 0;
+    if (!groups[id]) groups[id] = { words: 0, used: false, last: card };
+    groups[id].words += card.textContent.trim().split(/\s+/).length;
+    groups[id].last = card;
+  });
+  layer.replaceChildren();
+  layer.className = 'cd-standard-full';
+  var intro = document.createElement('p');
+  intro.className = 'cd-standard-intro';
+  intro.textContent = lang === 'ro'
+    ? 'Acesta este Cristalul tău complet. Începe cu primele fragmente personale; explicațiile detaliate și continuarea graficelor se deschid în fațeta aleasă sau în raportul integral.'
+    : 'Это твой полный Кристалл. Начни с первых персональных фрагментов. Подробные трактовки и продолжение графиков открываются в выбранной грани или во всём разборе.';
+  layer.appendChild(intro);
+  var contents = document.createElement('details');
+  contents.className = 'cd-standard-contents';
+  var summary = document.createElement('summary');
+  summary.textContent = lang === 'ro' ? 'Cuprinsul raportului' : 'Содержание разбора';
+  var navigation = document.createElement('nav');
+  navigation.setAttribute('aria-label', summary.textContent);
+  contents.append(summary, navigation);
+  layer.appendChild(contents);
+  var chartAdded = false;
+  var index = 0;
+
+  function ink(text) {
+    var span = document.createElement('span');
+    span.className = 'cd-premium-ink cd-premium-depth-' + (index++ % 3);
+    span.setAttribute('aria-hidden', 'true');
+    var words = text.trim().split(/\s+/);
+    words.forEach(function(word, i) {
+      var mark = document.createElement('i');
+      mark.style.width = Math.min(11, Math.max(2, word.length * 0.48)) + 'ch';
+      span.appendChild(mark);
+      if (i < words.length - 1) span.appendChild(document.createTextNode(' '));
+    });
+    return span;
+  }
+
+  function graphicShell(element) {
+    var shell = document.createElement('div');
+    shell.className = 'cd-premium-graphic';
+    shell.setAttribute('role', 'img');
+    shell.setAttribute('aria-label', lang === 'ro' ? 'Continuarea hărții este inclusă în raportul complet' : 'Продолжение карты — в полном разборе');
+    for (var i = 0; i < 9; i++) {
+      var cell = document.createElement('i');
+      cell.style.setProperty('--ink-size', (30 + (i * 23) % 50) + '%');
+      shell.appendChild(cell);
+    }
+    element.replaceWith(shell);
+  }
+
+  function maskCard(original, id) {
+    // A clone has no renderer listeners. Renamed IDs also prevent deferred callbacks from restoring paid data.
+    var card = original.cloneNode(true);
+    var title = card.querySelector('.section-title');
+    var titleText = titleOf(original);
+    var hint = null;
+    var group = groups[id];
+    if (group && !group.used && id !== 0) {
+      var limit = Math.min(id === 1 ? 120 : 65, Math.floor(group.words * 0.18));
+      var paragraphs = Array.from(card.querySelectorAll('p')).filter(function(p) {
+        return !p.closest('.section-title, .hint, .chart-legend') && p.textContent.trim().split(/\s+/).length >= 18;
+      });
+      for (var p = 0; p < paragraphs.length && !hint; p++) {
+        var sentences = paragraphs[p].textContent.trim().match(/[^.!?]+[.!?]+(?:\s|$)/g) || [];
+        var excerpt = '';
+        (id === 1 ? sentences : sentences.slice(0, 2)).some(function(sentence) {
+          if ((excerpt + sentence).trim().split(/\s+/).length > limit) return true;
+          excerpt += sentence;
+          return false;
+        });
+        if (excerpt.trim()) hint = excerpt.trim();
+      }
+      if (!hint) {
+        var fact = graniFact(id);
+        if (fact && fact.text) hint = fact.text;
+      }
+      group.used = Boolean(hint);
+    }
+    card.querySelectorAll('script, style, iframe, input, select, textarea, button, audio, video').forEach(function(el) { el.remove(); });
+    card.querySelectorAll('svg, canvas, img, .pyth-grid, .yc-scroll, .meta-timeline').forEach(function(el) {
+      if (card.contains(el)) graphicShell(el);
+    });
+    [card].concat(Array.from(card.querySelectorAll('*'))).forEach(function(el) {
+      Array.from(el.attributes).forEach(function(attr) {
+        if (/^on|^data-|^aria-|^title$|^alt$|^href$|^tabindex$/.test(attr.name)) el.removeAttribute(attr.name);
+      });
+      if (el.id) el.id = 'cd-masked-' + el.id;
+    });
+    var walker = document.createTreeWalker(card, NodeFilter.SHOW_TEXT);
+    var texts = [];
+    while (walker.nextNode()) {
+      var current = walker.currentNode;
+      if (current.textContent.trim() && !title.contains(current) && !current.parentElement.closest('.cd-premium-graphic')) texts.push(current);
+    }
+    texts.forEach(function(text) { text.replaceWith(ink(text.textContent)); });
+    title.textContent = titleText;
+    card.classList.add('cd-premium-chapter');
+    if (hint) {
+      var paragraph = document.createElement('p');
+      paragraph.className = 'cd-standard-excerpt';
+      paragraph.textContent = hint;
+      title.after(paragraph);
+    }
+    return card;
+  }
+
+  function graphExplorer() {
+    var explorer = document.createElement('div');
+    explorer.className = 'cd-gr-chart-explorer';
+    explorer.innerHTML = '<p class="cd-gr-note cd-gr-chart-hint">'+T.chartTitle+'</p><div class="cd-gr-chart-tabs" role="group" aria-label="'+(lang==='ro'?'Alege graficul':'Выбери график')+'">'+CHART_KEYS.map(function(key,i){return '<button type="button" class="cd-gr-chart-tab" data-gr-chart="'+key+'" aria-pressed="'+(i===0?'true':'false')+'" aria-controls="cd-gr-chart-panel">'+esc(T.charts[i])+'</button>';}).join('')+'</div><div class="cd-gr-chart-panel" id="cd-gr-chart-panel">'+chartContent('career')+'</div>';
+    return explorer;
+  }
+
+  cards.forEach(function(original) {
+    var g = matchGrani(titleOf(original));
+    var id = g ? g.id : 0;
+    var opened = unlocked.indexOf(id) >= 0;
+    var card = opened ? original : maskCard(original, id);
+    card.dataset.grani = String(id);
+    var jump = document.createElement('button');
+    jump.type = 'button';
+    jump.textContent = titleOf(original);
+    jump.addEventListener('click', function() {
+      contents.open = false;
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    navigation.appendChild(jump);
+    if (!opened && original.querySelector('#lifeChartSvg')) {
+      var shell = card.querySelector('.cd-premium-graphic');
+      if (shell) shell.replaceWith(graphExplorer());
+      else card.querySelector('.section-title').after(graphExplorer());
+      chartAdded = true;
+    }
+    if (!opened && id && groups[id].last === original) {
+      var actions = document.createElement('div');
+      actions.className = 'cd-gr-actions cd-standard-actions';
+      actions.innerHTML = '<button type="button" class="cd-gr-btn" data-grani-btn="'+id+'" onclick="__cdGraniUnlock('+id+')">'+btnLabel()+'</button><p class="cd-gr-note">'+T.note+'</p>';
+      card.appendChild(actions);
+    }
+    layer.appendChild(card);
+    if (chartAdded) {
+      layer.appendChild(compactPaywall());
+      chartAdded = false;
+    }
+  });
+  var full = document.createElement('div');
+  full.className = 'cd-gr-full';
+  full.innerHTML = renderPaywall(model);
+  layer.appendChild(full);
+  Array.from(results.children).forEach(function(el) {
+    if (el !== layer && el.id !== 'devBarFull' && el.id !== 'personalDataSummary') el.remove();
+  });
+  refreshGraniButtons();
+  observeReveal(layer);
+  try { if (typeof track === 'function') track('grani_preview_view', { unlocked: unlockedCount }); } catch (e) {}
+}
+
   window.renderPreview = renderPreview = function(model){
     baseRender(model);
     var layer = document.getElementById('previewLayer');
     var results = document.getElementById('results');
     if(!layer || !results) return;
+    if(params.get('pv') === 'preview-grani-v1' && (params.get('fv') === 'form-standard-v1' || params.has('unlocked')) && params.get('gift') !== '1'){ renderStandardFull(model, layer, results); return; }
     var groups = {}; GRANI.forEach(function(g){ groups[g.id] = []; });
     Array.prototype.slice.call(results.querySelectorAll(':scope .card')).forEach(function(card){
       if(layer.contains(card)) return;
@@ -10442,7 +10637,8 @@ if (progressiveCheck) {
 <script id="cd-report-next-script">
 (function () {
   const params = new URLSearchParams(location.search);
-  if (params.get('design') !== 'next') return;
+  const standardPreview = params.get('pv') === 'preview-grani-v1' && (params.get('fv') === 'form-standard-v1' || params.has('unlocked')) && params.get('gift') !== '1';
+  if (params.get('design') !== 'next' && !standardPreview) return;
   document.documentElement.classList.add('cd-next-design');
   const state = { ready: false, cards: [], timer: 0 };
   const clean = value => String(value == null ? '' : value).trim();
@@ -10661,8 +10857,9 @@ if (progressiveCheck) {
   }
   function initialize() {
     if (state.ready) return;
-    const results = document.getElementById('results');
+    const results = document.querySelector('#previewLayer.cd-standard-full') || document.getElementById('results');
     const result = window.__cdLastResult;
+    if (standardPreview && params.get('auto') !== '1' && !results?.classList.contains('cd-standard-full')) return;
     if (!results || !result || results.querySelectorAll(':scope > .card .section-title').length < 4) return;
     state.ready = true;
     buildCover(results, result);
@@ -10681,6 +10878,7 @@ if (progressiveCheck) {
     results.querySelectorAll('.mandala-chart-svg').forEach(upgradeMandala);
     const back = node('button', 'cd-next-backtop', 'Вернуться к началу');
     back.type = 'button'; back.addEventListener('click', () => send({ type: 'cdNextTop' })); results.append(back);
+    if (results.classList.contains('cd-standard-full')) back.addEventListener('click', () => results.scrollIntoView({behavior:'smooth',block:'start'}));
     const resize = new ResizeObserver(schedulePublish); resize.observe(results);
     const life = document.getElementById('lifeChartSvg');
     if (life) new MutationObserver(upgradeLifeChart).observe(life, { childList: true });

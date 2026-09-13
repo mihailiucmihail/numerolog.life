@@ -20,6 +20,14 @@ function renderStandardFull(model, layer, results) {
     ? 'Acesta este Cristalul tău complet. Începe cu primele fragmente personale; explicațiile detaliate și continuarea graficelor se deschid în fațeta aleasă sau în raportul integral.'
     : 'Это твой полный Кристалл. Начни с первых персональных фрагментов. Подробные трактовки и продолжение графиков открываются в выбранной грани или во всём разборе.';
   layer.appendChild(intro);
+  var contents = document.createElement('details');
+  contents.className = 'cd-standard-contents';
+  var summary = document.createElement('summary');
+  summary.textContent = lang === 'ro' ? 'Cuprinsul raportului' : 'Содержание разбора';
+  var navigation = document.createElement('nav');
+  navigation.setAttribute('aria-label', summary.textContent);
+  contents.append(summary, navigation);
+  layer.appendChild(contents);
   var chartAdded = false;
   var index = 0;
 
@@ -65,14 +73,18 @@ function renderStandardFull(model, layer, results) {
       for (var p = 0; p < paragraphs.length && !hint; p++) {
         var sentences = paragraphs[p].textContent.trim().match(/[^.!?]+[.!?]+(?:\s|$)/g) || [];
         var excerpt = '';
-        sentences.some(function(sentence) {
+        (id === 1 ? sentences : sentences.slice(0, 2)).some(function(sentence) {
           if ((excerpt + sentence).trim().split(/\s+/).length > limit) return true;
           excerpt += sentence;
           return false;
         });
         if (excerpt.trim()) hint = excerpt.trim();
       }
-      group.used = true;
+      if (!hint) {
+        var fact = graniFact(id);
+        if (fact && fact.text) hint = fact.text;
+      }
+      group.used = Boolean(hint);
     }
     card.querySelectorAll('script, style, iframe, input, select, textarea, button, audio, video').forEach(function(el) { el.remove(); });
     card.querySelectorAll('svg, canvas, img, .pyth-grid, .yc-scroll, .meta-timeline').forEach(function(el) {
@@ -115,6 +127,14 @@ function renderStandardFull(model, layer, results) {
     var opened = unlocked.indexOf(id) >= 0;
     var card = opened ? original : maskCard(original, id);
     card.dataset.grani = String(id);
+    var jump = document.createElement('button');
+    jump.type = 'button';
+    jump.textContent = titleOf(original);
+    jump.addEventListener('click', function() {
+      contents.open = false;
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    navigation.appendChild(jump);
     if (!opened && original.querySelector('#lifeChartSvg')) {
       var shell = card.querySelector('.cd-premium-graphic');
       if (shell) shell.replaceWith(graphExplorer());

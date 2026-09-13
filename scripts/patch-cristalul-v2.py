@@ -486,6 +486,15 @@ assert gift_gate in grani_preview
 grani_preview = grani_preview.replace(gift_gate, "var progressiveCheck = pv === 'preview-birth-input-check-v1' || pv === 'preview-hidden-gift-v2';")
 grani_preview = grani_preview.replace('wrap.innerHTML = head;', 'wrap.innerHTML = (hiddenGift ? hiddenGiftIntro() : \'\') + head;')
 grani_preview = grani_preview.replace('/*__CD_PROGRESSIVE_CHECK__*/', gift_script + '\n' + progressive_check)
+standard_full = (ROOT / 'scripts/cristalul-standard-full.js').read_text(encoding='utf-8')
+assert '\ufffd' not in standard_full
+standard_anchor = '  window.renderPreview = renderPreview = function(model){'
+assert grani_preview.count(standard_anchor) == 1
+grani_preview = grani_preview.replace(standard_anchor, standard_full + '\n' + standard_anchor)
+standard_render_anchor = '    if(!layer || !results) return;'
+assert grani_preview.count(standard_render_anchor) == 1
+standard_condition = "params.get('pv') === 'preview-grani-v1' && (params.get('fv') === 'form-standard-v1' || params.has('unlocked')) && params.get('gift') !== '1'"
+grani_preview = grani_preview.replace(standard_render_anchor, standard_render_anchor + '\n    if(' + standard_condition + '){ renderStandardFull(model, layer, results); return; }')
 grani_styles = (ROOT / 'scripts/cristalul-grani-preview.css').read_text(encoding='utf-8')
 assert grani_preview.count('</style>') == 1
 assert '\ufffd' not in grani_styles
@@ -493,6 +502,10 @@ grani_preview = grani_preview.replace('</style>', grani_styles + '\n</style>')
 report_next = re.sub(r'(?m)^([ \t]*)> ', r'\1', REPORT_NEXT.read_text(encoding='utf-8'))
 assert 'cd-report-next-script' in report_next and "params.get('design') !== 'next'" in report_next
 assert report_next.count('\ufffd') == 0, 'scriptul nou al raportului conține U+FFFD'
+report_next = report_next.replace("if (params.get('design') !== 'next') return;", "const standardPreview = " + standard_condition + ";\n  if (params.get('design') !== 'next' && !standardPreview) return;")
+report_next = report_next.replace("const results = document.getElementById('results');\n    const result", "const results = document.querySelector('#previewLayer.cd-standard-full') || document.getElementById('results');\n    const result")
+report_next = report_next.replace("if (!results || !result || results.querySelectorAll", "if (standardPreview && params.get('auto') !== '1' && !results?.classList.contains('cd-standard-full')) return;\n    if (!results || !result || results.querySelectorAll")
+report_next = report_next.replace("results.append(back);", "results.append(back);\n    if (results.classList.contains('cd-standard-full')) back.addEventListener('click', () => results.scrollIntoView({behavior:'smooth',block:'start'}));")
 rep('</body>', bridge.rstrip('\n') + '\n' + preview.rstrip('\n') + '\n' + variants.rstrip('\n') + '\n' + date_age_preview.rstrip('\n') + '\n' + theme_previews.rstrip('\n') + '\n' + career_previews.rstrip('\n') + '\n' + grani_preview.rstrip('\n') + '\n' + report_next.rstrip('\n') + '\n</body>')
 
 # 6. Fără surse/autori în text vizibil -------------------------------------------------------------
