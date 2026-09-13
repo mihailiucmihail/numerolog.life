@@ -462,6 +462,10 @@ grani_facts = (ROOT / 'scripts/cristalul-grani-facts.js').read_text(encoding='ut
 assert grani_preview.count('/*__CD_GRANI_FACTS__*/') == 1
 assert '\ufffd' not in grani_facts
 grani_preview = grani_preview.replace('/*__CD_GRANI_FACTS__*/', grani_facts)
+progressive_check = (ROOT / 'scripts/cristalul-progressive-check.js').read_text(encoding='utf-8')
+assert '\ufffd' not in progressive_check
+assert grani_preview.count('/*__CD_PROGRESSIVE_CHECK__*/') == 1
+grani_preview = grani_preview.replace('/*__CD_PROGRESSIVE_CHECK__*/', progressive_check)
 grani_styles = (ROOT / 'scripts/cristalul-grani-preview.css').read_text(encoding='utf-8')
 assert grani_preview.count('</style>') == 1
 assert '\ufffd' not in grani_styles

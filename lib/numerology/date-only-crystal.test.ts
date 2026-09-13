@@ -129,6 +129,62 @@ test('cycles and current age remain correct before, on and after a leap-day birt
   }
 })
 
+const alphabetStart = html.indexOf('const ALPHABETS = {')
+const alphabetEnd = html.indexOf('function normalizeForAlphabet(', alphabetStart)
+assert.ok(alphabetStart >= 0 && alphabetEnd > alphabetStart)
+const nominalHelpers = ['normalizeForAlphabet', 'numberTo22', 'letterToNumber', 'lettersToNumber', 'checkNameData', 'checkPersonalResult'].map(originalFunction).join('\n')
+const nominal = new Function(`${html.slice(alphabetStart, alphabetEnd)}\n${nominalHelpers}\nreturn {
+  enrich: checkPersonalResult,
+  name: checkNameData,
+  expected(value, key) {
+    const normalized = normalizeForAlphabet(value, key);
+    return numberTo22(lettersToNumber(normalized, ALPHABETS[key].letters));
+  },
+};`)() as {
+  enrich: (birth: ReturnType<typeof calculateDateOnlyCrystal>, identity: Record<string, string>) => ReturnType<typeof calculateDateOnlyCrystal> & {
+    nameArcana: { first: number | null; last: number | null }
+    nameCounts: Record<string, number> | null
+    Prizvanie_num: number | null
+    RZ_num: number | null
+  }
+  name: (value: unknown) => { arcana: number; counts: Record<string, number>; alphabet: string } | null
+  expected: (value: string, alphabet: string) => number
+}
+
+test('private Grani preview adds no nominal values until actual names are supplied', () => {
+  const birth = calculateDateOnlyCrystal({ day: 10, month: 5, year: 1992 }, today)
+  const before = structuredClone(birth)
+  const result = nominal.enrich(birth, {})
+  assert.deepEqual(result.nameArcana, { first: null, last: null })
+  for (const field of ['nameCounts', 'Prizvanie_num', 'RZ_num'] as const) assert.equal(result[field], null)
+  assert.deepEqual(birth, before)
+  assert.equal(result.lifeCharts, birth.lifeCharts)
+  assert.equal('gender' in result, false)
+  assert.equal('mandala' in result, false)
+})
+
+test('private nominal fragments preserve original letter arithmetic for Latin and Cyrillic', () => {
+  const birth = calculateDateOnlyCrystal({ day: 10, month: 5, year: 1992 }, today)
+  for (const [name, alphabet] of [['Ana', 'ro'], ['Ion', 'ro'], ['Ștefan', 'ro'], ['Анна', 'ru'], ['Иван', 'ru'], ['Ёлка', 'ru']]) {
+    const data = nominal.name(name)!
+    assert.equal(data.alphabet, alphabet)
+    assert.equal(data.arcana, nominal.expected(name, alphabet))
+    assert.equal(Object.values(data.counts).reduce((sum, n) => sum + n, 0), name.length)
+    const firstOnly = nominal.enrich(birth, { first: name })
+    assert.equal(firstOnly.nameArcana.first, data.arcana)
+    assert.equal(firstOnly.RZ_num, null)
+    const sum = 9 * birth.TaroMonth + birth.TaroYear + data.arcana
+    assert.equal(firstOnly.Prizvanie_num, ((sum - 1) % 22) + 1)
+    const lastOnly = nominal.enrich(birth, { last: name })
+    assert.equal(lastOnly.RZ_num, data.arcana)
+    assert.equal(lastOnly.Prizvanie_num, null)
+    assert.equal(lastOnly.nameCounts, null)
+    assert.equal(lastOnly.lifeCharts, firstOnly.lifeCharts)
+  }
+  for (const value of [undefined, null, '', ' ', '123', '张伟', 'AnaИван']) assert.equal(nominal.name(value), null)
+  assert.deepEqual(nominal.name('Ștefan'.normalize('NFD')), nominal.name('Ștefan'))
+})
+
 test('zero differences reduce to 22 without replacing OPV with days 14–22', () => {
   const same = calculateDateOnlyCrystal({ day: 3, month: 3, year: 2000 }, today)
   assert.equal(same.OPV, 22)

@@ -5,6 +5,7 @@ import { useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { BirthDateForm } from '@/components/numerology/funnel/birth-date-form'
 import { DateOnlyChartCheck } from '@/components/admin/date-only-chart-check'
+import { BirthInputPreviewCheck } from '@/components/admin/birth-input-preview-check'
 import { IdentityCompletionDialog } from '@/components/numerology/funnel/identity-completion-dialog'
 import { calculateDateOnlyCrystal } from '@/lib/numerology/date-only-crystal'
 import { NAME_FRAGMENT_REQUIREMENTS, type BirthDateInput } from '@/lib/numerology/progressive-input'
@@ -55,13 +56,14 @@ function FormCheck({ locale }: { locale: 'ro' | 'ru' }) {
       ) : result && (
         <div className="flex flex-col gap-4">
           <h3 tabIndex={-1} className="text-lg font-semibold">Dată validată: {result.birth.day}.{result.birth.month}.{result.birth.year}</h3>
-          <p className="text-sm leading-6 text-muted-foreground">Calculul doar din dată a fost executat fără nume și fără sex presupus. Mai jos verifici colectarea datelor; aceasta nu este încă previzualizarea finală cu 14 fațete.</p>
+          <p className="text-sm leading-6 text-muted-foreground">Calculul doar din dată a fost executat fără nume și fără sex presupus. Mai jos verifici cele 14 fațete și completarea fragmentelor nominale. Interpretările încă neportate sunt marcate explicit; aceasta nu este încă varianta publică a experimentului.</p>
           <dl className="flex flex-wrap gap-6 text-sm">
             <div><dt className="text-muted-foreground">Arcana zilei</dt><dd className="font-mono text-xl">{result.TaroDay}</dd></div>
             <div><dt className="text-muted-foreground">Arcana lunii</dt><dd className="font-mono text-xl">{result.TaroMonth}</dd></div>
             <div><dt className="text-muted-foreground">Arcana anului</dt><dd className="font-mono text-xl">{result.TaroYear}</dd></div>
           </dl>
-          <DateOnlyChartCheck result={result} locale={locale} />
+          <BirthInputPreviewCheck result={result} identity={identity} locale={locale} onComplete={facet => setActive(CHECKS.find(check => check.key === (facet === 'full' ? 'full' : facet === 11 ? 'family' : 'vocation'))!)} />
+          <details><summary className="cursor-pointer text-sm leading-6">Verifică separat datele graficelor</summary><DateOnlyChartCheck result={result} locale={locale} /></details>
           <div className="flex flex-col gap-3 sm:items-start">
             {CHECKS.map(check => <Button key={check.key} type="button" variant="outline" onClick={() => setActive(check)} className="min-h-11">{check.label}</Button>)}
             <Button type="button" variant="ghost" onClick={() => setEditing(true)} className="min-h-11">Editează data</Button>

@@ -91,7 +91,7 @@ function CompletionContent({ locale, title, description, request, initialValues,
   }
 
   return (
-    <DialogContent showCloseButton={false} className="max-h-[90dvh] overflow-y-auto" onEscapeKeyDown={(event) => { if (submitting.current) event.preventDefault() }} onPointerDownOutside={(event) => { if (submitting.current) event.preventDefault() }}>
+    <DialogContent showCloseButton={false} className="max-h-[90dvh] overflow-y-auto [--background:var(--popover)] [--foreground:var(--popover-foreground)] text-foreground" onEscapeKeyDown={(event) => { if (submitting.current) event.preventDefault() }} onPointerDownOutside={(event) => { if (submitting.current) event.preventDefault() }}>
       <DialogHeader>
         <DialogTitle>{title}</DialogTitle>
         <DialogDescription>{description}</DialogDescription>
