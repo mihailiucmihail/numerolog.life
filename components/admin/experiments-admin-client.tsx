@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react"
 import { SocialAdminClient } from "./social-admin-client"
+import { BirthInputFormCheck } from "./birth-input-form-check"
 import {
   BarChart3,
   Check,
@@ -572,6 +573,7 @@ export function ExperimentsAdminClient() {
         </button>
       </header>
 
+      <div className="mb-5"><BirthInputFormCheck /></div>
       <div className="mb-5"><SocialAdminClient password={password} /></div>
 
       <section className="mb-5 rounded-2xl border border-primary/25 bg-card/70 p-4 sm:p-5">
