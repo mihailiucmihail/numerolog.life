@@ -1,9 +1,6 @@
 import { generateText, Output } from 'ai'
-import { createGateway } from '@ai-sdk/gateway'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-
-const gateway = createGateway({ apiKey: process.env.AI_GATEWAY_API_KEY })
 
 export const maxDuration = 300
 
@@ -39,10 +36,11 @@ export async function POST(request: NextRequest) {
     ).length(entries.length),
   })
 
-  const { output } = await generateText({
-    model: gateway('anthropic/claude-sonnet-5'),
-    output: Output.object({ schema }),
-    system: `Ești un traducător literar român și redactor expert în numerologie. Tradu fiecare text din rusă în română nativă, elegantă și clară, cu diacritice corecte (ă, â, î, ș, ț).
+  try {
+    const { output } = await generateText({
+      model: 'anthropic/claude-sonnet-5',
+      output: Output.object({ schema }),
+      system: `Ești un traducător literar român și redactor expert în numerologie. Tradu fiecare text din rusă în română nativă, elegantă și clară, cu diacritice corecte (ă, â, î, ș, ț).
 
 Reguli absolute:
 - Păstrează exact sensul, intensitatea, persoana gramaticală și structura fiecărui text.
@@ -52,10 +50,17 @@ Reguli absolute:
 - Folosește terminologia numerologică firească în limba română: Arcană, Cristalul Destinului, linie ancestrală, destin, karmă.
 - Pentru adresarea directă folosește un ton cald, premium, la persoana a doua singular.
 - Returnează toate elementele, cu același id.`,
-    prompt: JSON.stringify({ entries }),
-    maxOutputTokens: 24_000,
-    temperature: 0.15,
-  })
+      prompt: JSON.stringify({ entries }),
+      maxOutputTokens: 24_000,
+      temperature: 0.15,
+    })
 
-  return NextResponse.json(output)
+    return NextResponse.json(output)
+  } catch (error) {
+    console.log('[v0] translate-cristalul error:', error instanceof Error ? error.message : error)
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Eroare necunoscută' },
+      { status: 500 },
+    )
+  }
 }
