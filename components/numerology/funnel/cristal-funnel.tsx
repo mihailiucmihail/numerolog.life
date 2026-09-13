@@ -493,7 +493,7 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
     } else if (searchParams.get('go') === '1' && saved && isStandardFunnel && saved.first && saved.last) {
       let savedEmail = ''
       try { savedEmail = sessionStorage.getItem(`${FUNNEL_STORAGE_KEY}:email`) || '' } catch {}
-      if (savedEmail) submitStandard({ ...saved, email: savedEmail })
+      submitStandard({ ...saved, email: savedEmail })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -601,15 +601,25 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
 
   // O fațetă („Grani”) a Cristalului: același flux ca raportul întreg (aceeași cheie localStorage, același
   // success_url) — `saveRaportAndSendEmail` citește `graniId` din metadata Stripe și salvează un raport parțial.
+  const [pendingGraniId, setPendingGraniId] = useState<number | null>(null)
+  const [paymentEmail, setPaymentEmail] = useState('')
+  const paymentEmailRef = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    if (pendingGraniId === null) return
+    paymentEmailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    paymentEmailRef.current?.focus({ preventScroll: true })
+  }, [pendingGraniId])
+
   const handleGraniCheckout = useCallback(
     async (graniId: number, email: string) => {
       if (!form) return
-      if (!email) {
-        const message = t('errorCheckout')
-        setCheckoutError(message)
-        postToFrame({ type: 'paymentError', message })
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+        setPaymentEmail(email)
+        setPendingGraniId(graniId)
+        setCheckoutError('')
         return
       }
+      setFormEmail(email.trim())
       setCheckoutError('')
       setCheckoutBusy(true)
       trackFunnel('grani_checkout_clicked', { currency: cristal.currency, grani_id: graniId })
@@ -685,6 +695,23 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
 
   return (
     <div className="relative [&>iframe]:mb-0">
+      {pendingGraniId !== null && (
+        <section className="mx-auto mb-6 max-w-xl rounded-2xl border border-primary/30 bg-card p-6 text-foreground" aria-labelledby="grani-payment-email-title">
+          <h2 id="grani-payment-email-title" className="font-serif text-2xl">{locale === 'ro' ? 'Email pentru linkul analizei' : 'Email для ссылки на разбор'}</h2>
+          <p className="mt-2 text-sm text-muted-foreground">{locale === 'ro' ? 'Introdu emailul pentru a continua la plata fațetei selectate.' : 'Укажи email, чтобы перейти к оплате выбранной грани.'}</p>
+          <form className="mt-4 flex flex-col gap-3" onSubmit={(event) => {
+            event.preventDefault()
+            if (checkoutBusy) return
+            void handleGraniCheckout(pendingGraniId, paymentEmail.trim())
+          }}>
+            <label htmlFor="grani-payment-email" className="text-sm">Email</label>
+            <input ref={paymentEmailRef} id="grani-payment-email" type="email" required autoComplete="email" value={paymentEmail} onChange={(event) => setPaymentEmail(event.target.value)} className="rounded-xl border border-border bg-background px-4 py-3 text-base text-foreground" />
+            {checkoutError && <p role="alert" className="text-sm text-destructive">{checkoutError}</p>}
+            <button type="submit" disabled={checkoutBusy} className="rounded-xl bg-primary px-4 py-3 text-primary-foreground disabled:opacity-50">{locale === 'ro' ? 'Continuă la plată' : 'Перейти к оплате'}</button>
+            <button type="button" disabled={checkoutBusy} onClick={() => { setPendingGraniId(null); setCheckoutError('') }} className="text-sm text-muted-foreground">{locale === 'ro' ? 'Înapoi la analiză' : 'Вернуться к разбору'}</button>
+          </form>
+        </section>
+      )}
       {/* Previzualizare din panoul de admin: nimic nu se înregistrează (fără evenimente, fără lead-uri). */}
       {exp.previewMode && (
         <div className="mx-auto mb-6 flex max-w-xl flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-xl border border-amber-300/30 bg-amber-300/10 px-4 py-2.5 text-center">
