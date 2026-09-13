@@ -132,7 +132,7 @@ export function HomeReportExample({ locale: explicitLocale }: { locale?: 'ro' | 
         {mounted && <iframe key={attempt} ref={iframeRef} src={`/cristalul-calculator.html?${EXAMPLE_PARAMS}&retry=${attempt}`} title="Полный пример разбора Дарьи Михайлюк" onError={() => setFailed(true)} className="block w-full border-0 bg-transparent" style={{ height: ready ? height : 1, visibility: ready ? 'visible' : 'hidden' }} />}
         <footer className="flex flex-col items-center gap-5 py-14 text-center">
           <h3 className="text-balance font-serif text-3xl">{ro ? 'Acum — povestea ta' : 'Теперь — твоя история'}</h3>
-          <p className="max-w-2xl text-base leading-relaxed text-muted-foreground">{ro ? 'Introdu numele și data nașterii. Raportul personal îți arată primele fragmente; interpretările detaliate și continuarea graficelor se deschid după plată.' : 'Введи своё имя и дату рождения. В личном разборе ты увидишь первые фрагменты; подробные трактовки и продолжение графиков откроются после оплаты.'}</p>
+          <p className="max-w-2xl text-base leading-relaxed text-muted-foreground">{ro ? 'Introdu numele și data nașterii pentru a vedea povestea ta personală, interpretările și graficele construite pentru tine.' : 'Введи своё имя и дату рождения, чтобы увидеть свою личную историю, интерпретации и графики, рассчитанные для тебя.'}</p>
           <button type="button" onClick={openForm} className="inline-flex min-h-12 items-center gap-3 rounded-full bg-primary px-6 text-base font-medium text-primary-foreground">{ro ? 'Calculează Cristalul meu' : 'Рассчитать мой Кристалл'}<ArrowRight className="size-4" aria-hidden="true" /></button>
         </footer>
       </div>

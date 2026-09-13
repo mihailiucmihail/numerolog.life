@@ -4,6 +4,10 @@
     .cd-preview .hero,
     .cd-preview #inputFormCard,
     .cd-preview #pdfDownloadCard{display:none !important;}
+    .cd-full-report #previewLayer,
+    .cd-full-report #stickyCta,
+    .cd-full-report .paywall,
+    .cd-full-report .sticky-cta{display:none !important;}
     /* In timpul ecranului "Cristalul se formeaza" continutul iframe-ului este invizibil; la `previewReveal` apare cu fade. */
     body.cd-forming > *{opacity:0 !important;transition:none !important;}
     body > *{transition:opacity .7s ease;}
@@ -27,7 +31,8 @@
       // astfel stratul de prezentare deschide direct cardul temei (?entry=) si nu monteaza paywall/sticky.
       if(params.get('auto') === '1'){
         try{ ENTITLED = true; ACCESS_LEVEL = 'full'; }catch(e){}
-        // Raport platit: stratul de previzualizare (cu paywall) nu are ce cauta in DOM.
+        document.documentElement.classList.add('cd-full-report');
+        // Raport complet: stratul de previzualizare (cu paywall) nu are ce cauta in DOM.
         document.addEventListener('DOMContentLoaded', function(){
           setTimeout(function(){ ['previewLayer','stickyCta'].forEach(function(id){ var el = document.getElementById(id); if(el) el.remove(); }); }, 300);
         });
