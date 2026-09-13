@@ -105,14 +105,14 @@ export function HomeReportExample({ locale: explicitLocale }: { locale?: 'ro' | 
             <div className="flex max-w-2xl flex-col gap-3">
               <p className="text-sm uppercase tracking-widest text-primary">{ro ? 'Un exemplu real · toate capitolele deschise' : 'Настоящий пример · все главы открыты'}</p>
               <h2 id="example-title" className="text-balance font-serif text-3xl sm:text-4xl">{ro ? 'De la o dată de naștere, la o poveste întreagă' : 'От даты рождения — к целой истории'}</h2>
-              <p className="text-base leading-relaxed text-muted-foreground">{ro ? 'Explorează raportul Dariei Mihailiuc · 01.02.1996. Apoi deschide „Raportul meu” și introdu datele tale pentru un calcul personal.' : 'Изучи разбор Дарьи Михайлюк · 01.02.1996. Затем открой «Мой разбор» и введи свои данные для личного расчёта.'}</p>
+              <p className="text-base font-medium leading-relaxed text-foreground/80">{ro ? 'Explorează raportul Dariei Mihailiuc · 01.02.1996. Apoi deschide „Raportul meu”, introdu datele tale și apasă butonul galben pentru calcularea raportului personal.' : 'Изучи разбор Дарьи Михайлюк · 01.02.1996. Затем открой «Мой разбор», введи свои данные и нажми жёлтую кнопку для расчёта персонального разбора.'}</p>
             </div>
             <span className="shrink-0 text-sm text-primary">NUMEROLOG.life</span>
           </div>
         </header>
         <nav ref={toolbarRef} id="prima-cheie" aria-label={ro ? 'Navigare raport și calcul personal' : 'Разделы и личный расчёт'} className="sticky top-[env(safe-area-inset-top,0px)] z-30 scroll-mt-0 border border-primary/20 bg-card/95 p-2 text-foreground shadow-lg backdrop-blur-xl sm:rounded-b-xl">
           <div className="flex items-center gap-2">
-            <span className="hidden shrink-0 px-2 text-sm text-muted-foreground lg:block">{ro ? 'Cuprins' : 'Содержание'}{chapters.length > 0 && ` · ${chapters.length}`}</span>
+            <span className="hidden max-w-[300px] shrink-0 px-2 text-sm font-semibold leading-5 text-foreground/85 lg:block">{ro ? 'Raport exemplu · Pentru raportul tău, apasă butonul galben și completează datele personale.' : 'Пример разбора · Для своего отчёта нажми жёлтую кнопку и введи личные данные.'}</span>
             <select aria-label={ro ? 'Alege un capitol' : 'Выбери раздел'} disabled={!chapters.length} defaultValue="" onChange={event => { const chapter = chapters.find(item => item.id === event.target.value); if (chapter) navigate(chapter) }} className="h-11 min-w-0 flex-1 rounded-lg border border-border bg-card px-2 text-sm text-foreground">
               <option value="" disabled>{ro ? 'Alege un capitol' : 'Выбери раздел'}</option>
               {chapters.map(chapter => <option key={chapter.id} value={chapter.id}>{chapter.title}</option>)}
