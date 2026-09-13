@@ -688,7 +688,7 @@ body.is-preview #results > *:not(#previewLayer){display:none !important;}
 .pw-trust{margin-top:14px;font-family:var(--mono);font-size:11.5px;letter-spacing:.03em;color:var(--parchment-dim);line-height:1.8;}
 .sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:60;padding:8px 12px calc(8px + env(safe-area-inset-bottom));background:rgba(12,8,20,0.92);backdrop-filter:blur(8px);border-top:1px solid rgba(217,169,79,0.35);}
 .sticky-cta button{display:block;width:100%;padding:13px 12px;border:0;border-radius:9px;background:var(--brass-bright);color:#1a1108;font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.05em;cursor:pointer;}
-body.has-sticky #previewLayer{padding-bottom:78px;}
+body.has-sticky #previewLayer{padding-bottom:78px;} body{overflow-x:hidden;} #results svg,#results canvas{max-width:100%;}
 .unlock-overlay{position:fixed;inset:0;z-index:70;display:flex;align-items:center;justify-content:center;background:rgba(10,6,18,0.94);opacity:0;transition:opacity .45s ease;pointer-events:none;}
 .unlock-overlay.on{opacity:1;}
 .unlock-overlay>div{font-family:var(--font-display, serif);font-size:26px;color:var(--brass-bright);text-align:center;padding:0 24px;}
@@ -1331,7 +1331,7 @@ html.cd-next-design .cd-next-backtop { width: 100%; min-height: 48px; border: 1p
 
       
       <div class="full" hidden style="display:none;">
-        <label>Отчество <span style="opacity:.65;text-transform:none;letter-spacing:0;color:var(--brass-bright);">(необязательно, но рекомендуем — для более полного и точного разбора)</span></label>
+        <label>Отчество </label>
         <input id="middleName" type="text" placeholder="ex: Петрович" autocomplete="off" value="">
       </div>
       <div class="full" hidden style="display:none;">
@@ -1381,7 +1381,7 @@ html.cd-next-design .cd-next-backtop { width: 100%; min-height: 48px; border: 1p
       </div>
     </div>
     <button id="mainCalcBtn" class="btn cd-main-cta" onclick="cdMainAction()">РАССЧИТАТЬ МОЙ РАЗБОР</button>
-      <p class="cd-main-cta-note">Часть персонального разбора доступна бесплатно</p>
+      <p class="cd-main-cta-note">Нажми жёлтую кнопку, чтобы рассчитать свой персональный разбор ↓</p>
     <script>
       document.addEventListener('DOMContentLoaded', function(){
         paintGender();

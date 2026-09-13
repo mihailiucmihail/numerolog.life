@@ -911,9 +911,10 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
             transition={{ duration: 0.3 }}
             className="fixed inset-x-0 bottom-0 z-40 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
           >
-            <div className="mx-auto flex max-w-xl items-center justify-between gap-3 rounded-2xl border border-primary/40 bg-background/90 p-3 shadow-2xl shadow-primary/10 backdrop-blur-md">
+            <div className="mx-auto flex max-w-xl items-center justify-between gap-3 rounded-2xl border border-primary/50 bg-background/95 p-3 shadow-2xl shadow-primary/10 backdrop-blur-md">
               <div className="min-w-0 pl-2">
-                <p className="truncate text-sm text-foreground">{t('stickyTitle')}</p>
+                <p className="text-sm font-semibold leading-5 text-foreground sm:text-base">{t('stickyTitle')}</p>
+                <p className="mt-0.5 text-xs leading-4 text-foreground/80">{t('stickyHint')}</p>
                 <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-primary/80">
                   {offer ? (
                     <>
