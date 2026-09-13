@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { SocialAdminClient } from "./social-admin-client"
 import { BirthInputFormCheck } from "./birth-input-form-check"
 import {
@@ -22,6 +22,9 @@ import {
   getExperimentParticipants,
   getVariantPreviewLinks,
   saveFunnelTraffic,
+  getBirthInputExperiment,
+  saveBirthInputExperiment,
+  type BirthInputSettingsView,
   type ExperimentParticipantRow,
   type ExperimentReport,
   type VariantPreviewLinks,
@@ -409,6 +412,113 @@ function AnalyticsTable({ report }: { report: ExperimentReport }) {
   )
 }
 
+function BirthInputConfig({ password }: { password: string }) {
+  const [draft, setDraft] = useState<BirthInputSettingsView | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [message, setMessage] = useState("")
+  const [error, setError] = useState("")
+
+  async function refresh() {
+    setLoading(true)
+    const result = await getBirthInputExperiment(password)
+    setLoading(false)
+    if (result.ok && result.settings) setDraft(result.settings)
+  }
+
+  // Încarcă o singură dată configurația reală din DB (implicit inactiv 0/0).
+  useEffect(() => { void refresh() }, [])
+
+  const total = draft ? draft.percentages.A + draft.percentages.B : 0
+  const enabled = draft?.enabled ?? false
+  const saveBlocked = !draft || saving || (enabled ? total !== 100 : total !== 0)
+
+  function setPct(arm: "A" | "B", value: number) {
+    setMessage("")
+    setError("")
+    setDraft((current) => current ? { ...current, percentages: { ...current.percentages, [arm]: Math.max(0, Math.min(100, Math.round(value) || 0)) } } : current)
+  }
+
+  function toggleEnabled() {
+    setMessage("")
+    setError("")
+    setDraft((current) => {
+      if (!current) return current
+      const next = !current.enabled
+      // La oprire, ambele brațe revin la 0%; la pornire pornim de la un 50/50 sigur.
+      return next
+        ? { enabled: true, percentages: current.percentages.A + current.percentages.B === 100 ? current.percentages : { A: 50, B: 50 } }
+        : { enabled: false, percentages: { A: 0, B: 0 } }
+    })
+  }
+
+  async function save() {
+    if (!draft) return
+    setSaving(true)
+    setMessage("")
+    setError("")
+    const result = await saveBirthInputExperiment(password, draft)
+    setSaving(false)
+    if (!result.ok) {
+      setError(result.error || "Configurația nu a putut fi salvată.")
+      return
+    }
+    setMessage("Distribuția a fost salvată. Vizitatorii noi o primesc în maximum 15 secunde.")
+    await refresh()
+  }
+
+  return (
+    <section className="rounded-2xl border border-primary/25 bg-card/70 p-4 sm:p-5">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-primary">Experiment dedicat</p>
+          <h2 className="mt-1 text-lg font-semibold text-foreground">Formular complet (A) vs. numai data nașterii (B)</h2>
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">Grup separat de distribuția funnelurilor de mai jos. Se atribuie pe homepage și la intrarea în Numerologie, cu aceeași variantă între pagini. Cât e oprit, comportamentul live rămâne exact cel actual.</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button type="button" role="switch" aria-checked={enabled} aria-label={`${enabled ? "Oprește" : "Pornește"} experimentul formular vs. dată`} disabled={!draft} onClick={toggleEnabled} className={`relative h-7 w-12 rounded-full border transition ${enabled ? "border-primary bg-primary" : "border-border bg-muted"} disabled:cursor-not-allowed disabled:opacity-60`}>
+            <span className={`absolute top-0.5 size-5 rounded-full bg-primary-foreground transition-transform ${enabled ? "translate-x-5" : "translate-x-0.5"}`} />
+          </button>
+          <span className={`min-w-12 text-sm font-medium ${enabled ? "text-primary" : "text-muted-foreground"}`}>{enabled ? "Activ" : "Oprit"}</span>
+        </div>
+      </div>
+
+      {loading || !draft ? (
+        <div className="mt-4 flex min-h-16 items-center justify-center rounded-xl border border-border bg-background/30 text-sm text-muted-foreground"><Loader2 className="mr-2 size-4 animate-spin" />Se încarcă configurația</div>
+      ) : (
+        <>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {(["A", "B"] as const).map((arm) => (
+              <div key={arm} className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background/35 p-4">
+                <div>
+                  <p className="text-sm font-medium text-foreground">{arm === "A" ? "A · Formular complet" : "B · Numai data nașterii"}</p>
+                  <p className="mt-1 text-xs leading-5 text-muted-foreground">{arm === "A" ? "Fluxul actual, nemodificat." : "Începe cu data nașterii, numele se cere progresiv."}</p>
+                </div>
+                <span className="flex items-center overflow-hidden rounded-lg border border-border bg-background">
+                  <input aria-label={`Trafic brațul ${arm}`} type="number" min={0} max={100} step={1} disabled={!enabled} value={draft.percentages[arm]} onChange={(event) => setPct(arm, Number(event.target.value))} className="w-16 bg-transparent px-2 py-2 text-right font-mono text-sm text-foreground outline-none disabled:opacity-40" />
+                  <span className="pr-2 text-sm text-muted-foreground">%</span>
+                </span>
+              </div>
+            ))}
+          </div>
+          <div className={`mt-4 flex items-start gap-3 rounded-xl border p-3 ${(enabled ? total === 100 : total === 0) ? "border-border bg-background/35" : "border-destructive/40 bg-destructive/10"}`}>
+            <Check className={`mt-0.5 size-4 shrink-0 ${(enabled ? total === 100 : total === 0) ? "text-primary" : "text-destructive"}`} />
+            <p className={`text-sm ${(enabled ? total === 100 : total === 0) ? "text-muted-foreground" : "text-destructive"}`}>{enabled ? (total === 100 ? "Totalul este corect. Modificările devin publice numai după salvare." : `A + B = ${total}%. Salvarea este blocată până când totalul este exact 100%.`) : "Testul este oprit; ambele brațe sunt 0% și comportamentul live rămâne neschimbat."}</p>
+          </div>
+          <div className="mt-4 flex flex-wrap items-center gap-3">
+            <button type="button" onClick={save} disabled={saveBlocked} className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:cursor-not-allowed disabled:opacity-45">
+              {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
+              Salvează distribuția
+            </button>
+            {message && <p className="text-sm text-primary">{message}</p>}
+            {error && <p className="text-sm text-destructive">{error}</p>}
+          </div>
+        </>
+      )}
+    </section>
+  )
+}
+
 export function ExperimentsAdminClient() {
   const [password, setPassword] = useState("")
   const [authed, setAuthed] = useState(false)
@@ -573,6 +683,7 @@ export function ExperimentsAdminClient() {
         </button>
       </header>
 
+      <div className="mb-5"><BirthInputConfig password={password} /></div>
       <div className="mb-5"><BirthInputFormCheck /></div>
       <div className="mb-5"><SocialAdminClient password={password} /></div>
 

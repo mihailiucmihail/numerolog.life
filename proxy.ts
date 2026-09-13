@@ -17,6 +17,16 @@ import { hasPromoMarker, resolveStandardAssignment } from './lib/experiments/rou
 import { readAssignment } from './lib/experiments/assignment'
 import { SOCIAL_COOKIE, SOCIAL_TTL, captureSocialTouch, readSocialAttribution, signSocialAttribution, trackingExcluded } from './lib/experiments/social-attribution'
 import { resolveSocialAssignment } from './lib/experiments/social-server'
+import {
+  BIRTH_INPUT_COOKIE,
+  BIRTH_INPUT_TTL_MS,
+  birthInputSurface,
+  readBirthInputAssignment,
+  resolveBirthInputAssignment,
+  signBirthInputAssignment,
+  type BirthInputAssignment,
+} from './lib/experiments/birth-input-experiment'
+import { birthInputSecret, getBirthInputSettings } from './lib/experiments/birth-input-settings'
 
 const handleI18nRouting = createMiddleware(routing)
 
@@ -75,16 +85,25 @@ async function withGeoCookies(
   request: NextRequest,
   resolved: { country: string | null; persist: boolean },
   experiment?: { assignment: Assignment; changed: boolean },
+  birthInput?: { assignment: BirthInputAssignment; changed: boolean } | null,
 ): Promise<NextResponse | Response> {
   const { currency, persist } = resolveCurrency(request, resolved.country)
   const persistExperiment = experiment?.changed === true
-  if (!persist && !resolved.persist && !persistExperiment) return response
+  const persistBirthInput = birthInput?.changed === true
+  if (!persist && !resolved.persist && !persistExperiment && !persistBirthInput) return response
   const res = response instanceof NextResponse ? response : new NextResponse(response.body, response)
   if (persistExperiment && experiment) {
     // Nu este httpOnly: interfața trebuie să știe ce variantă randează. Semnătura HMAC
     // împiedică alegerea manuală a unei variante din browser.
     res.cookies.set(EXPERIMENT_COOKIE, await signAssignment(experiment.assignment), {
       path: '/', maxAge: EXPERIMENT_COOKIE_MAX_AGE, sameSite: 'lax',
+    })
+  }
+  if (persistBirthInput && birthInput) {
+    // Cookie propriu, independent de funnel. Nu este httpOnly: formularul trebuie să știe ce braț
+    // randează; semnătura HMAC împiedică alegerea manuală a brațului din browser.
+    res.cookies.set(BIRTH_INPUT_COOKIE, await signBirthInputAssignment(birthInput.assignment, birthInputSecret()), {
+      path: '/', maxAge: Math.floor(BIRTH_INPUT_TTL_MS / 1000), sameSite: 'lax',
     })
   }
   if (persist) res.cookies.set(CURRENCY_COOKIE, currency, { path: '/', maxAge: CURRENCY_COOKIE_MAX_AGE, sameSite: 'lax' })
@@ -118,6 +137,44 @@ export default async function proxy(request: NextRequest) {
   const result = response instanceof NextResponse ? response : new NextResponse(response.body, response)
   result.cookies.set(SOCIAL_COOKIE, socialCookie, { path: '/', maxAge, httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax' })
   return result
+}
+
+/**
+ * Experimentul „formular complet (A) vs. numai data nașterii (B)”, atribuit server-side pe homepage
+ * ȘI la intrarea în Numerologie, cu aceeași atribuire pentru ambele suprafețe. Overlay independent de
+ * funnel: cookie propriu, distincție proprie. Când testul e oprit (implicit acum) întoarce `null`
+ * ÎNAINTE de a citi cookie-ul — cale complet no-op, fără citiri suplimentare de cookie și fără antete.
+ * Setează antetele `x-birth-input-*` doar când vizitatorul e înscris, ca prima randare să nu pâlpâie.
+ */
+async function resolveBirthInput(
+  request: NextRequest,
+  headers: Headers,
+): Promise<{ assignment: BirthInputAssignment; changed: boolean } | null> {
+  const url = request.nextUrl
+  if (!birthInputSurface(url)) return null
+  const settings = await getBirthInputSettings()
+  if (!settings.enabled) return null
+  const secret = birthInputSecret()
+  const previous = await readBirthInputAssignment(request.cookies.get(BIRTH_INPUT_COOKIE)?.value, secret)
+  // Reutilizăm identificatorul stabil al vizitatorului pentru a putea corela analizele, dar testul
+  // rămâne interpretabil și de sine stătător (id-ul se păstrează în propriul cookie odată înscris).
+  const visitorId =
+    previous?.visitorId ||
+    (await readSocialAttribution(request.cookies.get(SOCIAL_COOKIE)?.value))?.visitorId ||
+    (await readAssignment(request.cookies.get(EXPERIMENT_COOKIE)?.value))?.visitorId ||
+    crypto.randomUUID().replaceAll('-', '')
+  const result = await resolveBirthInputAssignment({
+    settings,
+    previous,
+    visitorId,
+    url: new URL(url.toString()),
+    headers: request.headers,
+  })
+  if (!result.assignment) return null
+  headers.set('x-birth-input-arm', result.assignment.arm)
+  headers.set('x-birth-input-enrollment', result.assignment.enrollmentId)
+  headers.set('x-birth-input-visitor', result.assignment.visitorId)
+  return { assignment: result.assignment, changed: result.changed }
 }
 
 async function routeRequest(request: NextRequest) {
@@ -159,6 +216,10 @@ async function routeRequest(request: NextRequest) {
       }
     }
 
+    // Experimentul „formular complet vs. numai data nașterii” se atribuie pe homepage ȘI la intrarea
+    // în Numerologie, cu aceeași atribuire între pagini. Overlay independent de funnel; no-op cât e oprit.
+    const birthInput = await resolveBirthInput(request, headers)
+
     // Funnelul se atribuie exclusiv la intrarea în calculator. Dacă l-am atribui pe homepage sau
     // pe altă rută, fallback-ul Control s-ar fixa în cookie înainte ca distribuția live să fie citită.
     // Atribuirea rămâne tot înainte de randarea calculatorului, deci nu există schimbare vizibilă.
@@ -178,10 +239,10 @@ async function routeRequest(request: NextRequest) {
       headers.set('x-exp-form', experiment.assignment.form)
       headers.set('x-exp-preview', experiment.assignment.preview)
       const forwarded = new NextRequest(request, { headers })
-      return withGeoCookies(handleI18nRouting(forwarded), request, resolved, experiment)
+      return withGeoCookies(handleI18nRouting(forwarded), request, resolved, experiment, birthInput)
     }
 
-    return withGeoCookies(handleI18nRouting(new NextRequest(request, { headers })), request, resolved)
+    return withGeoCookies(handleI18nRouting(new NextRequest(request, { headers })), request, resolved, undefined, birthInput)
   }
 
   // Orice rută publică este redirecționată către versiunea rusă.

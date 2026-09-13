@@ -11,6 +11,8 @@ import {
   type ExperimentKind,
 } from "@/lib/experiments/catalog"
 import { PREVIEW_TOKEN_PARAM, signPreviewToken } from "@/lib/experiments/preview-token"
+import { BIRTH_INPUT_EXPERIMENT, isBirthInputSettings, type BirthInputSettings } from "@/lib/experiments/birth-input-experiment"
+import { getBirthInputSettings, saveBirthInputSettings } from "@/lib/experiments/birth-input-settings"
 import { minorToMajor } from "@/lib/experiments/money"
 import {
   computeAllocation,
@@ -475,6 +477,59 @@ export async function getVariantPreviewLinks(
     }),
   ])
   return { ok: true, links }
+}
+
+/**
+ * Configurația experimentului „formular complet (A) vs. numai data nașterii (B)”.
+ * Grup dedicat, separat de distribuțiile FORM/PREVIEW și social. Implicit INACTIV.
+ */
+export interface BirthInputSettingsView {
+  enabled: boolean
+  percentages: { A: number; B: number }
+}
+
+export async function getBirthInputExperiment(
+  password: string,
+): Promise<{ ok: boolean; settings?: BirthInputSettingsView }> {
+  if (!checkPassword(password)) return { ok: false }
+  try {
+    const settings = await getBirthInputSettings()
+    return { ok: true, settings: { enabled: settings.enabled, percentages: { ...settings.percentages } } }
+  } catch (err) {
+    console.error("[v0] getBirthInputExperiment error:", err)
+    return { ok: false }
+  }
+}
+
+export async function saveBirthInputExperiment(
+  password: string,
+  draft: BirthInputSettingsView,
+): Promise<{ ok: boolean; error?: string }> {
+  if (!checkPassword(password)) return { ok: false, error: "Parolă incorectă." }
+  const A = Number(draft?.percentages?.A)
+  const B = Number(draft?.percentages?.B)
+  if (![A, B].every((n) => Number.isInteger(n) && n >= 0 && n <= 100)) {
+    return { ok: false, error: "Procentele trebuie să fie numere întregi între 0 și 100." }
+  }
+  const next: BirthInputSettings = {
+    experiment: BIRTH_INPUT_EXPERIMENT,
+    enabled: !!draft.enabled,
+    percentages: { A, B },
+  }
+  if (next.enabled && A + B !== 100) {
+    return { ok: false, error: `Traficul activ însumează ${A + B}%. Când testul e activ, A + B trebuie să fie exact 100%.` }
+  }
+  if (!next.enabled && (A !== 0 || B !== 0)) {
+    return { ok: false, error: "Când testul e oprit, ambele brațe trebuie să fie 0%." }
+  }
+  if (!isBirthInputSettings(next)) return { ok: false, error: "Configurație invalidă." }
+  try {
+    await saveBirthInputSettings(next)
+    return { ok: true }
+  } catch (err) {
+    console.error("[v0] saveBirthInputExperiment error:", err)
+    return { ok: false, error: "Configurația nu a putut fi salvată." }
+  }
 }
 
 /** Sincronizează registrul de variante din cod în DB (idempotent). */
