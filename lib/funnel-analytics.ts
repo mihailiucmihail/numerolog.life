@@ -7,6 +7,7 @@
 // confirmarea reală a plății (paymentStatus === 'paid'), niciodată la click pe checkout.
 
 export type FunnelEvent =
+  | 'hidden_gift_step'
   | 'numerology_landing_view'
   | 'crystal_start_clicked'
   | 'birth_data_submitted'

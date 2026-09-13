@@ -477,7 +477,15 @@ grani_preview = grani_preview.replace('/*__CD_GRANI_FACTS__*/', grani_facts)
 progressive_check = (ROOT / 'scripts/cristalul-progressive-check.js').read_text(encoding='utf-8')
 assert '\ufffd' not in progressive_check
 assert grani_preview.count('/*__CD_PROGRESSIVE_CHECK__*/') == 1
-grani_preview = grani_preview.replace('/*__CD_PROGRESSIVE_CHECK__*/', progressive_check)
+gift_script = (ROOT / 'scripts/cristalul-hidden-gift.js').read_text(encoding='utf-8')
+gift_years = re.search(r'const SIMPLE_YEAR_TXT = (\{.*?\});', s, re.S)
+assert gift_years and '\ufffd' not in gift_script
+gift_script = gift_script.replace('/*__CD_GIFT_YEARS__*/', gift_years.group(1))
+gift_gate = "var progressiveCheck = pv === 'preview-birth-input-check-v1';"
+assert gift_gate in grani_preview
+grani_preview = grani_preview.replace(gift_gate, "var progressiveCheck = pv === 'preview-birth-input-check-v1' || pv === 'preview-hidden-gift-v2';")
+grani_preview = grani_preview.replace('wrap.innerHTML = head;', 'wrap.innerHTML = (hiddenGift ? hiddenGiftIntro() : \'\') + head;')
+grani_preview = grani_preview.replace('/*__CD_PROGRESSIVE_CHECK__*/', gift_script + '\n' + progressive_check)
 grani_styles = (ROOT / 'scripts/cristalul-grani-preview.css').read_text(encoding='utf-8')
 assert grani_preview.count('</style>') == 1
 assert '\ufffd' not in grani_styles

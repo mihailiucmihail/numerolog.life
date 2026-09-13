@@ -34,7 +34,14 @@ if (progressiveCheck) {
     full: 'Проверить данные для полного разбора'
   };
 
-  // This private renderer never calls calculate/computeAll, renderPaywall or checkout.
+  if (hiddenGift) {
+    checkCopy.complete = lang === 'ro' ? 'Completează numele pentru a continua' : 'Дополни имя, чтобы продолжить';
+    checkCopy.full = checkCopy.complete;
+    checkCopy.note = lang === 'ro' ? 'Din dată, acum. Din nume, când alegi să continui.' : 'Сейчас — по дате. По имени — когда захочешь продолжить.';
+    checkCopy.pending = lang === 'ro' ? 'Acest fragment se adaugă în continuarea personalizată a analizei.' : 'Этот фрагмент появится в персонализированном продолжении разбора.';
+  }
+
+  // The date-only renderer never calls calculate/computeAll, renderPaywall or checkout.
   function checkNameAlphabet(value) {
     if (typeof value !== 'string' || !/\p{L}/u.test(value)) return null;
     var order = ['ru', 'ro'].concat(Object.keys(ALPHABETS).filter(function(key) { return key !== 'ru' && key !== 'ro'; }));
@@ -87,6 +94,8 @@ if (progressiveCheck) {
   function checkFact(id) {
     var r = checkResult;
     var fallback = { hint: checkCopy.description, text: checkCopy.pending, question: '' };
+    if (hiddenGift && id === 1 && !r.nameArcana.first) return { hint: checkCopy.day + ' · ' + r.TaroDay, text: lang === 'ro' ? RO_FACTS.positiveTraits[r.TaroDay] : sourceText(dbText('positiveTraits', r.TaroDay)), question: '' };
+    if (hiddenGift && id === 3 && !r.Prizvanie_num) return { hint: lang === 'ro' ? 'Vocația cere prenumele' : 'Для призвания нужно имя', text: graniFact(9).text, question: '' };
     if (id === 1 && !r.nameArcana.first) {
       return { hint: checkCopy.day + ' · ' + r.TaroDay, text: checkCopy.missing, question: '' };
     }
@@ -105,7 +114,7 @@ if (progressiveCheck) {
     if (id === 10) {
       var cycle = r.yearlyCycle.find(function(item) { return item.year === new Date().getFullYear(); });
       if (!cycle) return fallback;
-      return { hint: checkCopy.year + ' · ' + cycle.personalYear, text: lang === 'ro' ? YEAR_RO[cycle.personalYear] : checkCopy.pending, question: '' };
+      return { hint: checkCopy.year + ' · ' + cycle.personalYear, text: lang === 'ro' ? YEAR_RO[cycle.personalYear] : hiddenGift ? giftYears[cycle.personalYear] : checkCopy.pending, question: '' };
     }
     return graniFact(id);
   }
@@ -137,6 +146,7 @@ if (progressiveCheck) {
     } else {
       var wrap = document.createElement('div'); wrap.className = 'cd-gr';
       wrap.innerHTML = '<header class="cd-gr-head"><p class="cd-gr-kicker">' + T.kicker + '</p><h2>' + checkCopy.title + '</h2><p class="cd-gr-meta">' + esc(incoming.birth.day + '.' + incoming.birth.month + '.' + incoming.birth.year) + '</p><p class="cd-gr-lead">' + checkCopy.lead + '</p><p class="cd-gr-note">' + checkCopy.note + '</p></header>';
+      if (hiddenGift) wrap.innerHTML = hiddenGiftIntro();
       DISPLAY_ORDER.forEach(function(id, index) {
         var g = GRANI.find(function(item) { return item.id === id; });
         var fact = checkFact(id);
@@ -144,6 +154,10 @@ if (progressiveCheck) {
         var section = document.createElement('section');
         section.className = 'cd-gr-card'; section.setAttribute('data-grani', String(id));
         section.innerHTML = '<p class="cd-gr-kicker">' + T.grani(index + 1, titles.length) + '</p><h3>' + esc(g[lang]) + '</h3><div class="cd-gr-fact"><p class="cd-gr-kicker" data-check-hint>' + esc(fact.hint) + '</p><p data-check-text>' + esc(fact.text) + '</p></div>';
+        if (hiddenGift) {
+          section.setAttribute('data-availability', [11, 12].indexOf(id) >= 0 ? 'name' : 'date');
+          section.innerHTML += '<p class="cd-gr-note">' + (lang === 'ro' ? ([11,12].indexOf(id) >= 0 ? 'Numele completează această fațetă.' : 'Fragment calculat din data nașterii.') : ([11,12].indexOf(id) >= 0 ? 'Имя дополняет эту грань.' : 'Фрагмент рассчитан по дате рождения.')) + '</p>';
+        }
         if (id === 9) {
           section.innerHTML += '<div class="cd-gr-chart-explorer"><p class="cd-gr-note cd-gr-chart-hint">' + T.chartTitle + '</p><div class="cd-gr-chart-tabs" role="group" aria-label="' + esc(g[lang]) + '">' + CHART_KEYS.map(function(key, i) { return '<button type="button" class="cd-gr-chart-tab" data-gr-chart="' + key + '" aria-pressed="' + (i === 0) + '" aria-controls="cd-gr-chart-panel">' + esc(T.charts[i]) + '</button>'; }).join('') + '</div><div class="cd-gr-chart-panel" id="cd-gr-chart-panel">' + chartContent('career') + '</div></div>';
         }
@@ -155,11 +169,26 @@ if (progressiveCheck) {
           button.addEventListener('click', function() { window.parent.postMessage({ type: 'birthInputCheckIdentity', facet: id }, checkOrigin); });
           var actions = document.createElement('div'); actions.className = 'cd-gr-actions'; actions.appendChild(button); section.appendChild(actions);
         }
+        if (hiddenGift) {
+          var buy = document.createElement('button'); buy.type = 'button'; buy.className = 'cd-gr-btn';
+          buy.textContent = lang === 'ro' ? 'Deschide fațeta' : 'Открыть грань';
+          buy.setAttribute('data-gift-purchase', String(id));
+          buy.addEventListener('click', function() { window.parent.postMessage({ type: 'birthInputCheckIdentity', facet: id, purchase: true }, checkOrigin); });
+          var buyActions = document.createElement('div'); buyActions.className = 'cd-gr-actions'; buyActions.appendChild(buy); section.appendChild(buyActions);
+        }
         wrap.appendChild(section);
       });
       var full = document.createElement('button'); full.type = 'button'; full.className = 'cd-gr-btn'; full.textContent = checkCopy.full;
       full.addEventListener('click', function() { window.parent.postMessage({ type: 'birthInputCheckIdentity', facet: 'full' }, checkOrigin); });
-      wrap.appendChild(full); layer.appendChild(wrap);
+      wrap.appendChild(full);
+      if (hiddenGift) {
+        var buyFull = document.createElement('button'); buyFull.type = 'button'; buyFull.className = 'cd-gr-btn';
+        buyFull.textContent = lang === 'ro' ? 'Deschide analiza completă' : 'Открыть полный разбор';
+        buyFull.setAttribute('data-gift-purchase', 'full');
+        buyFull.addEventListener('click', function() { window.parent.postMessage({ type: 'birthInputCheckIdentity', facet: 'full', purchase: true }, checkOrigin); });
+        wrap.appendChild(buyFull);
+      }
+      layer.appendChild(wrap);
     }
     window.parent.postMessage({ type: 'birthInputCheckRendered' }, checkOrigin);
   }

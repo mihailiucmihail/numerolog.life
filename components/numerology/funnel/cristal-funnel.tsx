@@ -18,6 +18,7 @@ import { CHECKOUT_STORAGE_KEY, FUNNEL_STORAGE_KEY, type FunnelForm as FormValues
 import { useLandingView, type InitialExperimentAssignment } from '@/lib/experiments/use-experiment'
 import { CrystalReactForm } from './crystal-react-form'
 import { StandardCrystalForm } from './standard-crystal-form'
+import { HiddenGiftFunnel } from './hidden-gift-funnel'
 import { STANDARD_FORM_VARIANT, STANDARD_PREVIEW_VARIANT } from '@/lib/experiments/catalog'
 
 const PAYWALL_ID = 'funnel-paywall'
@@ -80,6 +81,7 @@ const PREVIEW_ENGINE_VARIANTS: Record<string, string> = {
   'preview-topic-choice-v1': 'preview-topic-choice-v1',
   'preview-life-stage-now-v1': 'preview-life-stage-now-v1',
   'preview-hidden-gift-v1': 'preview-hidden-gift-v1',
+  'preview-hidden-gift-v2': 'preview-grani-v1',
   'preview-birthday-express-v1': 'preview-birthday-express-v1',
   'preview-day-arcana-v1': 'preview-day-arcana-v1',
   'preview-grani-v1': 'preview-grani-v1',
@@ -101,6 +103,10 @@ function buildPreviewSrc(v: FormValues, variants?: { form: string; preview: stri
   })
   if (v.entry) params.set('entry', v.entry)
   if (v.intent) params.set('intent', v.intent)
+  if (variants?.preview === 'preview-hidden-gift-v2' || v.intent === 'hidden-gift-v2') {
+    params.set('gift', '1')
+    params.set('pv', 'preview-grani-v1')
+  }
   if (options?.stage) params.set('stage', options.stage)
   if (options?.locale) params.set('lang', options.locale)
   // Varianta de PREVIEW din experiment: fără ea iframe-ul ar randa mereu baseline-ul, iar panoul de admin
@@ -345,7 +351,7 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
         setForming(true)
         exp.track({ event: 'form_submit' })
         exp.track({ event: 'calculation_start' })
-        window.scrollTo({ top: 0 })
+        if (formRef.current?.intent !== 'hidden-gift-v2') window.scrollTo({ top: 0 })
       }
 
       if (d.type === 'previewRendered') {
@@ -457,7 +463,7 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
   const submitStandard = (values: Omit<FormValues, 'gender' | 'nameAlphabetKey'> & { email?: string; gender?: string; nameAlphabetKey?: string }) => {
     const email = (values.email || '').trim()
     const { email: _email, ...rest } = values
-    const nextValues: FormValues = { ...rest, gender: 'f', nameAlphabetKey: values.nameAlphabetKey || alphabet }
+    const nextValues: FormValues = { ...rest, gender: values.gender === 'm' ? 'm' : 'f', nameAlphabetKey: values.nameAlphabetKey || alphabet }
     formRef.current = nextValues
     setFormEmail(email)
     try {
@@ -474,8 +480,8 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
     setForming(true)
     exp.track({ event: 'form_submit' })
     exp.track({ event: 'calculation_start' })
-    window.scrollTo({ top: 0 })
-    trackFunnel('birth_data_submitted', { has_middle: Boolean(nextValues.middle), alphabet: nextValues.nameAlphabetKey, funnel: 'standard' })
+    if (nextValues.intent !== 'hidden-gift-v2') window.scrollTo({ top: 0 })
+    trackFunnel('birth_data_submitted', { has_middle: Boolean(nextValues.middle), alphabet: nextValues.nameAlphabetKey, funnel: nextValues.intent === 'hidden-gift-v2' ? 'hidden-gift-v2' : 'standard' })
   }
 
   // Restaurare după întoarcere de la Stripe (anulat): raport blurat direct, fără re-completare.
@@ -487,7 +493,9 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
       const savedEmail = sessionStorage.getItem(`${FUNNEL_STORAGE_KEY}:email`)
       if (savedEmail) setFormEmail(savedEmail)
     } catch {}
-    if (searchParams.get('payment') === 'cancelled' && saved) {
+    if (saved?.intent === 'hidden-gift-v2' && saved.first && saved.last && (exp.form === 'form-hidden-gift-v2' || searchParams.get('payment') === 'cancelled')) {
+      submitStandard(saved)
+    } else if (searchParams.get('payment') === 'cancelled' && saved) {
       setCancelledNotice(true)
       setFrameSrc(`${buildPreviewSrc(saved)}&k=${Date.now()}`)
     } else if (searchParams.get('go') === '1' && saved && isStandardFunnel && saved.first && saved.last) {
@@ -661,9 +669,18 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
   const handleFormingDone = useCallback(() => {
     // Poziționăm pagina pe raport cât ecranul e încă opac, apoi iframe-ul își arată conținutul (fade) și
     // ecranul dispare (fade) — cele două tranziții se suprapun, fără cadru gol sau străpungere.
-    iframeRef.current?.scrollIntoView({ behavior: 'instant', block: 'start' })
+    if (formRef.current?.intent === 'hidden-gift-v2') {
+      try { window.scrollTo({ top: Number(sessionStorage.getItem('crystal:hidden-gift-v2:scroll')) || 0, behavior: 'instant' }) } catch {}
+    } else iframeRef.current?.scrollIntoView({ behavior: 'instant', block: 'start' })
     iframeRef.current?.contentWindow?.postMessage({ type: 'previewReveal' }, '*')
     setForming(false)
+    if (formRef.current?.intent === 'hidden-gift-v2') {
+      try {
+        const raw = sessionStorage.getItem('crystal:hidden-gift-v2:purchase')
+        const target = raw === null ? NaN : Number(raw)
+        if (Number.isInteger(target) && target >= 0 && target <= 14) setPendingGraniId(target)
+      } catch {}
+    }
   }, [])
 
   const resetToForm = () => {
@@ -698,17 +715,18 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
       {pendingGraniId !== null && (
         <section className="mx-auto mb-6 max-w-xl rounded-2xl border border-primary/30 bg-card p-6 text-foreground" aria-labelledby="grani-payment-email-title">
           <h2 id="grani-payment-email-title" className="font-serif text-2xl">{locale === 'ro' ? 'Email pentru linkul analizei' : 'Email для ссылки на разбор'}</h2>
-          <p className="mt-2 text-sm text-muted-foreground">{locale === 'ro' ? 'Introdu emailul pentru a continua la plata fațetei selectate.' : 'Укажи email, чтобы перейти к оплате выбранной грани.'}</p>
+          <p className="mt-2 text-sm text-muted-foreground">{pendingGraniId === 0 ? (locale === 'ro' ? 'Introdu emailul pentru plata analizei complete.' : 'Укажи email для оплаты полного разбора.') : (locale === 'ro' ? 'Introdu emailul pentru a continua la plata fațetei selectate.' : 'Укажи email, чтобы перейти к оплате выбранной грани.')}</p>
           <form className="mt-4 flex flex-col gap-3" onSubmit={(event) => {
             event.preventDefault()
             if (checkoutBusy) return
-            void handleGraniCheckout(pendingGraniId, paymentEmail.trim())
+              if (pendingGraniId === 0) void handleCheckout(paymentEmail.trim())
+              else void handleGraniCheckout(pendingGraniId, paymentEmail.trim())
           }}>
             <label htmlFor="grani-payment-email" className="text-sm">Email</label>
             <input ref={paymentEmailRef} id="grani-payment-email" type="email" required autoComplete="email" value={paymentEmail} onChange={(event) => setPaymentEmail(event.target.value)} className="rounded-xl border border-border bg-background px-4 py-3 text-base text-foreground" />
             {checkoutError && <p role="alert" className="text-sm text-destructive">{checkoutError}</p>}
             <button type="submit" disabled={checkoutBusy} className="rounded-xl bg-primary px-4 py-3 text-primary-foreground disabled:opacity-50">{locale === 'ro' ? 'Continuă la plată' : 'Перейти к оплате'}</button>
-            <button type="button" disabled={checkoutBusy} onClick={() => { setPendingGraniId(null); setCheckoutError('') }} className="text-sm text-muted-foreground">{locale === 'ro' ? 'Înapoi la analiză' : 'Вернуться к разбору'}</button>
+            <button type="button" disabled={checkoutBusy} onClick={() => { setPendingGraniId(null); setCheckoutError(''); try { sessionStorage.removeItem('crystal:hidden-gift-v2:purchase') } catch {} }} className="text-sm text-muted-foreground">{locale === 'ro' ? 'Înapoi la analiză' : 'Вернуться к разбору'}</button>
           </form>
         </section>
       )}
@@ -750,7 +768,12 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
         </p>
       )}
 
-      {!previewRequested && !cancelledNotice && isStandardFunnel ? (
+      {!previewRequested && !cancelledNotice && exp.form === 'form-hidden-gift-v2' ? (
+        <HiddenGiftFunnel locale={locale} onSubmit={submitStandard} onTrack={(step) => {
+          exp.track({ event: 'form_step_complete', meta: { step }, dedupSuffix: `hidden-gift-v2:${step}` })
+          if (!exp.previewMode) trackFunnel('hidden_gift_step', { variant: 'hidden-gift-v2', step }, `hidden-gift-v2:${step}`)
+        }} />
+      ) : !previewRequested && !cancelledNotice && isStandardFunnel ? (
         <StandardCrystalForm
           initialEmail={formEmail || emailParam}
           initialValues={form || undefined}
@@ -770,7 +793,7 @@ export default function CristalFunnel({ initialExperiment }: CristalFunnelProps)
           onBirthSubmit={({ day, month, year }) => {
             const birthValues: FormValues = {
               first: locale === 'ro' ? 'Calcul' : 'Расчёт',
-              last: locale === 'ro' ? 'Personal' : 'Личный',
+              last: locale === 'ro' ? 'Personal' : '\u041b\u0438\u0447\u043d\u044b\u0439',
               middle: '', day, month, year, gender: 'f',
               nameAlphabetKey: locale === 'ro' ? 'ro' : 'ru',
               entry: futureTopic,
