@@ -1,7 +1,7 @@
 'use client'
 
 import { useId, useRef, useState, type FormEvent } from 'react'
-import { LoaderCircle } from 'lucide-react'
+import { Check, LoaderCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -11,8 +11,8 @@ import { identityCompletionSchema, type IdentityCompletion, type IdentityComplet
 
 const COPY = {
   ro: {
-    first: 'Prenume', middle: 'Al doilea prenume', gender: 'Sexul pentru calcul',
-    optional: 'Opțional. Completează-l numai dacă ai un al doilea prenume.',
+    first: 'Prenume', middle: 'Patronimic', gender: 'Sexul pentru calcul',
+    optional: 'Opțional. Completează-l numai dacă ai patronimic.',
     genderPrompt: 'Alege', female: 'Feminin', male: 'Masculin', email: 'Email',
     emailNote: 'Aici primești linkul permanent către analiza ta.',
     save: 'Continuă', pay: 'Plătește și deschide raportul', cancel: 'Înapoi la previzualizare',
@@ -94,13 +94,14 @@ function CompletionContent({ locale, title, description, request, initialValues,
   }
 
   return (
-    <DialogContent showCloseButton={false} className="max-h-[90dvh] overflow-y-auto [--background:var(--popover)] [--foreground:var(--popover-foreground)] text-foreground" onEscapeKeyDown={(event) => { if (submitting.current) event.preventDefault() }} onPointerDownOutside={(event) => { if (submitting.current) event.preventDefault() }}>
-      <DialogHeader>
-        <DialogTitle>{title}</DialogTitle>
-        <DialogDescription>{description}</DialogDescription>
+    <DialogContent showCloseButton={false} className="max-h-[90dvh] max-w-xl overflow-y-auto rounded-2xl border border-primary/40 bg-popover p-5 text-popover-foreground shadow-2xl shadow-background/60 sm:p-7" onEscapeKeyDown={(event) => { if (submitting.current) event.preventDefault() }} onPointerDownOutside={(event) => { if (submitting.current) event.preventDefault() }}>
+      <DialogHeader className="gap-3 text-left">
+        {price && <p className="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-primary">{locale === 'ru' ? 'Или весь Кристалл сразу' : 'Sau tot Cristalul dintr-o dată'}</p>}
+        <DialogTitle className="text-balance text-2xl font-bold leading-tight sm:text-3xl">{title}</DialogTitle>
+        <DialogDescription className="text-pretty text-sm leading-relaxed text-muted-foreground">{description}</DialogDescription>
       </DialogHeader>
-      {benefits && benefits.length > 0 && <ul className="flex flex-col gap-2 rounded-xl border border-border/70 bg-muted/40 p-4 text-sm text-foreground">
-        {benefits.map((benefit) => <li key={benefit} className="flex gap-2"><span className="text-primary" aria-hidden="true">✓</span><span>{benefit}</span></li>)}
+      {benefits && benefits.length > 0 && <ul className="flex flex-col gap-2 border-y border-border/70 py-3 text-sm text-foreground">
+        {benefits.map((benefit) => <li key={benefit} className="flex gap-2"><Check className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" /><span>{benefit}</span></li>)}
       </ul>}
       {birthDate && <p className="rounded-lg bg-muted/50 px-3 py-2 text-sm text-muted-foreground">{locale === 'ru' ? 'Дата рождения' : 'Data nașterii'}: <strong className="text-foreground">{birthDate}</strong></p>}
       {price && <p className="text-center text-lg font-semibold text-foreground">{locale === 'ru' ? `Полный разбор · ${price}` : `Raportul complet · ${price}`}</p>}
@@ -111,7 +112,7 @@ function CompletionContent({ locale, title, description, request, initialValues,
           {keys.map(key => {
             const invalid = errors.includes(key)
             const required = key === 'email' ? request.requireEmail : request.fields.includes(key)
-            const hint = key === 'middle' ? c.optional : key === 'email' ? c.emailNote : undefined
+            const hint = key === 'middle' && !request.fields.includes('middle') ? c.optional : key === 'email' ? c.emailNote : undefined
             const describedBy = [hint ? `${id}-${key}-hint` : '', invalid ? `${id}-${key}-error` : ''].filter(Boolean).join(' ') || undefined
             return (
               <Field key={key} data-invalid={invalid} data-disabled={pending}>
@@ -132,9 +133,9 @@ function CompletionContent({ locale, title, description, request, initialValues,
           })}
         </FieldGroup>
         {failure && <FieldError>{failure}</FieldError>}
-        <DialogFooter>
-          <DialogClose asChild><Button type="button" variant="outline" disabled={pending} className="min-h-11">{c.cancel}</Button></DialogClose>
-          <Button type="submit" disabled={pending} className="min-h-11">{pending && <LoaderCircle data-icon="inline-start" className="animate-spin" aria-hidden="true" />}{price ? c.pay : c.save}</Button>
+        <DialogFooter className="flex-col-reverse gap-2 sm:flex-col-reverse">
+          <DialogClose asChild><Button type="button" variant="ghost" disabled={pending} className="min-h-11 w-full text-muted-foreground">{c.cancel}</Button></DialogClose>
+          <Button type="submit" disabled={pending} className="min-h-12 w-full font-semibold shadow-lg shadow-primary/20">{pending && <LoaderCircle data-icon="inline-start" className="animate-spin" aria-hidden="true" />}{price ? c.pay : c.save}</Button>
         </DialogFooter>
       </form>
     </DialogContent>

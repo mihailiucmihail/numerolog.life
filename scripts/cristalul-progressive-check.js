@@ -91,11 +91,46 @@ if (progressiveCheck) {
     return checkCopy.financial + ' ' + checkResult.currentAge + ' · ' + level.toLocaleString(lang === 'ro' ? 'ro-RO' : 'ru-RU', { maximumFractionDigits: 1 }) + '/9';
   }
 
+  function checkChartFact(key) {
+    var charts = lifeCharts();
+    var age = checkResult.currentAge;
+    var keys = key === 'career_personal' ? ['career', 'personal'] : key === 'karma_destiny' ? ['karma', 'destiny'] : [key];
+    var first = charts && (charts[keys[0]] || (keys[0] === 'selfrealization' && checkResult.selfRealizationChart));
+    var second = keys[1] && charts ? charts[keys[1]] : null;
+    var value = first && first.points ? interpolateAtAge(first.points, age) : null;
+    var secondValue = second && second.points ? interpolateAtAge(second.points, age) : null;
+    var number = function(input) { return Number(input).toLocaleString(lang === 'ro' ? 'ro-RO' : 'ru-RU', { maximumFractionDigits: 1 }); };
+    var label = T.charts[CHART_KEYS.indexOf(key)];
+    var texts = lang === 'ro' ? {
+      career: 'La vârsta de ' + age + ' de ani, ritmul carierei tale este la nivelul ' + number(value) + ' din 9. Graficul arată cum se schimbă realizarea profesională în etapele următoare.',
+      personal: 'La vârsta de ' + age + ' de ani, dinamica vieții personale este la nivelul ' + number(value) + ' din 9. Linia evidențiază perioadele de apropiere, schimbare și reașezare emoțională.',
+      career_personal: 'Acum, cariera este la nivelul ' + number(value) + ', iar viața personală la ' + number(secondValue) + ' din 9. Distanța dintre linii arată unde una dintre sfere cere mai multă atenție.',
+      financial: 'La vârsta de ' + age + ' de ani, fluxul financiar este la nivelul ' + number(value) + ' din 9. Graficul evidențiază perioadele de consolidare și schimbare materială.',
+      selfrealization: 'La vârsta de ' + age + ' de ani, autorealizarea este la nivelul ' + number(value) + ' din 9. Curba arată când potențialul tău cere exprimare și o direcție mai clară.',
+      karma: 'La vârsta de ' + age + ' de ani, intensitatea lecțiilor karmice este la nivelul ' + number(value) + ' din 9. Graficul marchează etapele în care tiparele vechi cer o alegere conștientă.',
+      destiny: 'La vârsta de ' + age + ' de ani, linia destinului este la nivelul ' + number(value) + ' din 9. Evoluția ei arată perioadele cu schimbări importante de direcție.',
+      karma_destiny: 'Acum, karma este la nivelul ' + number(value) + ', iar destinul la ' + number(secondValue) + ' din 9. Apropierea liniilor indică etapele în care lecțiile și schimbările de drum se întâlnesc.',
+      will: 'La vârsta de ' + age + ' de ani, voința este la nivelul ' + number(value) + ' din 9. Graficul arată perioadele în care energia de decizie crește sau are nevoie de refacere.'
+    } : {
+      career: 'В возрасте ' + age + ' лет уровень карьеры составляет ' + number(value) + ' из 9. График показывает, как меняется профессиональная реализация на следующих этапах.',
+      personal: 'В возрасте ' + age + ' лет динамика личной жизни находится на уровне ' + number(value) + ' из 9. Линия отмечает периоды сближения, перемен и эмоциональной перестройки.',
+      career_personal: 'Сейчас карьера находится на уровне ' + number(value) + ', а личная жизнь — ' + number(secondValue) + ' из 9. Расстояние между линиями показывает, какая сфера требует больше внимания.',
+      financial: 'В возрасте ' + age + ' лет финансовый поток находится на уровне ' + number(value) + ' из 9. График отмечает периоды материального укрепления и перемен.',
+      selfrealization: 'В возрасте ' + age + ' лет самореализация находится на уровне ' + number(value) + ' из 9. Кривая показывает, когда потенциал требует проявления и более ясного направления.',
+      karma: 'В возрасте ' + age + ' лет интенсивность кармических уроков находится на уровне ' + number(value) + ' из 9. График отмечает этапы, когда старые сценарии требуют осознанного выбора.',
+      destiny: 'В возрасте ' + age + ' лет линия судьбы находится на уровне ' + number(value) + ' из 9. Её развитие показывает периоды важных перемен направления.',
+      karma_destiny: 'Сейчас карма находится на уровне ' + number(value) + ', а судьба — ' + number(secondValue) + ' из 9. Сближение линий отмечает этапы, где уроки встречаются с переменами пути.',
+      will: 'В возрасте ' + age + ' лет воля находится на уровне ' + number(value) + ' из 9. График показывает периоды усиления решительности и восстановления энергии.'
+    };
+    return { hint: label + ' · ' + age, text: texts[key] || checkCopy.pending, question: '' };
+  }
+
   function checkFact(id) {
     var r = checkResult;
     var fallback = { hint: checkCopy.description, text: checkCopy.pending, question: '' };
     if (hiddenGift && id === 1 && !r.nameArcana.first) return { hint: checkCopy.day + ' · ' + r.TaroDay, text: lang === 'ro' ? RO_FACTS.positiveTraits[r.TaroDay] : sourceText(dbText('positiveTraits', r.TaroDay)), question: '' };
     if (hiddenGift && id === 3 && !r.Prizvanie_num) return { hint: lang === 'ro' ? 'Vocația cere prenumele' : 'Для призвания нужно имя', text: graniFact(9).text, question: '' };
+    if (hiddenGift && id === 9) return checkChartFact('career');
     if (id === 1 && !r.nameArcana.first) {
       return { hint: checkCopy.day + ' · ' + r.TaroDay, text: checkCopy.missing, question: '' };
     }
@@ -163,35 +198,43 @@ if (progressiveCheck) {
         }
         if (id === 9) section.innerHTML += '<p class="cd-gr-note" data-check-financial>' + esc(checkFinancialText()) + '</p>';
         section.innerHTML += '<ul class="cd-gr-inside">' + titles.map(function(title) { return '<li><i aria-hidden="true"></i><em>' + esc(title) + '</em></li>'; }).join('') + '</ul>';
-        if ([1, 3, 9, 11, 12, 13].indexOf(id) >= 0) {
+        if (!hiddenGift && [1, 3, 9, 11, 12, 13].indexOf(id) >= 0) {
           var button = document.createElement('button'); button.type = 'button'; button.className = 'cd-gr-btn'; button.textContent = checkCopy.complete;
           button.setAttribute('data-check-complete', String(id));
           button.addEventListener('click', function() { window.parent.postMessage({ type: 'birthInputCheckIdentity', facet: id }, checkOrigin); });
           var actions = document.createElement('div'); actions.className = 'cd-gr-actions'; actions.appendChild(button); section.appendChild(actions);
         }
-        if (hiddenGift) {
+        if (hiddenGift && id === 9) {
           var buy = document.createElement('button'); buy.type = 'button'; buy.className = 'cd-gr-btn';
-          buy.textContent = lang === 'ro' ? 'Deschide fațeta' : 'Открыть грань';
-          buy.setAttribute('data-gift-purchase', String(id));
-          buy.addEventListener('click', function() { window.parent.postMessage({ type: 'birthInputCheckIdentity', facet: id, purchase: true }, checkOrigin); });
+          buy.textContent = lang === 'ro' ? 'Deschide analiza completă' : 'Открыть полный разбор';
+          buy.setAttribute('data-gift-purchase', 'full');
+          buy.addEventListener('click', function() { window.parent.postMessage({ type: 'birthInputCheckIdentity', facet: 'full', purchase: true }, checkOrigin); });
           var buyActions = document.createElement('div'); buyActions.className = 'cd-gr-actions'; buyActions.appendChild(buy); section.appendChild(buyActions);
         }
         wrap.appendChild(section);
       });
-      var full = document.createElement('button'); full.type = 'button'; full.className = 'cd-gr-btn'; full.textContent = checkCopy.full;
-      full.addEventListener('click', function() { window.parent.postMessage({ type: 'birthInputCheckIdentity', facet: 'full' }, checkOrigin); });
-      wrap.appendChild(full);
-      if (hiddenGift) {
-        var buyFull = document.createElement('button'); buyFull.type = 'button'; buyFull.className = 'cd-gr-btn';
-        buyFull.textContent = lang === 'ro' ? 'Deschide analiza completă' : 'Открыть полный разбор';
-        buyFull.setAttribute('data-gift-purchase', 'full');
-        buyFull.addEventListener('click', function() { window.parent.postMessage({ type: 'birthInputCheckIdentity', facet: 'full', purchase: true }, checkOrigin); });
-        wrap.appendChild(buyFull);
+      if (!hiddenGift) {
+        var full = document.createElement('button'); full.type = 'button'; full.className = 'cd-gr-btn'; full.textContent = checkCopy.full;
+        full.addEventListener('click', function() { window.parent.postMessage({ type: 'birthInputCheckIdentity', facet: 'full' }, checkOrigin); });
+        wrap.appendChild(full);
       }
       layer.appendChild(wrap);
     }
     window.parent.postMessage({ type: 'birthInputCheckRendered' }, checkOrigin);
   }
+
+  document.addEventListener('click', function(event) {
+    if (!hiddenGift) return;
+    var button = event.target.closest('[data-gr-chart]');
+    if (!button) return;
+    var key = button.getAttribute('data-gr-chart');
+    if (CHART_KEYS.indexOf(key) < 0 || !checkResult) return;
+    var section = button.closest('[data-grani="9"]');
+    if (!section) return;
+    var fact = checkChartFact(key);
+    section.querySelector('[data-check-hint]').textContent = fact.hint;
+    section.querySelector('[data-check-text]').textContent = fact.text;
+  });
 
   window.addEventListener('message', function(event) {
     if (event.origin !== checkOrigin || event.source !== window.parent || !event.data || event.data.type !== 'birthInputCheckData') return;
