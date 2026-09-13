@@ -29,8 +29,14 @@ import { birthInputSecret, getBirthInputSettings } from './lib/experiments/birth
 
 const handleI18nRouting = createMiddleware(routing)
 
-// Experiența publică este exclusiv în limba rusă.
-const LOCALE_REGEX = /^\/ru(\/|$)/
+// Experiența publică e disponibilă în rusă și română; limba se alege automat după țara
+// vizitatorului (RO/MD -> ro, restul -> ru), fără comutator manual vizibil.
+const LOCALE_REGEX = /^\/(ro|ru)(\/|$)/
+
+/** Limba pentru un vizitator fără prefix de locale în URL, decisă exclusiv după țara efectivă. */
+function localeForCountry(country: string | null): 'ro' | 'ru' {
+  return country === 'RO' || country === 'MD' ? 'ro' : 'ru'
+}
 
 const CURRENCY_COOKIE_MAX_AGE = 60 * 60 * 24 * 30 // 30 de zile
 
@@ -183,15 +189,16 @@ async function routeRequest(request: NextRequest) {
   const resolved = await resolveCountry(request)
 
   // Pagina de login nu mai este publică în produsul actual: orice acces direct
-  // la ruta localizată sau ne-localizată merge la pagina principală.
-  if (/^\/(?:ru\/)?auth\/login\/?$/.test(pathname)) {
+  // la ruta localizată sau ne-localizată merge la pagina principală, în aceeași limbă.
+  const loginMatch = pathname.match(/^\/(?:(ro|ru)\/)?auth\/login\/?$/)
+  if (loginMatch) {
     const home = request.nextUrl.clone()
-    home.pathname = '/ru'
+    home.pathname = `/${loginMatch[1] || localeForCountry(resolved.country)}`
     home.search = ''
     return NextResponse.redirect(home)
   }
 
-  // Dacă URL-ul este deja în rusă, lasă next-intl să gestioneze ruta.
+  // Dacă URL-ul este deja localizat (ro/ru), lasă next-intl să gestioneze ruta.
   if (LOCALE_REGEX.test(pathname)) {
     // Moneda merge și ca header de request, ca prima randare (înainte să existe cookie-ul)
     // să afișeze deja prețurile corecte — fără flash EUR -> KZT.
@@ -224,7 +231,7 @@ async function routeRequest(request: NextRequest) {
     // Funnelul se atribuie exclusiv la intrarea în calculator. Dacă l-am atribui pe homepage sau
     // pe altă rută, fallback-ul Control s-ar fixa în cookie înainte ca distribuția live să fie citită.
     // Atribuirea rămâne tot înainte de randarea calculatorului, deci nu există schimbare vizibilă.
-    const isNumerologyEntry = /^\/ru\/numerologie\/?$/.test(pathname)
+    const isNumerologyEntry = /^\/(ro|ru)\/numerologie\/?$/.test(pathname)
     if (isNumerologyEntry) {
       // Traficul din promovare (utm_*, fbclid, gclid, entry=, src=) intră în distribuția live a
       // experimentelor; orice altă intrare (link intern/organic) primește funnelul Standard.
@@ -245,13 +252,10 @@ async function routeRequest(request: NextRequest) {
     return withGeoCookies(handleI18nRouting(new NextRequest(request, { headers })), request, resolved, undefined, birthInput)
   }
 
-  // Orice rută publică este redirecționată către versiunea rusă.
+  // Rută fără prefix de limbă: alegem automat locale-ul după țara efectivă a vizitatorului
+  // (RO/MD -> română, restul -> rusă), fără niciun comutator manual.
   const url = request.nextUrl.clone()
-  if (/^\/ro(\/|$)/.test(pathname)) {
-    url.pathname = `/ru${pathname.slice(3) || '/'}`
-  } else {
-    url.pathname = `/ru${pathname}`
-  }
+  url.pathname = `/${localeForCountry(resolved.country)}${pathname}`
   return withGeoCookies(NextResponse.redirect(url), request, resolved)
 }
 
