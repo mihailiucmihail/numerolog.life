@@ -3,7 +3,7 @@ import test from 'node:test'
 import {
   BIRTH_INPUT_ARMS, BIRTH_INPUT_EXPERIMENT, BIRTH_INPUT_TTL_MS, INITIAL_BIRTH_INPUT_SETTINGS,
   birthInputSurface, excludeBirthInputEnrollment, isBirthInputSettings,
-  readBirthInputAssignment, resolveBirthInputAssignment, signBirthInputAssignment,
+  readBirthInputAssignment, resolveBirthInputAssignment, signBirthInputAssignment, selectBirthInputSecret,
   type BirthInputSettings,
 } from './birth-input-experiment'
 import { FORM_VARIANTS, PREVIEW_VARIANTS } from './catalog'
@@ -13,6 +13,19 @@ const secret = 'unit-test-only-signing-secret-123456'
 const visitorId = 'a'.repeat(32)
 const settings: BirthInputSettings = { experiment: BIRTH_INPUT_EXPERIMENT, enabled: true, percentages: { A: 50, B: 50 } }
 const context = { settings, previous: null, visitorId, url: new URL('https://numerolog.life/ru'), headers: new Headers(), now }
+
+test('short admin passwords do not shadow a valid signing secret', async () => {
+  assert.equal(selectBirthInputSecret(undefined, 'short', secret), secret)
+  assert.equal(selectBirthInputSecret('', 'short', secret), secret)
+  assert.equal(selectBirthInputSecret(secret, 'another-valid-secret', undefined), secret)
+  assert.equal(selectBirthInputSecret(undefined, 'short', undefined), '')
+  assert.equal(selectBirthInputSecret(' '.repeat(32)), '')
+  const { assignment } = await resolveBirthInputAssignment(context)
+  assert.ok(assignment)
+  const selected = selectBirthInputSecret(undefined, 'short', secret)
+  const signed = await signBirthInputAssignment(assignment, selected, now)
+  assert.deepEqual(await readBirthInputAssignment(signed, selected, now), assignment)
+})
 
 test('new experiment is inactive, isolated and does not reinterpret historical IDs', () => {
   assert.deepEqual(INITIAL_BIRTH_INPUT_SETTINGS.percentages, { A: 0, B: 0 })

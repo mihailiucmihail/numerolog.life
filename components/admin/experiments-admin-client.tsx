@@ -231,6 +231,15 @@ const FUNNELS = [
     preview: "preview-life-stage-now-v1",
   },
   {
+    key: "hidden-gift-v2",
+    label: "Darul ascuns · Cristal progresiv",
+    eyebrow: "Dar și 14 fațete",
+    summary: "Data dezvăluie darul și cinci curiozități, apoi 14 fațete. Numele completează analiza; emailul se cere numai la plată.",
+    flow: ["Dată", "Dar + 5 curiozități", "14 fațete", "Nume", "Plată"],
+    form: "form-hidden-gift-v2",
+    preview: "preview-hidden-gift-v2",
+  },
+  {
     key: "hidden-gift-v1",
     label: "Darul ascuns",
     eyebrow: "Revelație personală",

@@ -51,6 +51,15 @@ def rep(old, new, count=1):
     s = s.replace(old, new)
 
 
+# The homepage example must never scroll its ancestors when calculate() renders.
+rep('<head>', '''<head>
+<script id="cd-passive-example">
+(function () {
+  if (new URLSearchParams(window.location.search).get('example') !== '1') return;
+  Element.prototype.scrollIntoView = function () {};
+})();
+</script>''')
+
 # 1. CSS pentru iframe -------------------------------------------------------------
 rep("html,body{margin:0;padding:0;background-color:#161022;background:var(--ink);color:var(--parchment);",
     ":root{color-scheme:light;}\nhtml,body{margin:0;padding:0;background-color:transparent !important;background:transparent !important;color:var(--parchment);")
@@ -70,6 +79,9 @@ rep(".wrap{max-width:920px;margin:0 auto;position:relative;z-index:1;}",
 rep("""  background-color:#1c1529;
   background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), #1c1529;
 """, "  background-color:transparent;\n  background:linear-gradient(145deg,rgba(40,24,62,.72),rgba(13,13,35,.9));\n")
+
+# Email is collected by the payment UI, never by the initial calculator form.
+rep('</head>', '<style id="cd-checkout-only-email">#emailField{display:none!important}</style></head>')
 
 # 1b. body{min-height:100vh} în iframe = înălțimea iframe-ului → buclă infinită de resize. Eliminăm.
 rep("  min-height:100vh;\n  padding: 0 6px 80px;", "  min-height:0;\n  padding: 0 6px 80px;")
@@ -465,7 +477,15 @@ grani_preview = grani_preview.replace('/*__CD_GRANI_FACTS__*/', grani_facts)
 progressive_check = (ROOT / 'scripts/cristalul-progressive-check.js').read_text(encoding='utf-8')
 assert '\ufffd' not in progressive_check
 assert grani_preview.count('/*__CD_PROGRESSIVE_CHECK__*/') == 1
-grani_preview = grani_preview.replace('/*__CD_PROGRESSIVE_CHECK__*/', progressive_check)
+gift_script = (ROOT / 'scripts/cristalul-hidden-gift.js').read_text(encoding='utf-8')
+gift_years = re.search(r'const SIMPLE_YEAR_TXT = (\{.*?\});', s, re.S)
+assert gift_years and '\ufffd' not in gift_script
+gift_script = gift_script.replace('/*__CD_GIFT_YEARS__*/', gift_years.group(1))
+gift_gate = "var progressiveCheck = pv === 'preview-birth-input-check-v1';"
+assert gift_gate in grani_preview
+grani_preview = grani_preview.replace(gift_gate, "var progressiveCheck = pv === 'preview-birth-input-check-v1' || pv === 'preview-hidden-gift-v2';")
+grani_preview = grani_preview.replace('wrap.innerHTML = head;', 'wrap.innerHTML = (hiddenGift ? hiddenGiftIntro() : \'\') + head;')
+grani_preview = grani_preview.replace('/*__CD_PROGRESSIVE_CHECK__*/', gift_script + '\n' + progressive_check)
 grani_styles = (ROOT / 'scripts/cristalul-grani-preview.css').read_text(encoding='utf-8')
 assert grani_preview.count('</style>') == 1
 assert '\ufffd' not in grani_styles
@@ -496,6 +516,9 @@ for marker in ('id="emailAddr"', 'id="promoCode"', 'id="mainCalcBtn"', 'function
                'function cdMainAction', 'onclick="cdMainAction()"', 'data-cd-form', "params.get('fv')", 'cristalul-premium.mp4', 'hero-video',
                ':root{color-scheme:light;}', '.bg-anim{display:none !important;}'):
     assert marker in s, f'marker lipsă după patch: {marker}'
+
+# Keep the bridge field available, but collect email only in payment UI.
+rep('<div class="full" id="emailField">', '<div class="full" id="emailField" hidden style="display:none!important;">')
 
 DST.write_text(s, encoding='utf-8')
 
