@@ -10444,8 +10444,7 @@ function renderStandardFull(model, layer, results) {
   cards.forEach(function(card) {
     var group = matchGrani(titleOf(card));
     var id = group ? group.id : 0;
-    if (!groups[id]) groups[id] = { words: 0, used: false, last: card };
-    groups[id].words += card.textContent.trim().split(/\s+/).length;
+    if (!groups[id]) groups[id] = { last: card };
     groups[id].last = card;
   });
   layer.replaceChildren();
@@ -10465,11 +10464,74 @@ function renderStandardFull(model, layer, results) {
   contents.append(summary, navigation);
   layer.appendChild(contents);
   var chartAdded = false;
-  var index = 0;
+  function readingUnits(card) {
+    var units = [];
+    var byBlock = new Map();
+    var walker = document.createTreeWalker(card, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) {
+      var text = walker.currentNode;
+      var parent = text.parentElement;
+      if (!text.textContent.trim() || parent.closest('.section-title, script, style, iframe, input, select, textarea, button, audio, video, svg, canvas, .pyth-grid, .yc-scroll, .meta-timeline')) continue;
+      // A story, list or table is one idea: never expose isolated rows or list items.
+      var block = parent.closest('.story-step, ul, ol, dl, table, blockquote') || parent.closest('p, h1, h2, h3, h4, h5, h6, div') || parent;
+      var unit = byBlock.get(block);
+      if (!unit) {
+        unit = { block: block, nodes: [], words: 0, text: '' };
+        byBlock.set(block, unit);
+        units.push(unit);
+      }
+      unit.nodes.push(text);
+      unit.words += text.textContent.trim().split(/\s+/).length;
+      unit.text += ' ' + text.textContent.trim();
+    }
+    var complete = [];
+    var pending = [];
+    units.forEach(function(unit) {
+      pending.push(unit);
+      var label = /^H[1-6]$/.test(unit.block.tagName) || (unit.words <= 14 && !/[.!?…][»”"']?$/.test(unit.text.trim()));
+      if (label) return;
+      complete.push({ nodes: pending.flatMap(function(item) { return item.nodes; }), words: pending.reduce(function(sum, item) { return sum + item.words; }, 0) });
+      pending = [];
+    });
+    if (pending.length) {
+      var tail = { nodes: pending.flatMap(function(item) { return item.nodes; }), words: pending.reduce(function(sum, item) { return sum + item.words; }, 0) };
+      if (complete.length) {
+        complete[complete.length - 1].nodes.push.apply(complete[complete.length - 1].nodes, tail.nodes);
+        complete[complete.length - 1].words += tail.words;
+      } else complete.push(tail);
+    }
+    return complete;
+  }
+
+  var previewWordBalance = 0;
+  function visibleOpening(card) {
+    var units = readingUnits(card);
+    var total = units.reduce(function(sum, unit) { return sum + unit.words; }, 0);
+    // Carry whole-paragraph rounding forward, without starving any chapter of its opening.
+    var target = Math.max(total * 0.3, Math.min(total * 0.5, total * 0.4 + previewWordBalance));
+    var count = 0;
+    var sum = 0;
+    var best = Infinity;
+    // Choose one continuous opening, at the nearest complete idea to 40%, independent of viewport.
+    units.forEach(function(unit, index) {
+      sum += unit.words;
+      if (units.length > 1 && index === units.length - 1) return;
+      var distance = Math.abs(sum - target);
+      if (distance < best) { best = distance; count = index + 1; }
+    });
+    var visible = new WeakSet();
+    var words = 0;
+    units.slice(0, count).forEach(function(unit) {
+      words += unit.words;
+      unit.nodes.forEach(function(text) { visible.add(text); });
+    });
+    previewWordBalance += total * 0.4 - words;
+    return { nodes: visible, total: total, words: words };
+  }
 
   function ink(text) {
     var span = document.createElement('span');
-    span.className = 'cd-premium-ink cd-premium-depth-' + (index++ % 3);
+    span.className = 'cd-premium-ink cd-premium-depth-1';
     span.setAttribute('aria-hidden', 'true');
     var words = text.trim().split(/\s+/);
     words.forEach(function(word, i) {
@@ -10499,29 +10561,7 @@ function renderStandardFull(model, layer, results) {
     var card = original.cloneNode(true);
     var title = card.querySelector('.section-title');
     var titleText = titleOf(original);
-    var hint = null;
-    var group = groups[id];
-    if (group && !group.used && id !== 0) {
-      var limit = Math.min(id === 1 ? 120 : 65, Math.floor(group.words * 0.18));
-      var paragraphs = Array.from(card.querySelectorAll('p')).filter(function(p) {
-        return !p.closest('.section-title, .hint, .chart-legend') && p.textContent.trim().split(/\s+/).length >= 18;
-      });
-      for (var p = 0; p < paragraphs.length && !hint; p++) {
-        var sentences = paragraphs[p].textContent.trim().match(/[^.!?]+[.!?]+(?:\s|$)/g) || [];
-        var excerpt = '';
-        (id === 1 ? sentences : sentences.slice(0, 2)).some(function(sentence) {
-          if ((excerpt + sentence).trim().split(/\s+/).length > limit) return true;
-          excerpt += sentence;
-          return false;
-        });
-        if (excerpt.trim()) hint = excerpt.trim();
-      }
-      if (!hint) {
-        var fact = graniFact(id);
-        if (fact && fact.text) hint = fact.text;
-      }
-      group.used = Boolean(hint);
-    }
+    var opening = visibleOpening(card);
     card.querySelectorAll('script, style, iframe, input, select, textarea, button, audio, video').forEach(function(el) { el.remove(); });
     card.querySelectorAll('svg, canvas, img, .pyth-grid, .yc-scroll, .meta-timeline').forEach(function(el) {
       if (card.contains(el)) graphicShell(el);
@@ -10538,15 +10578,13 @@ function renderStandardFull(model, layer, results) {
       var current = walker.currentNode;
       if (current.textContent.trim() && !title.contains(current) && !current.parentElement.closest('.cd-premium-graphic')) texts.push(current);
     }
-    texts.forEach(function(text) { text.replaceWith(ink(text.textContent)); });
+    texts.forEach(function(text) {
+      if (!opening.nodes.has(text)) text.replaceWith(ink(text.textContent));
+    });
     title.textContent = titleText;
     card.classList.add('cd-premium-chapter');
-    if (hint) {
-      var paragraph = document.createElement('p');
-      paragraph.className = 'cd-standard-excerpt';
-      paragraph.textContent = hint;
-      title.after(paragraph);
-    }
+    card.dataset.previewTotalWords = String(opening.total);
+    card.dataset.previewVisibleWords = String(opening.words);
     return card;
   }
 
