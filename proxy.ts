@@ -16,7 +16,6 @@ import { getRuntimeFunnels } from './lib/experiments/runtime-config'
 import { hasPromoMarker, resolveStandardAssignment } from './lib/experiments/routing'
 import { readAssignment } from './lib/experiments/assignment'
 import { SOCIAL_COOKIE, SOCIAL_TTL, captureSocialTouch, readSocialAttribution, signSocialAttribution, trackingExcluded } from './lib/experiments/social-attribution'
-import { resolveSocialAssignment } from './lib/experiments/social-server'
 import {
   BIRTH_INPUT_COOKIE,
   BIRTH_INPUT_TTL_MS,
@@ -231,12 +230,11 @@ async function routeRequest(request: NextRequest) {
       // experimentelor; orice altă intrare (link intern/organic) primește funnelul Standard.
       const funnels = await getRuntimeFunnels()
       const rawCookie = request.cookies.get(EXPERIMENT_COOKIE)?.value
-      const social = trackingExcluded(request.nextUrl, request.headers) ? null : await readSocialAttribution(request.cookies.get(SOCIAL_COOKIE)?.value)
-      const experiment = social && !previewToken
-        ? await resolveSocialAssignment(social, rawCookie)
-        : hasPromoMarker(sp) || previewToken
-          ? await resolveAssignment(rawCookie, funnels)
-          : await resolveStandardAssignment(rawCookie, funnels)
+      // UTM/fbclid/gclid traffic must use the main admin experiment distribution.
+      // Social attribution remains independent and is only used for post-level reporting.
+      const experiment = hasPromoMarker(sp) || previewToken
+        ? await resolveAssignment(rawCookie, funnels)
+        : await resolveStandardAssignment(rawCookie, funnels)
       headers.set('x-exp-visitor', experiment.assignment.visitorId)
       headers.set('x-exp-form', experiment.assignment.form)
       headers.set('x-exp-preview', experiment.assignment.preview)

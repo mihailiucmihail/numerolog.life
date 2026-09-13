@@ -15,7 +15,7 @@ const COPY = {
     optional: 'Opțional. Completează-l numai dacă ai un al doilea prenume.',
     genderPrompt: 'Alege', female: 'Feminin', male: 'Masculin', email: 'Email',
     emailNote: 'Aici primești linkul permanent către analiza ta.',
-    save: 'Continuă', cancel: 'Înapoi la previzualizare',
+    save: 'Continuă', pay: 'Plătește și deschide raportul', cancel: 'Înapoi la previzualizare',
     error: 'Verifică acest câmp.', retry: 'Nu am putut continua. Datele rămân în formular; încearcă din nou.',
   },
   ru: {
@@ -23,7 +23,7 @@ const COPY = {
     optional: 'Необязательно. Укажи, только если у тебя есть отчество.',
     genderPrompt: 'Выбери', female: 'Женский', male: 'Мужской', email: 'Email',
     emailNote: 'Сюда придёт постоянная ссылка на твой разбор.',
-    save: 'Продолжить', cancel: 'Вернуться к разбору',
+    save: 'Продолжить', pay: 'Оплатить и открыть полный разбор', cancel: 'Вернуться к разбору',
     error: 'Проверь это поле.', retry: 'Не удалось продолжить. Данные остались в форме; попробуй ещё раз.',
   },
 } as const
@@ -37,6 +37,9 @@ export interface IdentityCompletionDialogProps {
   request: IdentityCompletionRequest
   initialValues: IdentityCompletion
   onConfirm: (values: IdentityCompletion) => void | Promise<void>
+  price?: string
+  birthDate?: string
+  benefits?: readonly string[]
 }
 
 export function IdentityCompletionDialog(props: IdentityCompletionDialogProps) {
@@ -47,7 +50,7 @@ export function IdentityCompletionDialog(props: IdentityCompletionDialogProps) {
   )
 }
 
-function CompletionContent({ locale, title, description, request, initialValues, onConfirm, onOpenChange }: IdentityCompletionDialogProps) {
+function CompletionContent({ locale, title, description, request, initialValues, onConfirm, onOpenChange, price, birthDate, benefits }: IdentityCompletionDialogProps) {
   const c = COPY[locale]
   const id = useId()
   const formRef = useRef<HTMLFormElement>(null)
@@ -96,6 +99,11 @@ function CompletionContent({ locale, title, description, request, initialValues,
         <DialogTitle>{title}</DialogTitle>
         <DialogDescription>{description}</DialogDescription>
       </DialogHeader>
+      {benefits && benefits.length > 0 && <ul className="flex flex-col gap-2 rounded-xl border border-border/70 bg-muted/40 p-4 text-sm text-foreground">
+        {benefits.map((benefit) => <li key={benefit} className="flex gap-2"><span className="text-primary" aria-hidden="true">✓</span><span>{benefit}</span></li>)}
+      </ul>}
+      {birthDate && <p className="rounded-lg bg-muted/50 px-3 py-2 text-sm text-muted-foreground">{locale === 'ru' ? 'Дата рождения' : 'Data nașterii'}: <strong className="text-foreground">{birthDate}</strong></p>}
+      {price && <p className="text-center text-lg font-semibold text-foreground">{locale === 'ru' ? `Полный разбор · ${price}` : `Raportul complet · ${price}`}</p>}
       <form ref={formRef} onSubmit={submit} onKeyDown={(event) => {
         if (event.key === 'Enter' && (event.nativeEvent.isComposing || event.keyCode === 229)) event.preventDefault()
       }} noValidate aria-busy={pending} className="flex flex-col gap-6 font-sans">
@@ -126,7 +134,7 @@ function CompletionContent({ locale, title, description, request, initialValues,
         {failure && <FieldError>{failure}</FieldError>}
         <DialogFooter>
           <DialogClose asChild><Button type="button" variant="outline" disabled={pending} className="min-h-11">{c.cancel}</Button></DialogClose>
-          <Button type="submit" disabled={pending} className="min-h-11">{pending && <LoaderCircle data-icon="inline-start" className="animate-spin" aria-hidden="true" />}{c.save}</Button>
+          <Button type="submit" disabled={pending} className="min-h-11">{pending && <LoaderCircle data-icon="inline-start" className="animate-spin" aria-hidden="true" />}{price ? c.pay : c.save}</Button>
         </DialogFooter>
       </form>
     </DialogContent>

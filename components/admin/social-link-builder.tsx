@@ -13,7 +13,7 @@ export function SocialLinkBuilder() {
   const [message, setMessage] = useState('')
   const valid = Object.values(values).every(v => UTM_CODE.test(v))
   const params = new URLSearchParams(Object.entries(values).map(([k, v]) => [`utm_${k}`, v]))
-  const link = valid ? `https://numerolog.life/ru?${params}` : ''
+  const link = valid ? `https://numerolog.life/ru/numerologie?${params}` : ''
   async function copy() {
     try { await navigator.clipboard.writeText(link); setMessage('Link copiat.') }
     catch { setMessage('Copierea automată nu este disponibilă. Selectează și copiază linkul de mai jos.') }
