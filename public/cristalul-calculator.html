@@ -8535,6 +8535,10 @@ function startPdfExport(){
     .cd-preview .hero,
     .cd-preview #inputFormCard,
     .cd-preview #pdfDownloadCard{display:none !important;}
+    .cd-full-report #previewLayer,
+    .cd-full-report #stickyCta,
+    .cd-full-report .paywall,
+    .cd-full-report .sticky-cta{display:none !important;}
     /* In timpul ecranului "Cristalul se formeaza" continutul iframe-ului este invizibil; la `previewReveal` apare cu fade. */
     body.cd-forming > *{opacity:0 !important;transition:none !important;}
     body > *{transition:opacity .7s ease;}
@@ -8558,7 +8562,8 @@ function startPdfExport(){
       // astfel stratul de prezentare deschide direct cardul temei (?entry=) si nu monteaza paywall/sticky.
       if(params.get('auto') === '1'){
         try{ ENTITLED = true; ACCESS_LEVEL = 'full'; }catch(e){}
-        // Raport platit: stratul de previzualizare (cu paywall) nu are ce cauta in DOM.
+        document.documentElement.classList.add('cd-full-report');
+        // Raport complet: stratul de previzualizare (cu paywall) nu are ce cauta in DOM.
         document.addEventListener('DOMContentLoaded', function(){
           setTimeout(function(){ ['previewLayer','stickyCta'].forEach(function(id){ var el = document.getElementById(id); if(el) el.remove(); }); }, 300);
         });
@@ -10749,23 +10754,31 @@ function renderStandardFull(model, layer, results) {
     const chart = document.getElementById('lifeChartSvg');
     const host = chart?.closest('.chart-stage')?.parentElement;
     if (!chart || !host || !chart.querySelector('.life-path')) return;
-    document.querySelectorAll('.chart-tab').forEach(tab => tab.setAttribute('aria-pressed', String(tab.classList.contains('active'))));
+    document.querySelectorAll('.chart-tab').forEach(tab => {
+      tab.setAttribute('aria-pressed', String(tab.classList.contains('active')));
+      if (!tab.dataset.cdLegendBound) {
+        tab.dataset.cdLegendBound = '1';
+        tab.addEventListener('click', () => setTimeout(upgradeLifeChart, 120));
+      }
+    });
     let tools = host.querySelector('.cd-next-life-tools');
     if (!tools) { tools = node('div', 'cd-next-life-tools'); chart.closest('.chart-stage').after(tools); }
-    legend(tools, [
-      ['gold', 'Основная линия'],
-      ['teal', 'Сравнение', 'dashed'],
-      ['rose', 'Среднее значение'],
-      ['rose', 'Среднее сравнение', 'dashed'],
-      ['teal', 'Текущий возраст', 'marker'],
-      ['rose', 'Точка пересечения', 'dot']
-    ]);
+    const activeTab = document.querySelector('.chart-tab.active');
+    const chartName = activeTab?.dataset.chart === 'personal' ? 'Личная жизнь' : activeTab?.dataset.chart === 'financial' ? 'Финансовый поток' : activeTab?.dataset.chart === 'selfrealization' ? 'Самореализация' : activeTab?.dataset.chart === 'karma' ? 'Карма' : activeTab?.dataset.chart === 'destiny' ? 'Судьба' : activeTab?.dataset.chart === 'will' ? 'Воля' : 'Карьера';
+    const hasComparison = !!chart.querySelector('.life-path-2, .life-point-2, .avg-line-2');
+    const legendItems = [['gold', 'Линия «' + chartName + '»']];
+    if (hasComparison) legendItems.push(['teal', 'Сравнение', 'dashed']);
+    if (chart.querySelector('.avg-line')) legendItems.push(['rose', 'Личный уровень комфорта']);
+    if (chart.querySelector('.avg-line-2')) legendItems.push(['rose', 'Уровень комфорта сравнения', 'dashed']);
+    legendItems.push(['teal', 'Текущий возраст', 'marker']);
+    if (chart.querySelector('.crossing-mark')) legendItems.push(['rose', 'Точка пересечения', 'dot']);
+    legend(tools, legendItems);
     const output = readout(tools, 'Выберите точку: возраст и значение появятся здесь.');
     chart.querySelectorAll('.life-point, .life-point-2').forEach(point => {
       const age = Number(point.dataset.plotage || point.dataset.age);
       const level = Number(point.dataset.level);
       if (!Number.isFinite(age) || !Number.isFinite(level)) return;
-      const series = point.classList.contains('life-point-2') ? 'Сравнение' : 'Основная линия';
+      const series = point.classList.contains('life-point-2') ? 'Сравнение' : 'Линия «' + chartName + '»';
       selectData(point, output, series + ' · Возраст: ' + age.toFixed(1).replace(/\.0$/, '') + ' · Значение: ' + level);
     });
   }
@@ -10939,6 +10952,12 @@ function renderStandardFull(model, layer, results) {
     const resize = new ResizeObserver(schedulePublish); resize.observe(results);
     const life = document.getElementById('lifeChartSvg');
     if (life) new MutationObserver(upgradeLifeChart).observe(life, { childList: true });
+    const chartTabs = document.getElementById('chartTabs');
+    if (chartTabs && !chartTabs.dataset.cdLegendObserver) {
+      chartTabs.dataset.cdLegendObserver = '1';
+      chartTabs.addEventListener('click', () => setTimeout(upgradeLifeChart, 180));
+      new MutationObserver(() => setTimeout(upgradeLifeChart, 120)).observe(chartTabs, { attributes: true, subtree: true });
+    }
     document.fonts.ready.then(schedulePublish);
     schedulePublish();
   }
