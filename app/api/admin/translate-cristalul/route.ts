@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 
 export const maxDuration = 300
+export const dynamic = 'force-dynamic'
 
 const requestSchema = z.object({
   entries: z.array(
