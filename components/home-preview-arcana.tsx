@@ -13,20 +13,20 @@ const COPY = {
   ro: {
     label: 'Cristalul destinului · 22 de arcane · 14 fațete', title: 'Calculează Cristalul Destinului',
     body: 'Calculul complet se construiește din nume, prenume, al doilea prenume și data nașterii. Vei descoperi întreg Cristalul — fațetă cu fațetă, pentru a-ți înțelege punctele forte, a depăși obstacolele interioare și a afla ce ți-a pregătit destinul.',
-    last: 'Nume', first: 'Prenume', middle: 'Al doilea prenume', middleNote: 'Opțional. Îl recomandăm pentru un calcul mai exact.',
+    last: 'Nume', first: 'Prenume', middle: 'Al doilea prenume', middleNote: '',
     date: 'Data nașterii', day: 'Zi', month: 'Lună', year: 'An',
     email: 'Email', emailNote: 'Aici primești linkul permanent către Cristalul tău.',
-    submit: 'Arată-mi Cristalul',
+    submit: 'Calculează',
     nameError: 'Completează numele și prenumele.', dateError: 'Verifică data nașterii.', emailError: 'Indică un email corect — fără el nu putem salva analiza ta.',
     note: 'plată unică · fără abonament', privacy: 'Datele sunt folosite doar pentru acest calcul.',
   },
   ru: {
     label: 'Кристалл судьбы · 22 аркана · 14 граней', title: 'Рассчитай свой Кристалл судьбы',
     body: 'Полный расчёт строится по фамилии, имени, отчеству и дате рождения. Ты увидишь весь Кристалл — грань за гранью, чтобы понять свои сильные стороны, преодолеть внутренние препятствия и узнать, что приготовила для тебя судьба.',
-    last: 'Фамилия', first: 'Имя', middle: 'Отчество', middleNote: 'Необязательно. Рекомендуем для более точного расчёта.',
+    last: 'Фамилия', first: 'Имя', middle: 'Отчество', middleNote: '',
     date: 'Дата рождения', day: 'День', month: 'Месяц', year: 'Год',
     email: 'Email', emailNote: 'Сюда придёт постоянная ссылка на твой Кристалл.',
-    submit: 'Показать мой Кристалл',
+    submit: 'Рассчитать',
     nameError: 'Заполни фамилию и имя.', dateError: 'Проверь дату рождения.', emailError: 'Укажи корректный email — без него не сможем сохранить твой разбор.',
     note: 'один платёж · без подписки', privacy: 'Данные используются только для этого расчёта.',
   },
@@ -107,7 +107,7 @@ export function HomePreviewArcana({ locale, compact = false, initialValues, onVa
       <div className="grid grid-cols-2 gap-3">
         {(['last', 'first'] as const).map(key => <label key={key} className="flex min-w-0 flex-col gap-1 text-sm"><span>{c[key]}</span><input className={inputClass} value={values[key]} onChange={event => update(key, event.target.value)} autoComplete={key === 'last' ? 'family-name' : 'given-name'} maxLength={100} required /></label>)}
       </div>
-      <label className="flex flex-col gap-1 text-sm"><span>{c.middle} <span className="text-muted-foreground">({locale === 'ro' ? 'opțional' : 'необязательно'})</span></span><input className={inputClass} value={values.middle} onChange={event => update('middle', event.target.value)} autoComplete="additional-name" maxLength={100} /></label>
+      <label className="flex flex-col gap-1 text-sm"><span>{c.middle}</span><input className={inputClass} value={values.middle} onChange={event => update('middle', event.target.value)} autoComplete="additional-name" maxLength={100} /></label>
       <fieldset className="flex flex-col gap-2">
         <legend className="text-sm">{c.date}</legend>
         <div className="grid grid-cols-[1fr_1fr_1.4fr] gap-2">
@@ -126,8 +126,8 @@ export function HomePreviewArcana({ locale, compact = false, initialValues, onVa
       <form onSubmit={submit} noValidate className="flex flex-col gap-5">
         <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.2em] text-primary"><span className="size-1.5 shrink-0 rounded-full bg-primary" />{c.label}</div>
         <div>
-          <h2 id="first-key-title" className="text-balance font-serif text-3xl leading-tight sm:text-4xl">{c.title}</h2>
-          <p className="mt-3 text-sm leading-6 text-muted-foreground">{c.body}</p>
+          <h2 id="first-key-title" className="text-balance font-serif text-3xl font-bold leading-tight sm:text-4xl">{c.title}</h2>
+          <p className="mt-3 text-sm leading-6 text-foreground/80">{c.body}</p>
         </div>
 
         <fieldset className="flex flex-col gap-3">
@@ -157,7 +157,8 @@ export function HomePreviewArcana({ locale, compact = false, initialValues, onVa
 
         {error && <p role="alert" className="rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2.5 text-sm text-destructive">{error}</p>}
 
-        <button type="submit" disabled={pending} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-6 font-medium text-primary-foreground transition-transform hover:-translate-y-0.5 disabled:opacity-70">{c.submit}<ArrowRight className="size-4" aria-hidden="true" /></button>
+        <p className="text-center text-sm font-semibold leading-5 text-foreground/85">{locale === 'ro' ? 'Introdu datele tale, apoi apasă butonul galben pentru calcularea raportului personal.' : 'Введи свои данные, затем нажми жёлтую кнопку, чтобы рассчитать персональный разбор.'}</p>
+        <button type="submit" disabled={pending} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-6 font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5 disabled:opacity-70">{c.submit}<ArrowRight className="size-4" aria-hidden="true" /></button>
         <p className="flex items-center gap-2 text-xs leading-5 text-muted-foreground"><LockKeyhole className="size-3.5 shrink-0 text-primary" aria-hidden="true" />{c.privacy}</p>
       </form>
     </section>
