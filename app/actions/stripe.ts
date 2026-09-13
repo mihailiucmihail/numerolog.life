@@ -8,7 +8,7 @@ import { getRequestCristalPrice, getRequestCurrency } from "@/lib/currency-serve
 import { getGraniPriceMinor, graniCurrency } from "@/lib/currency"
 import { fromStripeMinor, toStripeMinor } from "@/lib/country-pricing"
 import { recordCheckoutAttempt } from "@/lib/checkout-attempts"
-import { getRequestAssignment } from "@/lib/experiments/server"
+import { getRequestAssignment, getRequestBirthInput } from "@/lib/experiments/server"
 import { recordExperimentEvent } from "@/app/actions/experiment-events"
 import { socialCheckoutMetadata, recordSocialSession } from '@/lib/experiments/social-server'
 
@@ -47,6 +47,9 @@ export async function startNumerologieCheckout(
   // Atribuirea experimentului vine din cookie-ul SEMNAT, nu din browser: altfel un vizitator
   // ar putea raporta cumpărarea pe altă variantă decât cea pe care a văzut-o.
   const assignment = await getRequestAssignment()
+  // Experimentul „formular complet (A) vs. numai data nașterii (B)”: null cât testul e oprit sau
+  // vizitatorul nu e înscris, deci metadata nu se schimbă și cumpărarea rămâne exact ca acum.
+  const birthInput = await getRequestBirthInput()
   const socialMetadata = await socialCheckoutMetadata()
   let unitAmount = toStripeMinor(price.amount, price.currency)
   let appliedPromo: string | null = null
@@ -144,6 +147,8 @@ export async function startNumerologieCheckout(
       ...(assignment.visitorId ? { expVisitor: assignment.visitorId } : {}),
       expForm: assignment.form,
       expPreview: assignment.preview,
+      // Atribuirea experimentului formular vs. dată — prezentă doar când testul e activ și înscris.
+      ...(birthInput ? { biArm: birthInput.arm, biEnrollment: birthInput.enrollmentId, biVisitor: birthInput.visitorId } : {}),
       ...socialMetadata,
     },
     success_url: `${baseUrl}/${locale}/numerologie?payment=success&session_id={CHECKOUT_SESSION_ID}`,

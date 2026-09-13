@@ -3,6 +3,8 @@ import { cookies, headers } from 'next/headers'
 import { db } from '@/lib/db'
 import { EXPERIMENT_COOKIE, fallbackAssignment, readAssignment, type Assignment } from './assignment'
 import { ALL_VARIANTS, isKnownVariant } from './catalog'
+import { BIRTH_INPUT_COOKIE, readBirthInputAssignment, type BirthInputArm } from './birth-input-experiment'
+import { birthInputSecret, getBirthInputSettings } from './birth-input-settings'
 
 /**
  * Atribuirea vizitatorului, citită pe server din cookie-ul semnat.
@@ -34,6 +36,43 @@ export async function getRequestAssignment(): Promise<Assignment> {
     // cookies() nu e disponibil în acest context (ex. build static)
   }
   return fallbackAssignment()
+}
+
+export interface BirthInputContext {
+  arm: BirthInputArm
+  enrollmentId: string
+  visitorId: string
+}
+
+/**
+ * Contextul experimentului „formular complet vs. numai data nașterii”, citit pe server.
+ *
+ * Ca și la funnel, antetele puse de proxy au prioritate (la prima vizită cookie-ul e doar în răspuns).
+ * Proxy-ul le setează DOAR când testul e activ și vizitatorul e înscris, deci antetul de sine stătător
+ * este suficient. Când testul e oprit sau vizitatorul nu e înscris, întoarcem `null` — arma A (formularul
+ * complet actual) rămâne comportamentul implicit, deci nimic nu se schimbă live.
+ */
+export async function getRequestBirthInput(): Promise<BirthInputContext | null> {
+  try {
+    const h = await headers()
+    const arm = h.get('x-birth-input-arm')
+    const enrollmentId = h.get('x-birth-input-enrollment')
+    const visitorId = h.get('x-birth-input-visitor')
+    if ((arm === 'A' || arm === 'B') && /^[0-9a-f]{32}$/.test(enrollmentId || '') && /^[0-9a-f]{32}$/.test(visitorId || '')) {
+      return { arm, enrollmentId: enrollmentId!, visitorId: visitorId! }
+    }
+  } catch {
+    // headers() nu e disponibil în acest context
+  }
+  try {
+    const settings = await getBirthInputSettings()
+    if (!settings.enabled) return null
+    const store = await cookies()
+    const assignment = await readBirthInputAssignment(store.get(BIRTH_INPUT_COOKIE)?.value, birthInputSecret())
+    return assignment ? { arm: assignment.arm, enrollmentId: assignment.enrollmentId, visitorId: assignment.visitorId } : null
+  } catch {
+    return null
+  }
 }
 
 /** Antetele puse de proxy pentru contextul de raportare (fără date personale). */

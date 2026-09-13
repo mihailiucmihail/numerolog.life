@@ -62,7 +62,8 @@ body.cd-grani-preview #results{margin-inline:0!important;width:100%!important;ma
   'use strict';
   var params = new URLSearchParams(location.search);
   var pv = params.get('pv');
-  if(pv !== 'preview-grani-v1') return;
+  var progressiveCheck = pv === 'preview-birth-input-check-v1';
+  if(pv !== 'preview-grani-v1' && !progressiveCheck) return;
   document.body.classList.add('cd-grani-preview');
   var lang = params.get('lang') === 'ro' ? 'ro' : 'ru';
   var unlocked = (params.get('unlocked') || '').split(',').map(function(v){ return parseInt(v, 10); }).filter(function(n){ return n >= 1 && n <= 14; });
@@ -268,6 +269,9 @@ body.cd-grani-preview #results{margin-inline:0!important;width:100%!important;ma
     var io = new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('is-in'); io.unobserve(e.target); } }); }, { threshold:.08 });
     items.forEach(function(el){ io.observe(el); });
   }
+
+  /*__CD_PROGRESSIVE_CHECK__*/
+  if(progressiveCheck) return;
 
   window.renderPreview = renderPreview = function(model){
     baseRender(model);

@@ -2,6 +2,7 @@
 
 import { db } from '@/lib/db'
 import { normalizeCountry } from '@/lib/currency'
+import { getRequestBirthInput } from '@/lib/experiments/server'
 
 interface PreviewForm {
   last?: string
@@ -69,6 +70,11 @@ export async function savePreviewLead(
 
     const leadKey = leadKeyFor(email, id)
     const safeLocale = locale === 'ro' ? 'ro' : 'ru'
+    // Arma experimentului „formular vs. dată”, citită din cookie-ul SEMNAT pe server (nu din client).
+    // null cât testul e oprit sau vizitatorul nu e înscris → coloanele rămân NULL, nimic nu se schimbă.
+    const birthInput = await getRequestBirthInput()
+    const biArm = birthInput?.arm ?? null
+    const biEnrollment = birthInput?.enrollmentId ?? null
     const formData = {
       last: id.last,
       first: id.first,
@@ -83,16 +89,18 @@ export async function savePreviewLead(
 
     await db`
       INSERT INTO cristalul_previews
-        (lead_key, email, first_name, last_name, birth_day, birth_month, birth_year, form_data, locale, currency, country)
+        (lead_key, email, first_name, last_name, birth_day, birth_month, birth_year, form_data, locale, currency, country, bi_arm, bi_enrollment)
       VALUES
-        (${leadKey}, ${email}, ${id.first}, ${id.last}, ${id.day}, ${id.month}, ${id.year}, ${db.json(formData as any)}, ${safeLocale}, ${safeCurrency}, ${safeCountry})
+        (${leadKey}, ${email}, ${id.first}, ${id.last}, ${id.day}, ${id.month}, ${id.year}, ${db.json(formData as any)}, ${safeLocale}, ${safeCurrency}, ${safeCountry}, ${biArm}, ${biEnrollment})
       ON CONFLICT (lead_key) DO UPDATE
         SET views = cristalul_previews.views + 1,
             last_seen_at = now(),
             form_data = EXCLUDED.form_data,
             locale = EXCLUDED.locale,
             currency = EXCLUDED.currency,
-            country = COALESCE(EXCLUDED.country, cristalul_previews.country)
+            country = COALESCE(EXCLUDED.country, cristalul_previews.country),
+            bi_arm = COALESCE(EXCLUDED.bi_arm, cristalul_previews.bi_arm),
+            bi_enrollment = COALESCE(EXCLUDED.bi_enrollment, cristalul_previews.bi_enrollment)
     `
     return { ok: true }
   } catch (err) {
