@@ -1256,26 +1256,33 @@ html.cd-next-design #pdfDownloadCard { display: none !important; }
 html.cd-next-design #lifeChartSvg .axis-line { stroke: var(--cdn-border) !important; }
 html.cd-next-design #lifeChartSvg .axis-label { fill: var(--cdn-muted) !important; font: 14px Manrope, sans-serif !important; }
 html.cd-next-design #lifeChartSvg .life-path { stroke: var(--cdn-gold) !important; stroke-width: 3 !important; filter: none !important; }
-html.cd-next-design #lifeChartSvg .life-path-2 { stroke: var(--cdn-teal) !important; stroke-width: 3 !important; }
-html.cd-next-design #lifeChartSvg .avg-line, html.cd-next-design #lifeChartSvg .avg-line-2 { stroke: var(--cdn-rose) !important; opacity: .8 !important; }
+html.cd-next-design #lifeChartSvg .life-path-2 { stroke: var(--cdn-teal) !important; stroke-width: 3 !important; stroke-dasharray: 8 5 !important; }
+html.cd-next-design #lifeChartSvg .avg-line { stroke: var(--cdn-rose) !important; opacity: .8 !important; }
+html.cd-next-design #lifeChartSvg .avg-line-2 { stroke: var(--cdn-rose) !important; opacity: .8 !important; stroke-dasharray: 5 4 !important; }
 html.cd-next-design #lifeChartSvg .life-point { fill: var(--cdn-bg) !important; stroke: var(--cdn-gold) !important; }
 html.cd-next-design #lifeChartSvg .life-point-2 { fill: var(--cdn-bg) !important; stroke: var(--cdn-teal) !important; }
 html.cd-next-design #lifeChartSvg .now-line, html.cd-next-design #lifeChartSvg .now-marker { stroke: var(--cdn-teal) !important; }
+html.cd-next-design #lifeChartSvg .now-line { stroke-dasharray: 2 4 !important; }
 html.cd-next-design #lifeChartSvg .now-marker { fill: var(--cdn-teal) !important; }
-html.cd-next-design #lifeChartSvg .crossing-mark { stroke: var(--cdn-rose) !important; }
+html.cd-next-design #lifeChartSvg .crossing-mark { stroke: var(--cdn-rose) !important; fill: var(--cdn-rose) !important; }
 html.cd-next-design #lifeChartSvg .now-label-bg { fill: var(--cdn-bg) !important; }
 html.cd-next-design #lifeChartSvg .now-label-text { fill: var(--cdn-teal) !important; }
 html.cd-next-design .chart-tabs { display: flex !important; flex-wrap: wrap !important; gap: 8px !important; }
 html.cd-next-design #results .card .chart-tab { flex: 0 1 auto !important; width: auto !important; min-width: 0 !important; min-height: 36px !important; padding: 6px 10px !important; border: 1px solid var(--cdn-border) !important; border-radius: 6px !important; background: var(--cdn-panel) !important; color: var(--cdn-muted) !important; font-size: 14px !important; line-height: 1.4 !important; letter-spacing: 0 !important; text-transform: none !important; }
 html.cd-next-design #results .chart-tabs { gap: 6px !important; margin-bottom: 12px !important; }
 html.cd-next-design #results .card .chart-tab.active { border-color: var(--cdn-gold) !important; color: var(--cdn-gold) !important; }
-html.cd-next-design .cd-next-legend { display: flex; flex-wrap: wrap; gap: 12px 20px; padding-block: 12px; font: 14px/1.5 Manrope, sans-serif; color: var(--cdn-muted); }
-html.cd-next-design .cd-next-legend span { display: inline-flex; align-items: center; gap: 8px; }
-html.cd-next-design .cd-next-legend i { width: 16px; height: 3px; background: var(--cdn-gold); }
+html.cd-next-design .cd-next-legend { display: flex; flex-wrap: nowrap; gap: 12px 20px; max-width: 100%; overflow-x: auto; padding-block: 12px; font: 14px/1.5 Manrope, sans-serif; color: var(--cdn-muted); scrollbar-width: thin; }
+html.cd-next-design .cd-next-legend span { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 8px; white-space: nowrap; }
+html.cd-next-design .cd-next-legend i { width: 18px; height: 3px; flex: 0 0 18px; background: var(--cdn-gold); }
 html.cd-next-design .cd-next-legend [data-tone="teal"] i { background: var(--cdn-teal); }
 html.cd-next-design .cd-next-legend [data-tone="rose"] i { background: var(--cdn-rose); }
-html.cd-next-design .cd-next-readout { display: block; min-height: 48px; padding: 12px; margin-block: 12px 0; border: 1px solid var(--cdn-border); border-radius: 8px; background: var(--cdn-panel); color: var(--cdn-text); font: 14px/1.5 Manrope, sans-serif; overflow-wrap: anywhere; }
-html.cd-next-design .cd-next-chart-control { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding-block: 12px; color: var(--cdn-muted); font: 14px/1.5 Manrope, sans-serif; }
+html.cd-next-design .cd-next-legend [data-tone="gold"][data-style="dashed"] i { background: repeating-linear-gradient(90deg, var(--cdn-gold) 0 6px, transparent 6px 10px); }
+html.cd-next-design .cd-next-legend [data-tone="teal"][data-style="dashed"] i { background: repeating-linear-gradient(90deg, var(--cdn-teal) 0 6px, transparent 6px 10px); }
+html.cd-next-design .cd-next-legend [data-tone="rose"][data-style="dashed"] i { background: repeating-linear-gradient(90deg, var(--cdn-rose) 0 6px, transparent 6px 10px); }
+html.cd-next-design .cd-next-legend [data-style="marker"] i { width: 10px; height: 10px; flex-basis: 10px; border: 2px solid currentColor; border-radius: 50%; background: transparent; }
+html.cd-next-design .cd-next-legend [data-style="dot"] i { width: 10px; height: 10px; flex-basis: 10px; border-radius: 50%; }
+html.cd-next-design .cd-next-readout { display: block; min-width: 0; min-height: 48px; padding: 12px; margin-block: 12px 0; border: 1px solid var(--cdn-border); border-radius: 8px; background: var(--cdn-panel); color: var(--cdn-text); font: 14px/1.5 Manrope, sans-serif; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+html.cd-next-design .cd-next-chart-control { display: flex; flex-wrap: nowrap; align-items: center; gap: 12px; min-width: 0; padding-block: 12px; color: var(--cdn-muted); font: 14px/1.5 Manrope, sans-serif; }
 html.cd-next-design .cd-next-chart-control input { min-width: 0; width: auto; flex: 1 1 160px; height: 32px; accent-color: var(--cdn-teal); }
 html.cd-next-design .meta-timeline { padding-inline: 12px; }
 html.cd-next-design .meta-track { height: 28px; border: 1px solid var(--cdn-border) !important; border-radius: 8px !important; background: var(--cdn-panel) !important; }
@@ -10704,9 +10711,10 @@ function renderStandardFull(model, layer, results) {
   function legend(host, items) {
     if (host.querySelector(':scope > .cd-next-legend')) return;
     const row = node('div', 'cd-next-legend');
-    items.forEach(([tone, label]) => {
+    items.forEach(([tone, label, style]) => {
       const item = node('span');
       item.dataset.tone = tone;
+      if (style) item.dataset.style = style;
       const swatch = node('i');
       swatch.setAttribute('aria-hidden', 'true');
       item.append(swatch, document.createTextNode(label));
@@ -10744,7 +10752,14 @@ function renderStandardFull(model, layer, results) {
     document.querySelectorAll('.chart-tab').forEach(tab => tab.setAttribute('aria-pressed', String(tab.classList.contains('active'))));
     let tools = host.querySelector('.cd-next-life-tools');
     if (!tools) { tools = node('div', 'cd-next-life-tools'); chart.closest('.chart-stage').after(tools); }
-    legend(tools, [['gold', 'Основная линия'], ['teal', 'Сейчас / сравнение'], ['rose', 'Среднее значение']]);
+    legend(tools, [
+      ['gold', 'Основная линия'],
+      ['teal', 'Сравнение', 'dashed'],
+      ['rose', 'Среднее значение'],
+      ['rose', 'Среднее сравнение', 'dashed'],
+      ['teal', 'Текущий возраст', 'marker'],
+      ['rose', 'Точка пересечения', 'dot']
+    ]);
     const output = readout(tools, 'Выберите точку: возраст и значение появятся здесь.');
     chart.querySelectorAll('.life-point, .life-point-2').forEach(point => {
       const age = Number(point.dataset.plotage || point.dataset.age);

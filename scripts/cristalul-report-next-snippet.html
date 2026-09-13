@@ -25,9 +25,10 @@
   function legend(host, items) {
     if (host.querySelector(':scope > .cd-next-legend')) return;
     const row = node('div', 'cd-next-legend');
-    items.forEach(([tone, label]) => {
+    items.forEach(([tone, label, style]) => {
       const item = node('span');
       item.dataset.tone = tone;
+      if (style) item.dataset.style = style;
       const swatch = node('i');
       swatch.setAttribute('aria-hidden', 'true');
       item.append(swatch, document.createTextNode(label));
@@ -65,7 +66,14 @@
     document.querySelectorAll('.chart-tab').forEach(tab => tab.setAttribute('aria-pressed', String(tab.classList.contains('active'))));
     let tools = host.querySelector('.cd-next-life-tools');
     if (!tools) { tools = node('div', 'cd-next-life-tools'); chart.closest('.chart-stage').after(tools); }
-    legend(tools, [['gold', 'Основная линия'], ['teal', 'Сейчас / сравнение'], ['rose', 'Среднее значение']]);
+    legend(tools, [
+      ['gold', 'Основная линия'],
+      ['teal', 'Сравнение', 'dashed'],
+      ['rose', 'Среднее значение'],
+      ['rose', 'Среднее сравнение', 'dashed'],
+      ['teal', 'Текущий возраст', 'marker'],
+      ['rose', 'Точка пересечения', 'dot']
+    ]);
     const output = readout(tools, 'Выберите точку: возраст и значение появятся здесь.');
     chart.querySelectorAll('.life-point, .life-point-2').forEach(point => {
       const age = Number(point.dataset.plotage || point.dataset.age);
