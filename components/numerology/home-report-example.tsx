@@ -112,7 +112,7 @@ export function HomeReportExample({ locale: explicitLocale }: { locale?: 'ro' | 
         </header>
         <nav ref={toolbarRef} id="prima-cheie" aria-label={ro ? 'Navigare raport și calcul personal' : 'Разделы и личный расчёт'} className="sticky top-[env(safe-area-inset-top,0px)] z-30 scroll-mt-0 border border-primary/20 bg-card/95 p-2 text-foreground shadow-lg backdrop-blur-xl sm:rounded-b-xl">
           <div className="flex items-center gap-2">
-            <span className="hidden max-w-[300px] shrink-0 px-2 text-sm font-semibold leading-5 text-foreground/85 lg:block">{ro ? 'Raport exemplu · Pentru raportul tău, apasă butonul galben și completează datele personale.' : 'Пример разбора · Для своего отчёта нажми жёлтую кнопку и введи личные данные.'}</span>
+            <span className="max-w-[190px] min-w-0 shrink px-2 text-xs font-semibold leading-4 text-foreground/85 sm:max-w-[300px] sm:text-sm sm:leading-5">{ro ? 'Raport exemplu · Pentru raportul tău, apasă butonul galben și completează datele personale.' : 'Пример разбора · Для своего отчёта нажми жёлтую кнопку и введи личные данные.'}</span>
             <select aria-label={ro ? 'Alege un capitol' : 'Выбери раздел'} disabled={!chapters.length} defaultValue="" onChange={event => { const chapter = chapters.find(item => item.id === event.target.value); if (chapter) navigate(chapter) }} className="h-11 min-w-0 flex-1 rounded-lg border border-border bg-card px-2 text-sm text-foreground">
               <option value="" disabled>{ro ? 'Alege un capitol' : 'Выбери раздел'}</option>
               {chapters.map(chapter => <option key={chapter.id} value={chapter.id}>{chapter.title}</option>)}
