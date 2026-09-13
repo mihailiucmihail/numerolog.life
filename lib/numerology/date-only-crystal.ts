@@ -1,4 +1,5 @@
 import { birthDateSchema } from './progressive-input'
+import { calculateDateLifeCharts } from './date-only-life-charts'
 
 function reduce22(value: number): number {
   if (value > 22) value -= 22 * Math.floor((value - 1) / 22)
@@ -13,7 +14,7 @@ function lastNonzeroDigit(value: number): number {
   return Number([...String(value)].reverse().find(digit => digit !== '0') || 0)
 }
 
-/** Only date-derived scalars. No name normalization, nominal chart or inferred gender runs here. */
+/** Only date-derived calculations. No name normalization, nominal chart or inferred gender runs here. */
 export function calculateDateOnlyCrystal(input: unknown, today = new Date()) {
   const birth = birthDateSchema(today).parse(input)
   const { day, month, year } = birth
@@ -50,8 +51,17 @@ export function calculateDateOnlyCrystal(input: unknown, today = new Date()) {
   const counts: Record<number, number> = Object.fromEntries(Array.from({ length: 9 }, (_, index) => [index + 1, 0]))
   for (const digit of `${day}${month}${year}`) if (digit !== '0') counts[Number(digit)]++
   const maturityStart = WorkNum_1 + 10
+  const karmicValues = [OPV_DOP, OPV, KN_2, KN_3, KN_4, lowerTotal].filter((value): value is number => value !== null)
+  const repeatCount = Math.max(...karmicValues.map(value => karmicValues.filter(other => other === value).length))
+  const baseRaw = 55 - (2 * month + day) || 53
+  let layer1 = baseRaw
+  for (let index = 0; index < repeatCount; index++) layer1 += layer1 < 40 ? 13 : 1
+  layer1 = Math.min(layer1, 53)
 
   return {
+    ...calculateDateLifeCharts(birth, layer1, today),
+    baseRaw, layer1, repeatCount,
+    karmicLayerAges: Array.from({ length: 7 }, (_, index) => layer1 + 9 * index),
     kind: 'date-only' as const,
     birth,
     TaroDay, TaroMonth, TaroYear, childhoodDigit,

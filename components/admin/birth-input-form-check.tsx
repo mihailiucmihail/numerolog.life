@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { BirthDateForm } from '@/components/numerology/funnel/birth-date-form'
+import { DateOnlyChartCheck } from '@/components/admin/date-only-chart-check'
 import { IdentityCompletionDialog } from '@/components/numerology/funnel/identity-completion-dialog'
 import { calculateDateOnlyCrystal } from '@/lib/numerology/date-only-crystal'
 import { NAME_FRAGMENT_REQUIREMENTS, type BirthDateInput } from '@/lib/numerology/progressive-input'
@@ -60,6 +61,7 @@ function FormCheck({ locale }: { locale: 'ro' | 'ru' }) {
             <div><dt className="text-muted-foreground">Arcana lunii</dt><dd className="font-mono text-xl">{result.TaroMonth}</dd></div>
             <div><dt className="text-muted-foreground">Arcana anului</dt><dd className="font-mono text-xl">{result.TaroYear}</dd></div>
           </dl>
+          <DateOnlyChartCheck result={result} locale={locale} />
           <div className="flex flex-col gap-3 sm:items-start">
             {CHECKS.map(check => <Button key={check.key} type="button" variant="outline" onClick={() => setActive(check)} className="min-h-11">{check.label}</Button>)}
             <Button type="button" variant="ghost" onClick={() => setEditing(true)} className="min-h-11">Editează data</Button>
