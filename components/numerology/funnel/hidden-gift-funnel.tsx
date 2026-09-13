@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { CrystalReactForm } from './crystal-react-form'
+import { StandardCrystalForm } from './standard-crystal-form'
 import { IdentityCompletionDialog } from './identity-completion-dialog'
 import type { FunnelForm } from './types'
 import { calculateDateOnlyCrystal } from '@/lib/numerology/date-only-crystal'
@@ -75,8 +75,8 @@ export function HiddenGiftFunnel({ locale, onSubmit, onTrack }: {
   }, [birth, attempt])
 
 
-  if (!birth) return <CrystalReactForm locale={locale} variant="form-hidden-gift-v1" futureStage="date" onSubmit={() => {}} onFirstInteraction={() => onTrack('date_started')} onBirthSubmit={(value) => {
-    const next = calculateDateOnlyCrystal(value).birth
+  if (!birth) return <StandardCrystalForm locale={locale} onFirstInteraction={() => onTrack('date_started')} onSubmit={(value) => {
+    const next = calculateDateOnlyCrystal({ day: value.day, month: value.month, year: value.year }).birth
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next))
     setBirth(next)
     onTrack('date_submitted')
