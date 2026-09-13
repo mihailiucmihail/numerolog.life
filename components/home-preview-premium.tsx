@@ -192,7 +192,7 @@ export function HomePreviewPremium({ locale }: { locale: Locale }) {
           <figure>
             <div className="relative h-[520px] overflow-hidden rounded-3xl border border-primary/20 bg-card p-3 shadow-2xl">
               <div className="absolute inset-x-8 top-0 z-10 h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
-              {showReportExample ? <iframe src={`/cristalul-calculator.html?auto=1&first=${locale === 'ro' ? 'Ana' : 'Анна'}&last=${locale === 'ro' ? 'Popescu' : 'Иванова'}&day=10&month=9&year=1990&alpha=${locale === 'ro' ? 'ro' : 'ru'}&lang=${locale}`} title={locale === 'ro' ? 'Exemplu real de raport Cristalul Destinului' : 'Реальный пример разбора «Кристалл судьбы»'} loading="lazy" tabIndex={-1} className="pointer-events-none h-[1120px] w-full rounded-2xl border-0 bg-transparent" /> : null}
+              {showReportExample ? <iframe src={`/cristalul-calculator.html?auto=1&example=1&first=${locale === 'ro' ? 'Ana' : 'Анна'}&last=${locale === 'ro' ? 'Popescu' : 'Иванова'}&day=10&month=9&year=1990&alpha=${locale === 'ro' ? 'ro' : 'ru'}&lang=${locale}`} title={locale === 'ro' ? 'Exemplu real de raport Cristalul Destinului' : 'Реальный пример разбора «Кристалл судьбы»'} loading="lazy" sandbox="allow-scripts" tabIndex={-1} className="pointer-events-none h-[1120px] w-full rounded-2xl border-0 bg-transparent" /> : null}
             </div>
             <figcaption className="mt-3 text-center text-xs text-muted-foreground">{c.reportCaption}</figcaption>
           </figure>

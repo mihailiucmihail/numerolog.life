@@ -51,6 +51,15 @@ def rep(old, new, count=1):
     s = s.replace(old, new)
 
 
+# The homepage example must never scroll its ancestors when calculate() renders.
+rep('<head>', '''<head>
+<script id="cd-passive-example">
+(function () {
+  if (new URLSearchParams(window.location.search).get('example') !== '1') return;
+  Element.prototype.scrollIntoView = function () {};
+})();
+</script>''')
+
 # 1. CSS pentru iframe -------------------------------------------------------------
 rep("html,body{margin:0;padding:0;background-color:#161022;background:var(--ink);color:var(--parchment);",
     ":root{color-scheme:light;}\nhtml,body{margin:0;padding:0;background-color:transparent !important;background:transparent !important;color:var(--parchment);")

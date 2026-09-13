@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+<script id="cd-passive-example">
+(function () {
+  if (new URLSearchParams(window.location.search).get('example') !== '1') return;
+  Element.prototype.scrollIntoView = function () {};
+})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Кристалл Судьбы — твой персональный нумерологический разбор</title>
