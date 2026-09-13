@@ -118,7 +118,7 @@ s = _mail_re.sub("""      <div class="full" id="emailField">
         <p class="note" style="margin-top:6px;font-size:12.5px;line-height:1.5;opacity:.75;">Используется только для отправки ссылки на твой разбор.</p>
       </div>
       <div class="full" id="promoField" hidden style="display:none;">
-        <label>Промокод <span style="opacity:.5;text-transform:none;letter-spacing:0;">(необязательно — скидка 15 %, де��ствует один раз)</span></label>
+        <label>Промокод <span style="opacity:.5;text-transform:none;letter-spacing:0;">(необязательно — скидка 15 %, действует один раз)</span></label>
         <input id="promoCode" type="text" placeholder="CRISTAL15-XXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" value="" style="text-transform:uppercase;letter-spacing:.08em;">
         <div id="promoMsg" style="display:none;margin-top:8px;font-size:13px;line-height:1.5;"></div>
       </div>
@@ -236,7 +236,7 @@ rep('<h1 id="heroH1"><span class="hero-lead">Твой</span><span class="hero-ca
     '<h1 id="heroH1" hidden aria-hidden="true"><span class="hero-lead">Открой свой</span><span class="hero-caps">Кристалл Судьбы</span></h1>')
 rep('<p id="heroP">Твоё имя и дата рождения хранят ответы о характере, судьбе и жизненном пути — '
     '<span class="hero-highlight">узнай, что скрыто именно в тебе</span>.</p>',
-    '<div class="hero-video" aria-label="Видео о персональном ��азборе" hidden>\n'
+    '<div class="hero-video" aria-label="Видео о персональном разборе" hidden>\n'
     '      <div class="hero-video-frame">\n'
     '        <video class="hero-video-media" controls muted loop playsinline preload="none" '
     'data-src="/videos/cristalul-premium.mp4">\n'
