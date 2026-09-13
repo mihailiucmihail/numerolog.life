@@ -1249,7 +1249,7 @@ html.cd-next-design #results b, html.cd-next-design #results strong { color: var
 html.cd-next-design #results .num { color: var(--cdn-gold) !important; }
 html.cd-next-design #results [style*="border-left:2px"], html.cd-next-design #results [style*="border-left: 2px"], html.cd-next-design .meta-block, html.cd-next-design .mini-grid > div { background: var(--cdn-panel) !important; border: 1px solid var(--cdn-border) !important; border-radius: 12px !important; box-shadow: none !important; }
 html.cd-next-design #results .mini-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)) !important; }
-html.cd-next-design #results .chart-stage, html.cd-next-design .cd-next-chart-scroll, html.cd-next-design .yc-scroll { width: 100%; max-width: 100%; margin-inline: auto; overflow-x: auto !important; overflow-y: hidden; overscroll-behavior-x: contain; border: 1px solid var(--cdn-border) !important; border-radius: 12px !important; background: var(--cdn-panel) !important; box-shadow: none !important; scrollbar-color: var(--cdn-gold) transparent; scrollbar-width: thin; }
+html.cd-next-design #results .chart-stage, html.cd-next-design .cd-next-chart-scroll, html.cd-next-design .yc-scroll { width: 100%; max-width: 100%; margin-inline: auto; overflow: visible !important; min-width: 0 !important; box-sizing: border-box; border: 1px solid var(--cdn-border) !important; border-radius: 12px !important; background: var(--cdn-panel) !important; box-shadow: none !important; scrollbar-color: var(--cdn-gold) transparent; scrollbar-width: thin; }
 html.cd-next-design #lifeChartSvg { display: block; min-width: 0 !important; width: 100% !important; max-width: 720px; margin-inline: auto; height: auto !important; aspect-ratio: 2; border: 0 !important; background: transparent !important; }
 html.cd-next-design #results .chart-stage { max-width: 720px !important; }
 html.cd-next-design #pdfDownloadCard { display: none !important; }
@@ -1287,8 +1287,12 @@ html.cd-next-design .meta-marks { height: 32px; font-size: 14px; }
 html.cd-next-design .meta-block-head { min-height: 48px; }
 html.cd-next-design .meta-block.active .meta-block-body { max-height: none !important; }
 html.cd-next-design .yc-scroll { padding: 32px 16px 16px !important; }
-html.cd-next-design .yc-grid { height: 208px !important; gap: 12px !important; }
-html.cd-next-design .yc-bar-wrap { min-width: 44px !important; }
+html.cd-next-design .yc-grid { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(52px, 1fr)); grid-auto-rows: 208px; min-width: 0 !important; width: 100% !important; height: auto !important; gap: 40px 12px !important; }
+html.cd-next-design .yc-bar-wrap { min-width: 0 !important; width: 100% !important; height: 208px !important; }
+html.cd-next-design #results div[style*="overflow-x:auto"] { overflow: visible !important; min-width: 0; }
+html.cd-next-design #results table { table-layout: fixed; width: 100% !important; }
+html.cd-next-design #results table td, html.cd-next-design #results table th { overflow-wrap: anywhere; white-space: normal !important; }
+html.cd-next-design .mandala-code-chip { margin-block: 2px; }
 html.cd-next-design .yc-bar { background: var(--cdn-gold) !important; border-radius: 6px 6px 0 0 !important; box-shadow: none !important; }
 html.cd-next-design .yc-bar.past { opacity: .45; }
 html.cd-next-design .yc-bar.q-bad, html.cd-next-design .yc-bar.q-low { background: var(--cdn-rose) !important; }

@@ -24,8 +24,8 @@ export async function generateMetadata({
   return {
     title: ro ? 'Cristalul Destinului — raport numerologic personal' : 'Кристалл судьбы — персональный нумерологический разбор',
     description: ro
-      ? 'Descoperă gratuit prima Arcană și explorează structura Cristalului Destinului: identitate, relații, bani, carieră și ciclurile vieții.'
-      : 'Узнай бесплатно первый Аркан и исследуй свой «Кристалл судьбы»: личность, отношения, деньги, карьеру и жизненные циклы.',
+      ? 'Explorează un exemplu complet al Cristalului Destinului, apoi calculează raportul tău personal: identitate, relații, bani și ciclurile vieții.'
+      : 'Изучи полный пример «Кристалла судьбы», затем рассчитай свою личную карту: личность, отношения, деньги и жизненные циклы.',
     alternates: {
       canonical: `/${locale}`,
       languages: {
