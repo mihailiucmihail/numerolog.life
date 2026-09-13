@@ -7,6 +7,7 @@ import { useCurrency } from '@/components/providers/currency-provider'
 import { FUNNEL_STORAGE_KEY } from '@/components/numerology/funnel/types'
 
 type Locale = 'ro' | 'ru'
+export type HomePreviewFormValues = { last: string; first: string; middle: string; day: string; month: string; year: string; email: string }
 
 const COPY = {
   ro: {
@@ -55,10 +56,10 @@ export function HomePreviewPrice({ locale }: { locale: Locale }) {
  * La trimitere salvează datele în sessionStorage (aceeași cheie ca funnelul) și deschide
  * `/numerologie?go=1`, unde funnelul Standard pornește direct raportul complet.
  */
-export function HomePreviewArcana({ locale }: { locale: Locale }) {
+export function HomePreviewArcana({ locale, compact = false, initialValues, onValuesChange }: { locale: Locale; compact?: boolean; initialValues?: HomePreviewFormValues; onValuesChange?: (values: HomePreviewFormValues) => void }) {
   const c = COPY[locale]
   const router = useRouter()
-  const [values, setValues] = useState({ last: '', first: '', middle: '', day: '', month: '', year: '', email: '' })
+  const [values, setValues] = useState(initialValues ?? { last: '', first: '', middle: '', day: '', month: '', year: '', email: '' })
   const [error, setError] = useState('')
   const [pending, setPending] = useState(false)
   const dateRefs = useRef<Array<HTMLInputElement | null>>([])
@@ -72,7 +73,9 @@ export function HomePreviewArcana({ locale }: { locale: Locale }) {
 
   const update = (key: keyof typeof values, value: string) => {
     setError('')
-    setValues((current) => ({ ...current, [key]: value }))
+    const nextValues = { ...values, [key]: value }
+    setValues(nextValues)
+    onValuesChange?.(nextValues)
   }
   const updateDate = (index: number, key: 'day' | 'month' | 'year', raw: string, max: number) => {
     const value = raw.replace(/\D/g, '').slice(0, max)
@@ -98,6 +101,24 @@ export function HomePreviewArcana({ locale }: { locale: Locale }) {
     setPending(true)
     router.push('/numerologie?go=1')
   }
+
+  if (compact) return (
+    <form onSubmit={submit} noValidate className="flex flex-col gap-3" aria-label={c.title}>
+      <div className="grid grid-cols-2 gap-3">
+        {(['last', 'first'] as const).map(key => <label key={key} className="flex min-w-0 flex-col gap-1 text-sm"><span>{c[key]}</span><input className={inputClass} value={values[key]} onChange={event => update(key, event.target.value)} autoComplete={key === 'last' ? 'family-name' : 'given-name'} maxLength={100} required /></label>)}
+      </div>
+      <label className="flex flex-col gap-1 text-sm"><span>{c.middle} <span className="text-muted-foreground">({locale === 'ro' ? 'opțional' : 'необязательно'})</span></span><input className={inputClass} value={values.middle} onChange={event => update('middle', event.target.value)} autoComplete="additional-name" maxLength={100} /></label>
+      <fieldset className="flex flex-col gap-2">
+        <legend className="text-sm">{c.date}</legend>
+        <div className="grid grid-cols-[1fr_1fr_1.4fr] gap-2">
+          {([['day', c.day, 2], ['month', c.month, 2], ['year', c.year, 4]] as const).map(([key, label, max], index) => <label key={key} className="flex min-w-0 flex-col gap-1 text-sm text-muted-foreground"><span>{label}</span><input ref={el => { dateRefs.current[index] = el }} className={`${inputClass} px-2 text-center tabular-nums`} value={values[key]} onChange={event => updateDate(index, key, event.target.value, max)} inputMode="numeric" maxLength={max} required /></label>)}
+        </div>
+      </fieldset>
+      {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
+      <button type="submit" disabled={pending} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary px-4 text-sm font-medium text-primary-foreground disabled:opacity-70">{pending ? (locale === 'ro' ? 'Se deschide…' : 'Открываем…') : c.submit}<ArrowRight className="size-4" aria-hidden="true" /></button>
+      <p className="text-sm leading-relaxed text-muted-foreground">{c.privacy}</p>
+    </form>
+  )
 
   return (
     <section className="relative overflow-hidden rounded-[2rem] border border-primary/25 bg-background/70 p-5 shadow-2xl backdrop-blur-xl sm:p-7" aria-labelledby="first-key-title">

@@ -6,9 +6,10 @@ import { Link, usePathname } from '@/i18n/navigation'
 
 interface NavbarProps {
   hideStart?: boolean
+  fixed?: boolean
 }
 
-export function Navbar({ hideStart = false }: NavbarProps) {
+export function Navbar({ hideStart = false, fixed = true }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false)
   const locale = useLocale()
   const pathname = usePathname()
@@ -25,7 +26,7 @@ export function Navbar({ hideStart = false }: NavbarProps) {
   return (
     <header
       data-site-header
-      className={`fixed inset-x-0 top-0 z-50 text-foreground transition-[background-color,backdrop-filter,border-color] duration-300 motion-reduce:transition-none ${scrolled ? 'border-b border-primary/10 bg-card/75 backdrop-blur-xl' : 'border-b border-transparent bg-transparent backdrop-blur-none'}`}
+      className={`${fixed ? 'fixed inset-x-0 top-0' : 'relative'} z-50 text-foreground transition-[background-color,backdrop-filter,border-color] duration-300 motion-reduce:transition-none ${scrolled ? 'border-b border-primary/10 bg-card/75 backdrop-blur-xl' : 'border-b border-transparent bg-transparent backdrop-blur-none'}`}
     >
       <nav
         className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8"
