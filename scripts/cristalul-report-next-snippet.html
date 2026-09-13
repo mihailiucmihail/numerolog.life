@@ -227,6 +227,15 @@
     buildCover(results, result);
     state.cards = [...results.querySelectorAll(':scope > .card')].filter(card => card.id !== 'personalDataSummary' && card.querySelector('.section-title') && getComputedStyle(card).display !== 'none');
     state.cards.forEach((card, index) => { card.id = card.id || ('cd-next-section-' + index); wrapCard(card, index); });
+    if (params.get('homeExample') === '1') {
+      const graphCard = results.querySelector('#lifeChartSvg')?.closest('.card');
+      if (graphCard) {
+        const action = node('button', 'cd-next-example-cta', 'Рассчитать мой Кристалл');
+        action.type = 'button';
+        action.addEventListener('click', () => send({ type: 'cdExampleForm' }));
+        graphCard.after(action);
+      }
+    }
     upgradeLifeChart(); upgradeBars(results); upgradeMatrices(results); upgradeTimeline();
     results.querySelectorAll('.mandala-chart-svg').forEach(upgradeMandala);
     const back = node('button', 'cd-next-backtop', 'Вернуться к началу');

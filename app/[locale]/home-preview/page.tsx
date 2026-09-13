@@ -1,4 +1,13 @@
-import { notFound, redirect } from 'next/navigation'
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import { HomePreviewPremium } from '@/components/home-preview-premium'
+
+export const metadata: Metadata = {
+  title: 'Homepage — preview',
+  robots: { index: false, follow: false },
+}
+
+export const dynamic = 'force-dynamic'
 
 export default async function HomePreviewPage({
   params,
@@ -8,5 +17,5 @@ export default async function HomePreviewPage({
   const { locale } = await params
   if (locale !== 'ro' && locale !== 'ru') notFound()
 
-  redirect(`/${locale}`)
+  return <HomePreviewPremium locale={locale} />
 }

@@ -81,7 +81,13 @@
     "instantTitle": "Grafic interactiv",
     "instantDesc": "O perspectivă vizuală și ușor de consultat asupra parcursului personal.",
     "privacyTitle": "Acces permanent",
-    "privacyDesc": "Primești un link personal către raportul tău, disponibil și după generare."
+    "privacyDesc": "Primești un link personal către raportul tău, disponibil și după generare.",
+    "ancestralTitle": "Temele tale karmice",
+    "ancestralDesc": "Ce lecții, conform sistemului de calcul, se repetă în viața ta și de ce anumite situații pot reveni iar și iar.",
+    "soulTitle": "Dorințele tale ascunse",
+    "soulDesc": "Ce te atrage mai profund decât pare la prima vedere — chiar dacă rar îți recunoști asta ție însuți.",
+    "mandalaTitle": "Și, cel mai important — tabloul tău personal, în întregime",
+    "mandalaDesc": "Nu un set de numere separate, ci o analiză unitară a modului în care calitățile, relațiile, banii, destinul și etapele de viață sunt legate între ele."
   },
   "compatibility": {
     "badge": "Compatibilitate",
@@ -187,6 +193,7 @@
     "feature8": "Raport complet în format ușor de consultat",
     "cta": "Primește analiza mea — {price}",
     "ctaNote": "Primești acces după plata securizată · {price}",
+    "ctaMobile": "Primește analiza mea · {price}",
     "trustSecure": "Plată securizată",
     "trustInstant": "Livrare instant",
     "trustGuarantee": "Garanție 30 zile"

@@ -1,6 +1,13 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { HomePreviewPremium } from '@/components/home-preview-premium'
+import { HomePreviewPremium as HomeClassic } from '@/components/home-classic'
+import { HOME_PAGE_VERSION } from '@/lib/home-version'
+
+const HOME_COMPONENTS = {
+  classic: HomeClassic,
+  report: HomePreviewPremium,
+}
 
 type Locale = 'ro' | 'ru'
 
@@ -38,5 +45,6 @@ export default async function HomePage({
   const { locale } = await params
   if (locale !== 'ro' && locale !== 'ru') notFound()
 
-  return <HomePreviewPremium locale={locale as Locale} />
+  const Home = HOME_COMPONENTS[HOME_PAGE_VERSION]
+  return <Home locale={locale as Locale} />
 }
