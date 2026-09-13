@@ -95,6 +95,10 @@ export async function resolveBirthInputAssignment(options: {
   }
 }
 
+export function selectBirthInputSecret(...candidates: (string | undefined)[]): string {
+  return candidates.find(candidate => typeof candidate === 'string' && candidate.trim().length >= 16) || ''
+}
+
 async function signingKey(secret: string): Promise<CryptoKey> {
   // No public fallback: the server caller supplies the existing configured application secret.
   if (secret.length < 16) throw new Error('Experiment signing secret is missing or too short')

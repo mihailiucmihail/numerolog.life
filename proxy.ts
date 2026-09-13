@@ -119,7 +119,7 @@ export default async function proxy(request: NextRequest) {
   let socialCookie: string | null = null
   let maxAge = 0
   const cleanHeaders = new Headers(request.headers)
-  for (const key of ['x-exp-visitor', 'x-exp-form', 'x-exp-preview']) cleanHeaders.delete(key)
+  for (const key of ['x-exp-visitor', 'x-exp-form', 'x-exp-preview', 'x-birth-input-arm', 'x-birth-input-enrollment', 'x-birth-input-visitor']) cleanHeaders.delete(key)
   request = new NextRequest(request, { headers: cleanHeaders })
   if (request.method === 'GET' && !request.headers.has('next-router-prefetch') && request.headers.get('purpose') !== 'prefetch' && !trackingExcluded(request.nextUrl, request.headers)) {
     const previous = await readSocialAttribution(request.cookies.get(SOCIAL_COOKIE)?.value)
@@ -155,6 +155,8 @@ async function resolveBirthInput(
   const settings = await getBirthInputSettings()
   if (!settings.enabled) return null
   const secret = birthInputSecret()
+  // Missing signing credentials must not block the public site or create unsigned assignments.
+  if (!secret) return null
   const previous = await readBirthInputAssignment(request.cookies.get(BIRTH_INPUT_COOKIE)?.value, secret)
   // Reutilizăm identificatorul stabil al vizitatorului pentru a putea corela analizele, dar testul
   // rămâne interpretabil și de sine stătător (id-ul se păstrează în propriul cookie odată înscris).

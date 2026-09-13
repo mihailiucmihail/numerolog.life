@@ -16,16 +16,16 @@ import {
   BIRTH_INPUT_EXPERIMENT,
   INITIAL_BIRTH_INPUT_SETTINGS,
   isBirthInputSettings,
+  selectBirthInputSecret,
   type BirthInputSettings,
 } from './birth-input-experiment'
 
 /** Același lanț de secrete ca la cookie-ul de funnel (`assignment.ts`), fără fallback public în producție. */
 export function birthInputSecret(): string {
-  return (
-    process.env.EXPERIMENT_COOKIE_SECRET ||
-    process.env.NEWSLETTER_ADMIN_PASSWORD ||
-    process.env.STRIPE_SECRET_KEY ||
-    'numerolog-birth-input'
+  return selectBirthInputSecret(
+    process.env.EXPERIMENT_COOKIE_SECRET,
+    process.env.NEWSLETTER_ADMIN_PASSWORD,
+    process.env.STRIPE_SECRET_KEY,
   )
 }
 
