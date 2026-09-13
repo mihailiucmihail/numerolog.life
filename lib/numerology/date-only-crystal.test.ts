@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import test from 'node:test'
 import { calculateDateOnlyCrystal } from './date-only-crystal'
+import { canCalculateNameFragment, NAME_FRAGMENT_REQUIREMENTS, type NameFragment } from './progressive-input'
 import { interpolateLifeChart, projectLifeChartPreview } from './date-only-life-charts'
 
 const html = readFileSync(resolve(process.cwd(), 'public/cristalul-calculator.html'), 'utf8')
@@ -132,16 +133,17 @@ test('cycles and current age remain correct before, on and after a leap-day birt
 const alphabetStart = html.indexOf('const ALPHABETS = {')
 const alphabetEnd = html.indexOf('function normalizeForAlphabet(', alphabetStart)
 assert.ok(alphabetStart >= 0 && alphabetEnd > alphabetStart)
-const nominalHelpers = ['normalizeForAlphabet', 'numberTo22', 'letterToNumber', 'lettersToNumber', 'checkNameData', 'checkPersonalResult'].map(originalFunction).join('\n')
+const nominalHelpers = ['normalizeForAlphabet', 'numberTo22', 'letterToNumber', 'lettersToNumber', 'checkNameAlphabet', 'checkNameData', 'checkPersonalResult'].map(originalFunction).join('\n')
 const nominal = new Function(`${html.slice(alphabetStart, alphabetEnd)}\n${nominalHelpers}\nreturn {
   enrich: checkPersonalResult,
-  name: checkNameData,
+  name(value) { return checkNameData(value, checkNameAlphabet(value)); },
   expected(value, key) {
     const normalized = normalizeForAlphabet(value, key);
     return numberTo22(lettersToNumber(normalized, ALPHABETS[key].letters));
   },
 };`)() as {
-  enrich: (birth: ReturnType<typeof calculateDateOnlyCrystal>, identity: Record<string, string>) => ReturnType<typeof calculateDateOnlyCrystal> & {
+  enrich: (birth: ReturnType<typeof calculateDateOnlyCrystal>, identity: Record<string, string>, available: Record<string, boolean>) => ReturnType<typeof calculateDateOnlyCrystal> & {
+    mandala: unknown
     nameArcana: { first: number | null; last: number | null }
     nameCounts: Record<string, number> | null
     Prizvanie_num: number | null
@@ -151,16 +153,21 @@ const nominal = new Function(`${html.slice(alphabetStart, alphabetEnd)}\n${nomin
   expected: (value: string, alphabet: string) => number
 }
 
+function enrich(birth: ReturnType<typeof calculateDateOnlyCrystal>, identity: Record<string, string>) {
+  const available = Object.fromEntries((Object.keys(NAME_FRAGMENT_REQUIREMENTS) as NameFragment[]).map(fragment => [fragment, canCalculateNameFragment(fragment, identity)]))
+  return nominal.enrich(birth, identity, available)
+}
+
 test('private Grani preview adds no nominal values until actual names are supplied', () => {
   const birth = calculateDateOnlyCrystal({ day: 10, month: 5, year: 1992 }, today)
   const before = structuredClone(birth)
-  const result = nominal.enrich(birth, {})
+  const result = enrich(birth, {})
   assert.deepEqual(result.nameArcana, { first: null, last: null })
   for (const field of ['nameCounts', 'Prizvanie_num', 'RZ_num'] as const) assert.equal(result[field], null)
   assert.deepEqual(birth, before)
   assert.equal(result.lifeCharts, birth.lifeCharts)
   assert.equal('gender' in result, false)
-  assert.equal('mandala' in result, false)
+  assert.equal(result.mandala, null)
 })
 
 test('private nominal fragments preserve original letter arithmetic for Latin and Cyrillic', () => {
@@ -170,12 +177,12 @@ test('private nominal fragments preserve original letter arithmetic for Latin an
     assert.equal(data.alphabet, alphabet)
     assert.equal(data.arcana, nominal.expected(name, alphabet))
     assert.equal(Object.values(data.counts).reduce((sum, n) => sum + n, 0), name.length)
-    const firstOnly = nominal.enrich(birth, { first: name })
+    const firstOnly = enrich(birth, { first: name })
     assert.equal(firstOnly.nameArcana.first, data.arcana)
     assert.equal(firstOnly.RZ_num, null)
     const sum = 9 * birth.TaroMonth + birth.TaroYear + data.arcana
     assert.equal(firstOnly.Prizvanie_num, ((sum - 1) % 22) + 1)
-    const lastOnly = nominal.enrich(birth, { last: name })
+    const lastOnly = enrich(birth, { last: name })
     assert.equal(lastOnly.RZ_num, data.arcana)
     assert.equal(lastOnly.Prizvanie_num, null)
     assert.equal(lastOnly.nameCounts, null)

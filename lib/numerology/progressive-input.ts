@@ -72,7 +72,7 @@ export const BIRTH_SURNAME_LABEL = {
 } as const
 
 export type IdentityField = keyof ProgressiveIdentity
-export type NameFragment = 'nameArcana' | 'vocation' | 'familyTask' | 'personalFinancialFlow' | 'nameMap'
+export type NameFragment = 'nameArcana' | 'vocation' | 'familyTask' | 'personalFinancialFlow' | 'nameMap' | 'mandala'
 
 // These are fragment prerequisites, not permission to sell an entire mixed-content facet.
 export const NAME_FRAGMENT_REQUIREMENTS = {
@@ -81,6 +81,7 @@ export const NAME_FRAGMENT_REQUIREMENTS = {
   familyTask: ['last'],
   personalFinancialFlow: ['last', 'first'],
   nameMap: ['first'],
+  mandala: ['last', 'first'],
 } as const satisfies Record<NameFragment, readonly IdentityField[]>
 
 export function missingIdentityFields(input: unknown, fields: readonly IdentityField[]): IdentityField[] {

@@ -14,6 +14,8 @@ import { FULL_CRYSTAL_IDENTITY_REQUEST, mergeIdentityCompletion, type IdentityCo
 const CHECKS = [
   { key: 'vocation', label: 'Prenume pentru vocație', request: { fields: NAME_FRAGMENT_REQUIREMENTS.vocation, requireEmail: false } },
   { key: 'family', label: 'Nume la naștere pentru neam', request: { fields: NAME_FRAGMENT_REQUIREMENTS.familyTask, requireEmail: false } },
+  { key: 'financial', label: 'Identitate pentru fluxul financiar nominal', request: { fields: NAME_FRAGMENT_REQUIREMENTS.personalFinancialFlow, includeMiddle: true, requireEmail: false } },
+  { key: 'mandala', label: 'Identitate pentru mandală', request: { fields: NAME_FRAGMENT_REQUIREMENTS.mandala, includeMiddle: true, requireEmail: false } },
   { key: 'email', label: 'Email înainte de plată', request: { fields: [], requireEmail: true } },
   { key: 'full', label: 'Identitate pentru raportul complet', request: FULL_CRYSTAL_IDENTITY_REQUEST },
 ] as const satisfies readonly { key: string; label: string; request: IdentityCompletionRequest }[]
@@ -62,7 +64,7 @@ function FormCheck({ locale }: { locale: 'ro' | 'ru' }) {
             <div><dt className="text-muted-foreground">Arcana lunii</dt><dd className="font-mono text-xl">{result.TaroMonth}</dd></div>
             <div><dt className="text-muted-foreground">Arcana anului</dt><dd className="font-mono text-xl">{result.TaroYear}</dd></div>
           </dl>
-          <BirthInputPreviewCheck result={result} identity={identity} locale={locale} onComplete={facet => setActive(CHECKS.find(check => check.key === (facet === 'full' ? 'full' : facet === 11 ? 'family' : 'vocation'))!)} />
+          <BirthInputPreviewCheck result={result} identity={identity} locale={locale} onComplete={facet => setActive(CHECKS.find(check => check.key === (facet === 'full' ? 'full' : facet === 11 ? 'family' : facet === 9 ? 'financial' : facet === 12 ? 'mandala' : 'vocation'))!)} />
           <details><summary className="cursor-pointer text-sm leading-6">Verifică separat datele graficelor</summary><DateOnlyChartCheck result={result} locale={locale} /></details>
           <div className="flex flex-col gap-3 sm:items-start">
             {CHECKS.map(check => <Button key={check.key} type="button" variant="outline" onClick={() => setActive(check)} className="min-h-11">{check.label}</Button>)}

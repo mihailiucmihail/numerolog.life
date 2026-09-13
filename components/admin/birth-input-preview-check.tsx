@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from 'react'
 import type { DateOnlyCrystal } from '@/lib/numerology/date-only-crystal'
 import type { IdentityCompletion } from '@/lib/numerology/identity-completion'
+import { canCalculateNameFragment, NAME_FRAGMENT_REQUIREMENTS, type NameFragment } from '@/lib/numerology/progressive-input'
 
-export type PreviewCheckFacet = 1 | 3 | 11 | 13 | 'full'
+export type PreviewCheckFacet = 1 | 3 | 9 | 11 | 12 | 13 | 'full'
 
 export function BirthInputPreviewCheck({ result, identity, locale, onComplete }: {
   result: DateOnlyCrystal
@@ -18,7 +19,8 @@ export function BirthInputPreviewCheck({ result, identity, locale, onComplete }:
   latest.current = { result, identity, onComplete }
 
   function sendData() {
-    frame.current?.contentWindow?.postMessage({ type: 'birthInputCheckData', result: latest.current.result, identity: latest.current.identity }, window.location.origin)
+    const available = Object.fromEntries((Object.keys(NAME_FRAGMENT_REQUIREMENTS) as NameFragment[]).map(fragment => [fragment, canCalculateNameFragment(fragment, latest.current.identity)]))
+    frame.current?.contentWindow?.postMessage({ type: 'birthInputCheckData', result: latest.current.result, identity: latest.current.identity, available }, window.location.origin)
   }
 
   useEffect(() => {
@@ -29,7 +31,7 @@ export function BirthInputPreviewCheck({ result, identity, locale, onComplete }:
       if (data.type === 'birthInputCheckReady') sendData()
       if (data.type === 'birthInputCheckRendered') { window.clearTimeout(timeout); setStatus('ready') }
       if (data.type === 'birthInputCheckFailed') { window.clearTimeout(timeout); setStatus('error') }
-      if (data.type === 'birthInputCheckIdentity' && [1, 3, 11, 13, 'full'].includes(data.facet)) latest.current.onComplete(data.facet)
+      if (data.type === 'birthInputCheckIdentity' && [1, 3, 9, 11, 12, 13, 'full'].includes(data.facet)) latest.current.onComplete(data.facet)
     }
     window.addEventListener('message', receive)
     return () => { window.clearTimeout(timeout); window.removeEventListener('message', receive) }

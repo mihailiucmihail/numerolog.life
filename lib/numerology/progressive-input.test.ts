@@ -40,6 +40,10 @@ test('nominal fragments stay unavailable until their actual name prerequisites e
   assert.equal(canCalculateNameFragment('familyTask', { last: 'Popescu' }), true)
   assert.equal(canCalculateNameFragment('personalFinancialFlow', { last: 'Popescu' }), false)
   assert.equal(canCalculateNameFragment('personalFinancialFlow', { last: 'Popescu', first: 'Ana' }), true)
+  assert.equal(canCalculateNameFragment('mandala', { first: 'Ana' }), false)
+  assert.equal(canCalculateNameFragment('mandala', { last: 'Popescu' }), false)
+  assert.equal(canCalculateNameFragment('mandala', { first: 'Ana', last: 'Popescu' }), true)
+  assert.equal(canCalculateNameFragment('mandala', { first: 'Ana', last: '<script>' }), false)
   assert.deepEqual(missingIdentityFields({ first: '<script>', gender: 'unknown' }, ['first', 'last', 'gender']), ['first', 'last', 'gender'])
 })
 

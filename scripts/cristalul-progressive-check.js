@@ -11,7 +11,11 @@ if (progressiveCheck) {
     description: 'Despre această fațetă',
     pending: 'Interpretarea acestui fragment nu este încă disponibilă în verificarea numai din dată.',
     day: 'Arcana zilei', year: 'An personal',
-    mandala: 'Mandala combină data și identitatea. Nu este calculată aici fără ramura nominală completă.',
+    mandala: 'Mandala combină data și identitatea. Completează prenumele și numele de familie la naștere pentru acest fragment.',
+    root: 'Rădăcina mandalei',
+    financial: 'Fluxul financiar nominal la vârsta de',
+    financialMissing: 'Fluxul din dată este deja disponibil. Pentru fluxul nominal, completează prenumele și numele de familie la naștere.',
+    alphabet: 'Pentru calcul, scrie toate numele într-un singur alfabet acceptat.',
     full: 'Verifică datele pentru raportul complet'
   } : {
     title: 'Твой Кристалл начинается с даты рождения',
@@ -22,21 +26,26 @@ if (progressiveCheck) {
     description: 'Об этой грани',
     pending: 'Трактовка этого фрагмента пока недоступна в проверке только по дате.',
     day: 'Аркан дня', year: 'Личный год',
-    mandala: 'Мандала объединяет дату и личные данные. Без полной именной ветки она здесь не рассчитывается.',
+    mandala: 'Мандала объединяет дату и личные данные. Дополни имя и фамилию при рождении для этого фрагмента.',
+    root: 'Корень мандалы',
+    financial: 'Именной финансовый поток в возрасте',
+    financialMissing: 'Поток по дате уже доступен. Для именного потока дополни имя и фамилию при рождении.',
+    alphabet: 'Для расчёта напиши все имена в одном поддерживаемом алфавите.',
     full: 'Проверить данные для полного разбора'
   };
 
   // This private renderer never calls calculate/computeAll, renderPaywall or checkout.
-  function checkNameData(value) {
-    if (typeof value !== 'string' || !value.trim()) return null;
-    var letters = value.normalize('NFC').match(/\p{L}/gu) || [];
-    if (!letters.length) return null;
+  function checkNameAlphabet(value) {
+    if (typeof value !== 'string' || !/\p{L}/u.test(value)) return null;
     var order = ['ru', 'ro'].concat(Object.keys(ALPHABETS).filter(function(key) { return key !== 'ru' && key !== 'ro'; }));
-    var key = order.find(function(key) {
-      var normalized = normalizeForAlphabet(value, key);
-      return (normalized.match(/\p{L}/gu) || []).every(function(letter) { return letterToNumber(letter, ALPHABETS[key].letters) > 0; });
-    });
-    if (!key) return null;
+    return order.find(function(key) {
+      var letters = normalizeForAlphabet(value.normalize('NFC'), key).match(/\p{L}/gu) || [];
+      return letters.length > 0 && letters.every(function(letter) { return letterToNumber(letter, ALPHABETS[key].letters) > 0; });
+    }) || null;
+  }
+
+  function checkNameData(value, key) {
+    if (typeof value !== 'string' || !value.trim() || !key) return null;
     var normalized = normalizeForAlphabet(value.normalize('NFC'), key);
     var sum = lettersToNumber(normalized, ALPHABETS[key].letters);
     var counts = {}; for (var digit = 1; digit <= 9; digit++) counts[digit] = 0;
@@ -47,15 +56,32 @@ if (progressiveCheck) {
     return sum ? { arcana: numberTo22(sum), counts: counts, alphabet: key } : null;
   }
 
-  function checkPersonalResult(incoming, identity) {
-    var first = checkNameData(identity.first);
-    var last = checkNameData(identity.last);
+  function checkPersonalResult(incoming, identity, available) {
+    available = available || {};
+    var key = checkNameAlphabet([identity.last, identity.first, identity.middle].filter(Boolean).join(' '));
+    var first = available.nameArcana === true ? checkNameData(identity.first, key) : null;
+    var last = available.familyTask === true ? checkNameData(identity.last, key) : null;
+    var normalized = function(value) { return normalizeForAlphabet((value || '').normalize('NFC'), key); };
+    var mandala = key && available.mandala === true
+      ? computeMandala(normalized(identity.last), normalized(identity.first), normalized(identity.middle), incoming.birth.day, incoming.birth.month, incoming.birth.year, key) : null;
+    var financial = key && available.personalFinancialFlow === true
+      ? buildPersonalizedFinancialChart(normalized(identity.last), normalized(identity.first), normalized(identity.middle), '', null, ALPHABETS[key].letters) : null;
     return Object.assign({}, incoming, {
       nameArcana: { first: first ? first.arcana : null, last: last ? last.arcana : null },
-      nameCounts: first ? first.counts : null,
-      Prizvanie_num: first ? numberTo22(9 * incoming.TaroMonth + incoming.TaroYear + first.arcana) : null,
-      RZ_num: last ? last.arcana : null
+      nameCounts: first && available.nameMap === true ? first.counts : null,
+      Prizvanie_num: first && available.vocation === true ? numberTo22(9 * incoming.TaroMonth + incoming.TaroYear + first.arcana) : null,
+      RZ_num: last ? last.arcana : null,
+      mandala: mandala,
+      personalFinancialChart: financial,
+      unsupportedAlphabet: !key && Boolean(identity.first || identity.last || identity.middle)
     });
+  }
+
+  function checkFinancialText() {
+    var chart = checkResult.personalFinancialChart;
+    if (!chart) return checkResult.unsupportedAlphabet ? checkCopy.alphabet : checkCopy.financialMissing;
+    var level = interpolateAtAge(chart.points, checkResult.currentAge);
+    return checkCopy.financial + ' ' + checkResult.currentAge + ' · ' + level.toLocaleString(lang === 'ro' ? 'ro-RO' : 'ru-RU', { maximumFractionDigits: 1 }) + '/9';
   }
 
   function checkFact(id) {
@@ -70,7 +96,11 @@ if (progressiveCheck) {
     if (id === 13 && r.nameCounts) {
       return { hint: lang === 'ro' ? 'Harta numelui · frecvența cifrelor' : 'Карта имени · частота цифр', text: Object.keys(r.nameCounts).map(function(digit) { return digit + ': ' + r.nameCounts[digit]; }).join(' · '), question: '' };
     }
-    if (id === 12) return { hint: checkCopy.description, text: checkCopy.mandala, question: '' };
+    if (id === 12) {
+      if (!r.mandala) return { hint: checkCopy.description, text: r.unsupportedAlphabet ? checkCopy.alphabet : checkCopy.mandala, question: '' };
+      var root = r.mandala.root;
+      return { hint: checkCopy.root + ' · ' + root, text: lang === 'ro' ? ROOT_RO[root] : sourceText(MANDALA_DB.rootTypes[root].plus), question: '' };
+    }
     if (id === 8 || id === 14) return fallback;
     if (id === 10) {
       var cycle = r.yearlyCycle.find(function(item) { return item.year === new Date().getFullYear(); });
@@ -85,7 +115,7 @@ if (progressiveCheck) {
     var incoming = payload.result;
     if (!incoming.birth || !Number.isInteger(incoming.birth.year) || !Number.isFinite(incoming.currentAge) || !incoming.lifeCharts) return;
     checkIdentity = payload.identity || {};
-    checkResult = checkPersonalResult(incoming, checkIdentity);
+    checkResult = checkPersonalResult(incoming, checkIdentity, payload.available);
     window.__cdLastResult = checkResult;
     currentBirthYear = incoming.birth.year;
     currentBirthMonth = incoming.birth.month;
@@ -102,6 +132,7 @@ if (progressiveCheck) {
         var section = layer.querySelector('[data-grani="' + id + '"]');
         section.querySelector('[data-check-hint]').textContent = fact.hint;
         section.querySelector('[data-check-text]').textContent = fact.text;
+        if (id === 9) section.querySelector('[data-check-financial]').textContent = checkFinancialText();
       });
     } else {
       var wrap = document.createElement('div'); wrap.className = 'cd-gr';
@@ -116,8 +147,9 @@ if (progressiveCheck) {
         if (id === 9) {
           section.innerHTML += '<div class="cd-gr-chart-explorer"><p class="cd-gr-note cd-gr-chart-hint">' + T.chartTitle + '</p><div class="cd-gr-chart-tabs" role="group" aria-label="' + esc(g[lang]) + '">' + CHART_KEYS.map(function(key, i) { return '<button type="button" class="cd-gr-chart-tab" data-gr-chart="' + key + '" aria-pressed="' + (i === 0) + '" aria-controls="cd-gr-chart-panel">' + esc(T.charts[i]) + '</button>'; }).join('') + '</div><div class="cd-gr-chart-panel" id="cd-gr-chart-panel">' + chartContent('career') + '</div></div>';
         }
+        if (id === 9) section.innerHTML += '<p class="cd-gr-note" data-check-financial>' + esc(checkFinancialText()) + '</p>';
         section.innerHTML += '<ul class="cd-gr-inside">' + titles.map(function(title) { return '<li><i aria-hidden="true"></i><em>' + esc(title) + '</em></li>'; }).join('') + '</ul>';
-        if ([1, 3, 11, 13].indexOf(id) >= 0) {
+        if ([1, 3, 9, 11, 12, 13].indexOf(id) >= 0) {
           var button = document.createElement('button'); button.type = 'button'; button.className = 'cd-gr-btn'; button.textContent = checkCopy.complete;
           button.setAttribute('data-check-complete', String(id));
           button.addEventListener('click', function() { window.parent.postMessage({ type: 'birthInputCheckIdentity', facet: id }, checkOrigin); });
