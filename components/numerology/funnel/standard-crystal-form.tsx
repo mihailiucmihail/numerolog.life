@@ -1,12 +1,12 @@
 'use client'
 
 import { FormEvent, useMemo, useRef, useState } from 'react'
-import { ArrowRight, CalendarDays, Lock, Mail, UserRound } from 'lucide-react'
+import { ArrowRight, CalendarDays, Lock, UserRound } from 'lucide-react'
 import type { CrystalFormValues } from './crystal-react-form'
 
 /**
  * Formularul „Standard” (trafic organic/intern): un singur pas, complet — nume, prenume,
- * patronimic, data nașterii și email opțional. Emailul este obligatoriu doar la plată.
+ * patronimic și data nașterii. Emailul este cerut doar la plată.
  * Titlul se personalizează în timp real cu prenumele introdus.
  */
 interface StandardCrystalFormProps {
@@ -134,8 +134,7 @@ export function StandardCrystalForm({ initialEmail = '', initialValues, locale =
     event.preventDefault()
     if (!values.first.trim() || !values.last.trim()) return setError(c.nameError)
     if (!dateValid) return setError(c.dateError)
-    const email = values.email.trim()
-    if (email && !EMAIL_RE.test(email)) return setError(c.emailError)
+    const email = EMAIL_RE.test(values.email.trim()) ? values.email.trim() : ''
     setError('')
     onSubmit({
       last: values.last.trim(),
@@ -211,15 +210,6 @@ export function StandardCrystalForm({ initialEmail = '', initialValues, locale =
             </p>
           )}
         </fieldset>
-
-        <label className="flex flex-col gap-2 text-xs text-muted-foreground">
-          <span className="flex items-center gap-2 font-mono uppercase tracking-[0.14em]">
-            <Mail className="size-4 text-primary" aria-hidden="true" />
-            {c.email}
-          </span>
-          <input type="email" className={inputClass} value={values.email} onChange={(e) => update('email', e.target.value)} autoComplete="email" inputMode="email" placeholder="name@example.com" />
-          <span className="text-xs leading-5 text-muted-foreground/80">{c.emailNote}</span>
-        </label>
 
         {error && (
           <p role="alert" className="rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2.5 text-sm text-destructive">

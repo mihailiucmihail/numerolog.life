@@ -80,6 +80,9 @@ rep("""  background-color:#1c1529;
   background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), #1c1529;
 """, "  background-color:transparent;\n  background:linear-gradient(145deg,rgba(40,24,62,.72),rgba(13,13,35,.9));\n")
 
+# Email is collected by the payment UI, never by the initial calculator form.
+rep('</head>', '<style id="cd-checkout-only-email">#emailField{display:none!important}</style></head>')
+
 # 1b. body{min-height:100vh} în iframe = înălțimea iframe-ului → buclă infinită de resize. Eliminăm.
 rep("  min-height:100vh;\n  padding: 0 6px 80px;", "  min-height:0;\n  padding: 0 6px 80px;")
 
@@ -115,7 +118,7 @@ s = _mail_re.sub("""      <div class="full" id="emailField">
         <p class="note" style="margin-top:6px;font-size:12.5px;line-height:1.5;opacity:.75;">Используется только для отправки ссылки на твой разбор.</p>
       </div>
       <div class="full" id="promoField" hidden style="display:none;">
-        <label>Промокод <span style="opacity:.5;text-transform:none;letter-spacing:0;">(необязательно — скидка 15 %, действует один раз)</span></label>
+        <label>Промокод <span style="opacity:.5;text-transform:none;letter-spacing:0;">(необязательно — скидка 15 %, де��ствует один раз)</span></label>
         <input id="promoCode" type="text" placeholder="CRISTAL15-XXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" value="" style="text-transform:uppercase;letter-spacing:.08em;">
         <div id="promoMsg" style="display:none;margin-top:8px;font-size:13px;line-height:1.5;"></div>
       </div>
@@ -233,7 +236,7 @@ rep('<h1 id="heroH1"><span class="hero-lead">Твой</span><span class="hero-ca
     '<h1 id="heroH1" hidden aria-hidden="true"><span class="hero-lead">Открой свой</span><span class="hero-caps">Кристалл Судьбы</span></h1>')
 rep('<p id="heroP">Твоё имя и дата рождения хранят ответы о характере, судьбе и жизненном пути — '
     '<span class="hero-highlight">узнай, что скрыто именно в тебе</span>.</p>',
-    '<div class="hero-video" aria-label="Видео о персональном разборе" hidden>\n'
+    '<div class="hero-video" aria-label="Видео о персональном ��азборе" hidden>\n'
     '      <div class="hero-video-frame">\n'
     '        <video class="hero-video-media" controls muted loop playsinline preload="none" '
     'data-src="/videos/cristalul-premium.mp4">\n'
@@ -505,6 +508,9 @@ for marker in ('id="emailAddr"', 'id="promoCode"', 'id="mainCalcBtn"', 'function
                'function cdMainAction', 'onclick="cdMainAction()"', 'data-cd-form', "params.get('fv')", 'cristalul-premium.mp4', 'hero-video',
                ':root{color-scheme:light;}', '.bg-anim{display:none !important;}'):
     assert marker in s, f'marker lipsă după patch: {marker}'
+
+# Keep the bridge field available, but collect email only in payment UI.
+rep('<div class="full" id="emailField">', '<div class="full" id="emailField" hidden style="display:none!important;">')
 
 DST.write_text(s, encoding='utf-8')
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { FormEvent, useMemo, useRef, useState } from 'react'
-import { ArrowRight, CalendarDays, LockKeyhole, Mail, UserRound } from 'lucide-react'
+import { ArrowRight, CalendarDays, LockKeyhole, UserRound } from 'lucide-react'
 import { useRouter } from '@/i18n/navigation'
 import { useCurrency } from '@/components/providers/currency-provider'
 import { FUNNEL_STORAGE_KEY } from '@/components/numerology/funnel/types'
@@ -33,7 +33,6 @@ const COPY = {
 
 const CYRILLIC = /[\u0400-\u04FF]/g
 const LATIN = /[A-Za-z\u00C0-\u024F]/g
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
 function detectAlphabet(name: string, fallback: string): string {
   const cyr = (name.match(CYRILLIC) || []).length
@@ -85,8 +84,7 @@ export function HomePreviewArcana({ locale }: { locale: Locale }) {
     event.preventDefault()
     if (!values.first.trim() || !values.last.trim()) return setError(c.nameError)
     if (!dateValid) return setError(c.dateError)
-    const email = values.email.trim()
-    if (!EMAIL_RE.test(email)) return setError(c.emailError)
+    const email = ''
     const payload = {
       last: values.last.trim(), first: values.first.trim(), middle: values.middle.trim(),
       day: Number(values.day), month: Number(values.month), year: Number(values.year),
@@ -135,12 +133,6 @@ export function HomePreviewArcana({ locale }: { locale: Locale }) {
             ))}
           </div>
         </fieldset>
-
-        <label className={labelClass}>
-          <span className="flex items-center gap-2 text-sm text-foreground"><Mail className="size-4 text-primary" aria-hidden="true" />{c.email}</span>
-          <input type="email" className={inputClass} value={values.email} onChange={(e) => update('email', e.target.value)} autoComplete="email" inputMode="email" placeholder="name@example.com" required />
-          <span className="text-xs leading-5 text-muted-foreground/80">{c.emailNote}</span>
-        </label>
 
         {error && <p role="alert" className="rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2.5 text-sm text-destructive">{error}</p>}
 
