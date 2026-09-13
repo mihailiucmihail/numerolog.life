@@ -1184,6 +1184,8 @@ html.cd-next-design body {
   font-family: Manrope, system-ui, sans-serif !important;
 }
 html.cd-next-design *, html.cd-next-design *::before, html.cd-next-design *::after { box-sizing: border-box; }
+html.cd-next-design .cd-next-example-cta { align-self: center; min-height: 48px; padding: 14px 24px; border: 0; border-radius: 999px; background: var(--cdn-gold); color: var(--cdn-bg); font: 600 16px/1.5 Manrope, sans-serif; cursor: pointer; }
+html.cd-next-design .cd-next-example-cta:focus-visible { outline: 2px solid var(--cdn-text); outline-offset: 4px; }
 html.cd-next-design .wrap { width: 100% !important; max-width: 1120px !important; margin: 0 auto !important; padding: 0 0 32px !important; }
 html.cd-next-design #results { display: flex !important; flex-direction: column; gap: 20px !important; width: 100% !important; max-width: none !important; margin: 0 auto !important; padding: 0 !important; counter-reset: none !important; }
 html.cd-next-design #results::before, html.cd-next-design #results::after, html.cd-next-design #personalDataSummary { display: none !important; }
@@ -10666,6 +10668,15 @@ if (progressiveCheck) {
     buildCover(results, result);
     state.cards = [...results.querySelectorAll(':scope > .card')].filter(card => card.id !== 'personalDataSummary' && card.querySelector('.section-title') && getComputedStyle(card).display !== 'none');
     state.cards.forEach((card, index) => { card.id = card.id || ('cd-next-section-' + index); wrapCard(card, index); });
+    if (params.get('homeExample') === '1') {
+      const graphCard = results.querySelector('#lifeChartSvg')?.closest('.card');
+      if (graphCard) {
+        const action = node('button', 'cd-next-example-cta', 'Рассчитать мой Кристалл');
+        action.type = 'button';
+        action.addEventListener('click', () => send({ type: 'cdExampleForm' }));
+        graphCard.after(action);
+      }
+    }
     upgradeLifeChart(); upgradeBars(results); upgradeMatrices(results); upgradeTimeline();
     results.querySelectorAll('.mandala-chart-svg').forEach(upgradeMandala);
     const back = node('button', 'cd-next-backtop', 'Вернуться к началу');

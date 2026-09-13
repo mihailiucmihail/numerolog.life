@@ -6,7 +6,7 @@ import { ArrowRight } from 'lucide-react'
 type Chapter = { id: string; title: string; top: number; height: number }
 
 const EXAMPLE_PARAMS = new URLSearchParams({
-  auto: '1', example: '1', homeExample: '1', design: 'next',
+  auto: '1', example: '1', homeExample: '1', design: 'next', country: 'XX', lang: 'ru',
   last: 'Михайлюк', first: 'Дарья', middle: '', day: '1', month: '2', year: '1996', alpha: 'ru', gender: 'f',
 })
 
@@ -78,7 +78,8 @@ export function HomeReportExample() {
 
   const navigate = (chapter: Chapter) => {
     if (!iframeRef.current) return
-    window.scrollTo({ top: iframeRef.current.getBoundingClientRect().top + window.scrollY + chapter.top - 150, behavior: 'smooth' })
+    const navigationHeight = sectionRef.current?.querySelector('nav')?.getBoundingClientRect().height ?? 0
+    window.scrollTo({ top: iframeRef.current.getBoundingClientRect().top + window.scrollY + chapter.top - navigationHeight - 96, behavior: 'smooth' })
   }
 
   return (
