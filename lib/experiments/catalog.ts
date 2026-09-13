@@ -37,7 +37,7 @@ export interface VariantDef {
 
 export const FORM_VARIANTS: VariantDef[] = [
   { id: 'form-hidden-gift-v2', kind: 'form', label: 'Darul ascuns · Cristal progresiv', hypothesis: 'Data dezvăluie darul și cinci răspunsuri înainte de completarea numelui.', angle: 'dar și Cristal progresiv', motion: 1, active: false, weight: 0 },
-  { id: 'form-control', kind: 'form', label: 'Control', hypothesis: 'Fluxul curent rămâne etalonul pentru toate mecanicile noi.', angle: 'control', motion: 1, active: true, weight: 10 },
+  { id: 'form-control', kind: 'form', label: 'Control', hypothesis: 'Fluxul curent rămâne etalonul pentru toate mecanicile noi.', angle: 'control', motion: 1, active: false, weight: 0 },
   { id: 'form-birthday-first', kind: 'form', label: 'Birthday First', hypothesis: 'Începerea cu data nașterii creează un angajament rapid înainte de cererea numelui.', angle: 'progressive profiling', motion: 2, active: false, weight: 0 },
   { id: 'form-date-age-fast-v1', kind: 'form', label: 'Data + Vârsta Rapid', hypothesis: 'Data pe primul ecran, confirmarea imediată a vârstei și focusul automat pe nume reduc fricțiunea până la rezultat.', angle: 'viteză și recompensă imediată', motion: 2, active: true, weight: 10 },
   { id: 'form-career-report-v1', kind: 'form', label: 'Carieră: graficul din raport (formular Career Future)', hypothesis: 'Același formular Career Future; diferă doar previzualizarea (graficul real al raportului).', angle: 'carieră: același formular', motion: 2, active: false, weight: 0 },
@@ -67,7 +67,7 @@ export const FORM_VARIANTS: VariantDef[] = [
 
 export const PREVIEW_VARIANTS: VariantDef[] = [
   { id: 'preview-hidden-gift-v2', kind: 'preview', label: 'Darul ascuns · 14 fațete progresive', hypothesis: 'Darul și cinci curiozități conduc spre 14 fațete, completarea numelui și plata.', angle: 'dezvăluire și aprofundare', motion: 1, active: false, weight: 0 },
-  { id: 'preview-control', kind: 'preview', label: 'Control', hypothesis: 'Previzualizarea nativă actuală rămâne etalonul.', angle: 'control', motion: 1, active: true, weight: 10 },
+  { id: 'preview-control', kind: 'preview', label: 'Control', hypothesis: 'Previzualizarea nativă actuală rămâne etalonul.', angle: 'control', motion: 1, active: false, weight: 0 },
   { id: 'preview-birthday-first', kind: 'preview', label: 'Birthday First', hypothesis: 'Cardul personal al datei de naștere validează instant calculul.', angle: 'identitate', motion: 2, active: false, weight: 0 },
   { id: 'preview-date-age-next-v1', kind: 'preview', label: 'Data + Acum + Următorul Prag', hypothesis: 'Trei răspunsuri personale compacte — data, starea actuală și direcția următorului prag — cresc dorința de a continua analiza.', angle: 'dovadă personală și curiozitate', motion: 2, active: true, weight: 10 },
   { id: 'preview-career-report-v1', kind: 'preview', label: 'Carieră: graficul din raport 1:1', hypothesis: 'Graficul real al raportului și paragraful lui de interpretare (nivel actual vs confort, tendință, cele mai bune/grele vârste) sunt mai credibile decât o previzualizare stilizată; anul următoarei schimbări apare ca interval.', angle: 'carieră: grafic real + text din raport', motion: 2, active: false, weight: 0 },
@@ -92,7 +92,7 @@ export const PREVIEW_VARIANTS: VariantDef[] = [
   { id: 'preview-hidden-gift-v1', kind: 'preview', label: 'Darul ascuns', hypothesis: 'Darul principal este dezvăluit gratuit, iar blocajul din domeniul ales deschide analiza completă.', angle: 'revelație personală', motion: 2, active: false, weight: 0 },
   { id: 'preview-birthday-express-v1', kind: 'preview', label: 'Data Express', hypothesis: 'Rezultatul birthday real confirmă imediat valoarea după completarea unui singur câmp.', angle: 'recompensă imediată', motion: 1, active: false, weight: 0 },
   { id: 'preview-day-arcana-v1', kind: 'preview', label: 'Arcana zilei', hypothesis: 'Arcana dezvăluită în formular continuă natural în rezultatul birthday complet.', angle: 'continuitate Arcana', motion: 2, active: false, weight: 0 },
-  { id: 'preview-grani-v1', kind: 'preview', label: 'Standard: Cristalul pe Grani', hypothesis: 'Raportul întreg prezentat ca 14 Grani tematice, fiecare cu un fapt real despre persoană și un preț mic de deschidere (1 € echivalent), plus raportul complet redus cu suma plătită — auto-recunoașterea și pragul mic cresc prima plată.', angle: 'implicit: Grani la 1 €', motion: 2, active: false, weight: 0, standard: true },
+  { id: 'preview-grani-v1', kind: 'preview', label: 'Standard: Cristalul pe Grani', hypothesis: 'Raportul întreg prezentat ca 14 Grani tematice, fiecare cu un fapt real despre persoană și un preț mic de deschidere (1 € echivalent), plus raportul complet redus cu suma plătită — auto-recunoașterea și pragul mic cresc prima plată.', angle: 'implicit: Grani la 1 EUR', motion: 2, active: false, weight: 0, standard: true },
 ]
 
 export const ALL_VARIANTS: VariantDef[] = [...FORM_VARIANTS, ...PREVIEW_VARIANTS]
