@@ -1,6 +1,9 @@
 import { generateText, Output } from 'ai'
+import { createGateway } from '@ai-sdk/gateway'
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+
+const gateway = createGateway({ apiKey: process.env.AI_GATEWAY_API_KEY })
 
 export const maxDuration = 300
 
@@ -37,7 +40,7 @@ export async function POST(request: NextRequest) {
   })
 
   const { output } = await generateText({
-    model: 'anthropic/claude-sonnet-5',
+    model: gateway('anthropic/claude-sonnet-5'),
     output: Output.object({ schema }),
     system: `Ești un traducător literar român și redactor expert în numerologie. Tradu fiecare text din rusă în română nativă, elegantă și clară, cu diacritice corecte (ă, â, î, ș, ț).
 
