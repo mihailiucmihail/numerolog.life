@@ -94,3 +94,91 @@ export async function getAstroStats(password: string, days: number): Promise<{ o
     return { ok: false, error: 'Статистика сейчас недоступна.' }
   }
 }
+
+/* ── Garanția: cererile de rambursare (ținute în metadata plăților Stripe) ── */
+
+export interface AstroRefundRow {
+  paymentIntentId: string
+  email: string
+  firstName: string
+  product: string
+  amountBani: number
+  paidAt: string
+  requestedAt: string
+  reason: string
+  status: 'requested' | 'refunded'
+}
+
+export async function listAstroRefunds(password: string): Promise<{ ok: true; rows: AstroRefundRow[] } | { ok: false; error: string }> {
+  if (!authorized(password)) return { ok: false, error: 'Неверный пароль.' }
+  try {
+    const { getStripe } = await import('@/lib/stripe')
+    const stripe = getStripe()
+    const res = await stripe.paymentIntents.search({ query: "metadata['astro_refund']:'requested' OR metadata['astro_refund']:'refunded'", limit: 50 })
+    const rows: AstroRefundRow[] = []
+    for (const pi of res.data) {
+      const sessions = await stripe.checkout.sessions.list({ payment_intent: pi.id, limit: 1 })
+      const s = sessions.data[0]
+      let firstName = ''
+      try { firstName = JSON.parse(s?.metadata?.astroData || '{}')?.a?.f || '' } catch { /* */ }
+      rows.push({
+        paymentIntentId: pi.id,
+        email: s?.customer_details?.email || s?.customer_email || pi.receipt_email || '',
+        firstName,
+        product: s?.metadata?.astroProduct || '',
+        amountBani: pi.amount,
+        paidAt: new Date(pi.created * 1000).toISOString(),
+        requestedAt: pi.metadata.astro_refund_at || '',
+        reason: pi.metadata.astro_refund_reason || '',
+        status: pi.metadata.astro_refund === 'refunded' ? 'refunded' : 'requested',
+      })
+    }
+    rows.sort((a, b) => (a.status === b.status ? b.requestedAt.localeCompare(a.requestedAt) : a.status === 'requested' ? -1 : 1))
+    return { ok: true, rows }
+  } catch (error) {
+    console.error('[astroai] refunds list error', error)
+    return { ok: false, error: 'Не удалось получить заявки из Stripe.' }
+  }
+}
+
+/** Возврат одной кнопкой: полный возврат через Stripe + письмо клиенту. Доступ к отчёту закрывается. */
+export async function refundAstroPayment(password: string, paymentIntentId: string): Promise<{ ok: true } | { ok: false; error: string }> {
+  if (!authorized(password)) return { ok: false, error: 'Неверный пароль.' }
+  if (!/^pi_[A-Za-z0-9]{10,200}$/.test(paymentIntentId)) return { ok: false, error: 'Неверный платёж.' }
+  try {
+    const { getStripe } = await import('@/lib/stripe')
+    const { sendAstroRefundDoneEmail } = await import('@/lib/astroai/email')
+    const { recordAstroEvent } = await import('@/lib/astroai/track')
+    const { ASTRO_PRODUCTS, isAstroProduct } = await import('@/lib/astroai/products')
+    const stripe = getStripe()
+    const pi = await stripe.paymentIntents.retrieve(paymentIntentId, { expand: ['latest_charge'] })
+    const charge = typeof pi.latest_charge === 'object' ? pi.latest_charge : null
+    if (!charge?.refunded) {
+      await stripe.refunds.create({ payment_intent: pi.id, reason: 'requested_by_customer', metadata: { source: 'astroai_guarantee' } }, { idempotencyKey: `astro-refund-${pi.id}` })
+    }
+    await stripe.paymentIntents.update(pi.id, { metadata: { astro_refund: 'refunded', astro_refunded_at: new Date().toISOString() } })
+    const s = (await stripe.checkout.sessions.list({ payment_intent: pi.id, limit: 1 })).data[0]
+    const product = s?.metadata?.astroProduct || ''
+    let firstName = ''
+    try { firstName = JSON.parse(s?.metadata?.astroData || '{}')?.a?.f || '' } catch { /* */ }
+    const to = s?.customer_details?.email || s?.customer_email || ''
+    if (to && !charge?.refunded) {
+      await sendAstroRefundDoneEmail({ to, firstName, product: isAstroProduct(product) ? ASTRO_PRODUCTS[product].name : 'raportul AstroAI', amount: `${Math.round(pi.amount / 100)} lei` })
+    }
+    await recordAstroEvent({ event: 'refund_done', product: isAstroProduct(product) ? product : 'site', valueAmount: pi.amount, valueCurrency: pi.currency, dedup: `refund_done_${pi.id}` })
+    return { ok: true }
+  } catch (error) {
+    console.error('[astroai] refund error', error)
+    return { ok: false, error: error instanceof Error ? error.message : 'Ошибка возврата.' }
+  }
+}
+
+/** Тестовое письмо «отчёт готов» — проверить, что Resend доставляет. */
+export async function sendAstroTestEmail(password: string, to: string): Promise<{ ok: true } | { ok: false; error: string }> {
+  if (!authorized(password)) return { ok: false, error: 'Неверный пароль.' }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(to.trim())) return { ok: false, error: 'Неверный e-mail.' }
+  const { sendAstroReportEmail } = await import('@/lib/astroai/email')
+  if (!process.env.RESEND_API_KEY) return { ok: false, error: 'RESEND_API_KEY не задан на сервере.' }
+  const r = await sendAstroReportEmail({ to: to.trim(), firstName: 'Test', product: 'pachet', url: 'https://astroai.ro/ro/astroai/raport?session_id=cs_test_EXEMPLU0000000' })
+  return r.sent ? { ok: true } : { ok: false, error: `Resend отклонил отправку (отправитель: ${process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'}). Смотри логи Vercel «[astroai] email error».` }
+}

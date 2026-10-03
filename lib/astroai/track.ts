@@ -31,10 +31,13 @@ export const ASTRO_EVENTS = new Set([
   'checkout_cancelled',
   'purchase',
   'report_view',
+  'refund_view',
+  'refund_request',
+  'refund_done',
 ])
 
 /** Evenimente numărate o singură dată per vizitator și produs. */
-const ONCE = new Set(['landing_view', 'form_impression', 'form_first_interaction', 'form_submit', 'report_view'])
+const ONCE = new Set(['landing_view', 'form_impression', 'form_first_interaction', 'form_submit', 'report_view', 'refund_view'])
 
 /** Evenimentele care alimentează și raportul pe postări Instagram (social_events). */
 const SOCIAL = new Set(['form_impression', 'form_submit', 'preview_impression'])

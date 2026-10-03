@@ -154,7 +154,46 @@ export const FAQ = [
     a: 'Da. Linkul din e-mail rămâne valabil, iar raportul se deschide de pe orice telefon sau calculator.',
   },
   {
+    q: 'Și dacă nu mă regăsesc în raport?',
+    a: 'Îți dăm banii înapoi, integral, dacă îi ceri în 14 zile de la plată. Apeși „Cere rambursarea” în raport sau în e-mail (ori deschizi „Garanție și rambursare” din josul paginii), scrii adresa de e-mail și gata. Îți răspundem în cel mult 3 zile lucrătoare.',
+  },
+  {
     q: 'Ce fac dacă am o problemă cu raportul?',
-    a: 'Scrie-ne la contact@numerolog.life și îți răspundem cât mai repede. Condițiile de returnare a banilor sunt descrise în pagina „Politica de rambursare”.',
+    a: 'Scrie-ne la contact@numerolog.life și îți răspundem cât mai repede.',
   },
 ]
+
+/* Garanția: pagina „Cere rambursarea” (/ro/astroai/rambursare). */
+export const REFUND_COPY = {
+  back: 'Înapoi la AstroAI',
+  kicker: 'Garanția AstroAI',
+  title1: 'Nu te regăsești în raport?',
+  title2: 'Îți dăm banii înapoi.',
+  lead: 'Avem încredere în rapoartele noastre, dar știm că fiecare om e unic. Dacă citești raportul și simți că nu vorbește despre tine, îți returnăm integral suma plătită. Ai la dispoziție 14 zile de la plată.',
+  points: [
+    { t: 'Integral', d: 'Îți returnăm toată suma, nu doar o parte din ea.' },
+    { t: 'Simplu', d: 'Completezi formularul în mai puțin de un minut. Nu trebuie să ne dai explicații.' },
+    { t: 'Rapid', d: 'Îți răspundem în cel mult 3 zile lucrătoare.' },
+  ],
+  formTitle: 'Cere rambursarea',
+  formNote: 'Scrie adresa de e-mail pe care ai primit raportul. Găsim noi comanda.',
+  formNoteKnown: 'Comanda ta e deja identificată. Verifică adresa de e-mail și trimite cererea.',
+  emailLabel: 'E-mailul folosit la comandă',
+  reasonLabel: 'Ce nu a mers? (opțional)',
+  reasonPlaceholder: 'Câteva cuvinte ne ajută să facem rapoartele mai bune.',
+  submit: 'Trimite cererea',
+  sending: 'Se trimite…',
+  secure: 'Banii se întorc pe cardul cu care ai plătit. Nu îți cerem datele cardului.',
+  errEmail: 'Scrie adresa de e-mail folosită la comandă.',
+  errNetwork: 'Nu am putut trimite cererea. Verifică conexiunea și încearcă din nou.',
+  doneTitle: 'Am primit cererea ta',
+  doneNew: 'Ți-am trimis o confirmare pe e-mail. Verificăm cererea și revenim în cel mult 3 zile lucrătoare. După aprobare, banii apar pe card în 5–10 zile lucrătoare, în funcție de bancă.',
+  doneAlready: 'Cererea pentru această comandă e deja înregistrată și o verificăm. Îți scriem pe e-mail imediat ce returnăm banii.',
+  doneRefunded: 'Banii pentru această comandă au fost deja returnați. Dacă nu i-ai primit încă, mai așteaptă puțin: de obicei durează 5–10 zile lucrătoare, în funcție de bancă.',
+  steps: [
+    { t: 'Trimiți cererea', d: 'Completezi formularul de mai sus sau ne scrii la contact@numerolog.life de pe adresa folosită la comandă.' },
+    { t: 'O verificăm', d: 'Fiecare cerere e citită de un om, nu de un robot. Îți răspundem pe e-mail în cel mult 3 zile lucrătoare.' },
+    { t: 'Primești banii', d: 'Suma se întoarce pe cardul cu care ai plătit, prin Stripe. De obicei apare în cont în 5–10 zile lucrătoare.' },
+  ],
+  legal: 'Poți cere rambursarea în 14 zile de la plată, o singură dată pentru fiecare comandă. După rambursare, accesul la raport se închide. Garanția nu îți limitează drepturile pe care le ai prin lege ca consumator.',
+}

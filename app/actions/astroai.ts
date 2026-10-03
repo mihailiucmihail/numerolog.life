@@ -19,7 +19,7 @@ async function requestOrigin(): Promise<string> {
 
 /** Evenimente de statistică trimise din pagină. Nu aruncă niciodată erori spre interfață. */
 export async function trackAstro(event: string, product: string): Promise<void> {
-  if (event === 'purchase' || event === 'checkout_start') return // acestea se scriu doar pe server
+  if (event === 'purchase' || event === 'checkout_start' || event === 'refund_request' || event === 'refund_done') return // acestea se scriu doar pe server
   await recordAstroEvent({ event, product })
 }
 

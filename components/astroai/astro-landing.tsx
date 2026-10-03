@@ -286,7 +286,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
             <nav aria-label="Informații legale">
               <Link href="/ro/termeni">Termeni și condiții</Link>
               <Link href="/ro/confidentialitate">Confidențialitate</Link>
-              <Link href="/ro/restituiri">Politica de rambursare</Link>
+              <Link href="/ro/astroai/rambursare">Garanție și rambursare</Link>
               <Link href="/ro/cookies">Cookie-uri</Link>
               <a href="mailto:contact@numerolog.life">Contact</a>
             </nav>
