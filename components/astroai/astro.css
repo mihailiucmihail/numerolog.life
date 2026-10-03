@@ -1,193 +1,174 @@
-/* AstroAI (astroai.ro) — design v3 „Noapte”. Toate clasele au prefixul ax- ca să nu atingă restul site-ului.
-   Fundalul rămâne cel original (bg #0b0816 + StarField + gradientul fix); aici sunt doar blocurile.
-   Un singur font (Bricolage Grotesque), fără auriu; accentul e o lavandă rece care se așază pe fundal. */
+/* AstroAI (astroai.ro) — „Astrolabul v2” (design v0, portat 1:1). Toate regulile sunt sub .ax ca să nu atingă restul site-ului.
+   Fundalul rămâne cel original (bg #0b0816 + StarField + gradientul fix). */
 .ax {
-  --ax-ink: #F3F0FA;
-  --ax-mute: #AFA9C2;
-  --ax-faint: #6E6887;
-  --ax-acc: #B7C4FF;
-  --ax-acc-deep: #8FA3FF;
-  --ax-line: rgba(255, 255, 255, .12);
-  --ax-line-2: rgba(255, 255, 255, .2);
-  --ax-panel: rgba(255, 255, 255, .045);
-  --ax-panel-2: rgba(255, 255, 255, .07);
-  --ax-font: 'Bricolage Grotesque', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --ax-display: var(--ax-font);
-  --ax-body: var(--ax-font);
-  --ax-gold: var(--ax-acc); /* compatibilitate cu clasele mai vechi */
-  font-family: var(--ax-font);
-  font-optical-sizing: auto;
-  color: var(--ax-ink);
-  -webkit-font-smoothing: antialiased;
-  font-size: 16px;
-  line-height: 1.55;
+  --background: #0b0816; --foreground: #eee9f4; --primary: #d4af37; --muted-foreground: #a19aaa;
+  --border: rgba(238, 233, 244, .13); --radius: 8px; --surface: rgba(238, 233, 244, .025);
+  --font-manrope: 'Manrope', 'Helvetica Neue', Arial, sans-serif; --font-cormorant: 'Cormorant Garamond', Georgia, serif;
+  /* tokenii vechi, folosiți de cabinet și de pagina de rambursare */
+  --ax-ink: var(--foreground); --ax-mute: var(--muted-foreground); --ax-faint: #6f6a7a; --ax-acc: var(--primary); --ax-gold: var(--primary);
+  --ax-line: var(--border); --ax-line-2: rgba(238, 233, 244, .22); --ax-panel: var(--surface); --ax-font: var(--font-manrope); --ax-display: var(--font-cormorant); --ax-body: var(--font-manrope);
+  color: var(--foreground); font-family: var(--font-manrope); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased;
 }
-.ax h1, .ax h2, .ax h3 { margin: 0; font-weight: 500; letter-spacing: -.025em; line-height: 1.08 }
-.ax h2 { font-size: clamp(28px, 3.2vw, 40px) }
-.ax h3 { font-size: 22px; line-height: 1.2 }
+.ax * { box-sizing: border-box }
+.ax button, .ax a { -webkit-tap-highlight-color: transparent } .ax button { font: inherit; cursor: pointer } .ax a { color: inherit; text-decoration: none }
+.ax button:focus-visible, .ax a:focus-visible { outline: 2px solid var(--primary); outline-offset: 5px }
+.ax ::selection { background: var(--primary); color: var(--background) }
 .ax p { margin: 0 }
-.ax-wrap { position: relative; z-index: 10; max-width: 1240px; margin: 0 auto; padding-inline: clamp(18px, 4vw, 48px) }
-.ax-muted { color: var(--ax-mute) }
-.ax-serif { font-family: var(--ax-font) }
-.ax-gold { color: var(--ax-acc) }
-.ax-kick { font-size: 13.5px; color: var(--ax-mute) }
+.ax-wrap { position: relative; z-index: 10; max-width: 1440px; margin: auto; padding: 0 80px }
+@keyframes ax-reveal { from { opacity: 0; transform: translateY(5px) } to { opacity: 1; transform: translateY(0) } }
 
-/* butoane */
-.ax-btn { display: inline-flex; align-items: center; justify-content: center; gap: .3em; height: 50px; padding: 0 24px; border-radius: 10px; background: var(--ax-ink); color: #0b0816; border: 0; cursor: pointer; font: 600 15px var(--ax-font); text-decoration: none; transition: background .2s, transform .2s; white-space: nowrap }
-.ax-btn:hover { background: #fff } .ax-btn:active { transform: translateY(1px) }
-.ax-btn:disabled { opacity: .6; cursor: progress }
-.ax-btn.acc { background: var(--ax-acc); color: #0b0816 } .ax-btn.acc:hover { background: #cad3ff }
-.ax-pill { display: inline-flex; align-items: center; height: 42px; padding: 0 18px; border-radius: 10px; border: 1px solid var(--ax-line-2); background: transparent; color: var(--ax-ink); text-decoration: none; font: 500 14px var(--ax-font); white-space: nowrap; cursor: pointer; transition: border-color .2s }
-.ax-pill:hover { border-color: var(--ax-ink) }
+/* header */
+.ax .site-header { display: flex; align-items: center; justify-content: space-between; height: 110px; border-bottom: 1px solid var(--border) }
+.ax .wordmark { display: flex; align-items: center; font-size: 28px; letter-spacing: -1.5px; font-weight: 500 }
+.ax .wordmark > span:not(.brand-symbol) { font-weight: 300; color: var(--primary) }
+.ax .wordmark small { font-size: 15px; letter-spacing: -.5px; align-self: flex-end; padding-bottom: 7px; color: var(--muted-foreground) }
+.ax .brand-symbol { color: var(--primary); margin-right: 10px }
+.ax .site-header nav { display: flex; gap: 36px; color: var(--muted-foreground) } .ax .site-header nav a:hover { color: var(--foreground) }
+.ax .header-link { display: flex; align-items: center; gap: 17px; border: 1px solid var(--border); border-radius: var(--radius); padding: 11px 18px; background: transparent; color: var(--foreground) }
 
-/* nav */
-.ax-nav { display: flex; align-items: center; justify-content: space-between; height: 76px; gap: 16px }
-.ax-logo { font: 600 22px/1 var(--ax-font); letter-spacing: -.02em; text-decoration: none; color: var(--ax-ink) }
-.ax-logo i { font-style: normal; color: var(--ax-acc) }
-.ax-links { display: flex; gap: 28px } .ax-links a { color: var(--ax-mute); text-decoration: none; font-size: 14.5px } .ax-links a:hover { color: var(--ax-ink) }
-
-/* hero: data e titlul */
-.ax-hero { position: relative; padding: 40px 0 56px; min-height: calc(100svh - 76px); display: flex; flex-direction: column; justify-content: center }
-.ax-hero-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: end }
-.ax-hero h1 { font-size: clamp(36px, 4.6vw, 60px); font-weight: 400; line-height: 1.02 }
-.ax-hero-top p { max-width: 46ch; color: var(--ax-mute); font-size: 17px; justify-self: end; padding-bottom: 6px }
-.ax-date { margin-top: 36px; display: flex; align-items: baseline; gap: .08em; font-weight: 300; font-size: clamp(52px, 11.6vw, 200px); line-height: .95; letter-spacing: -.05em; font-variant-numeric: tabular-nums }
-.ax-date input { all: unset; width: 2ch; text-align: center; color: var(--ax-ink); caret-color: var(--ax-acc); border-bottom: 3px solid rgba(255, 255, 255, .16); transition: border-color .25s; font-variant-numeric: tabular-nums }
-.ax-date input:focus { border-bottom-color: var(--ax-acc) }
-.ax-date input::placeholder { color: rgba(255, 255, 255, .16) }
-.ax-date input.y { width: 4ch }
-.ax-date span { color: rgba(255, 255, 255, .22) }
-.ax-answer { margin-top: 28px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: center; border-top: 1px solid var(--ax-line); padding-top: 22px }
-.ax-answer .line { font-size: clamp(17px, 1.9vw, 23px); min-height: 34px; color: var(--ax-mute); transition: opacity .4s; line-height: 1.4 }
-.ax-answer .line.off { opacity: 0 }
-.ax-answer .line b { color: var(--ax-ink); font-weight: 500 }
-.ax-answer .line em { font-style: normal; color: var(--ax-acc) }
-.ax-answer small { display: block; color: var(--ax-faint); font-size: 13px; margin-top: 6px }
-.ax-horizon { position: absolute; left: -10vw; right: -10vw; bottom: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--ax-acc), transparent); opacity: .5 }
-.ax-moon { position: absolute; right: 6%; top: 10%; width: 14px; height: 14px; border-radius: 50%; background: var(--ax-ink); box-shadow: 0 0 40px 10px rgba(183, 196, 255, .22); animation: ax-rise 18s ease-in-out infinite alternate }
-@keyframes ax-rise { to { transform: translateY(-40px) } }
-
-/* bandă-citat cu fotografie */
-.ax-strip { position: relative; margin-top: 10px; height: clamp(240px, 40vw, 480px); overflow: hidden; z-index: 5 }
-.ax-strip img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 35%; filter: grayscale(1) contrast(1.05); opacity: .5; mix-blend-mode: luminosity }
-.ax-strip::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, #0b0816 0%, rgba(11, 8, 22, .15) 30%, rgba(11, 8, 22, .15) 70%, #0b0816 100%) }
-.ax-strip blockquote { position: absolute; left: 0; right: 0; bottom: 16%; margin: 0; text-align: center; font-size: clamp(22px, 3vw, 38px); font-weight: 400; letter-spacing: -.02em; z-index: 1; padding: 0 20px; line-height: 1.2 }
-.ax-strip blockquote span { color: var(--ax-acc) }
-
-/* secțiuni */
-.ax-section { padding: 88px 0 0; scroll-margin-top: 16px }
-.ax-head { display: flex; justify-content: space-between; gap: 32px; align-items: end; flex-wrap: wrap; margin-bottom: 28px }
-.ax-head p { max-width: 46ch; color: var(--ax-mute) }
-
-/* rapoartele: registru pe rânduri */
-.ax-ledger { border-top: 1px solid var(--ax-line) }
-.ax-row-r { all: unset; box-sizing: border-box; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.6fr) 110px; gap: 24px; align-items: center; width: 100%; padding: 26px 0; border-bottom: 1px solid var(--ax-line); cursor: pointer; position: relative; transition: padding .25s, background .25s; text-align: left }
-.ax-row-r:hover { padding-left: 12px }
-.ax-row-r:focus-visible { outline: 2px solid var(--ax-acc); outline-offset: 2px }
-.ax-row-r[aria-checked="true"] { padding-left: 16px }
-.ax-row-r[aria-checked="true"]::before { content: ""; position: absolute; left: 0; top: 26px; bottom: 26px; width: 3px; background: var(--ax-acc); border-radius: 2px }
-.ax-row-r h3 { font-size: clamp(22px, 2.4vw, 30px); font-weight: 500; letter-spacing: -.025em }
-.ax-row-r .for { display: block; color: var(--ax-faint); font-size: 14px; margin-top: 4px }
-.ax-row-r ul { margin: 0; padding: 0; list-style: none; color: var(--ax-mute); font-size: 15px; columns: 2; column-gap: 28px }
-.ax-row-r ul li { break-inside: avoid; padding: 3px 0 3px 14px; position: relative }
-.ax-row-r ul li::before { content: ""; position: absolute; left: 0; top: 13px; width: 6px; height: 1px; background: var(--ax-faint) }
-.ax-row-r .price { text-align: right; font-size: 28px; font-weight: 300; letter-spacing: -.03em; font-variant-numeric: tabular-nums; white-space: nowrap }
-.ax-row-r.pack { background: var(--ax-panel); border-radius: 12px; border: 1px solid var(--ax-line); margin-top: 16px; padding: 22px 24px }
-.ax-row-r.pack:hover, .ax-row-r.pack[aria-checked="true"] { padding-left: 24px }
-.ax-row-r.pack[aria-checked="true"] { border-color: var(--ax-acc) }
-.ax-row-r.pack[aria-checked="true"]::before { display: none }
-.ax-row-r.pack .price s { color: var(--ax-faint); font-size: 16px; margin-right: 10px }
-.ax-row-r.pack p { color: var(--ax-mute); font-size: 15px }
+/* hero (v2: centrat) */
+.ax .hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 64px 0 48px }
+.ax .hero-copy { display: flex; flex-direction: column; align-items: center; width: 100% }
+.ax .hero-kicker { display: flex; align-items: center; gap: 12px; color: var(--primary); font-size: 14px }
+.ax .hero h1 { font-family: var(--font-cormorant); font-weight: 400; font-size: 52px; line-height: 1.15; letter-spacing: -1px; max-width: 850px; margin: 20px 0; text-wrap: balance }
+.ax .hero h1 em { font-style: italic; font-weight: 400; color: var(--primary) }
+.ax .hero-intro { font-size: 17px; line-height: 1.8; max-width: 700px; margin: 0 0 9px }
+.ax .hero-detail { font-size: 14px; color: var(--muted-foreground); max-width: 700px; line-height: 1.8; margin: 0 }
+.ax .together { display: flex; align-items: center; gap: 24px; max-width: 740px; text-align: left; border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 28px; background: var(--surface); margin-top: 30px }
+.ax .together-label { color: var(--primary); font-weight: 600; letter-spacing: .03em }
+.ax .together p { margin: 5px 0 0; color: var(--muted-foreground); font-size: 14px; line-height: 1.8; text-wrap: pretty }
+.ax .fusion-mark { position: relative; width: 84px; height: 66px; flex-shrink: 0 }
+.ax .fusion-wheel { position: absolute; left: 0; top: 0; width: 66px; height: 66px; border: 1px solid var(--primary); border-radius: 50%; background: repeating-conic-gradient(from 0deg, transparent 0deg 29deg, var(--border) 29deg 30deg); outline: 1px solid var(--border); outline-offset: -9px }
+.ax .fusion-grid { position: absolute; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(3, 1fr); width: 54px; height: 54px; background: var(--background); border: 1px solid var(--primary) }
+.ax .fusion-grid i { font-size: 14px; font-style: normal; line-height: 16px; text-align: center; color: var(--primary); border: 1px solid var(--border) }
+.ax .together.compact { max-width: none; margin: 0 0 28px; padding: 20px 24px } .ax .compact p { max-width: 930px }
+.ax .hero-art { width: min(100%, 620px); margin: 32px 0 0; min-width: 0; position: relative }
+.ax .art-topline { display: flex; justify-content: space-between; gap: 12px; color: var(--muted-foreground); font-size: 14px; padding: 0 22px }
+.ax .art-topline > span:first-child { display: flex; align-items: center; gap: 10px; color: var(--primary) }
+.ax .instrument { width: 100%; height: auto; display: block; aspect-ratio: 1 }
+.ax .instrument-caption { display: flex; align-items: center; justify-content: center; gap: 16px; font-size: 14px; color: var(--muted-foreground); text-align: center }
+.ax .caption-line { height: 1px; width: 30px; flex-shrink: 0; background: var(--border) }
+.ax .hero-cta { display: inline-flex; gap: 28px; align-items: center; background: var(--foreground); color: var(--background); padding: 16px 24px; border-radius: var(--radius); font-weight: 600; margin-top: 26px; border: 0; transition: background .2s }
+.ax .hero-cta:hover { background: #fff }
+.ax .hero-proof { display: flex; align-items: center; gap: 23px; font-size: 14px; color: var(--muted-foreground); margin-top: 18px }
+.ax .hero-proof span:first-child { display: flex; align-items: center; gap: 8px }
+.ax .hero-proof span + span { border-left: 1px solid var(--border); padding-left: 23px }
 
 /* comanda */
-.ax-order { margin-top: 88px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 5vw, 80px); padding: 56px 0; border-top: 1px solid var(--ax-line); scroll-margin-top: 16px }
-.ax-order-aside { position: sticky; top: 24px; align-self: start }
-.ax-order-aside p { margin-top: 16px; color: var(--ax-mute); max-width: 40ch }
-.ax-summary { margin-top: 28px; background: var(--ax-panel); border: 1px solid var(--ax-line); border-radius: 12px; padding: 20px 22px; display: grid; gap: 8px; font-size: 15px }
-.ax-summary div { display: flex; justify-content: space-between; gap: 12px; align-items: baseline }
-.ax-summary .total { border-top: 1px solid var(--ax-line); padding-top: 12px; margin-top: 4px; font-size: 26px; font-weight: 300 }
-.ax-summary .total s { color: var(--ax-faint); font-size: 15px; margin-right: 8px }
-.ax-form { display: grid; gap: 14px }
-.ax-row { display: grid; gap: 14px; grid-template-columns: 1fr 1fr }
-.ax-row.d { grid-template-columns: .8fr 1.35fr 1fr }
-.ax-field { display: grid; gap: 6px; min-width: 0 }
-.ax-field label { font-size: 13.5px; color: var(--ax-mute) }
-.ax-field input, .ax-field select, .ax-field textarea { all: unset; box-sizing: border-box; width: 100%; height: 50px; border: 1px solid var(--ax-line); border-radius: 10px; padding: 0 14px; font: 400 16px var(--ax-font); background: var(--ax-panel); color: var(--ax-ink); transition: border-color .2s }
-.ax-field textarea { height: auto; min-height: 96px; padding: 12px 14px; line-height: 1.5; white-space: pre-wrap }
-.ax-field input:focus, .ax-field select:focus, .ax-field textarea:focus { border-color: var(--ax-acc) }
-.ax-field input::placeholder, .ax-field textarea::placeholder { color: var(--ax-faint) }
-.ax-field select { cursor: pointer; background-image: linear-gradient(45deg, transparent 50%, var(--ax-mute) 50%), linear-gradient(135deg, var(--ax-mute) 50%, transparent 50%); background-position: calc(100% - 18px) 22px, calc(100% - 13px) 22px; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 32px }
-.ax-field select option { color: #111; background: #fff }
-.ax-hint { font-size: 12.5px; color: var(--ax-faint); margin: -4px 0 0 }
-.ax-seg { display: flex; border: 1px solid var(--ax-line); border-radius: 10px; overflow: hidden; height: 50px; background: var(--ax-panel) }
-.ax-seg button { all: unset; flex: 1; text-align: center; cursor: pointer; color: var(--ax-mute); font-size: 15px; transition: background .2s, color .2s }
-.ax-seg button[aria-checked="true"], .ax-seg button[aria-pressed="true"], .ax-seg button[aria-selected="true"] { background: var(--ax-ink); color: #0b0816; font-weight: 600 }
-.ax-subhead { font-size: 18px; font-weight: 500; margin-top: 10px; padding-top: 16px; border-top: 1px solid var(--ax-line) }
-.ax-subhead small { font-weight: 400; color: var(--ax-faint); font-size: 13px; margin-left: 8px }
-.ax-pay { margin-top: 6px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap }
-.ax-pay .ax-btn { height: 54px; padding: 0 26px; font-size: 16px }
-.ax-secure { font-size: 13px; color: var(--ax-faint); line-height: 1.5; max-width: 36ch }
-.ax-secure a { color: inherit }
-.ax-error { border: 1px solid rgba(248, 113, 113, .4); background: rgba(248, 113, 113, .1); color: #fecaca; border-radius: 10px; padding: 11px 14px; font-size: 14px }
+.ax .order-block { padding: 57px 0 40px; scroll-margin-top: 16px }
+.ax .order-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-bottom: 27px }
+.ax .small-kicker { font-size: 14px; color: var(--muted-foreground) }
+.ax h2 { font-family: var(--font-cormorant); font-size: 39px; line-height: 1.2; font-weight: 400; margin: 6px 0 0 }
+.ax .preview-note { display: flex; gap: 9px; align-items: center; color: var(--muted-foreground) }
+.ax .report-selector { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden }
+.ax .report-option { padding: 21px 24px; display: flex; flex-direction: column; gap: 7px; border: 0; border-right: 1px solid var(--border); border-radius: 0; background: transparent; color: var(--foreground); text-align: left; transition: background .2s }
+.ax .report-option:last-child { border-right: 0 }
+.ax .report-option:hover { background: var(--surface) }
+.ax .report-option.selected { background: rgba(212, 175, 55, .07); box-shadow: inset 0 2px var(--primary) }
+.ax .option-top { display: flex; justify-content: space-between; align-items: center; min-height: 22px; margin-bottom: 9px }
+.ax .radio-mark { height: 16px; width: 16px; border: 1px solid var(--muted-foreground); border-radius: 50%; display: grid; place-items: center }
+.ax .selected .radio-mark { border-color: var(--primary) } .ax .radio-mark > span { width: 6px; height: 6px; background: var(--primary); border-radius: 50% }
+.ax .bundle-save { font-size: 14px; color: var(--primary) }
+.ax .report-option strong { font-size: 15px; font-weight: 500 }
+.ax .report-price { font-size: 26px; margin-top: 7px } .ax .report-price span { font-size: 14px; color: var(--muted-foreground) } .ax .report-price del { font-size: 16px; color: var(--muted-foreground); margin-right: 8px }
+.ax .report-detail { border-bottom: 1px solid var(--border); padding: 34px 0 38px; min-height: 350px }
+.ax .report-detail-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px }
+.ax .report-detail-heading h3 { font-family: var(--font-cormorant); font-size: 34px; line-height: 1.3; font-weight: 400; margin: 0 }
+.ax .report-detail-heading > span { font-size: 20px; white-space: nowrap; color: var(--primary) } .ax .report-detail-heading del { font-size: 14px; color: var(--muted-foreground); margin-right: 8px }
+.ax .report-tagline { margin: 12px 0 25px; color: var(--muted-foreground); font-size: 16px; line-height: 1.7 }
+.ax .report-questions { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 18px 50px }
+.ax .report-questions li { display: flex; align-items: baseline; gap: 12px; line-height: 1.7 }
+.ax .report-questions li > span { width: 4px; height: 4px; background: var(--primary); border-radius: 50%; flex-shrink: 0 }
+.ax .report-reveal { animation: ax-reveal .2s ease both }
+.ax .order-bottom { display: grid; grid-template-columns: 1.2fr 1fr; gap: 70px; padding-top: 33px }
+.ax h3 { font-size: 16px; font-weight: 500; margin: 0 0 21px }
+.ax .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 19px 16px }
+.ax .field, .ax .date-field, .ax .sex-field { display: flex; flex-direction: column; gap: 8px; font-size: 14px; min-width: 0 }
+.ax .field > label, .ax .date-field > span, .ax .sex-field > span { color: var(--foreground) }
+.ax .field input, .ax .date-field select { all: unset; box-sizing: border-box; width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius); color: var(--foreground); background: var(--surface); font: inherit; transition: border-color .2s }
+.ax .field input::placeholder { color: var(--muted-foreground) }
+.ax .field input:focus, .ax .date-field select:focus { border-color: var(--primary) }
+.ax .date-field select { cursor: pointer; background-image: linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%), linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%); background-position: calc(100% - 16px) 20px, calc(100% - 11px) 20px; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 28px }
+.ax .date-field select option { color: #111; background: #fff }
+.ax .wide { grid-column: 1 / -1 }
+.ax .date-field > div { display: grid; grid-template-columns: .8fr 1.3fr 1fr; gap: 7px }
+.ax .sex-field > div { display: flex; border: 1px solid var(--border); border-radius: var(--radius); padding: 4px; height: 47px }
+.ax .sex-field button { display: flex; align-items: center; justify-content: center; gap: 8px; flex: 1; border: 0; background: transparent; color: var(--muted-foreground); border-radius: 4px; transition: background .2s, color .2s }
+.ax .sex-field button[aria-checked="true"] { background: rgba(238, 233, 244, .08); color: var(--foreground) }
+.ax .field-hint { grid-column: 1 / -1; font-size: 13px; color: var(--muted-foreground); margin: -8px 0 0 }
+.ax .partner-title { grid-column: 1 / -1; font-size: 15px; font-weight: 500; margin: 8px 0 -6px; padding-top: 16px; border-top: 1px solid var(--border) }
+.ax .partner-title small { font-weight: 400; color: var(--muted-foreground); margin-left: 8px }
+.ax .form-error { grid-column: 1 / -1; border: 1px solid rgba(248, 113, 113, .4); background: rgba(248, 113, 113, .08); color: #fecaca; border-radius: var(--radius); padding: 11px 14px }
+.ax .checkout-summary { border-left: 1px solid var(--border); padding-left: 55px; padding-top: 3px; position: sticky; top: 24px; align-self: start }
+.ax .summary-title { display: flex; align-items: center; justify-content: space-between; gap: 20px; font-size: 17px }
+.ax .summary-title strong { font-size: 31px; font-weight: 400 } .ax .summary-title small { font-size: 15px } .ax .summary-title del { font-size: 16px; color: var(--muted-foreground); margin-right: 8px }
+.ax .included { display: flex; flex-direction: column; gap: 7px; margin-top: 14px; color: var(--muted-foreground) }
+.ax .included > span { display: flex; gap: 9px; align-items: center } .ax .included svg { color: var(--primary); flex-shrink: 0 }
+.ax .payment-button { display: flex; width: 100%; justify-content: center; align-items: center; gap: 10px; background: var(--foreground); color: var(--background); font-weight: 600; border: 0; border-radius: var(--radius); padding: 16px; margin-top: 25px; transition: background .2s }
+.ax .payment-button:hover { background: #fff } .ax .payment-button:disabled { opacity: .65; cursor: progress }
+.ax .payment-note { font-size: 14px; text-align: center; color: var(--muted-foreground); line-height: 1.8; margin: 12px 0 19px } .ax .payment-note a { text-decoration: underline; text-underline-offset: 3px }
+.ax .guarantee { display: flex; align-items: center; justify-content: center; gap: 13px; border-top: 1px solid var(--border); padding-top: 17px }
+.ax .guarantee svg { color: var(--primary); flex-shrink: 0 } .ax .guarantee p { font-size: 14px; margin: 0 } .ax .guarantee p span { color: var(--muted-foreground) }
+.ax .guarantee a { color: var(--primary) }
 
-/* pași + întrebări frecvente */
-.ax-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--ax-line); border: 1px solid var(--ax-line); border-radius: 12px; overflow: hidden; margin-top: 28px }
-.ax-steps > div { background: #0b0816; padding: 28px 26px 30px }
-.ax-steps i { display: block; font-style: normal; font-weight: 300; font-size: 40px; color: var(--ax-acc); letter-spacing: -.04em; line-height: 1 }
-.ax-steps b { display: block; font-weight: 500; font-size: 18px; margin: 14px 0 6px }
-.ax-steps p { color: var(--ax-mute); font-size: 15px }
-.ax-faq-grid { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); gap: 48px }
-.ax-faq { border-top: 1px solid var(--ax-line) }
-.ax-faq > div { border-bottom: 1px solid var(--ax-line) }
-.ax-faq button { all: unset; box-sizing: border-box; cursor: pointer; display: flex; width: 100%; justify-content: space-between; gap: 20px; padding: 20px 0; font: 500 20px/1.3 var(--ax-font); letter-spacing: -.02em }
-.ax-faq button span:last-child { color: var(--ax-faint); font-weight: 300; font-size: 24px; line-height: 1 }
-.ax-faq p { padding: 0 0 22px; color: var(--ax-mute); max-width: 60ch }
-.ax-guar { margin-top: 88px; border: 1px solid var(--ax-line); border-radius: 12px; padding: 40px clamp(22px, 4vw, 48px); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: center; background: var(--ax-panel) }
-.ax-guar p { color: var(--ax-mute); margin-top: 8px; max-width: 52ch }
-.ax-foot { padding: 48px 0 40px; display: flex; flex-wrap: wrap; gap: 16px 32px; justify-content: space-between; align-items: center; font-size: 13.5px; color: var(--ax-faint) }
-.ax-foot nav { display: flex; gap: 22px; flex-wrap: wrap } .ax-foot a { color: inherit; text-decoration: none } .ax-foot a:hover { color: var(--ax-ink) }
+/* întrebări + subsol */
+.ax .faq-block { padding: 40px 0 10px; display: grid; grid-template-columns: .7fr 1.3fr; gap: 50px }
+.ax .faq-list { border-top: 1px solid var(--border) } .ax .faq-list > div { border-bottom: 1px solid var(--border) }
+.ax .faq-list button { all: unset; box-sizing: border-box; cursor: pointer; display: flex; width: 100%; justify-content: space-between; gap: 20px; padding: 18px 0; font-family: var(--font-cormorant); font-size: 22px; line-height: 1.3 }
+.ax .faq-list button span:last-child { color: var(--primary); font-family: var(--font-manrope); font-size: 20px }
+.ax .faq-list p { padding: 0 0 20px; color: var(--muted-foreground); max-width: 62ch; line-height: 1.8 }
+.ax footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 26px 0 32px; border-top: 1px solid var(--border); color: var(--muted-foreground); font-size: 14px; margin-top: 40px }
+.ax .footer-brand { color: var(--foreground); font-size: 20px; letter-spacing: -1px }
+.ax footer nav { display: flex; gap: 22px; flex-wrap: wrap } .ax footer nav a:hover { color: var(--foreground) }
 
 /* bară fixă pe mobil */
-.ax-sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); background: rgba(11, 8, 22, .86); backdrop-filter: blur(10px); border-top: 1px solid var(--ax-line); transition: transform .3s, opacity .3s }
+.ax-sticky { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); background: rgba(11, 8, 22, .88); backdrop-filter: blur(10px); border-top: 1px solid var(--border); transition: transform .3s, opacity .3s }
 .ax-sticky.hide { transform: translateY(110%); opacity: 0; pointer-events: none }
-.ax-sticky .ax-btn { width: 100%; height: 50px }
+.ax-sticky .payment-button { margin: 0; padding: 14px }
 .ax-sticky-pad { height: 0 }
-@media (min-width: 861px) { .ax-sticky, .ax-sticky-pad { display: none } }
+@media (min-width: 801px) { .ax-sticky, .ax-sticky-pad { display: none } }
 
-/* intrare la scroll */
-.ax-rv { transition: opacity .6s ease, transform .6s ease } .ax-rv.pre { opacity: 0; transform: translateY(14px) }
-
-@media (max-width: 980px) {
-  .ax-hero-top { grid-template-columns: 1fr } .ax-hero-top p { justify-self: start; padding: 0 }
-  .ax-hero { min-height: 0; padding-bottom: 40px }
-  .ax-row-r { grid-template-columns: 1fr; gap: 12px } .ax-row-r .price { text-align: left } .ax-row-r ul { columns: 1 }
-  .ax-order, .ax-faq-grid, .ax-guar { grid-template-columns: 1fr } .ax-order-aside { position: static }
-  .ax-steps { grid-template-columns: 1fr }
-  .ax-links { display: none }
+@media (max-width: 1150px) { .ax-wrap { padding: 0 40px } .ax .site-header nav { gap: 20px } .ax .report-option { padding: 20px 15px } .ax .order-bottom { gap: 35px } .ax .checkout-summary { padding-left: 30px } }
+@media (max-width: 800px) {
+  .ax-wrap { padding: 0 22px } .ax .site-header { height: 85px } .ax .site-header nav { display: none } .ax .wordmark { font-size: 25px } .ax .header-link { padding: 8px 12px }
+  .ax .hero { padding: 38px 0 35px } .ax .hero h1 { font-size: 37px; line-height: 1.18; letter-spacing: -.6px } .ax .hero-intro { font-size: 16px }
+  .ax .together { gap: 14px; padding: 18px 15px; align-items: flex-start } .ax .fusion-mark { width: 70px }
+  .ax .art-topline { padding: 0; font-size: 14px; gap: 10px } .ax .caption-line { display: none }
+  .ax .hero-proof { gap: 12px } .ax .hero-proof span + span { padding-left: 12px }
+  .ax .order-heading { align-items: flex-start } .ax .order-heading h2 { font-size: 32px } .ax .preview-note { display: none }
+  .ax .report-selector { grid-template-columns: 1fr 1fr } .ax .report-option { padding: 16px 12px; border-bottom: 1px solid var(--border) } .ax .report-option:nth-child(2n) { border-right: 0 } .ax .report-option:nth-child(n+3) { border-bottom: 0 } .ax .report-option strong { font-size: 14px } .ax .option-top { min-height: 43px }
+  .ax .report-detail { min-height: 0; padding: 28px 0 } .ax .report-detail-heading { align-items: baseline; gap: 10px } .ax .report-detail-heading h3 { font-size: 28px } .ax .report-detail-heading > span { font-size: 16px } .ax .report-questions { grid-template-columns: 1fr; gap: 17px } .ax .report-tagline { font-size: 14px }
+  .ax .order-block { padding-top: 30px; padding-bottom: 20px } .ax .order-bottom { grid-template-columns: 1fr; gap: 30px } .ax .checkout-summary { border-left: 0; border-top: 1px solid var(--border); padding: 25px 0 0; position: static }
+  .ax .field-grid { gap: 18px 12px } .ax .date-field, .ax .sex-field { grid-column: 1 / -1 }
+  .ax .faq-block { grid-template-columns: 1fr; gap: 20px }
+  .ax footer { flex-wrap: wrap } .ax footer > span:last-child { width: 100% }
+  .ax-sticky-pad { height: 76px }
 }
-@media (max-width: 860px) { .ax-sticky-pad { height: 80px } }
-@media (max-width: 520px) { .ax-row { grid-template-columns: 1fr } .ax-row.d { grid-template-columns: .8fr 1.35fr 1fr } .ax-answer { grid-template-columns: 1fr } }
-@media (prefers-reduced-motion: reduce) { .ax-moon { animation: none } .ax-rv, .ax-rv.pre { transition: none; opacity: 1; transform: none } }
+@media (prefers-reduced-motion: reduce) { .ax .report-reveal { animation: none } }
 
 /* cabinetul cu rapoarte */
 .ax-cab { display: flex; flex-direction: column; height: 100dvh }
-.ax-cab-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--ax-line); background: rgba(13, 10, 24, .92); backdrop-filter: blur(10px); flex: none }
-.ax-cab-top .ax-seg { height: 42px } .ax-cab-top .ax-seg button { padding: 0 16px; font-size: 14px }
-.ax-cab-hello { color: var(--ax-mute); font-size: 14px; margin: 0 }
+.ax-cab-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--border); background: rgba(13, 10, 24, .92); backdrop-filter: blur(10px); flex: none }
+.ax-logo { font-size: 24px; letter-spacing: -1px; font-weight: 500; text-decoration: none; color: var(--foreground) } .ax-logo i { font-style: normal; font-weight: 300; color: var(--primary) }
+.ax-seg { display: flex; border: 1px solid var(--border); border-radius: var(--radius); padding: 4px; height: 44px; gap: 4px }
+.ax-seg button { all: unset; cursor: pointer; padding: 0 16px; border-radius: 4px; font-size: 14px; color: var(--muted-foreground); transition: background .2s, color .2s }
+.ax-seg button[aria-selected="true"], .ax-seg button[aria-pressed="true"], .ax-seg button[aria-checked="true"] { background: rgba(238, 233, 244, .08); color: var(--foreground) }
+.ax-pill { display: inline-flex; align-items: center; height: 40px; padding: 0 16px; border-radius: var(--radius); border: 1px solid var(--border); background: transparent; color: var(--foreground); text-decoration: none; font: inherit; cursor: pointer }
+.ax-cab-hello { color: var(--muted-foreground); font-size: 14px; margin: 0 }
 .ax-cab-short { display: none }
 .ax-cab-body { position: relative; display: grid; grid-template-columns: 280px minmax(0, 1fr); flex: 1; min-height: 0 }
-.ax-cab-toc { overflow-y: auto; padding: 22px 12px; border-right: 1px solid var(--ax-line); background: rgba(11, 8, 22, .7) }
-.ax-cab-toc button { all: unset; box-sizing: border-box; cursor: pointer; display: flex; gap: 12px; width: 100%; padding: 9px 12px; border-radius: 10px; color: var(--ax-mute); font-size: 13.5px; line-height: 1.35; transition: background .25s, color .25s }
-.ax-cab-toc button:hover { color: var(--ax-ink) }
-.ax-cab-toc button i { font-style: normal; color: var(--ax-acc); min-width: 20px; font-variant-numeric: tabular-nums }
-.ax-cab-toc button[aria-current="true"] { background: rgba(183, 196, 255, .12); color: var(--ax-ink) }
-.ax-cab-wait { color: var(--ax-faint); font-size: 13px; padding: 0 12px }
+.ax-cab-toc { overflow-y: auto; padding: 22px 12px; border-right: 1px solid var(--border); background: rgba(11, 8, 22, .7) }
+.ax-kick { font-size: 12px; color: var(--muted-foreground); letter-spacing: .04em }
+.ax-cab-toc button { all: unset; box-sizing: border-box; cursor: pointer; display: flex; gap: 12px; width: 100%; padding: 9px 12px; border-radius: 6px; color: var(--muted-foreground); font-size: 13.5px; line-height: 1.35; transition: background .25s, color .25s }
+.ax-cab-toc button:hover { color: var(--foreground) }
+.ax-cab-toc button i { font-style: normal; color: var(--primary); min-width: 20px; font-variant-numeric: tabular-nums }
+.ax-cab-toc button[aria-current="true"] { background: rgba(212, 175, 55, .09); color: var(--foreground) }
+.ax-cab-wait { color: var(--muted-foreground); font-size: 13px; padding: 0 12px }
 .ax-cab-frame { width: 100%; height: 100%; border: 0; background: #0b0816 }
 .ax-cab-tocbtn { display: none }
-.ax-cab-guarantee { margin: 22px 12px 4px; padding-top: 16px; border-top: 1px dashed var(--ax-line) }
-.ax-cab-guarantee p { margin: 0 0 8px; font-size: 12px; line-height: 1.5; color: var(--ax-faint) }
-.ax-cab-refund { font-size: 12.5px; color: var(--ax-mute); text-decoration: none; border-bottom: 1px dashed var(--ax-line-2); white-space: nowrap }
-.ax-cab-refund:hover { color: var(--ax-acc) }
+.ax-cab-guarantee { margin: 22px 12px 4px; padding-top: 16px; border-top: 1px solid var(--border) }
+.ax-cab-guarantee p { margin: 0 0 8px; font-size: 12px; line-height: 1.5; color: var(--muted-foreground) }
+.ax-cab-refund { font-size: 12.5px; color: var(--primary); text-decoration: none; white-space: nowrap }
 @media (max-width: 900px) {
   .ax-cab-body { grid-template-columns: 1fr }
   .ax-cab-toc { position: absolute; inset: 0 auto 0 0; width: min(320px, 86vw); z-index: 20; background: rgba(11, 8, 22, .97); transform: translateX(-100%); transition: transform .3s }
@@ -198,40 +179,41 @@
 }
 
 /* Garanția: pagina de rambursare */
+.ax-nav { display: flex; align-items: center; justify-content: space-between; height: 85px; border-bottom: 1px solid var(--border) }
 .ax-refund { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 80px); align-items: start; padding-block: clamp(40px, 7vw, 90px) 40px }
-.ax-refund h1 { font-weight: 400; font-size: clamp(36px, 4.8vw, 64px); line-height: 1.02; letter-spacing: -.03em; margin: 18px 0 22px }
-.ax-refund h1 em { display: block; font-style: normal; color: var(--ax-acc) }
-.ax-refund-lead { color: var(--ax-mute); font-size: 17px; line-height: 1.7; max-width: 560px; margin: 0 }
+.ax-refund h1 { font-family: var(--font-cormorant); font-weight: 400; font-size: clamp(38px, 4.8vw, 62px); line-height: 1.08; letter-spacing: -1px; margin: 18px 0 22px }
+.ax-refund h1 em { display: block; font-style: italic; color: var(--primary) }
+.ax-serif { font-family: var(--font-cormorant) }
+.ax-refund-lead { color: var(--muted-foreground); font-size: 16px; line-height: 1.8; max-width: 560px; margin: 0 }
 .ax-refund-points { list-style: none; padding: 0; margin: 34px 0 0; display: grid; gap: 18px }
-.ax-refund-points li { display: grid; grid-template-columns: 120px 1fr; gap: 16px; align-items: baseline; border-top: 1px solid var(--ax-line); padding-top: 16px }
-.ax-refund-points b { font-weight: 300; font-size: 26px; color: var(--ax-acc); letter-spacing: -.02em }
-.ax-refund-points span { color: var(--ax-mute); font-size: 15px; line-height: 1.6 }
-.ax-refund-card { position: relative; border-radius: 14px; padding: clamp(22px, 3vw, 36px); background: var(--ax-panel); border: 1px solid var(--ax-line) }
+.ax-refund-points li { display: grid; grid-template-columns: 120px 1fr; gap: 16px; align-items: baseline; border-top: 1px solid var(--border); padding-top: 16px }
+.ax-refund-points b { font-family: var(--font-cormorant); font-weight: 400; font-size: 26px; color: var(--primary) }
+.ax-refund-points span { color: var(--muted-foreground); font-size: 14px; line-height: 1.7 }
+.ax-refund-card { position: relative; border-radius: var(--radius); padding: clamp(22px, 3vw, 36px); background: var(--surface); border: 1px solid var(--border) }
 .ax-refund-card form { display: grid; gap: 14px }
-.ax-refund-card h2 { font-weight: 500; font-size: 28px; margin: 0 }
-.ax-refund-note { color: var(--ax-mute); font-size: 14px; line-height: 1.55; margin: 0 0 4px }
+.ax-refund-card h2 { font-size: 30px; margin: 0 }
+.ax-refund-note { color: var(--muted-foreground); font-size: 14px; line-height: 1.7; margin: 0 0 4px }
+.ax-field { display: grid; gap: 8px; font-size: 14px } .ax-field label { color: var(--foreground) }
+.ax-field input, .ax-field textarea { all: unset; box-sizing: border-box; width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius); color: var(--foreground); background: var(--surface); font: inherit; transition: border-color .2s }
+.ax-field textarea { min-height: 96px; line-height: 1.6; white-space: pre-wrap }
+.ax-field input:focus, .ax-field textarea:focus { border-color: var(--primary) } .ax-field input::placeholder, .ax-field textarea::placeholder { color: var(--muted-foreground) }
+.ax-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; background: var(--foreground); color: var(--background); font-weight: 600; border: 0; border-radius: var(--radius); padding: 15px 22px; cursor: pointer; text-decoration: none; transition: background .2s }
+.ax-btn:hover { background: #fff } .ax-btn:disabled { opacity: .65; cursor: progress }
+.ax-secure { font-size: 13px; text-align: center; color: var(--muted-foreground); line-height: 1.7 }
+.ax-error { border: 1px solid rgba(248, 113, 113, .4); background: rgba(248, 113, 113, .08); color: #fecaca; border-radius: var(--radius); padding: 11px 14px; font-size: 14px }
 .ax-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0 }
 .ax-refund-done { text-align: center; padding: 18px 4px }
-.ax-refund-done p { color: var(--ax-mute); line-height: 1.7; font-size: 15.5px; margin: 0 }
-.ax-refund-seal { width: 64px; height: 64px; margin: 0 auto 18px; border-radius: 50%; display: grid; place-items: center; font-size: 28px; color: #0b0816; background: var(--ax-acc) }
-.ax-refund-legal { color: var(--ax-faint); font-size: 12.5px; line-height: 1.6; max-width: 760px; margin: 40px 0 0 }
-@media (max-width: 860px) { .ax-refund { grid-template-columns: 1fr } .ax-refund-points li { grid-template-columns: 1fr; gap: 4px } }
-
-/* hero: textul de răspuns + harta datei */
-.ax-hero-grid { margin-top: 28px; display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: clamp(24px, 4vw, 64px); align-items: center; border-top: 1px solid var(--ax-line); padding-top: 26px }
-.ax-answer-line { font-size: clamp(17px, 1.8vw, 22px); line-height: 1.45; color: var(--ax-mute); min-height: 64px; transition: opacity .4s }
-.ax-answer-line b { color: var(--ax-ink); font-weight: 500 } .ax-answer-line em { font-style: normal; color: var(--ax-acc) }
-.ax-answer-line.off span { color: var(--ax-faint) }
-.ax-hero-cta { margin-top: 24px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap }
-.ax-hero-cta small { color: var(--ax-faint); font-size: 13px; max-width: 30ch; line-height: 1.5 }
-.ax-sky { color: var(--ax-ink); width: 100%; max-width: 380px; margin-left: auto; text-align: center }
-.ax-sky svg { width: 100%; height: auto; display: block; overflow: visible; filter: drop-shadow(0 0 40px rgba(183, 196, 255, .12)) }
-.ax-sky-ring { transform-origin: 300px 300px; transition: transform 1.1s cubic-bezier(.2, .8, .2, 1) }
-.ax-sky-arc { stroke-dasharray: 160; stroke-dashoffset: 160; animation: ax-draw 1s .4s forwards ease-out }
-.ax-sky-path { stroke-dasharray: 1200; stroke-dashoffset: 1200; animation: ax-draw 1.6s .3s forwards ease-out }
-.ax-sky-mark { animation: ax-pop .6s .9s both }
-@keyframes ax-draw { to { stroke-dashoffset: 0 } }
-@keyframes ax-pop { from { opacity: 0; transform: scale(.4); transform-origin: 300px 32px } to { opacity: 1; transform: none } }
-.ax-sky-cap { margin-top: 10px; font-size: 13px; color: var(--ax-faint) }
-@media (max-width: 980px) { .ax-hero-grid { grid-template-columns: 1fr } .ax-sky { margin: 8px auto 0; max-width: 300px } }
-@media (prefers-reduced-motion: reduce) { .ax-sky-ring { transition: none } .ax-sky-arc, .ax-sky-path, .ax-sky-mark { animation: none; stroke-dashoffset: 0 } }
+.ax-refund-done p { color: var(--muted-foreground); line-height: 1.8; font-size: 15px; margin: 0 }
+.ax-refund-seal { width: 64px; height: 64px; margin: 0 auto 18px; border-radius: 50%; display: grid; place-items: center; font-size: 28px; color: var(--background); background: var(--primary) }
+.ax-section { padding: 20px 0 0 }
+.ax-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; margin-top: 10px }
+.ax-steps > div { border-top: 1px solid var(--border); padding-top: 18px } .ax-steps b { display: block; font-family: var(--font-cormorant); font-weight: 400; font-size: 26px; color: var(--primary) }
+.ax-steps h3 { font-size: 16px; margin: 6px 0 6px } .ax-steps p { color: var(--muted-foreground); line-height: 1.7 }
+.ax-refund-legal { color: var(--muted-foreground); font-size: 12.5px; line-height: 1.7; max-width: 760px; margin: 40px 0 0 }
+.ax-foot { padding: 26px 0 32px; border-top: 1px solid var(--border); margin-top: 40px; color: var(--muted-foreground); font-size: 14px }
+.ax-foot nav { display: flex; gap: 22px; flex-wrap: wrap } .ax-foot a { color: inherit } .ax-foot a:hover { color: var(--foreground) }
+@media (max-width: 860px) { .ax-refund { grid-template-columns: 1fr } .ax-refund-points li { grid-template-columns: 1fr; gap: 4px } .ax-steps { grid-template-columns: 1fr } }
+.ax-gold { color: var(--primary) }
+.ax .ax-wrap .ax-nav { height: 85px }
+.ax-refund .ax-kick { margin-top: 10px }
+.ax-foot > div { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between }

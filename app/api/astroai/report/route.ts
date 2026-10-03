@@ -13,8 +13,8 @@ const FILES: Record<AstroReport, string> = { cristal: 'cristal.html', compat: 'c
 const htmlCache = new Map<AstroReport, string>()
 
 /** Fonturile AstroAI în toate cele trei rapoarte, ca să arate ca un singur produs. */
-const BRAND = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Manrope:wght@300..800&display=swap">' +
-  '<style id="astroai-brand">:root:root{--display:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;--sans:"Manrope","Helvetica Neue",Arial,sans-serif;--num:"Manrope","Helvetica Neue",Arial,sans-serif}</style>'
+const BRAND = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@300..800&display=swap">' +
+  '<style id="astroai-brand">:root:root{--display:"Cormorant Garamond",Georgia,serif;--sans:"Manrope","Helvetica Neue",Arial,sans-serif;--num:"Manrope","Helvetica Neue",Arial,sans-serif}</style>'
 
 async function loadReport(r: AstroReport): Promise<string> {
   const hit = htmlCache.get(r)

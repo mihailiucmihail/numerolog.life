@@ -197,3 +197,12 @@ export const REFUND_COPY = {
   ],
   legal: 'Poți cere rambursarea în 14 zile de la plată, o singură dată pentru fiecare comandă. După rambursare, accesul la raport se închide. Garanția nu îți limitează drepturile pe care le ai prin lege ca consumator.',
 }
+
+/* Astrolabul v2: textele selectorului de rapoarte (întrebările corespund capitolelor reale). */
+export const TOGETHER = 'Astrologie și numerologie, într-o singură citire. De obicei le găsești separat. Aici lucrează împreună, pe aceeași dată de naștere. Puțini fac asta. Noi facem doar asta.'
+export const REPORTS_V2: Record<AstroProduct, { name: string; tagline: string; questions: string[] }> = {
+  cristal: { name: 'Cristalul Destinului', tagline: 'Portretul tău complet: cine ești, de ce ai venit și ce urmează.', questions: ['De ce, în sinea mea, sunt altfel decât par?', 'Care e rostul meu pe lumea asta?', 'În ce sunt bună cu adevărat și de ce nu-mi folosesc forța?', 'De ce atrag mereu același tip de bărbat?', 'Prin ce muncă îmi vin banii cel mai ușor?', 'Ce mă trage înapoi fără să-mi dau seama?', 'Ce am moștenit de la neamul meu, fără să știu?', 'În ce etapă a vieții sunt acum și ce urmează?'] },
+  compat: { name: 'Compatibilitatea cuplului', tagline: 'Ce vă leagă, ce vă desparte și încotro mergeți împreună.', questions: ['Ne potrivim cu adevărat sau doar ne-am obișnuit?', 'De ce ne certăm mereu pentru aceleași lucruri?', 'Cine conduce în relație și cine cedează?', 'E o legătură karmică și ce avem de învățat împreună?', 'Am putea face afaceri împreună?', 'Ce ne aduce anul acesta, ca cuplu?'] },
+  prog: { name: 'Prognoza personală', tagline: 'Ce îți aduce anul acesta și cum să profiți de el.', questions: ['E anul în care fac pasul — sau anul în care aștept?', 'În ce lună să iau decizia și în ce lună să aștept?', 'Ce lecție mi se tot repetă și cum o închid odată?', 'Care îmi sunt anii buni și care anii de încercare?', 'Ce zi e bună pentru nuntă, interviu sau o decizie mare?', 'Ce îmi spune data de naștere a copilului despre cum să-l cresc?'] },
+  pachet: { name: 'Toate trei', tagline: 'Toate trei, la un loc. Portretul, cuplul și anul — citite din aceeași dată de naștere, cu aceeași metodă.', questions: [] },
+}
