@@ -4,7 +4,7 @@ import { getStripe } from "@/lib/stripe"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { consumePromoCode } from "@/lib/promo"
 import { recordPurchaseFromSession } from "@/lib/experiments/purchase"
-import { sendAstroReportEmail } from "@/lib/astroai/email"
+import { sendAstroReportEmailOnce } from "@/lib/astroai/email"
 import { isAstroProduct } from "@/lib/astroai/products"
 
 // Stripe trimite payload-ul brut; dezactivam parsarea automata.
@@ -68,7 +68,8 @@ export async function POST(request: NextRequest) {
             let firstName = ""
             try { firstName = JSON.parse(session.metadata.astroData || "{}")?.a?.f || "" } catch { firstName = "" }
             const success = (session.success_url || "").split("?")[0] || "https://astroai.ro/ro/astroai/raport"
-            await sendAstroReportEmail({ to, firstName, product, url: `${success}?session_id=${session.id}` })
+            const piId = typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id ?? null
+            await sendAstroReportEmailOnce({ sessionId: session.id, paymentIntentId: piId, to, firstName, product, url: `${success}?session_id=${session.id}` })
           }
         }
 

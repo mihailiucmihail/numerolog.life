@@ -123,3 +123,35 @@ export async function sendAstroRefundDoneEmail(p: { to: string; firstName: strin
 <p style="margin:0 0 16px;">Ți-am returnat ${esc(p.amount)} pentru <strong>${esc(p.product)}</strong>, pe cardul cu care ai plătit. În funcție de bancă, suma apare în cont în 5–10 zile lucrătoare.</p>
 <p style="margin:0;font-size:14px;color:rgba(237,227,207,0.6);">Îți mulțumim că ai ales AstroAI. Dacă ai o întrebare, răspunde la acest e-mail.</p>`))
 }
+
+/**
+ * Trimite e-mailul cu linkul raportului o singură dată per plată, indiferent cine ajunge primul:
+ * webhookul Stripe sau pagina raportului. Marcajul stă în metadata PaymentIntent-ului (astro_email_sent).
+ */
+export async function sendAstroReportEmailOnce(params: {
+  sessionId: string
+  paymentIntentId: string | null
+  to: string
+  firstName: string
+  product: AstroProduct
+  url: string
+}): Promise<{ sent: boolean; already: boolean }> {
+  const { getStripe } = await import('@/lib/stripe')
+  const stripe = getStripe()
+  try {
+    if (params.paymentIntentId) {
+      const pi = await stripe.paymentIntents.retrieve(params.paymentIntentId)
+      if (pi.metadata?.astro_email_sent) return { sent: false, already: true }
+      // rezervăm marcajul înainte de trimitere, ca două cereri simultane să nu trimită de două ori
+      await stripe.paymentIntents.update(params.paymentIntentId, { metadata: { astro_email_sent: new Date().toISOString() } })
+    }
+  } catch (error) {
+    console.error('[astroai] email marker error', error)
+  }
+  const r = await sendAstroReportEmail({ to: params.to, firstName: params.firstName, product: params.product, url: params.url })
+  if (!r.sent && params.paymentIntentId) {
+    try { await stripe.paymentIntents.update(params.paymentIntentId, { metadata: { astro_email_sent: '' } }) } catch { /* marcajul rămâne; se poate retrimite din panou */ }
+  }
+  console.log('[astroai] report email', params.sessionId, r.sent ? 'sent' : 'FAILED', 'to', params.to)
+  return { sent: r.sent, already: false }
+}
