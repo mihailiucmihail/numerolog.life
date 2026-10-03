@@ -34,7 +34,7 @@ export default async function AstroReportPage({
     <>
       {/* Fonturile AstroAI (Bodoni Moda + Manrope, cu diacritice) */}
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..600;1,6..96,400..600&family=Manrope:wght@300..800&display=swap" precedence="default" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Manrope:wght@300..800&display=swap" precedence="default" />
       <AstroReportViewer
         sessionId={paid ? sid : null}
         reports={paid?.reports ?? []}
