@@ -126,7 +126,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
       <div className="ax-wrap">
         <header className="site-header">
           <a href="#" className="wordmark" aria-label="AstroAI, acasă"><Sparkles className="brand-symbol" size={29} strokeWidth={1.1} /> astro<span>ai</span><small>.ro</small></a>
-          <nav aria-label="Navigare"><a href="#rapoarte">Rapoartele tale</a><a href="#perspective">Două perspective, un singur raport</a><a href="#poveste">Povestea noastră</a><a href="#intrebari">Întrebări</a></nav>
+          <nav aria-label="Navigare"><a href="#rapoarte">Rapoartele tale</a><a href="#perspective">Două perspective, un singur raport</a><a href="#poveste">Metoda</a><a href="#intrebari">Întrebări</a></nav>
           <a href="#rapoarte" className="header-link" onClick={() => fire('product_select', product)}>Descoperă-te <ArrowUpRight size={16} /></a>
         </header>
 
