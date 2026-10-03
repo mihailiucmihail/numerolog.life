@@ -231,7 +231,6 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
             <Link href="/ro/cookies">Cookie-uri</Link>
             <a href="mailto:contact@numerolog.life">Contact</a>
           </nav>
-          <span>MIHAILIUC GROUP SRL · CUI 49596845 · J2024003230404</span>
         </footer>
       </div>
 
