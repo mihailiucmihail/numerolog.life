@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Loader2, Lock, RefreshCw } from 'lucide-react'
-import { getAstroStats, type AstroStats } from '@/app/actions/astroai-admin'
+import { getAstroStats, listAstroRefunds, refundAstroPayment, sendAstroTestEmail, type AstroRefundRow, type AstroStats } from '@/app/actions/astroai-admin'
 
 const NAMES: Record<string, string> = { cristal: 'Кристалл судьбы', compat: 'Совместимость', prog: 'Прогноз', pachet: 'Пакет из 3' }
 const lei = (bani: number) => `${(bani / 100).toLocaleString('ro-RO', { maximumFractionDigits: 0 })} lei`
@@ -68,6 +68,8 @@ export function AstroAIAdminClient() {
       </div>
       <p className="text-sm text-muted-foreground">Конверсия посетитель → покупка: <b className="text-foreground">{pct(totals.purchases, stats.visitors)}</b> · форма → оплата: <b className="text-foreground">{pct(totals.purchases, totals.submits)}</b></p>
 
+      <RefundsPanel password={password} />
+
       <section className="overflow-x-auto rounded-2xl border border-primary/15 bg-card/70">
         <table className="w-full min-w-[760px] text-sm">
           <thead className="text-left text-xs uppercase tracking-widest text-muted-foreground">
@@ -126,5 +128,74 @@ export function AstroAIAdminClient() {
         </div>
       </section>
     </div>
+  )
+}
+
+function RefundsPanel({ password }: { password: string }) {
+  const [rows, setRows] = useState<AstroRefundRow[] | null>(null)
+  const [busy, setBusy] = useState('')
+  const [msg, setMsg] = useState('')
+  const [testTo, setTestTo] = useState('')
+
+  async function load() {
+    setBusy('list'); setMsg('')
+    const r = await listAstroRefunds(password).catch(() => ({ ok: false as const, error: 'Ошибка соединения.' }))
+    setBusy('')
+    if (!r.ok) { setMsg(r.error); return }
+    setRows(r.rows)
+  }
+  async function refund(row: AstroRefundRow) {
+    if (!window.confirm(`Вернуть ${lei(row.amountBani)} клиенту ${row.email}? Доступ к отчёту закроется.`)) return
+    setBusy(row.paymentIntentId); setMsg('')
+    const r = await refundAstroPayment(password, row.paymentIntentId).catch(() => ({ ok: false as const, error: 'Ошибка соединения.' }))
+    setBusy('')
+    if (!r.ok) { setMsg(r.error); return }
+    setMsg(`Деньги возвращены: ${row.email}. Клиенту отправлено письмо.`)
+    void load()
+  }
+  async function test() {
+    setBusy('test'); setMsg('')
+    const r = await sendAstroTestEmail(password, testTo).catch(() => ({ ok: false as const, error: 'Ошибка соединения.' }))
+    setBusy('')
+    setMsg(r.ok ? `Тестовое письмо отправлено на ${testTo}. Проверь входящие и «Спам».` : r.error)
+  }
+
+  const pending = rows?.filter((r) => r.status === 'requested').length ?? 0
+  return (
+    <section className="rounded-2xl border border-primary/15 bg-card/70 p-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-serif text-2xl">Возвраты (гарантия 14 дней){rows && pending > 0 && <span className="ml-2 rounded-full bg-primary/20 px-2.5 py-0.5 text-sm text-primary">{pending} новых</span>}</h2>
+        <button type="button" onClick={() => void load()} className="rounded-full border border-primary/30 px-4 py-2 text-sm text-primary">{busy === 'list' ? <Loader2 className="size-4 animate-spin" /> : rows ? 'Обновить' : 'Показать заявки'}</button>
+      </div>
+      {msg && <p className="mt-3 text-sm text-primary">{msg}</p>}
+      {rows && (
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full min-w-[760px] text-sm">
+            <thead className="text-left text-xs uppercase tracking-widest text-muted-foreground"><tr>{['Клиент', 'Продукт', 'Сумма', 'Оплата', 'Заявка', 'Причина', ''].map((h) => <th key={h} className="px-3 py-2">{h}</th>)}</tr></thead>
+            <tbody>
+              {rows.length === 0 && <tr><td colSpan={7} className="px-3 py-5 text-center text-muted-foreground">Заявок на возврат нет.</td></tr>}
+              {rows.map((r) => (
+                <tr key={r.paymentIntentId} className="border-t border-primary/10 align-top">
+                  <td className="px-3 py-3">{r.firstName}<br /><span className="text-muted-foreground">{r.email}</span></td>
+                  <td className="px-3 py-3">{NAMES[r.product] || r.product}</td>
+                  <td className="px-3 py-3">{lei(r.amountBani)}</td>
+                  <td className="px-3 py-3">{new Date(r.paidAt).toLocaleDateString('ru-RU')}</td>
+                  <td className="px-3 py-3">{r.requestedAt ? new Date(r.requestedAt).toLocaleString('ru-RU') : '—'}</td>
+                  <td className="max-w-[260px] px-3 py-3 text-muted-foreground">{r.reason}</td>
+                  <td className="px-3 py-3">{r.status === 'refunded'
+                    ? <span className="text-emerald-300">Возвращено</span>
+                    : <button type="button" disabled={!!busy} onClick={() => void refund(r)} className="rounded-full bg-primary px-4 py-2 font-semibold text-primary-foreground disabled:opacity-60">{busy === r.paymentIntentId ? <Loader2 className="size-4 animate-spin" /> : 'Вернуть деньги'}</button>}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-primary/10 pt-4">
+        <span className="text-sm text-muted-foreground">Проверить письмо «отчёт готов»:</span>
+        <input type="email" value={testTo} onChange={(e) => setTestTo(e.target.value)} placeholder="твой e-mail" className="h-10 rounded-xl border border-primary/20 bg-background/40 px-3 text-sm outline-none focus:border-primary" />
+        <button type="button" disabled={!!busy || !testTo} onClick={() => void test()} className="rounded-full border border-primary/30 px-4 py-2 text-sm text-primary disabled:opacity-50">{busy === 'test' ? <Loader2 className="size-4 animate-spin" /> : 'Отправить тест'}</button>
+      </div>
+    </section>
   )
 }

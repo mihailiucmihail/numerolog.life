@@ -25,8 +25,12 @@ export async function getPaidAstroSession(sessionId: string | null | undefined):
   const hit = cache.get(sessionId)
   if (hit && Date.now() - hit.at < TTL) return hit.value
   try {
-    const s = await getStripe().checkout.sessions.retrieve(sessionId)
+    const s = await getStripe().checkout.sessions.retrieve(sessionId, { expand: ['payment_intent.latest_charge'] })
     if (s.payment_status !== 'paid') return null
+    // Garanția: după rambursarea integrală, accesul la raport se închide.
+    const pi = typeof s.payment_intent === 'object' ? s.payment_intent : null
+    const charge = pi && typeof pi.latest_charge === 'object' ? pi.latest_charge : null
+    if (charge?.refunded || pi?.metadata?.astro_refund === 'refunded') return null
     const meta = s.metadata || {}
     if (meta.site !== 'astroai' || !isAstroProduct(meta.astroProduct)) return null
     let parsed: unknown = null
