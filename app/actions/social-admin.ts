@@ -36,6 +36,7 @@ const metrics = {
   previews: uniqueEvent('preview_impression'), checkouts: uniqueEvent('checkout_start'),
   buyers: uniqueEvent('purchase'), transactions: eventCount('purchase'),
   facets: productCount('facet'), upgrades: productCount('upgrade'), fullReports: productCount('full_crystal'),
+  astroCristal: productCount('astro_cristal'), astroCompat: productCount('astro_compat'), astroProg: productCount('astro_prog'), astroPachet: productCount('astro_pachet'),
 }
 
 function cohort(filters: z.output<typeof filtersSchema>) {

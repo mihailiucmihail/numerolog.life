@@ -51,6 +51,7 @@ export async function socialCheckoutMetadata(): Promise<Record<string, string>> 
 }
 
 export function socialProduct(meta: Record<string, string>) {
+  if (typeof meta.reportType === 'string' && meta.reportType.startsWith('astro_')) return meta.reportType.slice(0, 40)
   return meta.unlockAll === '1' ? 'upgrade' : meta.graniId ? 'facet' : meta.reportType === 'grani' ? 'standalone_grani' : 'full_crystal'
 }
 

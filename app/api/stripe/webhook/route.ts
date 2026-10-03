@@ -4,6 +4,8 @@ import { getStripe } from "@/lib/stripe"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { consumePromoCode } from "@/lib/promo"
 import { recordPurchaseFromSession } from "@/lib/experiments/purchase"
+import { sendAstroReportEmail } from "@/lib/astroai/email"
+import { isAstroProduct } from "@/lib/astroai/products"
 
 // Stripe trimite payload-ul brut; dezactivam parsarea automata.
 export const runtime = "nodejs"
@@ -56,6 +58,18 @@ export async function POST(request: NextRequest) {
           await recordPurchaseFromSession(session, { entry: session.metadata?.entry ?? null })
         } catch (err) {
           console.error("[v0] Eroare la atribuirea experimentului:", err)
+        }
+
+        // AstroAI (astroai.ro): trimitem linkul raportului pe e-mail, în română.
+        if (session.metadata?.site === "astroai" && session.payment_status === "paid") {
+          const product = session.metadata.astroProduct
+          const to = session.customer_details?.email || session.customer_email
+          if (to && isAstroProduct(product)) {
+            let firstName = ""
+            try { firstName = JSON.parse(session.metadata.astroData || "{}")?.a?.f || "" } catch { firstName = "" }
+            const success = (session.success_url || "").split("?")[0] || "https://astroai.ro/ro/astroai/raport"
+            await sendAstroReportEmail({ to, firstName, product, url: `${success}?session_id=${session.id}` })
+          }
         }
 
         const userId = session.metadata?.userId
