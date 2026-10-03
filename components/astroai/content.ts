@@ -139,7 +139,7 @@ export const FAQ = [
   },
   {
     q: 'Ce metodă stă la baza rapoartelor?',
-    a: 'Numerologia karmică: calcule făcute după reguli precise, pornind de la numele și data ta de naștere. Lângă fiecare concluzie vezi și din ce calcul provine, așa că nimic nu e „din burtă”.',
+    a: 'Astrologie și numerologie, după șase școli: astrologia occidentală, pătratul Lo Shu, hexagramele chinezești, cele 22 de arcane, numerologia karmică și harta vectorială. Totul pornește de la numele și data ta de naștere și se calculează după regulile fiecărei școli. Lângă fiecare concluzie vezi din ce calcul provine, așa că nimic nu e spus la întâmplare.',
   },
   {
     q: 'Pot face raportul pentru altcineva?',
@@ -206,3 +206,25 @@ export const REPORTS_V2: Record<AstroProduct, { name: string; tagline: string; q
   prog: { name: 'Prognoza personală', tagline: 'Ce îți aduce anul acesta și cum să profiți de el.', questions: ['E anul în care fac pasul — sau anul în care aștept?', 'În ce lună să iau decizia și în ce lună să aștept?', 'Ce lecție mi se tot repetă și cum o închid odată?', 'Care îmi sunt anii buni și care anii de încercare?', 'Ce zi e bună pentru nuntă, interviu sau o decizie mare?', 'Ce îmi spune data de naștere a copilului despre cum să-l cresc?'] },
   pachet: { name: 'Toate trei', tagline: 'Toate trei, la un loc. Portretul, cuplul și anul — citite din aceeași dată de naștere, cu aceeași metodă.', questions: [] },
 }
+
+/** Povestea AstroAI: cele șase școli pe care se sprijină rapoartele (doar metode folosite efectiv în calcule). */
+export const STORY = {
+  kicker: 'Povestea AstroAI',
+  title: 'Două limbi vechi. O singură hartă.',
+  intro: [
+    'De mii de ani, oamenii caută răspunsuri pe două căi: unii privesc stelele, alții citesc numerele. Rareori s-au întâlnit — astrologii nu citeau numerele, iar numerologii nu priveau cerul.',
+    'AstroAI le reunește. Numele și data ta de naștere sunt interpretate, în același timp, după șase școli, din Europa până în China antică:',
+  ],
+  schools: [
+    { mark: '12', name: 'Astrologia occidentală', origin: 'Europa', text: 'Cele 12 semne și planetele, așezate pe calendarul vieții tale. Află care sunt perioadele karmice ale zodiei tale și ce îți aduc.' },
+    { mark: '洛', name: 'Pătratul Lo Shu', origin: 'China antică', text: 'Data ta de naștere, recalculată după calendarul chinezesc. Îți arată care îți sunt punctele forte și ce îți lipsește.' },
+    { mark: '64', name: 'Hexagramele chinezești', origin: 'Cartea Schimbărilor', text: 'Cele 64 de semne ale Cărții Schimbărilor. Află care e hexagrama ta și ce sfat îți dă.' },
+    { mark: 'XXII', name: 'Cele 22 de arcane', origin: 'Tradiția europeană', text: 'Energiile cu care ai venit pe lume, darurile tale și misiunea ta.' },
+    { mark: '∞', name: 'Numerologia karmică', origin: 'Karma și neamul', text: 'Lecțiile sufletului, tiparele moștenite din neam și oamenii pentru care ai venit pe lume.' },
+    { mark: '9', name: 'Harta vectorială', origin: 'Imaginea întreagă', text: 'Toate calculele, reunite într-o singură hartă a celor 9 sfere ale vieții tale.' },
+  ],
+  outro: 'Fiecare școală vede o parte din tine. Împreună, văd întregul. Acolo unde școlile ajung la aceeași concluzie, răspunsul capătă greutate. De aceea, lângă fiecare concluzie din raport vezi din ce calcul provine. Nimic nu e spus la întâmplare.',
+  note: 'Cristalul Destinului le folosește pe toate șase.',
+}
+
+export const SCHOOLS_LINE = 'Rapoartele AstroAI îmbină șase școli de astrologie și numerologie.'

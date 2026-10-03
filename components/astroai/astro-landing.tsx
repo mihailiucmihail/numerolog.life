@@ -6,7 +6,7 @@ import { ArrowUpRight, Check, LockKeyhole, Plus, ShieldCheck, Sparkles } from 'l
 import { StarField } from '@/components/star-field'
 import { startAstroCheckout, trackAstro } from '@/app/actions/astroai'
 import { ASTRO_PRODUCTS, ASTRO_SEPARATE_TOTAL_BANI, type AstroProduct } from '@/lib/astroai/products'
-import { FAQ, REPORTS_V2, TOGETHER } from './content'
+import { FAQ, REPORTS_V2, SCHOOLS_LINE, STORY, TOGETHER } from './content'
 import { CelestialInstrument } from './instrument'
 import './astro.css'
 
@@ -126,7 +126,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
       <div className="ax-wrap">
         <header className="site-header">
           <a href="#" className="wordmark" aria-label="AstroAI, acasă"><Sparkles className="brand-symbol" size={29} strokeWidth={1.1} /> astro<span>ai</span><small>.ro</small></a>
-          <nav aria-label="Navigare"><a href="#rapoarte">Rapoartele tale</a><a href="#perspective">Două perspective, un singur raport</a><a href="#intrebari">Întrebări</a></nav>
+          <nav aria-label="Navigare"><a href="#rapoarte">Rapoartele tale</a><a href="#perspective">Două perspective, un singur raport</a><a href="#poveste">Povestea noastră</a><a href="#intrebari">Întrebări</a></nav>
           <a href="#rapoarte" className="header-link" onClick={() => fire('product_select', product)}>Descoperă-te <ArrowUpRight size={16} /></a>
         </header>
 
@@ -145,6 +145,24 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
           </div>
           <a className="hero-cta" href="#rapoarte" onClick={() => fire('product_select', product)}>Găsește-ți răspunsurile <ArrowUpRight size={18} /></a>
           <div className="hero-proof"><span><Check size={14} /> Personalizat pentru tine</span><span>De la 39 lei</span></div>
+        </section>
+
+        <section className="story-block" id="poveste" aria-labelledby="poveste-titlu">
+          <div className="story-head">
+            <span className="small-kicker">{STORY.kicker}</span>
+            <h2 id="poveste-titlu">{STORY.title}</h2>
+            {STORY.intro.map((p) => <p key={p}>{p}</p>)}
+          </div>
+          <ol className="story-schools">
+            {STORY.schools.map((s) => (
+              <li key={s.name}>
+                <span className={`story-mark${s.mark.length > 2 ? ' long' : ''}`} aria-hidden>{s.mark}</span>
+                <div><h3>{s.name}</h3><span className="story-origin">{s.origin}</span><p>{s.text}</p></div>
+              </li>
+            ))}
+          </ol>
+          <p className="story-outro">{STORY.outro}</p>
+          <p className="story-note">{STORY.note}</p>
         </section>
 
         <section ref={orderRef} className="order-block" id="rapoarte" aria-label="Comanda ta">
@@ -204,6 +222,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
                 <span><Check size={15} /> Pe ecran imediat după plată, linkul și pe e-mail</span>
               </div>
               <button type="submit" className="payment-button" disabled={busy}><LockKeyhole size={16} /> {busy ? 'Se deschide plata…' : 'Plătește și deschide raportul'}</button>
+              <p className="payment-schools"><Sparkles size={14} strokeWidth={1.3} /> {SCHOOLS_LINE}</p>
               <p className="payment-note">Plată prin Stripe. Raportul se deschide imediat și îl primești pe e-mail.<br />Continuând, ești de acord cu <Link href="/ro/termeni">Termenii</Link> și <Link href="/ro/confidentialitate">Confidențialitatea</Link>.</p>
               <div className="guarantee"><ShieldCheck size={23} /><p>Nu te regăsești în raport?<br /><span>Îți dăm banii înapoi în 14 zile. </span><Link href="/ro/astroai/rambursare">Cum funcționează</Link></p></div>
             </div>
