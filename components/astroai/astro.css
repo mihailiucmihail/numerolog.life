@@ -217,3 +217,21 @@
 .ax .ax-wrap .ax-nav { height: 85px }
 .ax-refund .ax-kick { margin-top: 10px }
 .ax-foot > div { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between }
+
+/* povestea AstroAI — cele șase școli */
+.ax .story-block { padding: 64px 0 24px; scroll-margin-top: 16px; border-top: 1px solid var(--border) }
+.ax .story-head { max-width: 760px; margin: 0 auto; text-align: center }
+.ax .story-head h2 { margin: 8px 0 18px }
+.ax .story-head p { color: var(--muted-foreground); font-size: 15px; line-height: 1.85; margin: 0 0 10px; text-wrap: pretty }
+.ax .story-schools { list-style: none; padding: 0; margin: 36px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px }
+.ax .story-schools li { display: flex; gap: 18px; align-items: flex-start; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); padding: 22px 22px 20px }
+.ax .story-mark { flex-shrink: 0; width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--primary); display: grid; place-items: center; color: var(--primary); font-family: var(--font-cormorant); font-size: 21px; line-height: 1; letter-spacing: -.5px; box-shadow: 0 0 0 5px rgba(212, 175, 55, .06) }
+.ax .story-schools h3 { font-family: var(--font-cormorant); font-weight: 400; font-size: 23px; line-height: 1.2; margin: 2px 0 2px }
+.ax .story-origin { display: block; font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--primary); opacity: .85; margin-bottom: 8px }
+.ax .story-schools p { margin: 0; font-size: 13.5px; line-height: 1.7; color: var(--muted-foreground) }
+.ax .story-outro { max-width: 760px; margin: 34px auto 0; text-align: center; font-family: var(--font-cormorant); font-size: 22px; line-height: 1.5; color: var(--foreground); text-wrap: balance }
+.ax .story-note { text-align: center; margin: 12px 0 0; font-size: 13px; color: var(--primary) }
+.ax .payment-schools { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 12px 0 0; font-size: 12.5px; color: var(--primary) }
+@media (max-width: 1000px) { .ax .story-schools { grid-template-columns: repeat(2, 1fr) } }
+@media (max-width: 640px) { .ax .story-block { padding-top: 48px } .ax .story-schools { grid-template-columns: 1fr } .ax .story-outro { font-size: 20px } }
+.ax .story-mark.long { font-size: 16px; letter-spacing: 0 }
