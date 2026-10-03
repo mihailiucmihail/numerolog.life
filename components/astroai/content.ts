@@ -75,6 +75,42 @@ export const PRODUCTS_COPY: ProductCopy[] = [
   },
 ]
 
+/** Panoul unic de comandă: ce vede clientul pentru fiecare alegere. */
+export interface PanelCopy {
+  tab: string
+  short: string
+  title: [string, string]
+  tagline: string
+  questions: string[]
+  includes: string[]
+  image: string
+}
+
+const byId = Object.fromEntries(PRODUCTS_COPY.map((p) => [p.id, p])) as Record<ProductCopy['id'], ProductCopy>
+const panelOf = (id: ProductCopy['id'], tab: string, short: string, title: [string, string]): PanelCopy => ({
+  tab, short, title, tagline: byId[id].tagline, questions: byId[id].questions.slice(0, 6), includes: byId[id].includes, image: byId[id].image,
+})
+
+export const PANEL: Record<AstroProduct, PanelCopy> = {
+  cristal: panelOf('cristal', 'Cristalul Destinului', 'Cine ești și ce misiune ai', ['Cristalul', 'Destinului']),
+  compat: panelOf('compat', 'Compatibilitatea cuplului', 'Ce vă leagă, ce vă desparte', ['Compatibilitatea', 'cuplului']),
+  prog: panelOf('prog', 'Prognoza personală', 'Anul tău, lună cu lună', ['Prognoza', 'personală']),
+  pachet: {
+    tab: 'Toate trei',
+    short: 'Cristal + Cuplu + Prognoză',
+    title: ['Toate trei,', 'la un loc'],
+    tagline: 'Imaginea completă despre tine, relația ta și anul care vine.',
+    questions: [
+      'Cristalul Destinului: cine ești cu adevărat și ce misiune ai',
+      'Compatibilitatea cuplului: ce vă leagă și ce vă desparte',
+      'Prognoza personală: ce îți aduce anul acesta',
+      'Toate trei rapoartele se deschid în același cabinet',
+    ],
+    includes: ['3 rapoarte complete', 'Imediat după plată', 'Linkul vine și pe e-mail'],
+    image: '/astroai/raport-cristal.webp',
+  },
+}
+
 export const QUESTION_PILLS = [
   'Cine sunt eu, de fapt?',
   'Ne potrivim?',
