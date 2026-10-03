@@ -4,6 +4,10 @@ const withNextIntl = createNextIntlPlugin('./i18n/request.ts')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Rapoartele AstroAI nu sunt publice: se citesc de pe disc doar după plata confirmată.
+  outputFileTracingIncludes: {
+    '/api/astroai/report': ['./private/astroai/**/*'],
+  },
   reactCompiler: false,
   cacheComponents: false,
   typescript: {

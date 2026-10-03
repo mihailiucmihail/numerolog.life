@@ -644,3 +644,8 @@
 .ornament::after {
   right: -2rem;
 }
+
+/* AstroAI — telefonul din hero plutește ușor */
+@keyframes astro-float { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-10px) } }
+.astro-float { animation: astro-float 7s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .astro-float { animation: none } }

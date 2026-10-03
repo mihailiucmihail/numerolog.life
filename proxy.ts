@@ -184,9 +184,40 @@ async function resolveBirthInput(
   return { assignment: result.assignment, changed: result.changed }
 }
 
+/** astroai.ro: site-ul pentru piața din România (mereu în română, pagina principală proprie). */
+function isAstroHost(request: NextRequest): boolean {
+  const host = (request.headers.get('x-forwarded-host') || request.headers.get('host') || '').split(',')[0].trim().toLowerCase().split(':')[0]
+  return host === 'astroai.ro' || host === 'www.astroai.ro'
+}
+
 async function routeRequest(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const resolved = await resolveCountry(request)
+
+  if (isAstroHost(request)) {
+    // Pagina principală astroai.ro = landing-ul AstroAI, cu URL curat (fără /ro/astroai în bara de adrese).
+    if (pathname === '/' || /^\/ro\/?$/.test(pathname)) {
+      const { currency } = resolveCurrency(request, resolved.country)
+      const headers = new Headers(request.headers)
+      headers.set(CURRENCY_HEADER, currency)
+      if (resolved.country) headers.set(COUNTRY_HEADER, resolved.country)
+      headers.set('X-NEXT-INTL-LOCALE', 'ro')
+      const target = request.nextUrl.clone()
+      target.pathname = '/ro/astroai'
+      return withGeoCookies(NextResponse.rewrite(target, { request: { headers } }), request, resolved)
+    }
+    // Pe astroai.ro nu există versiunea rusă; orice rută fără limbă merge în română.
+    if (/^\/ru(\/|$)/.test(pathname)) {
+      const home = request.nextUrl.clone()
+      home.pathname = '/'
+      return NextResponse.redirect(home)
+    }
+    if (!LOCALE_REGEX.test(pathname)) {
+      const url = request.nextUrl.clone()
+      url.pathname = `/ro${pathname}`
+      return withGeoCookies(NextResponse.redirect(url), request, resolved)
+    }
+  }
 
   // Pagina de login nu mai este publică în produsul actual: orice acces direct
   // la ruta localizată sau ne-localizată merge la pagina principală, în aceeași limbă.
