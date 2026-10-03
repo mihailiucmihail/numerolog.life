@@ -33,7 +33,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
   const [b, setB] = useState<Person>(EMPTY)
   const [meet, setMeet] = useState({ d: '', m: '', y: '' })
   const [email, setEmail] = useState('')
-  const [error, setError] = useState<string | null>(cancelled ? 'Plata a fost anulată. Datele tale sunt încă aici — poți încerca din nou.' : null)
+  const [error, setError] = useState<string | null>(cancelled ? 'Plata a fost anulată. Datele tale au rămas completate — poți încerca din nou oricând.' : null)
   const [busy, setBusy] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(0)
   const touched = useRef(false)
@@ -42,6 +42,19 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
 
   const def = ASTRO_PRODUCTS[product]
   const needsPartner = def.reports.includes('compat')
+
+  // Datele formularului se păstrează în sesiunea browserului: dacă plata e anulată, nu le mai scrie nimeni de la zero.
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem('astroai_form')
+      if (!raw) return
+      const v = JSON.parse(raw)
+      if (v.a) setA({ ...EMPTY, ...v.a })
+      if (v.b) setB({ ...EMPTY, ...v.b })
+      if (v.meet) setMeet(v.meet)
+      if (typeof v.email === 'string') setEmail(v.email)
+    } catch { /* stocarea browserului poate fi indisponibilă */ }
+  }, [])
 
   useEffect(() => {
     fire('landing_view', 'site')
@@ -89,6 +102,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) { setError('Scrie o adresă de e-mail validă — acolo îți trimitem raportul.'); return }
     setBusy(true)
     fire('form_submit', product)
+    try { sessionStorage.setItem('astroai_form', JSON.stringify({ a, b, meet, email })) } catch { /* fără stocare: plata merge oricum */ }
     const payload = {
       a: person(a),
       ...(needsPartner ? { b: person(b) } : {}),
