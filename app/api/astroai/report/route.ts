@@ -12,6 +12,10 @@ export const dynamic = 'force-dynamic'
 const FILES: Record<AstroReport, string> = { cristal: 'cristal.html', compat: 'compat.html', prog: 'prog.html' }
 const htmlCache = new Map<AstroReport, string>()
 
+/** Fonturile AstroAI în toate cele trei rapoarte, ca să arate ca un singur produs. */
+const BRAND = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..600;1,6..96,400..600&family=Manrope:wght@300..800&display=swap">' +
+  '<style id="astroai-brand">:root:root{--display:"Bodoni Moda",Georgia,"Times New Roman",serif;--sans:"Manrope","Helvetica Neue",Arial,sans-serif;--num:"Manrope","Helvetica Neue",Arial,sans-serif}</style>'
+
 async function loadReport(r: AstroReport): Promise<string> {
   const hit = htmlCache.get(r)
   if (hit) return hit
@@ -30,7 +34,9 @@ export async function GET(request: NextRequest) {
       status: 403, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' },
     })
   }
-  const html = await loadReport(r)
+  const raw = await loadReport(r)
+  const h = raw.indexOf('</head>')
+  const html = h > 0 ? raw.slice(0, h) + BRAND + raw.slice(h) : raw
   const k = html.lastIndexOf('</body>')
   const script = prefillScript(r, session.data, session.email)
   const out = k > 0 ? html.slice(0, k) + script + html.slice(k) : html + script
