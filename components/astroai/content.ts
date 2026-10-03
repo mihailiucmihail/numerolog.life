@@ -210,7 +210,7 @@ export const REPORTS_V2: Record<AstroProduct, { name: string; tagline: string; q
 /** Povestea AstroAI: cele șase școli pe care se sprijină rapoartele (doar metode folosite efectiv în calcule). */
 export const STORY = {
   kicker: 'Metoda AstroAI',
-  title: 'Șase școli. Un singur sistem de calcul.',
+  title: 'Pe ce se bazează rapoartele AstroAI',
   intro: [
     'Fiecare raport AstroAI pornește de la numele tău și de la data nașterii. Le analizăm după șase școli de astrologie și numerologie, din Europa și din China, fiecare cu propriile reguli de calcul.',
     'Rezultatele sunt puse față în față, iar concluziile se bazează pe ceea ce arată împreună.',
