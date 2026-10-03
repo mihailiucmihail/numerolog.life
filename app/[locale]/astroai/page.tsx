@@ -1,13 +1,10 @@
 import type { Metadata } from 'next'
-import { Bodoni_Moda, Manrope } from 'next/font/google'
 import { notFound } from 'next/navigation'
 import { AstroLanding } from '@/components/astroai/astro-landing'
 import { isAstroProduct, type AstroProduct } from '@/lib/astroai/products'
 
 export const dynamic = 'force-dynamic'
 
-const display = Bodoni_Moda({ subsets: ['latin', 'latin-ext'], weight: ['400', '500', '600'], style: ['normal', 'italic'], variable: '--font-ax-display', display: 'swap' })
-const body = Manrope({ subsets: ['latin', 'latin-ext'], weight: ['300', '400', '500', '600', '700', '800'], variable: '--font-ax-body', display: 'swap' })
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://astroai.ro'),
@@ -39,8 +36,11 @@ export default async function AstroAIPage({
   const produs = typeof sp.produs === 'string' ? sp.produs : ''
   const initial: AstroProduct = isAstroProduct(produs) ? produs : 'cristal'
   return (
-    <div className={`${display.variable} ${body.variable}`}>
+    <>
+      {/* Fonturile AstroAI (Bodoni Moda + Manrope, cu diacritice) */}
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..600;1,6..96,400..600&family=Manrope:wght@300..800&display=swap" precedence="default" />
       <AstroLanding initialProduct={initial} cancelled={sp.plata === 'anulata'} />
-    </div>
+    </>
   )
 }
