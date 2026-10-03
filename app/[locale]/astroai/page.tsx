@@ -39,7 +39,7 @@ export default async function AstroAIPage({
     <>
       {/* Fonturile AstroAI (Bodoni Moda + Manrope, cu diacritice) */}
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Manrope:wght@300..800&display=swap" precedence="default" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@300..800&display=swap" precedence="default" />
       <AstroLanding initialProduct={initial} cancelled={sp.plata === 'anulata'} />
     </>
   )
