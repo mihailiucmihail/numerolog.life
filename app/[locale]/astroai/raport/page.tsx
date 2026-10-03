@@ -5,6 +5,8 @@ import { getPaidAstroSession } from '@/lib/astroai/session'
 import { recordPurchaseFromSession } from '@/lib/experiments/purchase'
 import { recordSocialSession } from '@/lib/experiments/social-server'
 import { AstroReportViewer } from '@/components/astroai/report-viewer'
+import { sendAstroReportEmailOnce } from '@/lib/astroai/email'
+import { headers } from 'next/headers'
 
 export const dynamic = 'force-dynamic'
 
@@ -28,7 +30,15 @@ export default async function AstroReportPage({
       const session = await getStripe().checkout.sessions.retrieve(sid)
       await recordPurchaseFromSession(session, { entry: session.metadata?.entry ?? null })
       await recordSocialSession(session, 'purchase')
-    } catch { /* statistica nu blochează afișarea raportului */ }
+      // Rezervă pentru webhook: dacă e-mailul cu linkul nu a plecat încă, îl trimitem de aici (o singură dată per plată).
+      if (paid.email) {
+        const h = await headers()
+        const host = (h.get('x-forwarded-host') || h.get('host') || 'astroai.ro').split(',')[0].trim()
+        const origin = /^astroai\.ro$|^www\.astroai\.ro$/i.test(host) ? 'https://astroai.ro' : `https://${host}`
+        const piId = typeof session.payment_intent === 'string' ? session.payment_intent : session.payment_intent?.id ?? null
+        await sendAstroReportEmailOnce({ sessionId: sid, paymentIntentId: piId, to: paid.email, firstName: paid.data.a.f, product: paid.product, url: `${origin}/ro/astroai/raport?session_id=${sid}` })
+      }
+    } catch (error) { console.error('[astroai] post-payment hooks', error) }
   }
   return (
     <>
