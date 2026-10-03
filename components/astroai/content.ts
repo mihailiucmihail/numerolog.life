@@ -209,11 +209,11 @@ export const REPORTS_V2: Record<AstroProduct, { name: string; tagline: string; q
 
 /** Povestea AstroAI: cele șase școli pe care se sprijină rapoartele (doar metode folosite efectiv în calcule). */
 export const STORY = {
-  kicker: 'Povestea AstroAI',
-  title: 'Două limbi vechi. O singură hartă.',
+  kicker: 'Metoda AstroAI',
+  title: 'Șase școli. Un singur sistem de calcul.',
   intro: [
-    'De mii de ani, oamenii caută răspunsuri pe două căi: unii privesc stelele, alții citesc numerele. Rareori s-au întâlnit — astrologii nu citeau numerele, iar numerologii nu priveau cerul.',
-    'AstroAI le reunește. Numele și data ta de naștere sunt interpretate, în același timp, după șase școli, din Europa până în China antică:',
+    'Fiecare raport AstroAI pornește de la numele tău și de la data nașterii. Le analizăm după șase școli de astrologie și numerologie, din Europa și din China, fiecare cu propriile reguli de calcul.',
+    'Rezultatele sunt puse față în față, iar concluziile se bazează pe ceea ce arată împreună.',
   ],
   schools: [
     { mark: '12', name: 'Astrologia occidentală', origin: 'Europa', text: 'Cele 12 semne și planetele, așezate pe calendarul vieții tale. Află care sunt perioadele karmice ale zodiei tale și ce îți aduc.' },
@@ -223,7 +223,7 @@ export const STORY = {
     { mark: '∞', name: 'Numerologia karmică', origin: 'Karma și neamul', text: 'Lecțiile sufletului, tiparele moștenite din neam și oamenii pentru care ai venit pe lume.' },
     { mark: '9', name: 'Harta vectorială', origin: 'Imaginea întreagă', text: 'Toate calculele, reunite într-o singură hartă a celor 9 sfere ale vieții tale.' },
   ],
-  outro: 'Fiecare școală vede o parte din tine. Împreună, văd întregul. Acolo unde școlile ajung la aceeași concluzie, răspunsul capătă greutate. De aceea, lângă fiecare concluzie din raport vezi din ce calcul provine. Nimic nu e spus la întâmplare.',
+  outro: 'Lângă fiecare concluzie din raport vezi din ce calcul provine. Nimic nu e spus la întâmplare.',
   note: 'Cristalul Destinului le folosește pe toate șase.',
 }
 
