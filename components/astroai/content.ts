@@ -142,6 +142,14 @@ export const FAQ = [
     a: 'Astrologie și numerologie, după șase școli: astrologia occidentală, pătratul Lo Shu, hexagramele chinezești, cele 22 de arcane, numerologia karmică și harta vectorială. Totul pornește de la numele și data ta de naștere și se calculează după regulile fiecărei școli. Lângă fiecare concluzie vezi din ce calcul provine, așa că nimic nu e spus la întâmplare.',
   },
   {
+    q: 'Raportul e scris de inteligența artificială?',
+    a: 'Nu în timp real. Calculele se fac după regulile fiecărei școli, iar interpretările sunt texte redactate și verificate în prealabil pentru fiecare rezultat posibil. Același nume și aceeași dată de naștere dau mereu același raport.',
+  },
+  {
+    q: 'De ce nu e nevoie de ora nașterii?',
+    a: 'Folosim elementele astrologice care se pot calcula din data nașterii: semnul zodiacal, perioadele karmice ale zodiei și ciclurile planetare. Ora și locul nașterii contează mai ales pentru ascendent, casele horoscopului și poziția exactă a Lunii, elemente pe care nu le folosim.',
+  },
+  {
     q: 'Pot face raportul pentru altcineva?',
     a: 'Da. Introdu datele persoanei respective — e un cadou neobișnuit pentru cineva drag. Raportul vine pe adresa de e-mail pe care o scrii în formular.',
   },
@@ -228,3 +236,15 @@ export const STORY = {
 }
 
 export const SCHOOLS_LINE = 'Rapoartele AstroAI îmbină șase școli de astrologie și numerologie.'
+
+/** Fragmente reale din rapoarte, arătate înainte de plată. */
+export const SAMPLE = {
+  kicker: 'Înainte să plătești',
+  title: 'Așa arată raportul',
+  intro: 'Fragmente reale din cele trei rapoarte. Lângă fiecare concluzie vezi din ce calcul provine.',
+  items: [
+    { name: 'Cristalul Destinului', caption: 'Cine ești cu adevărat', image: '/astroai/raport-cristal.webp', h: 985 },
+    { name: 'Compatibilitatea cuplului', caption: 'Compatibilitatea emoțională', image: '/astroai/raport-compatibilitate.webp', h: 1053 },
+    { name: 'Prognoza personală', caption: 'Perioadele și ciclurile tale', image: '/astroai/raport-prognoza.webp', h: 567 },
+  ],
+}
