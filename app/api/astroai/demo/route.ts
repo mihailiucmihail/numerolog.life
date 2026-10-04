@@ -28,9 +28,9 @@ const BRAND = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?fa
   '</style>'
 
 const BAND: Record<AstroReport, string> = {
-  cristal: 'Exemplu <span>· Ana, 16 februarie 1991 · date fictive</span>',
-  compat: 'Exemplu <span>· Ana și Andrei · date fictive</span>',
-  prog: 'Exemplu <span>· Ana, 16 februarie 1991 · date fictive</span>',
+  cristal: 'Exemplu <span>· Ana, 16 februarie 1991</span>',
+  compat: 'Exemplu <span>· Ana și Andrei</span>',
+  prog: 'Exemplu <span>· Ana, 16 februarie 1991</span>',
 }
 
 export async function GET(request: NextRequest) {

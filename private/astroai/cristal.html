@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cristalul Destinului — analiza ta numerologică personalizată</title>
+<title>Cristalul Destinului — lectura ta personală de astrologie și numerologie</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 :root{
@@ -10808,7 +10808,7 @@ window.HALYEAR_TEXTS={
     var d = +$('day').value, m = +$('month').value, y = +$('year').value;
     var MN = ['', 'ianuarie', 'februarie', 'martie', 'aprilie', 'mai', 'iunie', 'iulie', 'august', 'septembrie', 'octombrie', 'noiembrie', 'decembrie'];
     var chs = CH.map(function(c){ c.items = c.items.filter(function(x){ return x && x.key; }); return c; }).filter(function(c){ return c.items.length; });
-    var h = '<section class="st-welcome st-rv"><div class="st-crystal-sm">◈</div><div class="st-eyebrow">Consultație la numerolog</div>';
+    var h = '<section class="st-welcome st-rv"><div class="st-crystal-sm">◈</div><div class="st-eyebrow">Astrologie și numerologie</div>';
     h += '<h2>' + esc(NAME || 'Bine ai venit') + '</h2><div class="st-date">' + d + ' ' + MN[m] + ' ' + y + '</div>';
     h += '<div class="st-hello">' + esc((NAME ? NAME + ', ' : '') + 'așază-te comod. Am în față numele și data ta de naștere — hai să vedem ce stă scris în ele. Vom parcurge ' + chs.length + ' ' + roPl(chs.length, 'pas', 'pași') + ': de la cine ești — până la ce te așteaptă.') + '</div>';
     h += '<div class="st-toc-intro">' + chs.map(function(c, i){ return '<a href="#st-' + c.id + '"><span class="n">' + String(i + 1).padStart(2, '0') + '</span><span class="t">' + esc(c.menu) + '</span></a>'; }).join('') + '</div></section>';
@@ -10824,13 +10824,13 @@ window.HALYEAR_TEXTS={
       h += '<div class="st-final st-rv">' + FINAL.map(function(t){ return '<div class="st-line"><span class="i">◈</span><span class="t">' + t + '</span></div>'; }).join('') + '</div>';
       h += '<div class="st-bye st-rv">Îți mulțumesc că ai ' + fm('venit', 'venit') + '. Tot ce am discutat stă scris în data ta de naștere și în numele tău — iar ce faci cu toate acestea hotărăști doar tu.</div>';
       h += '<button class="st-fullbtn" id="stFullBtn" type="button">Deschide analiza completă, cu toate calculele</button>';
-      h += '<div class="st-disc">Analiza completă conține aceleași calcule, desfășurate pe toate sistemele, cu numere, tabele și grafice. Perspectiva numerologică nu înlocuiește sfatul unui medic, al unui jurist sau al unui consultant financiar.</div></section>';
+      h += '<div class="st-disc">Analiza completă conține aceleași calcule, desfășurate pe toate sistemele, cu numere, tabele și grafice. Lectura astrologică și numerologică nu înlocuiește sfatul unui medic, al unui jurist sau al unui consultant financiar.</div></section>';
     }
     // хелло в мужском/женском роде
     box.innerHTML = h;
     // меню
     var menu = $('stMenu');
-    menu.innerHTML = '<div class="p"><h4>Capitolele consultației</h4>' + chs.map(function(c, i){ return '<a href="#st-' + c.id + '" data-id="st-' + c.id + '"><span class="n">' + String(i + 1).padStart(2, '0') + '</span><span>' + esc(c.menu) + '</span></a>'; }).join('') + (FINAL.length ? '<a href="#st-final" data-id="st-final"><span class="n">◈</span><span>Concluzie</span></a>' : '') + '</div>';
+    menu.innerHTML = '<div class="p"><h4>Capitolele lecturii</h4>' + chs.map(function(c, i){ return '<a href="#st-' + c.id + '" data-id="st-' + c.id + '"><span class="n">' + String(i + 1).padStart(2, '0') + '</span><span>' + esc(c.menu) + '</span></a>'; }).join('') + (FINAL.length ? '<a href="#st-final" data-id="st-final"><span class="n">◈</span><span>Concluzie</span></a>' : '') + '</div>';
     var fb = $('stFullBtn');
     if(fb) fb.addEventListener('click', function(){
       var r = $('results'); var hidden = r.classList.toggle('st-full-hidden');
@@ -10901,10 +10901,10 @@ window.HALYEAR_TEXTS={
     if(window.STORY_GENDER && window.__STORY_GENDER_MAPS) STORY_GENDER.setMaps(window.__STORY_GENDER_MAPS);
     document.body.classList.add('st-mode');
     if(typeof window.animateCountUp === 'function' && !window.animateCountUp.__st){ var acu = window.animateCountUp; var acw = function(el, v, d){ if(el && v != null) el.dataset.stFinal = String(parseInt(v, 10)); return acu.apply(this, arguments); }; acw.__st = true; window.animateCountUp = acw; }
-    var ey = document.querySelector('.hero .eyebrow'); if(ey) ey.textContent = 'Consultație la numerolog';
-    var hp = document.querySelector('.hero p'); if(hp) hp.innerHTML = 'Imaginează-ți că ai venit la o consultație personală. Spune-mi numele și data ta de naștere, iar eu îți voi dezvălui ce stă scris în ele: <span class="hero-highlight">cine ești, de ce ești aici și ce te așteaptă</span>.';
-    document.querySelectorAll('button.btn').forEach(function(b){ if(/Calculează-ți Cristalul/.test(b.textContent)) b.textContent = 'Începe consultația'; });
-    var ft = document.querySelector('#inputFormCard .section-title'); if(ft) ft.textContent = 'Programare la consultație';
+    var ey = document.querySelector('.hero .eyebrow'); if(ey) ey.textContent = 'Astrologie și numerologie';
+    var hp = document.querySelector('.hero p'); if(hp) hp.innerHTML = 'Cerul din ziua nașterii tale și cifrele numelui tău, citite împreună. Din ele aflăm <span class="hero-highlight">cine ești, de ce ești aici și ce te așteaptă</span>.';
+    document.querySelectorAll('button.btn').forEach(function(b){ if(/Calculează-ți Cristalul/.test(b.textContent)) b.textContent = 'Începe lectura'; });
+    var ft = document.querySelector('#inputFormCard .section-title'); if(ft) ft.textContent = 'Datele pentru lectura ta';
     $('stMenuBtn').addEventListener('click', function(){ $('stMenu').classList.add('on'); });
     $('stMenu').addEventListener('click', function(e){ if(e.target.closest('a') || e.target === $('stMenu')) $('stMenu').classList.remove('on'); });
     addEventListener('scroll', progress, { passive: true });

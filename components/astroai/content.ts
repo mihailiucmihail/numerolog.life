@@ -32,7 +32,7 @@ export const PRODUCTS_COPY: ProductCopy[] = [
       'Ce ai adus din viețile trecute și din neamul tău?',
       'În ce etapă a vieții ești acum și ce urmează?',
     ],
-    includes: ['9 capitole, ca o consultație personală', 'Graficele vieții: carieră, bani, iubire', 'Harta natală numerologică', 'Codul și karma numelui tău'],
+    includes: ['9 capitole: astrologie și numerologie, împreună', 'Graficele vieții: carieră, bani, iubire', 'Harta natală', 'Codul și karma numelui tău'],
     image: '/astroai/raport-cristal.webp',
     imageAlt: 'Capitolul „Cine ești cu adevărat” din raportul Cristalul Destinului',
     needs: 'Numele, data nașterii și sexul',
