@@ -10824,7 +10824,7 @@ window.HALYEAR_TEXTS={
       h += '<div class="st-final st-rv">' + FINAL.map(function(t){ return '<div class="st-line"><span class="i">◈</span><span class="t">' + t + '</span></div>'; }).join('') + '</div>';
       h += '<div class="st-bye st-rv">Îți mulțumesc că ai ' + fm('venit', 'venit') + '. Tot ce am discutat stă scris în data ta de naștere și în numele tău — iar ce faci cu toate acestea hotărăști doar tu.</div>';
       h += '<button class="st-fullbtn" id="stFullBtn" type="button">Deschide analiza completă, cu toate calculele</button>';
-      h += '<div class="st-disc">Analiza completă conține aceleași calcule, desfășurate pe toate sistemele, cu numere, tabele și grafice. Lectura astrologică și numerologică nu înlocuiește sfatul unui medic, al unui jurist sau al unui consultant financiar.</div></section>';
+      h += '<div class="st-disc">Analiza completă conține aceleași calcule, desfășurate pe toate sistemele, cu numere, tabele și grafice. Lectura astrologică și numerologică are rol orientativ și nu înlocuiește sfatul unui medic, al unui jurist sau al unui consultant financiar.</div></section>';
     }
     // хелло в мужском/женском роде
     box.innerHTML = h;
@@ -10902,7 +10902,7 @@ window.HALYEAR_TEXTS={
     document.body.classList.add('st-mode');
     if(typeof window.animateCountUp === 'function' && !window.animateCountUp.__st){ var acu = window.animateCountUp; var acw = function(el, v, d){ if(el && v != null) el.dataset.stFinal = String(parseInt(v, 10)); return acu.apply(this, arguments); }; acw.__st = true; window.animateCountUp = acw; }
     var ey = document.querySelector('.hero .eyebrow'); if(ey) ey.textContent = 'Astrologie și numerologie';
-    var hp = document.querySelector('.hero p'); if(hp) hp.innerHTML = 'Cerul din ziua nașterii tale și cifrele numelui tău, citite împreună. Din ele aflăm <span class="hero-highlight">cine ești, de ce ești aici și ce te așteaptă</span>.';
+    var hp = document.querySelector('.hero p'); if(hp) hp.innerHTML = 'Cerul din ziua nașterii tale și cifrele numelui tău, citite împreună. Din ele citim <span class="hero-highlight">cine ești, ce te mișcă și ce perioade urmează</span>.';
     document.querySelectorAll('button.btn').forEach(function(b){ if(/Calculează-ți Cristalul/.test(b.textContent)) b.textContent = 'Începe lectura'; });
     var ft = document.querySelector('#inputFormCard .section-title'); if(ft) ft.textContent = 'Datele pentru lectura ta';
     $('stMenuBtn').addEventListener('click', function(){ $('stMenu').classList.add('on'); });
