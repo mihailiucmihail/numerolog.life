@@ -174,24 +174,19 @@ export function HookLanding({ hook }: { hook: HookView }) {
                 </div>
 
                 <div className="hk-rcard">
-                  <span className="hk-pcard-kicker">Cele nouă sfere ale vieții tale</span>
-                  <strong>Harta ta</strong>
-                  <p className="hk-map-lead">Fiecare punct arată câtă forță ai primit în acea sferă. Trei sfere îți arătăm acum.</p>
-                  <div className="hk-map" role="list">
-                    {result.rich.map.cells.map((c) => (
-                      <div key={c.n} role="listitem" className={`hk-cell${c.open ? ' open' : ''}`}>
-                        <span className="hk-cell-name">{c.name}</span>
-                        <span className="hk-dots" aria-label={`${c.count} din 4`}>{[0, 1, 2, 3].map((i) => <i key={i} className={i < c.count ? 'on' : ''} />)}</span>
-                        {!c.open && <LockKeyhole size={12} className="hk-cell-lock" aria-hidden />}
-                      </div>
-                    ))}
-                  </div>
+                  <span className="hk-pcard-kicker">Banii, familia, talentul</span>
+                  <strong>Harta vieții tale</strong>
+                  <p className="hk-map-lead">Data nașterii îți împarte viața în nouă sfere. Iată ce spune despre trei dintre ele:</p>
                   {result.rich.map.open.map((o) => (
                     <div key={o.name} className="hk-map-item">
-                      <b>{o.name} <small>{o.count === 0 ? 'niciun punct' : o.count === 1 ? 'un punct' : `${o.count} puncte`}</small></b>
+                      <b>{o.name}</b>
                       <p>{o.text}</p>
                     </div>
                   ))}
+                  <div className="hk-map-rest">
+                    <span><LockKeyhole size={13} aria-hidden /> Celelalte șase sfere sunt în raportul complet:</span>
+                    <div>{result.rich.map.cells.filter((c) => !c.open).map((c) => <i key={c.n}>{c.name}</i>)}</div>
+                  </div>
                 </div>
 
                 <div className="hk-rcard">
