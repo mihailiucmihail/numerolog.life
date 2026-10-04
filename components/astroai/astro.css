@@ -320,3 +320,41 @@
 .ax .sample-shot { background: #120d22 }
 .ax .hk-consent { display: flex; gap: 10px; align-items: flex-start; margin: 14px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--muted-foreground); cursor: pointer }
 .ax .hk-consent input { margin-top: 3px; width: 16px; height: 16px; accent-color: #d4af37; flex-shrink: 0 }
+
+/* întrebările (cel mai puternic text), sus */
+.ax .answers-block { padding: 56px 0 10px }
+.ax .answers { list-style: none; padding: 0; margin: 28px auto 0; max-width: 880px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px }
+.ax .answers li { font-family: var(--font-cormorant); font-size: 24px; line-height: 1.3; padding: 14px 0 14px 26px; border-bottom: 1px solid var(--border); position: relative; color: var(--foreground) }
+.ax .answers li::before { content: '✦'; position: absolute; left: 0; top: 17px; font-size: 13px; color: var(--primary) }
+.ax .answers-note { text-align: center; margin: 18px 0 0; font-size: 13.5px; color: var(--muted-foreground) }
+/* raportul-exemplu viu */
+.ax .demo { margin-top: 30px }
+.ax .demo-tabs { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 26px }
+.ax .demo-tabs button { font: inherit; font-size: 13.5px; padding: 10px 16px; border-radius: 999px; border: 1px solid var(--border); background: transparent; color: var(--muted-foreground); cursor: pointer }
+.ax .demo-tabs button.on { border-color: rgba(212,175,55,.6); color: var(--primary); background: rgba(212,175,55,.08) }
+.ax .demo-stage { display: grid; grid-template-columns: 360px 1fr; gap: 48px; align-items: center; max-width: 900px; margin: 0 auto }
+.ax .demo-phone { position: relative; width: 360px; height: 720px; border-radius: 40px; border: 1px solid rgba(238,233,244,.22); background: #0b0816; box-shadow: 0 40px 80px -30px rgba(0,0,0,.9), 0 0 0 8px #15101f, 0 0 0 9px rgba(238,233,244,.12), 0 0 90px rgba(212,175,55,.08); overflow: hidden }
+.ax .demo-notch { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 110px; height: 24px; border-radius: 14px; background: #15101f; z-index: 3 }
+.ax .demo-phone iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #0b0816 }
+.ax .demo-wait { position: absolute; inset: 0; display: grid; place-items: center; background: #0b0816; z-index: 2 }
+.ax .demo-wait span { width: 34px; height: 34px; border-radius: 50%; border: 2px solid rgba(212,175,55,.25); border-top-color: var(--primary); animation: ax-spin 1s linear infinite }
+@keyframes ax-spin { to { transform: rotate(360deg) } }
+.ax .demo-side h3 { font-family: var(--font-cormorant); font-weight: 400; font-size: 34px; line-height: 1.15; margin: 6px 0 2px }
+.ax .demo-who { color: var(--primary); font-size: 14px; margin: 0 0 14px }
+.ax .demo-side p { font-size: 15px; line-height: 1.75; color: var(--muted-foreground); margin: 0 }
+.ax .demo-side ul { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 8px; font-size: 14px; color: var(--muted-foreground) }
+.ax .demo-side li::before { content: '✓ '; color: var(--primary) }
+.ax .demo-cta { margin-top: 22px }
+.ax .demo-full { display: inline-flex; align-items: center; gap: 8px; margin-top: 14px; font-size: 13px; color: var(--muted-foreground); text-decoration: underline }
+/* metoda, strânsă */
+.ax .story-details > summary { list-style: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 10px 0 }
+.ax .story-details > summary::-webkit-details-marker { display: none }
+.ax .story-sum { font-family: var(--font-cormorant); font-size: 32px; line-height: 1.2; text-decoration: underline; text-decoration-color: rgba(212,175,55,.5); text-underline-offset: 8px }
+.ax .story-details[open] > summary .story-sum { text-decoration: none }
+.ax .story-block { padding-bottom: 10px }
+@media (max-width: 900px) {
+  .ax .answers { grid-template-columns: 1fr } .ax .answers li { font-size: 21px }
+  .ax .demo-stage { grid-template-columns: 1fr; gap: 26px; justify-items: center }
+  .ax .demo-phone { width: min(100%, 340px); height: 640px }
+  .ax .demo-side { text-align: center; max-width: 420px } .ax .demo-side ul { text-align: left }
+}
