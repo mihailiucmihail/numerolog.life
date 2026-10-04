@@ -5,7 +5,8 @@ import { createAdminClient } from "@/lib/supabase/admin"
 import { consumePromoCode } from "@/lib/promo"
 import { recordPurchaseFromSession } from "@/lib/experiments/purchase"
 import { sendAstroReportEmailOnce } from "@/lib/astroai/email"
-import { isAstroProduct } from "@/lib/astroai/products"
+import { isAstroProduct, ASTRO_PRODUCTS } from "@/lib/astroai/products"
+import { sendMetaPurchase } from "@/lib/astroai/meta-capi"
 
 // Stripe trimite payload-ul brut; dezactivam parsarea automata.
 export const runtime = "nodejs"
@@ -70,6 +71,14 @@ export async function POST(request: NextRequest) {
             const success = (session.success_url || "").split("?")[0] || "https://astroai.ro/ro/astroai/raport"
             const piId = typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id ?? null
             await sendAstroReportEmailOnce({ sessionId: session.id, paymentIntentId: piId, to, firstName, product, url: `${success}?session_id=${session.id}` })
+          }
+          if (isAstroProduct(product)) {
+            const md = session.metadata || {}
+            sendMetaPurchase({
+              eventId: session.id, email: to, valueBani: session.amount_total ?? ASTRO_PRODUCTS[product].priceBani, currency: session.currency || "ron",
+              product, sourceUrl: "https://astroai.ro/", externalId: md.expVisitor || md.socialVisitor || null,
+              match: { fbp: md.fbp, fbc: md.fbc, fbip: md.fbip, fbua: md.fbua }, eventTime: session.created,
+            }).catch((err) => console.error("[astroai] meta capi", err))
           }
         }
 

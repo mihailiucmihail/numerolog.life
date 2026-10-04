@@ -8,6 +8,7 @@ import { startAstroCheckout, trackAstro } from '@/app/actions/astroai'
 import { ASTRO_PRODUCTS, ASTRO_SEPARATE_TOTAL_BANI, type AstroProduct } from '@/lib/astroai/products'
 import { FAQ, REPORTS_V2, SAMPLE, SCHOOLS_LINE, STORY, TOGETHER } from './content'
 import { CelestialInstrument } from './instrument'
+import { fbqTrack, MetaPixel } from './meta-pixel'
 import './astro.css'
 
 const MONTHS = ['ianuarie', 'februarie', 'martie', 'aprilie', 'mai', 'iunie', 'iulie', 'august', 'septembrie', 'octombrie', 'noiembrie', 'decembrie']
@@ -65,6 +66,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
 
   useEffect(() => {
     fire('landing_view', 'site')
+    fbqTrack('ViewContent', { content_name: 'astroai_landing', content_category: 'astroai' })
     if (cancelled) fire('checkout_cancelled', initialProduct)
   }, [cancelled, initialProduct])
 
@@ -103,6 +105,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) { setError('Scrie o adresă de e-mail validă: acolo îți trimitem raportul.'); return }
     setBusy(true)
     fire('form_submit', product)
+    fbqTrack('InitiateCheckout', { content_name: product, value: ASTRO_PRODUCTS[product].priceBani / 100, currency: 'RON' })
     try { sessionStorage.setItem('astroai_form', JSON.stringify({ a, b, meet, email })) } catch { /* fără stocare: plata merge oricum */ }
     const payload = {
       a: person(a),
@@ -120,6 +123,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
 
   return (
     <main className="ax relative min-h-screen overflow-x-clip bg-[#0b0816]">
+      <MetaPixel />
       {/* Fundalul original al site-ului */}
       <StarField />
       <div aria-hidden className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.10),transparent_55%),radial-gradient(ellipse_at_bottom_right,rgba(124,77,255,0.10),transparent_60%)]" />
