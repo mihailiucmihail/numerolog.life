@@ -1,4 +1,5 @@
 import 'server-only'
+import { solar2Lunar } from './lunar'
 import data from './hooks-data.json'
 import type { AstroProduct } from './products'
 
@@ -138,7 +139,19 @@ export function isHookSlug(v: unknown): v is HookSlug { return typeof v === 'str
 
 export interface HookInput { d: number; m: number; y: number; g: 'm' | 'f'; b?: { d: number; m: number; y: number; g: 'm' | 'f' } }
 export interface HookProfileItem { key: 'day' | 'month' | 'zodiac' | 'mission'; kicker: string; title: string; text: string }
-export interface HookResult { label: string; title: string; text: string; extra?: string; /** semnul mare de deasupra rezultatului: ziua, luna, zodia sau cifra */ seal: string; /** portretul datei: ziua, luna, zodia, misiunea (texte scurte, pe înțelesul tuturor) */ profile?: HookProfileItem[] }
+export interface HookResult { label: string; title: string; text: string; extra?: string; /** semnul mare de deasupra rezultatului: ziua, luna, zodia sau cifra */ seal: string; /** portretul datei: ziua, luna, zodia, misiunea (texte scurte, pe înțelesul tuturor) */ profile?: HookProfileItem[]; /** partea bogată, calculată doar din dată (aceleași calcule ca în Cristal) */ rich?: HookRich }
+
+export interface HookMapCell { n: number; name: string; count: number; open: boolean }
+export interface HookRich {
+  strengths: string
+  map: { cells: HookMapCell[]; open: { name: string; count: number; text: string }[] }
+  work: string
+  recharge: string
+  element: { name: string; text: string }
+  color: string
+  talisman: string
+  locked: string[]
+}
 
 /** Formele de gen din texte: {masculin|feminin} sau {|ă}. */
 function gender(text: string, g: 'm' | 'f'): string {
@@ -214,6 +227,53 @@ function dateProfile(d: number, m: number, y: number, g: 'm' | 'f', skip?: HookP
   return items.filter((i) => i.key !== skip)
 }
 
+
+type Rich = { strengths: Record<string, string>; work: Record<string, string>; recharge: Record<string, string>; talisman: Record<string, string>; color: Record<string, string>; element: Record<string, string>; elementOf: Record<string, string>; map: Record<string, Record<string, string>> }
+/** reducere ca în motorul Cristalului: 1..22 */
+function to22(n: number): number { if (n > 22) n = n - 22 * Math.floor((n - 1) / 22); return n <= 0 ? 22 : n }
+const digitSum = (n: number) => String(Math.abs(n)).split('').reduce((a, c) => a + Number(c), 0)
+/** Pătratul Lo Shu (harta celor 9 sfere): cifrele datei în calendarul lunar chinezesc. */
+const MAP_LAYOUT = [4, 9, 2, 3, 5, 7, 8, 1, 6]
+const MAP_NAMES: Record<number, string> = { 1: 'Bani', 2: 'Minte', 3: 'Starea de bine', 4: 'Carieră', 5: 'Voință', 6: 'Familie', 7: 'Talent', 8: 'Oameni', 9: 'Forță' }
+const MAP_OPEN = [1, 6, 7]
+const ELEMENT_ART: Record<string, string> = { Foc: 'Focul', Apă: 'Apa', Pământ: 'Pământul', Aer: 'Aerul', Lemn: 'Lemnul', Metal: 'Metalul', Eter: 'Eterul' }
+export const RICH_LOCKED = [
+  'Celelalte șase sfere din harta ta: minte, carieră, voință, oameni, forță și starea de bine',
+  'Talentul ascuns care vine din numele tău',
+  'Lecția cu care ai venit și ce ai de dat mai departe',
+  'De ce fel de oameni e bine să te ferești',
+  'Țările în care te simți ca acasă',
+  'Cum îți merge viața pe ani, pe grafic',
+]
+
+function richProfile(d: number, m: number, y: number, g: 'm' | 'f'): HookRich {
+  const R = (data as unknown as { rich: Rich }).rich
+  const Dt = to22(d), Mt = m, Gt = to22(digitSum(y))
+  const OPV = to22(Math.abs(Dt - Mt))
+  const ZK = to22(Dt + 2 * Mt + Gt)
+  const SZ = to22(Dt + Mt + Gt)
+  const PROF = to22(ZK + SZ)
+  const lunar = solar2Lunar(y, m, d)
+  const str = `${String(lunar.day).padStart(2, '0')}${String(lunar.month).padStart(2, '0')}${y + 2698}`
+  const counts: Record<number, number> = {}
+  for (let i = 1; i <= 9; i++) counts[i] = 0
+  for (const c of str) if (c !== '0') counts[Number(c)]++
+  const el = R.elementOf[String(OPV)]
+  return {
+    strengths: gender(R.strengths[String(OPV)], g),
+    map: {
+      cells: MAP_LAYOUT.map((n) => ({ n, name: MAP_NAMES[n], count: counts[n], open: MAP_OPEN.includes(n) })),
+      open: MAP_OPEN.map((n) => ({ name: MAP_NAMES[n], count: counts[n], text: gender(R.map[String(n)][String(Math.min(4, counts[n]))], g) })),
+    },
+    work: gender(R.work[String(PROF)], g),
+    recharge: gender(R.recharge[String(ZK)], g),
+    element: { name: ELEMENT_ART[el] || el, text: gender(R.element[el], g) },
+    color: R.color[String(ZK)],
+    talisman: R.talisman[String(ZK)],
+    locked: RICH_LOCKED,
+  }
+}
+
 export function computeHook(slug: HookSlug, input: HookInput): HookResult | { error: string } {
   const h = HOOKS[slug]
   const { d, m, y, g } = input
@@ -222,11 +282,11 @@ export function computeHook(slug: HookSlug, input: HookInput): HookResult | { er
   if (h.kind === 'day') {
     const cat = dayCategory(d)
     const S = (data as unknown as { simple: Simple }).simple
-    return { seal: String(d), label: `${d} ${MONTHS[m - 1]} · zilele ${cat.replace('-', '–')}`, title: DAY_GROUP[cat], text: gender(S.day[String(d)], g), profile: dateProfile(d, m, y, g, 'day') }
+    return { seal: String(d), label: `${d} ${MONTHS[m - 1]} · zilele ${cat.replace('-', '–')}`, title: DAY_GROUP[cat], text: gender(S.day[String(d)], g), profile: dateProfile(d, m, y, g, 'day'), rich: richProfile(d, m, y, g) }
   }
   if (h.kind === 'month') {
     const text = (data.birthMonth as Record<string, string>)[String(m)]
-    return { seal: MONTHS[m - 1].slice(0, 3), label: `născut${g === 'f' ? 'ă' : ''} în ${MONTHS[m - 1]}`, title: `Luna ${MONTHS[m - 1]}`, text: gender(text, g), profile: dateProfile(d, m, y, g, 'month') }
+    return { seal: MONTHS[m - 1].slice(0, 3), label: `născut${g === 'f' ? 'ă' : ''} în ${MONTHS[m - 1]}`, title: `Luna ${MONTHS[m - 1]}`, text: gender(text, g), profile: dateProfile(d, m, y, g, 'month'), rich: richProfile(d, m, y, g) }
   }
   if (h.kind === 'zodiac') {
     const sign = zodiacSign(d, m)
@@ -240,7 +300,7 @@ export function computeHook(slug: HookSlug, input: HookInput): HookResult | { er
     if (current) when = `Ești chiar acum în perioada ta karmică: ${RO_DATE(current.start)} – ${RO_DATE(current.end)}.`
     else if (next) when = `Următoarea ta perioadă karmică: ${RO_DATE(next.start)} – ${RO_DATE(next.end)}.${past ? ` Ultima a fost ${RO_DATE(past.start)} – ${RO_DATE(past.end)}.` : ''}`
     else when = 'Perioadele tale karmice le găsești în raport.'
-    return { seal: ZODIAC_GLYPH[sign] || '✦', label: sign, title: `${sign}: ${current ? 'ești în perioada karmică' : 'perioada ta karmică'}`, text: when, extra: `Lecția zodiei tale în aceste perioade: ${gender(task, g)}`, profile: dateProfile(d, m, y, g, 'zodiac') }
+    return { seal: ZODIAC_GLYPH[sign] || '✦', label: sign, title: `${sign}: ${current ? 'ești în perioada karmică' : 'perioada ta karmică'}`, text: when, extra: `Lecția zodiei tale în aceste perioade: ${gender(task, g)}`, profile: dateProfile(d, m, y, g, 'zodiac'), rich: richProfile(d, m, y, g) }
   }
   // cuplu
   const b = input.b

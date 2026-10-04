@@ -165,6 +165,58 @@ export function HookLanding({ hook }: { hook: HookView }) {
             <h2>{result.title}</h2>
             <p className="hk-text">{result.text}</p>
             {result.extra && <p className="hk-extra">{result.extra}</p>}
+            {result.rich && (
+              <div className="hk-rich">
+                <div className="hk-rcard hk-strong">
+                  <span className="hk-pcard-kicker">Ce se vede din prima clipă</span>
+                  <strong>Punctele tale forte</strong>
+                  <p>{result.rich.strengths}</p>
+                </div>
+
+                <div className="hk-rcard">
+                  <span className="hk-pcard-kicker">Cele nouă sfere ale vieții tale</span>
+                  <strong>Harta ta</strong>
+                  <p className="hk-map-lead">Fiecare punct arată câtă forță ai primit în acea sferă. Trei sfere îți arătăm acum.</p>
+                  <div className="hk-map" role="list">
+                    {result.rich.map.cells.map((c) => (
+                      <div key={c.n} role="listitem" className={`hk-cell${c.open ? ' open' : ''}`}>
+                        <span className="hk-cell-name">{c.name}</span>
+                        <span className="hk-dots" aria-label={`${c.count} din 4`}>{[0, 1, 2, 3].map((i) => <i key={i} className={i < c.count ? 'on' : ''} />)}</span>
+                        {!c.open && <LockKeyhole size={12} className="hk-cell-lock" aria-hidden />}
+                      </div>
+                    ))}
+                  </div>
+                  {result.rich.map.open.map((o) => (
+                    <div key={o.name} className="hk-map-item">
+                      <b>{o.name} <small>{o.count === 0 ? 'niciun punct' : o.count === 1 ? 'un punct' : `${o.count} puncte`}</small></b>
+                      <p>{o.text}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="hk-rcard">
+                  <span className="hk-pcard-kicker">Munca și banii</span>
+                  <strong>Unde îți merge bine</strong>
+                  <p>{result.rich.work}</p>
+                </div>
+
+                <div className="hk-rcard">
+                  <span className="hk-pcard-kicker">Când obosești</span>
+                  <strong>Ce te pune pe picioare</strong>
+                  <p>{result.rich.recharge}</p>
+                </div>
+
+                <div className="hk-rcard">
+                  <span className="hk-pcard-kicker">Elementul tău · {result.rich.element.name}</span>
+                  <strong>Ce te ține în echilibru</strong>
+                  <p>{result.rich.element.text}</p>
+                  <div className="hk-chips">
+                    <span><small>Culoarea ta</small>{result.rich.color}</span>
+                    <span><small>Pietrele tale norocoase</small>{result.rich.talisman}</span>
+                  </div>
+                </div>
+              </div>
+            )}
             {result.profile && result.profile.length > 0 && (
               <div className="hk-profile">
                 <span className="hk-profile-head">Ce mai spune data ta de naștere</span>
@@ -175,6 +227,12 @@ export function HookLanding({ hook }: { hook: HookView }) {
                     <p>{it.text}</p>
                   </div>
                 ))}
+                {result.rich && (
+                  <div className="hk-locked">
+                    <span className="hk-profile-head">Ce mai e în raportul complet</span>
+                    <ul>{result.rich.locked.map((l) => <li key={l}><LockKeyhole size={14} aria-hidden /> {l}</li>)}</ul>
+                  </div>
+                )}
                 <p className="hk-profile-note">Toate acestea vin doar din data nașterii. Raportul complet adaugă și numele tău, și atunci totul devine doar despre tine.</p>
               </div>
             )}

@@ -504,3 +504,32 @@
 .ax .hk-pcard strong { display: block; font-family: var(--font-cormorant); font-weight: 500; font-size: 22px; line-height: 1.2; color: var(--foreground); margin-bottom: 6px }
 .ax .hk-pcard p { font-size: 15px; line-height: 1.65; color: rgba(238,233,244,.86) }
 .ax .hk-profile-note { text-align: center; font-size: 14px; line-height: 1.6; color: var(--muted-foreground); margin-top: 6px }
+
+/* rezultatul bogat din data nașterii */
+.ax .hk-rich { margin: 22px 0 6px; text-align: left; display: grid; gap: 12px }
+.ax .hk-rcard { padding: 18px 18px 16px; border-radius: 16px; border: 1px solid rgba(212,175,55,.22); background: linear-gradient(180deg, rgba(212,175,55,.08), rgba(238,233,244,.02)) }
+.ax .hk-rcard strong { display: block; font-family: var(--font-cormorant); font-weight: 500; font-size: 24px; line-height: 1.2; color: var(--foreground); margin-bottom: 8px }
+.ax .hk-rcard p { font-size: 15.5px; line-height: 1.7; color: rgba(238,233,244,.88) }
+.ax .hk-strong { border-color: rgba(212,175,55,.45); background: linear-gradient(180deg, rgba(212,175,55,.14), rgba(212,175,55,.03)) }
+.ax .hk-strong p { font-size: 16.5px; color: var(--foreground) }
+.ax .hk-map-lead { font-size: 14px !important; color: var(--muted-foreground) !important; margin-bottom: 12px }
+.ax .hk-map { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 14px }
+.ax .hk-cell { position: relative; aspect-ratio: 1 / .82; border-radius: 10px; border: 1px solid rgba(238,233,244,.12); background: rgba(238,233,244,.03); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 6px; text-align: center }
+.ax .hk-cell.open { border-color: rgba(212,175,55,.6); background: rgba(212,175,55,.1) }
+.ax .hk-cell-name { font-size: 12.5px; line-height: 1.2; color: rgba(238,233,244,.72) }
+.ax .hk-cell.open .hk-cell-name { color: var(--primary); font-weight: 600 }
+.ax .hk-dots { display: flex; gap: 5px }
+.ax .hk-dots i { width: 7px; height: 7px; border-radius: 50%; background: rgba(238,233,244,.14) }
+.ax .hk-dots i.on { background: rgba(238,233,244,.55) }
+.ax .hk-cell.open .hk-dots i.on { background: var(--primary); box-shadow: 0 0 8px rgba(212,175,55,.6) }
+.ax .hk-cell-lock { position: absolute; top: 6px; right: 6px; color: rgba(238,233,244,.35) }
+.ax .hk-map-item { padding-top: 12px; margin-top: 12px; border-top: 1px solid rgba(238,233,244,.08) }
+.ax .hk-map-item b { display: block; color: var(--primary); font-size: 15px; font-weight: 600; margin-bottom: 4px }
+.ax .hk-map-item b small { color: var(--muted-foreground); font-weight: 400; font-size: 13px; margin-left: 6px }
+.ax .hk-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px }
+.ax .hk-chips span { display: block; padding: 10px 12px; border-radius: 10px; background: rgba(238,233,244,.05); border: 1px solid rgba(238,233,244,.1); font-size: 14.5px; color: var(--foreground); line-height: 1.4 }
+.ax .hk-chips small { display: block; font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 3px }
+.ax .hk-locked { margin-top: 8px; padding: 16px 18px; border-radius: 16px; border: 1px dashed rgba(212,175,55,.35) }
+.ax .hk-locked ul { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 9px }
+.ax .hk-locked li { display: flex; gap: 9px; align-items: flex-start; font-size: 14.5px; line-height: 1.5; color: rgba(238,233,244,.82) }
+.ax .hk-locked li svg { flex: none; margin-top: 3px; color: var(--primary) }
