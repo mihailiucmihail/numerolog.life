@@ -142,9 +142,9 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
             <div className="hero-kicker"><Sparkles size={16} strokeWidth={1.2} /> Astrologie <Plus size={12} /> numerologie</div>
             <h1>Două tradiții vechi. <em>Un singur răspuns</em> despre tine.</h1>
             <p className="hero-intro">Am unit astrologia și numerologia într-o singură lectură, construită pe metodele a șase școli, din Europa și din China, și pe experiența multor astrologi și numerologi.</p>
-            <p className="hero-detail">Din numele și data nașterii tale primești răspunsuri clare, cu calculul la vedere. Nu ai nevoie de ora nașterii.</p>
+            <p className="hero-detail">Introdu numele, prenumele și data nașterii și vezi pe grafice cum îți merge în carieră, în bani și în iubire. Află ce talente ai, cât de bine te potrivești cu partenerul, ce îți aduce fiecare lună din an și multe alte lucruri despre tine pe care nu le știai.</p>
             <a className="hero-cta" href="#ce-afli" onClick={() => fire('product_select', product)}>Vezi ce cuprind rapoartele <ArrowUpRight size={18} /></a>
-            <div className="hero-proof"><span><ShieldCheck size={14} /> <Link href="/ro/astroai/rambursare">Garanția satisfacției: îți returnăm integral suma</Link></span><span>De la {priceFor(ASTRO_PRODUCTS.cristal.priceBani, promo).now}</span></div>
+            <div className="hero-proof"><span><ShieldCheck size={14} /> <Link href="/ro/astroai/rambursare">Drept de rambursare în 14 zile</Link></span><span>De la {priceFor(ASTRO_PRODUCTS.cristal.priceBani, promo).now}</span></div>
           </div>
           <div className="hero-art">
             <div className="art-topline"><span>Astrologie <Plus size={12} /> Numerologie</span><span>O singură lectură</span></div>
@@ -224,7 +224,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
               <button type="submit" className="payment-button" disabled={busy}><LockKeyhole size={16} /> {busy ? 'Se deschide plata…' : 'Deschide raportul meu'}</button>
               <p className="payment-schools"><Sparkles size={14} strokeWidth={1.3} /> {SCHOOLS_LINE}</p>
               <p className="payment-note">Plată prin Stripe. Raportul se deschide imediat și îl primești pe e-mail.<br />Continuând, ești de acord cu <Link href="/ro/termeni">Termenii</Link> și <Link href="/ro/confidentialitate">Confidențialitatea</Link>.</p>
-              <div className="guarantee"><ShieldCheck size={23} /><p>Garanția satisfacției<br /><span>Vrem ca raportul să te ajute să te cunoști mai bine și să vezi ce urmează. Dacă totuși nu te mulțumește, îți returnăm integral suma plătită, în primele 14 zile. </span><Link href="/ro/astroai/rambursare">Cum funcționează</Link></p></div>
+              <div className="guarantee"><ShieldCheck size={23} /><p>Drept de rambursare în 14 zile<br /><span>Vrem ca raportul să te ajute să te cunoști mai bine și să vezi ce urmează. Dacă totuși nu te mulțumește, îți returnăm integral suma plătită, în primele 14 zile. </span><Link href="/ro/astroai/rambursare">Cum funcționează</Link></p></div>
             </div>
           </form>
         </section>

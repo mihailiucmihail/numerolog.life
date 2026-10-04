@@ -191,7 +191,7 @@ export function HookLanding({ hook }: { hook: HookView }) {
               {payError && <p className="hk-error" role="alert">{payError}</p>}
               <button type="submit" className="payment-button hk-cta" disabled={payBusy}><LockKeyhole size={16} /> {payBusy ? 'Se deschide plata…' : `Deschide raportul ${couple ? 'nostru' : 'meu'} · ${price.now}`}</button>
               <div className="hk-trust">
-                <span><ShieldCheck size={14} /> Garanția satisfacției: îți returnăm integral suma, în 14 zile</span>
+                <span><ShieldCheck size={14} /> Drept de rambursare în 14 zile</span>
                 <span>Plată prin Stripe · fără abonament</span>
               </div>
               <p className="hk-legal">Continuând, ești de acord cu <Link href="/ro/termeni">Termenii</Link> și <Link href="/ro/confidentialitate">Confidențialitatea</Link>.</p>
