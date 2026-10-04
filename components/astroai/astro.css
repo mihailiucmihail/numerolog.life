@@ -533,3 +533,10 @@
 .ax .hk-locked ul { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 9px }
 .ax .hk-locked li { display: flex; gap: 9px; align-items: flex-start; font-size: 14.5px; line-height: 1.5; color: rgba(238,233,244,.82) }
 .ax .hk-locked li svg { flex: none; margin-top: 3px; color: var(--primary) }
+
+.ax .hk-map-item:first-of-type { border-top: 0; margin-top: 0; padding-top: 4px }
+.ax .hk-map-rest { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(238,233,244,.08) }
+.ax .hk-map-rest > span { display: flex; gap: 7px; align-items: center; font-size: 13.5px; color: var(--muted-foreground); margin-bottom: 9px }
+.ax .hk-map-rest > span svg { color: var(--primary) }
+.ax .hk-map-rest div { display: flex; flex-wrap: wrap; gap: 6px }
+.ax .hk-map-rest i { font-style: normal; font-size: 13px; padding: 5px 10px; border-radius: 999px; border: 1px solid rgba(238,233,244,.14); color: rgba(238,233,244,.7) }

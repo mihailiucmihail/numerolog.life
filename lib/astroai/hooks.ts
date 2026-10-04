@@ -238,7 +238,7 @@ const MAP_NAMES: Record<number, string> = { 1: 'Bani', 2: 'Minte', 3: 'Starea de
 const MAP_OPEN = [1, 6, 7]
 const ELEMENT_ART: Record<string, string> = { Foc: 'Focul', Apă: 'Apa', Pământ: 'Pământul', Aer: 'Aerul', Lemn: 'Lemnul', Metal: 'Metalul', Eter: 'Eterul' }
 export const RICH_LOCKED = [
-  'Celelalte șase sfere din harta ta: minte, carieră, voință, oameni, forță și starea de bine',
+  'Celelalte șase sfere din harta vieții tale',
   'Talentul ascuns care vine din numele tău',
   'Lecția cu care ai venit și ce ai de dat mai departe',
   'De ce fel de oameni e bine să te ferești',
