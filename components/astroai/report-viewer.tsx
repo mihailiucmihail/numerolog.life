@@ -101,7 +101,7 @@ export function AstroReportViewer({ sessionId, reports, firstName }: { sessionId
             <button key={`${active}-${i}`} type="button" aria-current={i === current} onClick={() => go(i)}><i>{i + 1}</i><span>{c.title}</span></button>
           ))}
           <div className="ax-cab-guarantee">
-            <p>Nu te regăsești în raport? Îți dăm banii înapoi dacă îi ceri în 14 zile de la plată.</p>
+            <p>Dacă raportul nu te mulțumește, îți returnăm integral suma plătită, în primele 14 zile de la plată.</p>
             <a href={`/ro/astroai/rambursare?session_id=${encodeURIComponent(sessionId)}`} className="ax-cab-refund">Cere rambursarea</a>
           </div>
         </nav>
