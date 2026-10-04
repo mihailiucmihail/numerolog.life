@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { ArrowUpRight, Check, LockKeyhole, Plus, ShieldCheck, Sparkles } from 'lucide-react'
+import { ArrowDown, ArrowUpRight, CalendarRange, Check, Gem, HeartHandshake, LockKeyhole, Plus, ShieldCheck, Sparkles } from 'lucide-react'
 import { StarField } from '@/components/star-field'
 import { startAstroCheckout, trackAstro } from '@/app/actions/astroai'
 import { ASTRO_PRODUCTS, ASTRO_SEPARATE_TOTAL_BANI, type AstroProduct } from '@/lib/astroai/products'
@@ -19,6 +19,11 @@ const YEAR_FIRST = YEAR_NOW - 10
 const YEARS = Array.from({ length: YEAR_FIRST - 1919 }, (_, i) => YEAR_FIRST - i)
 const DAYS = Array.from({ length: 31 }, (_, i) => i + 1)
 const ORDER: AstroProduct[] = ['cristal', 'compat', 'prog', 'pachet']
+const INTRO_CARDS = [
+  { id: 'cristal' as const, Icon: Gem, q: 'Cine sunt eu?', name: 'Cristalul Destinului', text: 'Ce te așteaptă în carieră, bani și iubire, talentele ascunse și misiunea ta.' },
+  { id: 'compat' as const, Icon: HeartHandshake, q: 'Ne potrivim?', name: 'Compatibilitatea cuplului', text: 'Ce vă unește, de unde pornesc certurile și încotro merge relația voastră.' },
+  { id: 'prog' as const, Icon: CalendarRange, q: 'Ce îmi aduce anul?', name: 'Prognoza personală', text: 'Anul tău lună cu lună, cu perioadele bune și datele care contează.' },
+]
 
 type Person = { f: string; l: string; d: string; m: string; y: string; g: '' | 'm' | 'f' }
 const EMPTY: Person = { f: '', l: '', d: '', m: '', y: '', g: '' }
@@ -154,10 +159,21 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
         </section>
 
         <section className="sc-block" id="ce-afli" aria-labelledby="ce-afli-titlu">
-          <div className="story-head">
-            <span className="small-kicker">Ce afli cu AstroAI</span>
-            <h2 id="ce-afli-titlu">Trei rapoarte, pentru întrebările care contează.</h2>
-            <p>Fiecare raport vine cu întrebările la care răspunde și cu un exemplu complet, pe care îl poți parcurge înainte să comanzi.</p>
+          <div className="story-head sc-head">
+            <span className="sc-kicker">Ce descoperi cu AstroAI</span>
+            <h2 id="ce-afli-titlu">Tu. <em>Relația ta.</em> Anul tău.</h2>
+            <p>Fiecare raport răspunde la altă întrebare importantă. Alege ce te interesează și vezi mai jos un exemplu complet.</p>
+          </div>
+          <div className="sc-cards">
+            {INTRO_CARDS.map((k) => (
+              <a key={k.id} href={`#${k.id}`} className="sc-card" onClick={() => fire('product_select', k.id)}>
+                <span className="sc-card-icon" aria-hidden><k.Icon size={22} strokeWidth={1.3} /></span>
+                <span className="sc-card-q">{k.q}</span>
+                <strong>{k.name}</strong>
+                <span className="sc-card-text">{k.text}</span>
+                <span className="sc-card-foot"><span>{priceFor(ASTRO_PRODUCTS[k.id].priceBani, promo).now}</span><span className="sc-card-go">Vezi exemplul <ArrowDown size={14} /></span></span>
+              </a>
+            ))}
           </div>
           <Showcase onChoose={(r) => choose(r)} />
         </section>

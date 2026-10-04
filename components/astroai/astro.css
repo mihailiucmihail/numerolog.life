@@ -439,3 +439,27 @@
   .ax .sc-cta { max-width: none }
   .ax .sc-stage .demo-phone { width: min(100%, 340px); height: 620px }
 }
+
+/* ── Intro „Ce descoperi”: titlu + trei carduri ── */
+.ax .sc-head .sc-kicker { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--primary) }
+.ax .sc-head .sc-kicker::before, .ax .sc-head .sc-kicker::after { content: ''; width: 28px; height: 1px; background: linear-gradient(90deg, transparent, var(--primary)) }
+.ax .sc-head .sc-kicker::after { transform: scaleX(-1) }
+.ax .sc-head h2 { font-family: var(--font-cormorant); font-weight: 400; font-size: 54px; line-height: 1.08; margin: 14px 0 16px; letter-spacing: -.5px }
+.ax .sc-head h2 em { font-style: italic; color: var(--primary) }
+.ax .sc-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; max-width: 1060px; margin: 34px auto 10px }
+.ax .sc-card { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 24px 22px 20px; border-radius: 16px; border: 1px solid rgba(212,175,55,.22); background: linear-gradient(180deg, rgba(212,175,55,.07), rgba(238,233,244,.02)); transition: transform .25s, border-color .25s, box-shadow .25s; overflow: hidden }
+.ax .sc-card::after { content: ''; position: absolute; inset: auto -40% -60% auto; width: 180px; height: 180px; border-radius: 50%; background: radial-gradient(circle, rgba(212,175,55,.16), transparent 70%); pointer-events: none }
+.ax .sc-card:hover { transform: translateY(-3px); border-color: rgba(212,175,55,.5); box-shadow: 0 18px 40px -22px rgba(212,175,55,.45) }
+.ax .sc-card-icon { width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(212,175,55,.45); display: flex; align-items: center; justify-content: center; color: var(--primary); margin-bottom: 6px }
+.ax .sc-card-q { font-family: var(--font-cormorant); font-style: italic; font-size: 22px; color: var(--primary); line-height: 1.1 }
+.ax .sc-card strong { font-size: 17px; font-weight: 600; color: var(--foreground) }
+.ax .sc-card-text { font-size: 14px; line-height: 1.65; color: var(--muted-foreground); flex: 1 }
+.ax .sc-card-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted-foreground) }
+.ax .sc-card-go { display: inline-flex; align-items: center; gap: 6px; color: var(--primary); font-weight: 500 }
+@media (max-width: 900px) {
+  .ax .sc-head h2 { font-size: 40px }
+  .ax .sc-cards { grid-template-columns: 1fr; gap: 12px; margin-top: 26px }
+  .ax .sc-card { padding: 18px 18px 16px; display: grid; grid-template-columns: 44px 1fr; column-gap: 14px; row-gap: 4px }
+  .ax .sc-card-icon { grid-row: span 3; margin: 0 }
+  .ax .sc-card-foot { grid-column: 1 / -1 }
+}
