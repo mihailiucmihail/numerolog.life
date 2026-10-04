@@ -138,7 +138,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
       <div className="ax-wrap">
         <header className="site-header">
           <a href="#" className="wordmark" aria-label="AstroAI, acasă"><Sparkles className="brand-symbol" size={29} strokeWidth={1.1} /> astro<span>ai</span><small>.ro</small></a>
-          <nav aria-label="Navigare"><a href="#ce-afli">Ce afli</a><a href="#cristal">Cristalul</a><a href="#compat">Cuplul</a><a href="#prog">Prognoza</a><a href="#poveste">Metoda</a><a href="#intrebari">Întrebări</a></nav>
+          <nav aria-label="Navigare"><a href="#ce-afli">Ce descoperi</a><a href="#cristal">Cristalul</a><a href="#compat">Cuplul</a><a href="#prog">Prognoza</a><a href="#poveste">Metoda</a><a href="#intrebari">Întrebări</a></nav>
           <a href="#rapoarte" className="header-link" onClick={() => fire('product_select', product)}>Descoperă-te <ArrowUpRight size={16} /></a>
         </header>
 
@@ -162,7 +162,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
           <div className="story-head sc-head">
             <span className="sc-kicker">Ce descoperi cu AstroAI</span>
             <h2 id="ce-afli-titlu">Tu. <em>Relația ta.</em> Anul tău.</h2>
-            <p>Fiecare raport răspunde la altă întrebare importantă. Alege ce te interesează și vezi mai jos un exemplu complet.</p>
+            <p>Fiecare raport răspunde la altă întrebare importantă din viața ta. Alege-l pe cel care te interesează acum.</p>
           </div>
           <div className="sc-cards">
             {INTRO_CARDS.map((k) => (
