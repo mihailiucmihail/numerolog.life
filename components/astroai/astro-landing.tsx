@@ -7,7 +7,7 @@ import { StarField } from '@/components/star-field'
 import { startAstroCheckout, trackAstro } from '@/app/actions/astroai'
 import { ASTRO_PRODUCTS, ASTRO_SEPARATE_TOTAL_BANI, type AstroProduct } from '@/lib/astroai/products'
 import { FAQ, REPORTS_V2, SCHOOLS_LINE, STORY } from './content'
-import { LiveDemo } from './live-demo'
+import { Showcase } from './showcase'
 import { CelestialInstrument } from './instrument'
 import { fbqTrack, MetaPixel } from './meta-pixel'
 import { PromoBar, PromoInline, PromoOptIn, PromoPopup, applyOptIn, priceFor, useAstroPromo, usePriceFor } from './promo'
@@ -133,44 +133,33 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
       <div className="ax-wrap">
         <header className="site-header">
           <a href="#" className="wordmark" aria-label="AstroAI, acasă"><Sparkles className="brand-symbol" size={29} strokeWidth={1.1} /> astro<span>ai</span><small>.ro</small></a>
-          <nav aria-label="Navigare"><a href="#rapoarte">Rapoartele tale</a><a href="#perspective">Două perspective, un singur raport</a><a href="#exemplu">Exemplu</a><a href="#poveste">Metoda</a><a href="#intrebari">Întrebări</a></nav>
+          <nav aria-label="Navigare"><a href="#ce-afli">Ce afli</a><a href="#cristal">Cristalul</a><a href="#compat">Cuplul</a><a href="#prog">Prognoza</a><a href="#poveste">Metoda</a><a href="#intrebari">Întrebări</a></nav>
           <a href="#rapoarte" className="header-link" onClick={() => fire('product_select', product)}>Descoperă-te <ArrowUpRight size={16} /></a>
         </header>
 
         <section className="hero" id="perspective">
           <div className="hero-copy">
-            <div className="hero-kicker"><Sparkles size={16} strokeWidth={1.2} /> Doar din nume și data nașterii</div>
-            <h1>Ai simțit mereu că ești <em>altfel</em> decât pari. Acum ai și <em>explicația.</em></h1>
-            <p className="hero-intro">Din numele și data ta de naștere: cine ești de fapt, de ce se repetă aceleași lucruri în viața ta și ce urmează.</p>
-            <p className="hero-detail">Astrologie și numerologie, într-un singur raport. Îl citești în 10 minute, pe telefon. Dacă nu te regăsești în el, îți dăm banii înapoi.</p>
+            <div className="hero-kicker"><Sparkles size={16} strokeWidth={1.2} /> Astrologie <Plus size={12} /> numerologie</div>
+            <h1>Două tradiții vechi. <em>Un singur răspuns</em> despre tine.</h1>
+            <p className="hero-intro">Am unit astrologia și numerologia într-o singură lectură, construită pe metodele a șase școli, din Europa și din China, și pe experiența multor astrologi și numerologi.</p>
+            <p className="hero-detail">Din numele și data nașterii tale primești răspunsuri clare, cu calculul la vedere. Nu ai nevoie de ora nașterii.</p>
+            <a className="hero-cta" href="#ce-afli" onClick={() => fire('product_select', product)}>Vezi ce cuprind rapoartele <ArrowUpRight size={18} /></a>
+            <div className="hero-proof"><span><ShieldCheck size={14} /> <Link href="/ro/astroai/rambursare">Banii înapoi automat, în primele 14 zile</Link></span><span>De la {priceFor(ASTRO_PRODUCTS.cristal.priceBani, promo).now}</span></div>
           </div>
           <div className="hero-art">
             <div className="art-topline"><span>Astrologie <Plus size={12} /> Numerologie</span><span>O singură lectură</span></div>
             <CelestialInstrument />
             <div className="instrument-caption"><span className="caption-line" /><span>Cerul îți dă coordonatele. Cifrele le dau sens.</span><span className="caption-line" /></div>
           </div>
-          <a className="hero-cta" href="#rapoarte" onClick={() => fire('product_select', product)}>Vreau raportul meu · {priceFor(ASTRO_PRODUCTS.cristal.priceBani, promo).now} <ArrowUpRight size={18} /></a>
-          <div className="hero-proof"><span><ShieldCheck size={14} /> <Link href="/ro/astroai/rambursare">Banii înapoi automat, în primele 14 zile</Link></span><span>Fără ora nașterii</span></div>
         </section>
 
-        <section className="answers-block" id="raspunsuri" aria-labelledby="raspunsuri-titlu">
+        <section className="sc-block" id="ce-afli" aria-labelledby="ce-afli-titlu">
           <div className="story-head">
-            <span className="small-kicker">Ce afli din raport</span>
-            <h2 id="raspunsuri-titlu">Întrebările pe care nu le pui nimănui</h2>
+            <span className="small-kicker">Ce afli cu AstroAI</span>
+            <h2 id="ce-afli-titlu">Trei rapoarte, pentru întrebările care contează.</h2>
+            <p>Fiecare raport vine cu întrebările la care răspunde și cu un exemplu complet, pe care îl poți parcurge înainte să comanzi.</p>
           </div>
-          <ul className="answers">
-            {REPORTS_V2.cristal.questions.map((q) => <li key={q}>{q}</li>)}
-          </ul>
-          <p className="answers-note">Fiecare răspuns vine din numele și data ta de naștere, cu calculul lângă el.</p>
-        </section>
-
-        <section className="sample-block" id="exemplu" aria-labelledby="exemplu-titlu">
-          <div className="story-head">
-            <span className="small-kicker">Înainte să plătești</span>
-            <h2 id="exemplu-titlu">Derulează un raport întreg</h2>
-            <p>Nu un fragment: un raport complet, așa cum îl vezi pe telefon.</p>
-          </div>
-          <LiveDemo onCta={(r) => choose(r)} />
+          <Showcase onChoose={(r) => choose(r)} />
         </section>
 
         <PromoInline />

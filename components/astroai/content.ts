@@ -43,7 +43,7 @@ export const PRODUCTS_COPY: ProductCopy[] = [
     title: 'Compatibilitatea cuplului',
     tagline: 'Ce vă leagă, ce vă desparte și încotro mergeți împreună.',
     questions: [
-      'Cât de compatibili sunteți în iubire, în afaceri și după Matrice?',
+      'Cât de compatibili sunteți în iubire și în afaceri?',
       'Care e țelul comun al cuplului și misiunea fiecăruia?',
       'Ce rol are fiecare în relație și cum vă purtați în conflict?',
       'Care e piatra de poticnire și de unde pornesc certurile?',
@@ -65,7 +65,7 @@ export const PRODUCTS_COPY: ProductCopy[] = [
       'Care sunt anii tăi buni și care anii de încercare?',
       'Ce se petrece cu tine în interior și ce se conturează în jurul tău?',
       'În ce perioadă a anului ești acum și ce cere de la tine?',
-      'Ce să eviți acum și ce lecție ți se întoarce',
+      'Ce să eviți acum și ce lecție ți se întoarce?',
       'Ce energie are ziua pe care o ai în gând, ca să știi la ce să te aștepți?',
     ],
     includes: ['Harta anilor vieții tale', 'Perioadele anului, cu date exacte', 'Ce îți iese ușor și unde să ai grijă', 'Calculatorul zilei'],
