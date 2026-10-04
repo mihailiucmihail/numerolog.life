@@ -42,7 +42,7 @@ export const ASTRO_EVENTS = new Set([
 const ONCE = new Set(['promo_view', 'promo_subscribe', 'landing_view', 'form_impression', 'form_first_interaction', 'form_submit', 'report_view', 'refund_view'])
 
 /** Evenimentele care alimentează și raportul pe postări Instagram (social_events). */
-const SOCIAL = new Set(['form_impression', 'form_submit', 'preview_impression'])
+const SOCIAL = new Set(['form_impression', 'form_submit', 'preview_impression', 'landing_view'])
 
 const VID = /^[0-9a-f]{32}$/
 
@@ -102,7 +102,9 @@ export async function recordAstroEvent(input: {
   }
 }
 
-async function recordAstroSocial(event: string, product: string, visitorId: string) {
+async function recordAstroSocial(rawEvent: string, product: string, visitorId: string) {
+  // vizita pe pagină contează ca afișare a formularului în raportul pe surse
+  const event = rawEvent === 'landing_view' ? 'form_impression' : rawEvent
   try {
     const a = await requestSocialAttribution()
     if (!a || a.visitorId !== visitorId) return

@@ -68,3 +68,13 @@ test('revenue converts minor units independently per currency', () => {
   assert.equal(minorToMajor(1000, 'jpy'), 1000)
   assert.equal(minorToMajor(2900, 'byn'), 29)
 })
+
+test('AstroAI hook pages are tracked, arbitrary slugs are not', () => {
+  assert.equal(safePublicPath('/inceput-sau-sfarsit'), '/inceput-sau-sfarsit')
+  assert.equal(safePublicPath('/ro/astroai/l/zile-14-22'), '/ro/astroai/l/zile-14-22')
+  assert.equal(safePublicPath('/ro/astroai'), '/ro/astroai')
+  assert.equal(safePublicPath('/ion-popescu'), null)
+  const u = new URL('https://astroai.ro/inceput-sau-sfarsit?utm_source=instagram&utm_medium=paid&utm_campaign=inceput_sau_sfarsit&utm_content=reels1')
+  assert.equal(trackingExcluded(u), false)
+  assert.equal(captureSocialTouch(null, u, visitor, null)?.last.content, 'reels1')
+})
