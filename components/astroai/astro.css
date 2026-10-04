@@ -463,3 +463,43 @@
   .ax .sc-card-icon { grid-row: span 3; margin: 0 }
   .ax .sc-card-foot { grid-column: 1 / -1 }
 }
+
+/* ── Showcase: elemente noi (ascunse în varianta de bază) ── */
+.ax .sc-top { display: flex; align-items: center; gap: 12px }
+.ax .sc-icon { display: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(212,175,55,.5); align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0 }
+.ax .sc-n { display: none; font-weight: 600; color: var(--primary); margin-right: 8px }
+
+/* Varianta A: card, titlu auriu, listă cu bife */
+.ax .v-a .sc-num { display: none }
+.ax .v-a .sc-icon { display: flex }
+.ax .v-a .sc-copy { padding: 26px 24px; border: 1px solid rgba(212,175,55,.25); border-radius: 20px; background: linear-gradient(180deg, rgba(212,175,55,.08), rgba(238,233,244,.02)) }
+.ax .v-a .sc-copy h3 { color: var(--primary); font-size: 40px; margin-top: 14px }
+.ax .v-a .sc-tag { font-size: 16px; color: var(--muted-foreground) }
+.ax .v-a .sc-label { margin-top: 20px }
+.ax .v-a .sc-q li { font-family: var(--font-manrope); font-size: 15.5px; line-height: 1.5; border: 0; padding: 7px 0 7px 32px; color: var(--foreground) }
+.ax .v-a .sc-q li::before { content: '✓'; top: 8px; width: 20px; height: 20px; border-radius: 50%; background: rgba(212,175,55,.16); color: var(--primary); font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 700 }
+
+/* Varianta B: titlu cu accent auriu, întrebări ca etichete */
+.ax .v-b .sc-num { display: none }
+.ax .v-b .sc-icon { display: flex }
+.ax .v-b .sc-copy h3 { font-size: 42px; margin-top: 14px; background: linear-gradient(180deg, #f4dc8a, #d4af37); -webkit-background-clip: text; background-clip: text; color: transparent }
+.ax .v-b .sc-tag { font-size: 16px; color: var(--muted-foreground) }
+.ax .v-b .sc-q { display: flex; flex-wrap: wrap; gap: 8px }
+.ax .v-b .sc-q li { font-family: var(--font-manrope); font-size: 14px; line-height: 1.4; padding: 9px 14px; border: 1px solid rgba(212,175,55,.3); border-radius: 999px; background: rgba(212,175,55,.06); color: var(--foreground) }
+.ax .v-b .sc-q li::before { display: none }
+
+/* Varianta C: titlu alb cu bară aurie, listă numerotată pe rânduri */
+.ax .v-c .sc-num { display: none }
+.ax .v-c .sc-icon { display: flex }
+.ax .v-c .sc-n { display: inline }
+.ax .v-c .sc-copy h3 { font-size: 42px; margin-top: 12px; padding-bottom: 14px; position: relative }
+.ax .v-c .sc-copy h3::after { content: ''; position: absolute; left: 0; bottom: 0; width: 56px; height: 2px; background: var(--primary) }
+.ax .v-c .sc-tag { margin-top: 12px; font-size: 16px; color: var(--muted-foreground) }
+.ax .v-c .sc-q { counter-reset: q }
+.ax .v-c .sc-q li { counter-increment: q; font-family: var(--font-manrope); font-size: 15.5px; line-height: 1.5; border: 0; border-radius: 10px; padding: 10px 12px 10px 48px; color: var(--foreground) }
+.ax .v-c .sc-q li:nth-child(odd) { background: rgba(238,233,244,.04) }
+.ax .v-c .sc-q li::before { content: counter(q); left: 12px; top: 10px; width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(212,175,55,.55); color: var(--primary); font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; font-family: var(--font-manrope) }
+@media (max-width: 900px) {
+  .ax .v-a .sc-copy h3, .ax .v-b .sc-copy h3, .ax .v-c .sc-copy h3 { font-size: 34px }
+  .ax .v-a .sc-copy { padding: 20px 18px }
+}
