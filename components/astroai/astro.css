@@ -48,8 +48,9 @@
 .ax .instrument { width: 100%; height: auto; display: block; aspect-ratio: 1 }
 .ax .instrument-caption { display: flex; align-items: center; justify-content: center; gap: 16px; font-size: 14px; color: var(--muted-foreground); text-align: center }
 .ax .caption-line { height: 1px; width: 30px; flex-shrink: 0; background: var(--border) }
-.ax .hero-cta { display: inline-flex; gap: 28px; align-items: center; background: var(--foreground); color: var(--background); padding: 16px 24px; border-radius: var(--radius); font-weight: 600; margin-top: 26px; border: 0; transition: background .2s }
-.ax .hero-cta:hover { background: #fff }
+.ax .hero-cta { display: inline-flex; gap: 18px; align-items: center; padding: 17px 26px; border-radius: 10px; font-weight: 600; margin-top: 26px; border: 0; transition: filter .2s }
+.ax .hero-cta, .ax .payment-button, .ax .ax-btn { background: linear-gradient(180deg, #e3c45c 0%, #d4af37 100%); color: #0b0816; box-shadow: inset 0 1px 0 rgba(255,255,255,.28), 0 12px 32px -12px rgba(212,175,55,.55) }
+.ax .hero-cta:hover, .ax .payment-button:hover, .ax .ax-btn:hover { filter: brightness(1.06) }
 .ax .hero-proof { display: flex; align-items: center; gap: 23px; font-size: 14px; color: var(--muted-foreground); margin-top: 18px }
 .ax .hero-proof span:first-child { display: flex; align-items: center; gap: 8px }
 .ax .hero-proof span + span { border-left: 1px solid var(--border); padding-left: 23px }
@@ -104,8 +105,8 @@
 .ax .summary-title strong { font-size: 31px; font-weight: 400 } .ax .summary-title small { font-size: 15px } .ax .summary-title del { font-size: 16px; color: var(--muted-foreground); margin-right: 8px }
 .ax .included { display: flex; flex-direction: column; gap: 7px; margin-top: 14px; color: var(--muted-foreground) }
 .ax .included > span { display: flex; gap: 9px; align-items: center } .ax .included svg { color: var(--primary); flex-shrink: 0 }
-.ax .payment-button { display: flex; width: 100%; justify-content: center; align-items: center; gap: 10px; background: var(--foreground); color: var(--background); font-weight: 600; border: 0; border-radius: var(--radius); padding: 16px; margin-top: 25px; transition: background .2s }
-.ax .payment-button:hover { background: #fff } .ax .payment-button:disabled { opacity: .65; cursor: progress }
+.ax .payment-button { display: flex; width: 100%; justify-content: center; align-items: center; gap: 10px; font-weight: 600; border: 0; border-radius: 10px; padding: 17px 16px; min-height: 56px; margin-top: 25px; transition: filter .2s; cursor: pointer }
+.ax .payment-button:disabled { opacity: .65; cursor: progress }
 .ax .payment-note { font-size: 14px; text-align: center; color: var(--muted-foreground); line-height: 1.8; margin: 12px 0 19px } .ax .payment-note a { text-decoration: underline; text-underline-offset: 3px }
 .ax .guarantee { display: flex; align-items: center; justify-content: center; gap: 13px; border-top: 1px solid var(--border); padding-top: 17px }
 .ax .guarantee svg { color: var(--primary); flex-shrink: 0 } .ax .guarantee p { font-size: 14px; margin: 0 } .ax .guarantee p span { color: var(--muted-foreground) }
@@ -117,7 +118,7 @@
 .ax .faq-list button { all: unset; box-sizing: border-box; cursor: pointer; display: flex; width: 100%; justify-content: space-between; gap: 20px; padding: 18px 0; font-family: var(--font-cormorant); font-size: 22px; line-height: 1.3 }
 .ax .faq-list button span:last-child { color: var(--primary); font-family: var(--font-manrope); font-size: 20px }
 .ax .faq-list p { padding: 0 0 20px; color: var(--muted-foreground); max-width: 62ch; line-height: 1.8 }
-.ax footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 26px 0 32px; border-top: 1px solid var(--border); color: var(--muted-foreground); font-size: 14px; margin-top: 40px }
+.ax footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; padding: 26px 0 32px; border-top: 1px solid var(--border); color: var(--muted-foreground); font-size: 14px; margin-top: 40px }
 .ax .footer-brand { color: var(--foreground); font-size: 20px; letter-spacing: -1px }
 .ax footer nav { display: flex; gap: 22px; flex-wrap: wrap } .ax footer nav a:hover { color: var(--foreground) }
 
@@ -132,6 +133,7 @@
 @media (max-width: 800px) {
   .ax-wrap { padding: 0 22px } .ax .site-header { height: 85px } .ax .site-header nav { display: none } .ax .wordmark { font-size: 25px } .ax .header-link { padding: 8px 12px }
   .ax .hero { padding: 38px 0 35px } .ax .hero h1 { font-size: 37px; line-height: 1.18; letter-spacing: -.6px } .ax .hero-intro { font-size: 16px }
+  .ax .hero-copy { order: 1 } .ax .hero-cta { order: 2; margin-top: 22px; width: 100%; justify-content: center } .ax .hero-proof { order: 3 } .ax .hero-art { order: 4; margin-top: 36px } .ax .instrument { max-width: 320px; margin: 0 auto }
   .ax .together { gap: 14px; padding: 18px 15px; align-items: flex-start } .ax .fusion-mark { width: 70px }
   .ax .art-topline { padding: 0; font-size: 14px; gap: 10px } .ax .caption-line { display: none }
   .ax .hero-proof { gap: 12px } .ax .hero-proof span + span { padding-left: 12px }
@@ -283,3 +285,38 @@
 .ax .hk-trust span { display: flex; align-items: center; gap: 6px }
 .ax .hk-again { all: unset; cursor: pointer; display: block; margin: 18px auto 0; font-size: 13px; color: var(--muted-foreground); text-decoration: underline }
 .ax .hk-foot { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 20px; padding: 40px 0 28px; font-size: 12.5px; color: var(--muted-foreground) }
+
+/* pagini de intrare: v2 (un singur câmp de dată, plată direct din rezultat) */
+.ax .hk-hero.done h1 { font-size: 24px; margin-bottom: 6px } .ax .hk-hero.done p { display: none }
+.ax .hk-relief { font-size: 14px; color: var(--primary); margin-top: 12px !important; opacity: .9 }
+.ax .hk-input { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--muted-foreground) }
+.ax .hk-input input, .ax .hk-row2 input { width: 100%; height: 52px; border: 1px solid rgba(238,233,244,.18); border-radius: 8px; background: rgba(11, 8, 22, .6); color: var(--foreground); padding: 0 14px; font: inherit; font-size: 18px; letter-spacing: .02em }
+.ax .hk-input input::placeholder, .ax .hk-row2 input::placeholder { color: rgba(161,154,170,.55) }
+.ax .hk-input input:focus, .ax .hk-row2 input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(212,175,55,.15) }
+.ax .hk-sample { max-width: 520px; margin: 16px auto 0; display: flex; gap: 12px; align-items: flex-start; font-size: 13.5px; color: var(--muted-foreground); line-height: 1.6 }
+.ax .hk-sample span { flex-shrink: 0; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--primary); padding-top: 3px }
+.ax .hk-sample p { margin: 0; font-style: italic }
+.ax .hk-seal { width: 150px; height: 150px; margin: 6px auto 18px; border-radius: 50%; border: 1px solid rgba(212,175,55,.45); box-shadow: 0 0 60px rgba(212,175,55,.18), inset 0 0 40px rgba(212,175,55,.06); display: grid; place-items: center }
+.ax .hk-seal b { font-family: var(--font-cormorant); font-weight: 400; font-size: 92px; line-height: 1; color: var(--primary) }
+.ax .hk-kicker { display: block; text-align: center }
+.ax .hk-result h2 { text-align: center }
+.ax .hk-upsell { margin-top: 34px; border: 1px solid rgba(212,175,55,.35); border-radius: 12px; background: linear-gradient(180deg, rgba(212,175,55,.08), rgba(212,175,55,.02)); padding: 24px 22px }
+.ax .hk-upsell-lead { margin: 0 0 16px; font-size: 14.5px; line-height: 1.7; color: var(--muted-foreground) }
+.ax .hk-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin: 4px 0 18px; font-size: 13px; color: var(--muted-foreground) }
+.ax .hk-price strong { font-family: var(--font-cormorant); font-size: 34px; color: var(--foreground); line-height: 1 }
+.ax .hk-names { display: flex; flex-direction: column; gap: 12px; padding-top: 16px; border-top: 1px solid rgba(212,175,55,.2) }
+.ax .hk-names .hk-label small { text-transform: none; letter-spacing: 0; color: var(--muted-foreground); margin-left: 6px }
+.ax .hk-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px }
+.ax .hk-row2 label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--muted-foreground) }
+.ax .hk-hint { margin: -2px 0 0; font-size: 12.5px; color: var(--muted-foreground) }
+.ax .hk-legal { margin: 12px 0 0; font-size: 11.5px; line-height: 1.55; color: rgba(161,154,170,.75); text-align: center }
+.ax .hk-legal a { color: var(--muted-foreground); text-decoration: underline }
+.ax .hk-disclaimer { flex-basis: 100%; text-align: center; font-size: 11.5px; color: rgba(161,154,170,.6); margin-top: 6px }
+@media (max-width: 480px) { .ax .hk-row2 { grid-template-columns: 1fr } .ax .hk-seal { width: 128px; height: 128px } .ax .hk-seal b { font-size: 78px } }
+/* cerul continuă pe toată pagina */
+.ax .sky-glow { position: fixed; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 0%, rgba(110,60,170,.16), transparent 55%), radial-gradient(ellipse at 100% 100%, rgba(212,175,55,.05), transparent 60%) }
+.ax .footer-disclaimer { flex-basis: 100%; font-size: 11.5px; color: rgba(161,154,170,.6); margin-top: 8px }
+.ax .report-detail-heading small { font-size: 12px; color: var(--muted-foreground); margin-right: 4px }
+.ax .sample-shot { background: #120d22 }
+.ax .hk-consent { display: flex; gap: 10px; align-items: flex-start; margin: 14px 0 0; font-size: 12.5px; line-height: 1.5; color: var(--muted-foreground); cursor: pointer }
+.ax .hk-consent input { margin-top: 3px; width: 16px; height: 16px; accent-color: #d4af37; flex-shrink: 0 }

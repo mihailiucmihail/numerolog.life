@@ -6,7 +6,7 @@ import { ArrowUpRight, Check, LockKeyhole, Plus, ShieldCheck, Sparkles } from 'l
 import { StarField } from '@/components/star-field'
 import { startAstroCheckout, trackAstro } from '@/app/actions/astroai'
 import { ASTRO_PRODUCTS, ASTRO_SEPARATE_TOTAL_BANI, type AstroProduct } from '@/lib/astroai/products'
-import { FAQ, REPORTS_V2, SAMPLE, SCHOOLS_LINE, STORY, TOGETHER } from './content'
+import { FAQ, REPORTS_V2, SAMPLE, SCHOOLS_LINE, STORY } from './content'
 import { CelestialInstrument } from './instrument'
 import { fbqTrack, MetaPixel } from './meta-pixel'
 import './astro.css'
@@ -24,14 +24,6 @@ const EMPTY: Person = { f: '', l: '', d: '', m: '', y: '', g: '' }
 function lei(bani: number) { return `${Math.round(bani / 100)} lei` }
 function fire(event: string, product: string) { void trackAstro(event, product).catch(() => {}) }
 
-function Together({ compact = false }: { compact?: boolean }) {
-  return (
-    <div className={`together${compact ? ' compact' : ''}`}>
-      <div className="fusion-mark" aria-hidden><span className="fusion-wheel" /><span className="fusion-grid">{[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => <i key={n}>{n}</i>)}</span></div>
-      <div><span className="together-label">Două în unu</span><p>{TOGETHER}</p></div>
-    </div>
-  )
-}
 
 export function AstroLanding({ initialProduct, cancelled }: { initialProduct: AstroProduct; cancelled: boolean }) {
   const [product, setProduct] = useState<AstroProduct>(initialProduct)
@@ -40,6 +32,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
   const [meet, setMeet] = useState({ d: '', m: '', y: '' })
   const [email, setEmail] = useState('')
   const [error, setError] = useState<string | null>(cancelled ? 'Plata a fost anulată. Datele tale au rămas completate, poți încerca din nou oricând.' : null)
+  const [consent, setConsent] = useState(false)
   const [busy, setBusy] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(0)
   const [formInView, setFormInView] = useState(false)
@@ -50,7 +43,6 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
   const def = ASTRO_PRODUCTS[product]
   const copy = REPORTS_V2[product]
   const needsPartner = def.reports.includes('compat')
-  const saving = lei(ASTRO_SEPARATE_TOTAL_BANI - ASTRO_PRODUCTS.pachet.priceBani)
 
   useEffect(() => {
     try {
@@ -103,6 +95,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
     if (missing(a)) { setError('Completează prenumele, numele, data nașterii și sexul.'); return }
     if (needsPartner && missing(b)) { setError('Completează și datele partenerului.'); return }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) { setError('Scrie o adresă de e-mail validă: acolo îți trimitem raportul.'); return }
+    if (!consent) { setError('Bifează acordul pentru livrarea imediată a raportului.'); return }
     setBusy(true)
     fire('form_submit', product)
     fbqTrack('InitiateCheckout', { content_name: product, value: ASTRO_PRODUCTS[product].priceBani / 100, currency: 'RON' })
@@ -126,6 +119,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
       <MetaPixel />
       {/* Fundalul original al site-ului */}
       <StarField />
+      <div className="sky-glow" aria-hidden />
       <div aria-hidden className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.10),transparent_55%),radial-gradient(ellipse_at_bottom_right,rgba(124,77,255,0.10),transparent_60%)]" />
 
       <div className="ax-wrap">
@@ -137,19 +131,18 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
 
         <section className="hero" id="perspective">
           <div className="hero-copy">
-            <div className="hero-kicker"><Sparkles size={16} strokeWidth={1.2} /> Privește imaginea întreagă</div>
-            <h1>Destinul tău, citit în <em>stele</em> și <em>cifre.</em></h1>
-            <p className="hero-intro">Tu, relațiile tale și anul care vine. Nu sunt povești separate.</p>
-            <p className="hero-detail">Explorează-le împreună, prin două limbaje care se completează: astrologia și numerologia.</p>
-            <Together />
+            <div className="hero-kicker"><Sparkles size={16} strokeWidth={1.2} /> Doar din nume și data nașterii</div>
+            <h1>Ai simțit mereu că ești <em>altfel</em> decât pari. Acum ai și <em>explicația.</em></h1>
+            <p className="hero-intro">Din numele și data ta de naștere: cine ești de fapt, de ce se repetă aceleași lucruri în viața ta și ce urmează.</p>
+            <p className="hero-detail">Astrologie și numerologie, într-un singur raport. Îl citești în 10 minute, pe telefon. Dacă nu te regăsești în el, îți dăm banii înapoi.</p>
           </div>
           <div className="hero-art">
             <div className="art-topline"><span>Astrologie <Plus size={12} /> Numerologie</span><span>O singură lectură</span></div>
             <CelestialInstrument />
             <div className="instrument-caption"><span className="caption-line" /><span>Cerul îți dă coordonatele. Cifrele le dau sens.</span><span className="caption-line" /></div>
           </div>
-          <a className="hero-cta" href="#rapoarte" onClick={() => fire('product_select', product)}>Găsește-ți răspunsurile <ArrowUpRight size={18} /></a>
-          <div className="hero-proof"><span><ShieldCheck size={14} /> <Link href="/ro/astroai/rambursare">Banii înapoi în 14 zile</Link></span><span>De la 39 lei</span></div>
+          <a className="hero-cta" href="#rapoarte" onClick={() => fire('product_select', product)}>Vreau raportul meu · {ASTRO_PRODUCTS.cristal.display} <ArrowUpRight size={18} /></a>
+          <div className="hero-proof"><span><ShieldCheck size={14} /> <Link href="/ro/astroai/rambursare">Banii înapoi automat, în primele 14 zile</Link></span><span>Fără ora nașterii</span></div>
         </section>
 
         <section className="story-block" id="poveste" aria-labelledby="poveste-titlu">
@@ -179,7 +172,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
           <div className="sample-grid">
             {SAMPLE.items.map((it) => (
               <figure key={it.name} className="sample-card">
-                <div className="sample-shot"><img src={it.image} alt={`Fragment din raportul ${it.name}`} loading="lazy" width={540} height={it.h} /></div>
+                <div className="sample-shot"><img src={it.image} alt={`Fragment din raportul ${it.name}`} loading="eager" decoding="async" width={540} height={it.h} /></div>
                 <figcaption><span>{it.name}</span><small>{it.caption}</small></figcaption>
               </figure>
             ))}
@@ -188,7 +181,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
 
         <section ref={orderRef} className="order-block" id="rapoarte" aria-label="Comanda ta">
           <div className="order-heading">
-            <div><span className="small-kicker">Un pas mai aproape de tine</span><h2>Cu ce vrei să începi?</h2></div>
+            <div><span className="small-kicker">Prima ta pagină</span><h2>Cu ce vrei să începi?</h2></div>
             <span className="preview-note"><LockKeyhole size={14} /> Datele tale rămân private</span>
           </div>
           <div className="report-selector" role="tablist" aria-label="Alege raportul">
@@ -197,16 +190,16 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
               return (
                 <button key={id} type="button" role="tab" id={`tab-${id}`} aria-controls="report-detail" aria-selected={on} tabIndex={on ? 0 : -1} className={`report-option${on ? ' selected' : ''}`} onClick={() => choose(id)}
                   onKeyDown={(e) => { if (['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) { e.preventDefault(); const next = e.key === 'Home' ? 0 : e.key === 'End' ? 3 : (idx + (e.key === 'ArrowRight' ? 1 : 3)) % 4; choose(ORDER[next]); document.getElementById(`tab-${ORDER[next]}`)?.focus() } }}>
-                  <div className="option-top"><span className="radio-mark">{on && <span />}</span>{i === 3 && <span className="bundle-save">Economisești {saving}</span>}</div>
+                  <div className="option-top"><span className="radio-mark">{on && <span />}</span>{i === 3 && <span className="bundle-save">Separat: {Math.round(ASTRO_SEPARATE_TOTAL_BANI / 100)} lei</span>}</div>
                   <strong>{r.name}</strong>
-                  <div className="report-price">{i === 3 && <del>{Math.round(ASTRO_SEPARATE_TOTAL_BANI / 100)}</del>} {Math.round(pr.priceBani / 100)}<span> lei</span></div>
+                  <div className="report-price">{Math.round(pr.priceBani / 100)}<span> lei</span></div>
                 </button>
               )
             })}
           </div>
           <div id="report-detail" role="tabpanel" aria-labelledby={`tab-${product}`} className="report-detail">
             <div key={product} className="report-reveal">
-              <div className="report-detail-heading"><h3>{copy.name}</h3><span>{product === 'pachet' && <del>{lei(ASTRO_SEPARATE_TOTAL_BANI)}</del>} {def.display}</span></div>
+              <div className="report-detail-heading"><h3>{copy.name}</h3><span>{product === 'pachet' && <small>separat {lei(ASTRO_SEPARATE_TOTAL_BANI)} · împreună </small>}{def.display}</span></div>
               <p className="report-tagline">{copy.tagline}</p>
               {copy.questions.length > 0 && <ul className="report-questions">{copy.questions.map((q) => <li key={q}><span aria-hidden />{q}</li>)}</ul>}
               {product === 'pachet' && (
@@ -235,12 +228,13 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
               </div>
             </div>
             <div className="checkout-summary">
-              <div className="summary-title"><span>{copy.name}</span><strong>{product === 'pachet' && <del>{Math.round(ASTRO_SEPARATE_TOTAL_BANI / 100)}</del>}{Math.round(def.priceBani / 100)} <small>lei</small></strong></div>
+              <div className="summary-title"><span>{copy.name}</span><strong>{Math.round(def.priceBani / 100)} <small>lei</small></strong></div>
               <div className="included">
                 <span><Check size={15} /> Astrologie și numerologie, împreună</span>
                 <span><Check size={15} /> {product === 'pachet' ? 'Trei rapoarte personale, acces permanent' : 'Raport personal, acces permanent'}</span>
                 <span><Check size={15} /> Pe ecran imediat după plată, linkul și pe e-mail</span>
               </div>
+              <label className="hk-consent"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} /><span>Vreau raportul livrat imediat după plată și înțeleg că, fiind conținut digital, dreptul legal de retragere se pierde la livrare. Garanția AstroAI de 14 zile rămâne valabilă.</span></label>
               <button type="submit" className="payment-button" disabled={busy}><LockKeyhole size={16} /> {busy ? 'Se deschide plata…' : 'Deschide raportul meu'}</button>
               <p className="payment-schools"><Sparkles size={14} strokeWidth={1.3} /> {SCHOOLS_LINE}</p>
               <p className="payment-note">Plată prin Stripe. Raportul se deschide imediat și îl primești pe e-mail.<br />Continuând, ești de acord cu <Link href="/ro/termeni">Termenii</Link> și <Link href="/ro/confidentialitate">Confidențialitatea</Link>.</p>
@@ -270,6 +264,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
             <Link href="/ro/cookies">Cookie-uri</Link>
             <a href="mailto:contact@numerolog.life">Contact</a>
           </nav>
+          <span className="footer-disclaimer">Rapoartele AstroAI sunt interpretări numerologice și astrologice, pentru autocunoaștere; nu înlocuiesc sfatul medical, juridic, financiar sau psihologic.</span>
         </footer>
       </div>
 
@@ -299,7 +294,7 @@ function PersonFields({ value, onChange, idp }: { value: Person; onChange: (p: P
     <>
       <div className="field"><label htmlFor={`${idp}-f`}>Prenume</label><input id={`${idp}-f`} autoComplete={idp === 'a' ? 'given-name' : 'off'} value={value.f} onChange={(e) => onChange({ ...value, f: e.target.value })} placeholder="Prenumele tău" /></div>
       <div className="field"><label htmlFor={`${idp}-l`}>Nume de familie</label><input id={`${idp}-l`} autoComplete={idp === 'a' ? 'family-name' : 'off'} value={value.l} onChange={(e) => onChange({ ...value, l: e.target.value })} placeholder="Numele tău" /></div>
-      <p className="field-hint">Pentru femeile căsătorite, recomandăm numele de fată.</p>
+      <p className="field-hint">Ți-ai schimbat numele (de exemplu la căsătorie)? Scrie numele de la naștere: e cel cu care ai venit pe lume. În raport vezi și ce a schimbat noul nume.</p>
       <DateSelects value={{ d: value.d, m: value.m, y: value.y }} onChange={(v) => onChange({ ...value, ...v })} idp={idp} />
       <div className="sex-field"><span>Sex</span>
         <div role="radiogroup" aria-label="Sexul">

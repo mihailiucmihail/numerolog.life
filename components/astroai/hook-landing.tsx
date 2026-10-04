@@ -2,34 +2,48 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { ArrowUpRight, Check, ShieldCheck, Sparkles } from 'lucide-react'
+import { ArrowUpRight, Check, LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react'
 import { StarField } from '@/components/star-field'
 import { runAstroHook, trackAstroHook } from '@/app/actions/astroai-hook'
+import { startAstroCheckout } from '@/app/actions/astroai'
 import type { HookDef, HookResult } from '@/lib/astroai/hooks'
 import { ASTRO_PRODUCTS } from '@/lib/astroai/products'
 import { fbqTrack, MetaPixel } from './meta-pixel'
 import './astro.css'
 
 const MONTHS = ['ianuarie', 'februarie', 'martie', 'aprilie', 'mai', 'iunie', 'iulie', 'august', 'septembrie', 'octombrie', 'noiembrie', 'decembrie']
-const YEAR_FIRST = new Date().getFullYear() - 10
-const YEARS = Array.from({ length: YEAR_FIRST - 1919 }, (_, i) => YEAR_FIRST - i)
-const DAYS = Array.from({ length: 31 }, (_, i) => i + 1)
+const YEAR_NOW = new Date().getFullYear()
 
-type D = { d: string; m: string; y: string; g: '' | 'm' | 'f' }
-const EMPTY: D = { d: '', m: '', y: '', g: '' }
+type D = { raw: string; g: '' | 'm' | 'f' }
+const EMPTY: D = { raw: '', g: 'f' }
 
 /** Definiția paginii fără funcții (vine de pe server, serializabilă). */
-export type HookView = Pick<HookDef, 'slug' | 'kind' | 'product' | 'title' | 'sub' | 'formLabel' | 'resultKicker' | 'more' | 'cta'>
+export type HookView = Pick<HookDef, 'slug' | 'kind' | 'product' | 'title' | 'sub' | 'formLabel' | 'resultKicker' | 'more' | 'cta'> & { sample: string; relief: string; upsellKicker: string; upsellLead: string }
 
-function DateFields({ v, onChange, who, idp }: { v: D; onChange: (n: D) => void; who?: string; idp: string }) {
+/** ZZ.LL.AAAA scris de pe tastatura numerică; punctele se pun singure. */
+function maskDate(v: string): string {
+  const d = v.replace(/\D/g, '').slice(0, 8)
+  if (d.length <= 2) return d
+  if (d.length <= 4) return `${d.slice(0, 2)}.${d.slice(2)}`
+  return `${d.slice(0, 2)}.${d.slice(2, 4)}.${d.slice(4)}`
+}
+function parseDate(raw: string): { d: number; m: number; y: number } | null {
+  const m = raw.match(/^(\d{2})\.(\d{2})\.(\d{4})$/)
+  if (!m) return null
+  const d = Number(m[1]), mo = Number(m[2]), y = Number(m[3])
+  if (mo < 1 || mo > 12 || y < 1920 || y > YEAR_NOW - 10) return null
+  if (d < 1 || d > new Date(y, mo, 0).getDate()) return null
+  return { d, m: mo, y }
+}
+
+function DateField({ v, onChange, who, idp, onTouch }: { v: D; onChange: (n: D) => void; who?: string; idp: string; onTouch: () => void }) {
   return (
     <div className="hk-date">
       {who && <span className="hk-who">{who}</span>}
-      <div className="hk-row">
-        <label><span>Ziua</span><select id={`${idp}-d`} value={v.d} onChange={(e) => onChange({ ...v, d: e.target.value })} required><option value="">—</option>{DAYS.map((d) => <option key={d} value={d}>{d}</option>)}</select></label>
-        <label className="hk-m"><span>Luna</span><select id={`${idp}-m`} value={v.m} onChange={(e) => onChange({ ...v, m: e.target.value })} required><option value="">—</option>{MONTHS.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}</select></label>
-        <label><span>Anul</span><select id={`${idp}-y`} value={v.y} onChange={(e) => onChange({ ...v, y: e.target.value })} required><option value="">—</option>{YEARS.map((y) => <option key={y} value={y}>{y}</option>)}</select></label>
-      </div>
+      <label className="hk-input" htmlFor={`${idp}-date`}>
+        <span>Data nașterii</span>
+        <input id={`${idp}-date`} inputMode="numeric" autoComplete="bday" placeholder="ZZ.LL.AAAA" maxLength={10} value={v.raw} onFocus={onTouch} onChange={(e) => onChange({ ...v, raw: maskDate(e.target.value) })} />
+      </label>
       <div className="hk-gender" role="radiogroup" aria-label="Sex">
         <button type="button" className={v.g === 'f' ? 'on' : ''} onClick={() => onChange({ ...v, g: 'f' })} aria-pressed={v.g === 'f'}>Femeie</button>
         <button type="button" className={v.g === 'm' ? 'on' : ''} onClick={() => onChange({ ...v, g: 'm' })} aria-pressed={v.g === 'm'}>Bărbat</button>
@@ -40,10 +54,17 @@ function DateFields({ v, onChange, who, idp }: { v: D; onChange: (n: D) => void;
 
 export function HookLanding({ hook }: { hook: HookView }) {
   const [a, setA] = useState<D>(EMPTY)
-  const [b, setB] = useState<D>(EMPTY)
+  const [b, setB] = useState<D>({ raw: '', g: 'm' })
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<HookResult | null>(null)
+  const [first, setFirst] = useState({ f: '', l: '' })
+  const [partner, setPartner] = useState({ f: '', l: '' })
+  const [email, setEmail] = useState('')
+  const [payBusy, setPayBusy] = useState(false)
+  const [payError, setPayError] = useState<string | null>(null)
+  const [consent, setConsent] = useState(false)
+  const touched = useRef(false)
   const resultRef = useRef<HTMLDivElement>(null)
   const couple = hook.kind === 'couple'
   const def = ASTRO_PRODUCTS[hook.product]
@@ -52,19 +73,19 @@ export function HookLanding({ hook }: { hook: HookView }) {
     void trackAstroHook(hook.slug, 'landing_view')
     fbqTrack('ViewContent', { content_name: `hook_${hook.slug}`, content_category: 'astroai_hook' })
   }, [hook.slug])
-
   useEffect(() => { if (result) resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }) }, [result])
 
-  const filled = (v: D) => v.d && v.m && v.y && v.g
+  function touch() { if (touched.current) return; touched.current = true; void trackAstroHook(hook.slug, 'form_first_interaction') }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
-    if (!filled(a) || (couple && !filled(b))) { setError(couple ? 'Completează ambele date de naștere și alege Femeie sau Bărbat pentru fiecare.' : 'Completează data nașterii și alege Femeie sau Bărbat.'); return }
+    const da = parseDate(a.raw), db = couple ? parseDate(b.raw) : null
+    if (!da || !a.g) { setError('Scrie data nașterii ca ZZ.LL.AAAA, de exemplu 16.02.1987.'); return }
+    if (couple && (!db || !b.g)) { setError('Scrie și data de naștere a partenerului / partenerei, ca ZZ.LL.AAAA.'); return }
     setBusy(true)
     try {
-      const num = (v: D) => ({ d: Number(v.d), m: Number(v.m), y: Number(v.y), g: v.g as 'm' | 'f' })
-      const r = await runAstroHook(hook.slug, { ...num(a), ...(couple ? { b: num(b) } : {}) })
+      const r = await runAstroHook(hook.slug, { ...da, g: a.g as 'm' | 'f', ...(couple && db ? { b: { ...db, g: b.g as 'm' | 'f' } } : {}) })
       if (!r.ok) { setError(r.error); return }
       setResult(r.result)
       fbqTrack('Lead', { content_name: `hook_${hook.slug}` })
@@ -73,15 +94,30 @@ export function HookLanding({ hook }: { hook: HookView }) {
     } finally { setBusy(false) }
   }
 
-  function goToReport() {
-    try {
-      const person = (v: D) => ({ f: '', l: '', d: v.d, m: v.m, y: v.y, g: v.g })
-      sessionStorage.setItem('astroai_form', JSON.stringify({ a: person(a), ...(couple ? { b: person(b) } : {}), meet: { d: '', m: '', y: '' }, email: '' }))
-    } catch { /* fără stocare: formularul se completează manual */ }
+  async function pay(e: React.FormEvent) {
+    e.preventDefault()
+    setPayError(null)
+    const da = parseDate(a.raw), db = couple ? parseDate(b.raw) : null
+    if (!da) return
+    if (!first.f.trim() || !first.l.trim()) { setPayError('Scrie prenumele și numele de familie: intră în calcul.'); return }
+    if (couple && (!partner.f.trim() || !partner.l.trim())) { setPayError('Scrie și numele partenerului / partenerei.'); return }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) { setPayError('Scrie o adresă de e-mail validă: acolo îți trimitem raportul.'); return }
+    if (!consent) { setPayError('Bifează acordul pentru livrarea imediată a raportului.'); return }
+    setPayBusy(true)
     void trackAstroHook(hook.slug, 'product_select')
+    fbqTrack('InitiateCheckout', { content_name: hook.product, value: def.priceBani / 100, currency: 'RON' })
+    const payload = {
+      a: { f: first.f.trim(), l: first.l.trim(), ...da, g: a.g },
+      ...(couple && db ? { b: { f: partner.f.trim(), l: partner.l.trim(), ...db, g: b.g } } : {}),
+    }
+    try {
+      const r = await startAstroCheckout(hook.product, payload, email)
+      if (!r.ok) { setPayError(r.error); return }
+      window.location.href = r.url
+    } catch {
+      setPayError('Nu am putut deschide plata. Mai încearcă o dată.')
+    } finally { setPayBusy(false) }
   }
-
-  const reportHref = `/ro/astroai?produs=${hook.product}#rapoarte`
 
   return (
     <main className="ax hk relative min-h-screen overflow-x-clip bg-[#0b0816]">
@@ -93,43 +129,68 @@ export function HookLanding({ hook }: { hook: HookView }) {
           <span className="hk-free"><Check size={13} /> Gratuit, pe loc</span>
         </header>
 
-        <section className="hk-hero">
+        <section className={`hk-hero${result ? ' done' : ''}`}>
           <h1>{hook.title}</h1>
           <p>{hook.sub}</p>
+          {!result && <p className="hk-relief">{hook.relief}</p>}
         </section>
 
         {!result && (
-          <form className="hk-form" onSubmit={submit} noValidate>
-            <span className="hk-label">{hook.formLabel}</span>
-            {couple ? (
-              <>
-                <DateFields v={a} onChange={setA} who="Tu" idp="a" />
-                <DateFields v={b} onChange={setB} who="Partenerul / partenera" idp="b" />
-              </>
-            ) : <DateFields v={a} onChange={setA} idp="a" />}
-            {error && <p className="hk-error" role="alert">{error}</p>}
-            <button type="submit" className="payment-button hk-submit" disabled={busy}>{busy ? 'Se calculează…' : 'Arată-mi'} <ArrowUpRight size={16} /></button>
-            <p className="hk-note">Nu îți cerem numele sau e-mailul.</p>
-          </form>
+          <>
+            <form className="hk-form" onSubmit={submit} noValidate>
+              <span className="hk-label">{hook.formLabel}</span>
+              {couple ? (
+                <>
+                  <DateField v={a} onChange={setA} who="Tu" idp="a" onTouch={touch} />
+                  <DateField v={b} onChange={setB} who="Partenerul / partenera" idp="b" onTouch={touch} />
+                </>
+              ) : <DateField v={a} onChange={setA} idp="a" onTouch={touch} />}
+              {error && <p className="hk-error" role="alert">{error}</p>}
+              <button type="submit" className="payment-button hk-submit" disabled={busy}>{busy ? 'Se calculează…' : hook.cta} <ArrowUpRight size={16} /></button>
+              <p className="hk-note">Nu îți cerem nici numele, nici e-mailul.</p>
+            </form>
+            <div className="hk-sample"><span>Exemplu</span><p>{hook.sample}</p></div>
+          </>
         )}
 
         {result && (
           <section className="hk-result" ref={resultRef} aria-live="polite">
-            <span className="small-kicker">{hook.resultKicker} · {result.label}</span>
+            <div className="hk-seal" aria-hidden><b>{result.seal}</b></div>
+            <span className="small-kicker hk-kicker">{hook.resultKicker} · {result.label}</span>
             <h2>{result.title}</h2>
             <p className="hk-text">{result.text}</p>
             {result.extra && <p className="hk-extra">{result.extra}</p>}
 
-            <div className="hk-upsell">
-              <span className="hk-upsell-kicker">O singură pagină din {def.name}</span>
+            <form className="hk-upsell" onSubmit={pay} noValidate>
+              <span className="hk-upsell-kicker">{hook.upsellKicker}</span>
+              <p className="hk-upsell-lead">{hook.upsellLead}</p>
               <ul>{hook.more.map((m) => <li key={m}><Check size={15} /> {m}</li>)}</ul>
-              <Link href={reportHref} className="payment-button hk-cta" onClick={goToReport}>{hook.cta} <ArrowUpRight size={16} /></Link>
-              <div className="hk-trust">
-                <span><ShieldCheck size={14} /> Returnăm banii în 14 zile</span>
-                <span>Raportul se deschide imediat după plată</span>
+              <div className="hk-price"><strong>{def.display}</strong><span>· se deschide imediat după plată · pe ecran și pe e-mail</span></div>
+              <div className="hk-names">
+                <span className="hk-label">{couple ? 'Numele voastre' : 'Numele tău'} <small>intră în calcul</small></span>
+                <div className="hk-row2">
+                  <label><span>Prenume</span><input value={first.f} onChange={(e) => setFirst({ ...first, f: e.target.value })} autoComplete="given-name" maxLength={40} /></label>
+                  <label><span>Nume de familie</span><input value={first.l} onChange={(e) => setFirst({ ...first, l: e.target.value })} autoComplete="family-name" maxLength={40} /></label>
+                </div>
+                {couple && (
+                  <div className="hk-row2">
+                    <label><span>Prenumele {b.g === 'f' ? 'partenerei' : 'partenerului'}</span><input value={partner.f} onChange={(e) => setPartner({ ...partner, f: e.target.value })} maxLength={40} /></label>
+                    <label><span>Numele de familie</span><input value={partner.l} onChange={(e) => setPartner({ ...partner, l: e.target.value })} maxLength={40} /></label>
+                  </div>
+                )}
+                {a.g === 'f' && <p className="hk-hint">Căsătorită? Scrie numele de fată: e cel cu care ai venit pe lume.</p>}
+                <label className="hk-input"><span>E-mail (aici primești raportul)</span><input type="email" inputMode="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="nume@exemplu.ro" /></label>
               </div>
-            </div>
-            <button type="button" className="hk-again" onClick={() => { setResult(null); setA(EMPTY); setB(EMPTY) }}>Altă dată de naștere</button>
+              <label className="hk-consent"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} /><span>Vreau raportul livrat imediat după plată și înțeleg că, fiind conținut digital, dreptul legal de retragere se pierde la livrare. Garanția AstroAI de 14 zile rămâne valabilă.</span></label>
+              {payError && <p className="hk-error" role="alert">{payError}</p>}
+              <button type="submit" className="payment-button hk-cta" disabled={payBusy}><LockKeyhole size={16} /> {payBusy ? 'Se deschide plata…' : `Deschide raportul ${couple ? 'nostru' : 'meu'} · ${def.display}`}</button>
+              <div className="hk-trust">
+                <span><ShieldCheck size={14} /> Banii înapoi automat, în primele 14 zile de la plată</span>
+                <span>Plată prin Stripe · fără abonament</span>
+              </div>
+              <p className="hk-legal">Continuând, ești de acord cu <Link href="/ro/termeni">Termenii</Link> și <Link href="/ro/confidentialitate">Confidențialitatea</Link>.</p>
+            </form>
+            <button type="button" className="hk-again" onClick={() => { setResult(null); setA(EMPTY); setB({ raw: '', g: 'm' }) }}>Altă dată de naștere</button>
           </section>
         )}
 
@@ -137,6 +198,7 @@ export function HookLanding({ hook }: { hook: HookView }) {
           <Link href="/ro/termeni">Termeni și condiții</Link>
           <Link href="/ro/confidentialitate">Confidențialitate</Link>
           <Link href="/ro/astroai/rambursare">Garanție și rambursare</Link>
+          <span className="hk-disclaimer">Rapoartele AstroAI sunt interpretări numerologice și astrologice, pentru autocunoaștere; nu înlocuiesc sfatul medical, juridic, financiar sau psihologic.</span>
         </footer>
       </div>
     </main>

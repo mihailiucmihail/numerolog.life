@@ -25,7 +25,7 @@ export default async function AstroHookPage({ params }: { params: Params }) {
   const { locale, slug } = await params
   if (locale !== 'ro' || !isHookSlug(slug)) notFound()
   const h = HOOKS[slug]
-  const view: HookView = { slug: h.slug, kind: h.kind, product: h.product, title: h.title, sub: h.sub, formLabel: h.formLabel, resultKicker: h.resultKicker, more: h.more, cta: h.cta }
+  const view: HookView = { slug: h.slug, kind: h.kind, product: h.product, title: h.title, sub: h.sub, formLabel: h.formLabel, resultKicker: h.resultKicker, more: h.more, cta: h.cta, sample: h.sample, relief: h.relief, upsellKicker: h.upsellKicker, upsellLead: h.upsellLead }
   return (
     <>
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />

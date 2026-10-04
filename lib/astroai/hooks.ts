@@ -25,14 +25,21 @@ export interface HookDef {
   /** ce mai aduce raportul (puncte pentru upsell) */
   more: string[]
   cta: string
+  /** un rezultat-exemplu arătat sub formular (forma recompensei, înainte de a introduce data) */
+  sample: string
+  /** o linie care nu lasă să plece cine nu se încadrează în întrebarea din titlu */
+  relief: string
+  /** puntea de la rezultatul gratuit la raport */
+  upsellKicker: string
+  upsellLead: string
   meta: { title: string; description: string }
 }
 
 const CRISTAL_MORE = [
-  'Ce spune numele tău despre tine și forța pe care oamenii o simt',
-  'Pentru cine ai venit pe lume și ce ai moștenit din neam',
-  'Prin ce muncă îți vin banii cel mai ușor',
-  'În ce etapă a vieții ești acum și ce urmează',
+  'Ce spune numele tău despre tine și forța pe care ceilalți o simt înainte s-o vezi tu',
+  'Pentru cine ai venit pe lume și ce ai luat, fără să vrei, de la mamă sau de la tată',
+  'Prin ce muncă îți vin banii ușor (și de ce uneori vin greu)',
+  'În ce etapă a vieții ești și ce ți se pregătește',
 ]
 
 export const HOOKS: Record<HookSlug, HookDef> = {
@@ -43,7 +50,11 @@ export const HOOKS: Record<HookSlug, HookDef> = {
     formLabel: 'Data ta de naștere',
     resultKicker: 'Lecția zilei tale',
     more: CRISTAL_MORE,
-    cta: 'Deschide raportul meu · 39 lei',
+    cta: 'Vezi lecția mea · gratuit',
+    sample: 'Ziua 12: „Ai venit cu o lecție despre respect și relații: ce prețuiești la alții și ce aștepți să prețuiască la tine…”',
+    relief: 'Lecția zilei există pentru orice zi a lunii: în relații, în bani, în familie. Merge și dacă nu te-ai născut între 10 și 13.',
+    upsellKicker: 'Asta a fost o singură pagină.',
+    upsellLead: 'Ce ai citit e lecția zilei: o au toți cei născuți în aceeași zi. Raportul complet pornește de la numele tău și de acolo nu mai seamănă cu al nimănui.',
     meta: { title: 'Ce lecție ascunde ziua ta de naștere? · AstroAI', description: 'Scrie data nașterii și află gratuit lecția zilei tale. Apoi, dacă vrei, raportul complet Cristalul Destinului.' },
   },
   'zile-14-22': {
@@ -53,7 +64,11 @@ export const HOOKS: Record<HookSlug, HookDef> = {
     formLabel: 'Data ta de naștere',
     resultKicker: 'Lecția ta karmică',
     more: CRISTAL_MORE,
-    cta: 'Deschide raportul meu · 39 lei',
+    cta: 'Vezi lecția mea · gratuit',
+    sample: 'Ziua 16: „Ai venit să înveți să construiești: case, relații, lucruri care rămân. Ce s-a stricat ușor în trecut…”',
+    relief: 'Ziua nașterii arată lecția pe care o repeți toată viața: în relații, în bani, în familie. Merge pentru orice zi a lunii.',
+    upsellKicker: 'Asta a fost o singură pagină.',
+    upsellLead: 'Ce ai citit e lecția zilei: o au toți cei născuți în aceeași zi. Raportul complet pornește de la numele tău și de acolo nu mai seamănă cu al nimănui.',
     meta: { title: 'Ce lecție karmică ai venit să înveți? · AstroAI', description: 'Scrie data nașterii și află gratuit lecția ta karmică. Apoi, dacă vrei, raportul complet Cristalul Destinului.' },
   },
   'inceput-sau-sfarsit': {
@@ -63,7 +78,11 @@ export const HOOKS: Record<HookSlug, HookDef> = {
     formLabel: 'Data ta de naștere',
     resultKicker: 'Programul tău',
     more: CRISTAL_MORE,
-    cta: 'Deschide raportul meu · 39 lei',
+    cta: 'Vezi în ce grupă sunt · gratuit',
+    sample: 'Ziua 27: „Programe neîmplinite: în trecut nu te-ai apropiat de ținta principală, de aceea acum te simți des fără direcție și te cauți…”',
+    relief: 'Patru grupe, după ziua nașterii: 1–9, 10–13, 14–22 și 23–31. Fiecare are lecția ei.',
+    upsellKicker: 'Asta a fost o singură pagină.',
+    upsellLead: 'Grupa e doar începutul. Raportul complet pornește de la numele tău și de acolo nu mai seamănă cu al nimănui.',
     meta: { title: 'Început sau sfârșit de lună? · AstroAI', description: 'Scrie data nașterii și află gratuit ce înseamnă ziua în care te-ai născut.' },
   },
   'luna-nasterii': {
@@ -73,7 +92,11 @@ export const HOOKS: Record<HookSlug, HookDef> = {
     formLabel: 'Data ta de naștere',
     resultKicker: 'Rolul tău în familie',
     more: CRISTAL_MORE,
-    cta: 'Deschide raportul meu · 39 lei',
+    cta: 'Vezi pentru cine am venit · gratuit',
+    sample: 'Martie: „Ai venit la mama ta: ea trebuie să-ți dea învățăturile de bază și să joace rolul principal în educația ta…”',
+    relief: 'Fiecare lună are răspunsul ei. Scrie data și îl vezi pe al tău.',
+    upsellKicker: 'Asta a fost o singură pagină.',
+    upsellLead: 'Luna spune pentru cine ai venit. Raportul complet spune ce ai luat de la ei fără să vrei, și ce poți să nu dai mai departe.',
     meta: { title: 'Pentru cine ai venit pe lume? · AstroAI', description: 'Luna nașterii arată rolul tău în familie. Află-l gratuit, din data nașterii.' },
   },
   cuplu: {
@@ -88,7 +111,11 @@ export const HOOKS: Record<HookSlug, HookDef> = {
       'Ce așteaptă fiecare de la celălalt, fără s-o spună',
       'Graficul relației, de la prima întâlnire',
     ],
-    cta: 'Deschide raportul nostru · 49 lei',
+    cta: 'Vezi cifra noastră · gratuit',
+    sample: '16 + 14 = 8: „Dorința de a avea ceva propriu. E important să respectați regulile stabilite de la început…”',
+    relief: 'Două date de naștere. Un răspuns pe care nu l-ai cerut nimănui.',
+    upsellKicker: 'Cifra cuplului e ce v-a adus împreună.',
+    upsellLead: 'Raportul vă arată ce vă ține, ce vă obosește și ce așteaptă fiecare de la celălalt fără s-o spună.',
     meta: { title: 'Cifra cuplului vostru · AstroAI', description: 'Din două date de naștere: țelul pentru care v-ați întâlnit. Gratuit, pe loc.' },
   },
   varsator: {
@@ -98,7 +125,11 @@ export const HOOKS: Record<HookSlug, HookDef> = {
     formLabel: 'Data ta de naștere',
     resultKicker: 'Perioada ta karmică',
     more: CRISTAL_MORE,
-    cta: 'Deschide raportul meu · 39 lei',
+    cta: 'Vezi perioada mea · gratuit',
+    sample: 'Vărsător: „Ești chiar acum în perioada ta karmică: 20 august 2026 – 8 martie 2028. Lecția: să nu te închizi în treburile tale…”',
+    relief: 'Fiecare zodie are perioadele ei. Scrie data și vezi când e a ta: poate a început deja.',
+    upsellKicker: 'Asta a fost o singură pagină.',
+    upsellLead: 'Perioada spune când. Raportul complet spune ce îți cere exact ție: din nume, din zi, din neam.',
     meta: { title: 'Perioada ta karmică · AstroAI', description: 'Când începe perioada karmică a zodiei tale și ce îți cere. Gratuit, din data nașterii.' },
   },
 }
@@ -106,7 +137,7 @@ export const HOOKS: Record<HookSlug, HookDef> = {
 export function isHookSlug(v: unknown): v is HookSlug { return typeof v === 'string' && v in HOOKS }
 
 export interface HookInput { d: number; m: number; y: number; g: 'm' | 'f'; b?: { d: number; m: number; y: number; g: 'm' | 'f' } }
-export interface HookResult { label: string; title: string; text: string; extra?: string }
+export interface HookResult { label: string; title: string; text: string; extra?: string; /** semnul mare de deasupra rezultatului: ziua, luna, zodia sau cifra */ seal: string }
 
 /** Formele de gen din texte: {masculin|feminin} sau {|ă}. */
 function gender(text: string, g: 'm' | 'f'): string {
@@ -168,6 +199,8 @@ const DAY_TEASER: Record<number, string> = {
   22: 'Lecția ta e legată de copii. Te atrag familiile mari sau îți place să ai copii în jurul tău, iar viața ta se schimbă în bine odată cu nașterea primului copil.',
 }
 
+const ZODIAC_GLYPH: Record<string, string> = { Berbec: '♈', Taur: '♉', Gemeni: '♊', Rac: '♋', Leu: '♌', Fecioară: '♍', Balanță: '♎', Scorpion: '♏', Săgetător: '♐', Capricorn: '♑', Vărsător: '♒', Pești: '♓' }
+
 const RO_DATE = (d: Date) => `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`
 
 export function computeHook(slug: HookSlug, input: HookInput): HookResult | { error: string } {
@@ -179,11 +212,11 @@ export function computeHook(slug: HookSlug, input: HookInput): HookResult | { er
     const cat = dayCategory(d)
     const c = (data.birthDayCategory as Record<string, { name: string; text: string }>)[cat]
     const full = DAY_TEASER[d] || (data.birthDay as Record<string, string>)[String(d)] || c.text
-    return { label: `${d} ${MONTHS[m - 1]} · ${c.name.toLowerCase()}`, title: `Ziua ${d}: ${c.name.toLowerCase()}`, text: gender(teaser(full), g), extra: 'Continuarea — trăsăturile din copilărie, ce ai de învățat și cum ieși din tipar — o găsești în raport.' }
+    return { seal: String(d), label: `${d} ${MONTHS[m - 1]} · ${c.name.toLowerCase()}`, title: `Ziua ${d}: ${c.name.toLowerCase()}`, text: gender(teaser(full), g), extra: 'Continuarea — trăsăturile din copilărie, ce ai de învățat și cum ieși din tipar — o găsești în raport.' }
   }
   if (h.kind === 'month') {
     const text = (data.birthMonth as Record<string, string>)[String(m)]
-    return { label: `născut${g === 'f' ? 'ă' : ''} în ${MONTHS[m - 1]}`, title: `Luna ${MONTHS[m - 1]}`, text: gender(text, g) }
+    return { seal: MONTHS[m - 1].slice(0, 3), label: `născut${g === 'f' ? 'ă' : ''} în ${MONTHS[m - 1]}`, title: `Luna ${MONTHS[m - 1]}`, text: gender(text, g) }
   }
   if (h.kind === 'zodiac') {
     const sign = zodiacSign(d, m)
@@ -197,7 +230,7 @@ export function computeHook(slug: HookSlug, input: HookInput): HookResult | { er
     if (current) when = `Ești chiar acum în perioada ta karmică: ${RO_DATE(current.start)} – ${RO_DATE(current.end)}.`
     else if (next) when = `Următoarea ta perioadă karmică: ${RO_DATE(next.start)} – ${RO_DATE(next.end)}.${past ? ` Ultima a fost ${RO_DATE(past.start)} – ${RO_DATE(past.end)}.` : ''}`
     else when = 'Perioadele tale karmice le găsești în raport.'
-    return { label: sign, title: `${sign}: ${current ? 'ești în perioada karmică' : 'perioada ta karmică'}`, text: when, extra: `Lecția zodiei tale în aceste perioade: ${gender(task, g)}` }
+    return { seal: ZODIAC_GLYPH[sign] || '✦', label: sign, title: `${sign}: ${current ? 'ești în perioada karmică' : 'perioada ta karmică'}`, text: when, extra: `Lecția zodiei tale în aceste perioade: ${gender(task, g)}` }
   }
   // cuplu
   const b = input.b
@@ -205,5 +238,5 @@ export function computeHook(slug: HookSlug, input: HookInput): HookResult | { er
   const ms1 = socialMission(d, m, y), ms2 = socialMission(b.d, b.m, b.y)
   const goal = r22(ms1 + ms2)
   const t = (data.commonGoal as Record<string, { goal: string; text: string }>)[String(goal)]
-  return { label: `${ms1} + ${ms2} = ${goal}`, title: `Cifra cuplului vostru: ${goal}`, text: `Țelul pentru care v-ați întâlnit: ${t.goal}. ${t.text}` }
+  return { seal: String(goal), label: `${ms1} + ${ms2} = ${goal}`, title: `Cifra cuplului vostru: ${goal}`, text: `Țelul pentru care v-ați întâlnit: ${t.goal}. ${t.text}` }
 }
