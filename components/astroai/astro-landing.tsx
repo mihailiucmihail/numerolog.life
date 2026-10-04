@@ -168,7 +168,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
           <div className="story-head">
             <span className="small-kicker">Înainte să plătești</span>
             <h2 id="exemplu-titlu">Derulează un raport întreg</h2>
-            <p>Nu un fragment: raportul complet, pe date fictive, așa cum îl vezi pe telefon.</p>
+            <p>Nu un fragment: un raport complet, așa cum îl vezi pe telefon.</p>
           </div>
           <LiveDemo onCta={(r) => choose(r)} />
         </section>
@@ -281,7 +281,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
             <Link href="/ro/cookies">Cookie-uri</Link>
             <a href="mailto:contact@numerolog.life">Contact</a>
           </nav>
-          <span className="footer-disclaimer">Rapoartele AstroAI sunt interpretări numerologice și astrologice, pentru autocunoaștere; nu înlocuiesc sfatul medical, juridic, financiar sau psihologic.</span>
+          <span className="footer-disclaimer">Rapoartele AstroAI sunt interpretări astrologice și numerologice, pentru autocunoaștere; nu înlocuiesc sfatul medical, juridic, financiar sau psihologic.</span>
         </footer>
       </div>
 

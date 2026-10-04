@@ -204,7 +204,7 @@ export function HookLanding({ hook }: { hook: HookView }) {
           <Link href="/ro/termeni">Termeni și condiții</Link>
           <Link href="/ro/confidentialitate">Confidențialitate</Link>
           <Link href="/ro/astroai/rambursare">Garanție și rambursare</Link>
-          <span className="hk-disclaimer">Rapoartele AstroAI sunt interpretări numerologice și astrologice, pentru autocunoaștere; nu înlocuiesc sfatul medical, juridic, financiar sau psihologic.</span>
+          <span className="hk-disclaimer">Rapoartele AstroAI sunt interpretări astrologice și numerologice, pentru autocunoaștere; nu înlocuiesc sfatul medical, juridic, financiar sau psihologic.</span>
         </footer>
       </div>
     </main>

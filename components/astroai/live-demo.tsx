@@ -46,7 +46,7 @@ export function LiveDemo({ onCta }: { onCta?: (r: AstroReport) => void }) {
           {seen && !loaded[tab] && <div className="demo-wait"><span /></div>}
         </div>
         <div className="demo-side">
-          <span className="small-kicker">Exemplu real, pe date fictive</span>
+          <span className="small-kicker">Raport-exemplu, complet</span>
           <h3>{t.label}</h3>
           <p className="demo-who">{t.who}</p>
           <p>Derulează raportul ca pe telefon. Așa arată și al tău, doar că despre tine: numele, data și fiecare concluzie se calculează din datele tale.</p>
