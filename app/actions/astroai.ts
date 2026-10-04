@@ -4,6 +4,7 @@ import { headers } from 'next/headers'
 import { getStripe } from '@/lib/stripe'
 import { ASTRO_CURRENCY, ASTRO_PRODUCTS, isAstroProduct, validateAstroForm, type AstroProduct } from '@/lib/astroai/products'
 import { astroVisitorId, recordAstroEvent } from '@/lib/astroai/track'
+import { metaMatchData } from '@/lib/astroai/meta-capi'
 import { socialCheckoutMetadata, recordSocialSession } from '@/lib/experiments/social-server'
 import { recordCheckoutAttempt } from '@/lib/checkout-attempts'
 
@@ -40,6 +41,7 @@ export async function startAstroCheckout(
   const origin = await requestOrigin()
   const visitorId = await astroVisitorId()
   const social = await socialCheckoutMetadata()
+  const meta = await metaMatchData()
   const payload = JSON.stringify(data)
   if (payload.length > 480) return { ok: false, error: 'Numele sunt prea lungi. Scrie-le fără titluri sau prescurtări.' }
 
@@ -62,6 +64,7 @@ export async function startAstroCheckout(
         country: 'RO',
         displayPrice: product.display,
         ...social,
+        ...meta,
         ...(visitorId ? { expVisitor: visitorId, socialVisitor: social.socialVisitor || visitorId } : {}),
       },
       success_url: `${origin}/ro/astroai/raport?session_id={CHECKOUT_SESSION_ID}`,

@@ -206,6 +206,15 @@ async function routeRequest(request: NextRequest) {
       target.pathname = '/ro/astroai'
       return withGeoCookies(NextResponse.rewrite(target, { request: { headers } }), request, resolved)
     }
+    // Paginile de intrare pentru reclame: astroai.ro/<slug> → /ro/astroai/l/<slug>, cu URL curat.
+    const hook = pathname.match(/^\/(zile-10-13|zile-14-22|inceput-sau-sfarsit|luna-nasterii|cuplu|varsator)\/?$/)
+    if (hook) {
+      const headers = new Headers(request.headers)
+      headers.set('X-NEXT-INTL-LOCALE', 'ro')
+      const target = request.nextUrl.clone()
+      target.pathname = `/ro/astroai/l/${hook[1]}`
+      return withGeoCookies(NextResponse.rewrite(target, { request: { headers } }), request, resolved)
+    }
     // Pe astroai.ro nu există versiunea rusă; orice rută fără limbă merge în română.
     if (/^\/ru(\/|$)/.test(pathname)) {
       const home = request.nextUrl.clone()
