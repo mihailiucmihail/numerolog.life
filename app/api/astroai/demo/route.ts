@@ -22,10 +22,13 @@ const DEMO: AstroFormData = {
 
 const BRAND = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Manrope:wght@300..800&display=swap">' +
   '<style id="astroai-brand">:root:root{--display:"Cormorant Garamond",Georgia,serif;--sans:"Manrope","Helvetica Neue",Arial,sans-serif;--num:"Manrope","Helvetica Neue",Arial,sans-serif}' +
-  '#inputFormCard{display:none!important}' +
+  '#inputFormCard{display:none!important}html,body{overscroll-behavior:contain}' +
   '.astroai-demo-band{position:sticky;top:0;z-index:9999;display:flex;align-items:center;justify-content:center;gap:10px;padding:9px 14px;background:rgba(11,8,22,.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(212,175,55,.35);font:600 11px/1.3 "Manrope","Helvetica Neue",Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#d4af37}' +
   '.astroai-demo-band span{font-weight:400;letter-spacing:0;text-transform:none;color:#a19aaa}' +
-  '</style>'
+  '</style>' +
+  // Exemplul stă într-un iframe pe pagina principală: scrollIntoView/focus din raport ar derula și pagina-mamă
+  // (efectul de „sărituri” la scroll). Le limităm la documentul exemplului.
+  '<script>(function(){try{var E=Element.prototype;E.scrollIntoView=function(o){try{var r=this.getBoundingClientRect();var b=o&&typeof o==="object"?o.block:"start";var y=r.top+window.scrollY-(b==="center"?(innerHeight-r.height)/2:0);window.scrollTo({top:Math.max(0,y),behavior:o&&o.behavior==="smooth"?"smooth":"auto"})}catch(e){}};var F=HTMLElement.prototype.focus;HTMLElement.prototype.focus=function(o){return F.call(this,Object.assign({},o||{},{preventScroll:true}))}}catch(e){}})()</script>'
 
 const BAND: Record<AstroReport, string> = {
   cristal: 'Exemplu <span>· Ana, 16 februarie 1991</span>',
