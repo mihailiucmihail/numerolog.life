@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { ArrowUpRight, Maximize2 } from 'lucide-react'
+import { ArrowUpRight, CalendarRange, Gem, HeartHandshake, Maximize2 } from 'lucide-react'
 import { ASTRO_PRODUCTS, type AstroReport } from '@/lib/astroai/products'
 import { PRODUCTS_COPY } from './content'
 import { priceFor, useAstroPromo } from './promo'
@@ -35,17 +35,22 @@ function Phone({ report, title }: { report: AstroReport; title: string }) {
   )
 }
 
+const ICONS = { cristal: Gem, compat: HeartHandshake, prog: CalendarRange }
+
 export function Showcase({ onChoose }: { onChoose: (r: AstroReport) => void }) {
   const { promo } = useAstroPromo()
   return (
-    <div className="sc">
+    <div className="sc v-a">
       {PRODUCTS_COPY.map((p, i) => {
         const ex = EXAMPLE[p.id]
         return (
           <section key={p.id} id={p.id} className={`sc-item${i % 2 ? ' flip' : ''}`} aria-labelledby={`sc-${p.id}`}>
             <div className="sc-copy">
               <span className="sc-num">0{i + 1}</span>
-              <span className="small-kicker">{p.kicker}</span>
+              <div className="sc-top">
+                <span className="sc-icon" aria-hidden>{(() => { const I = ICONS[p.id]; return <I size={20} strokeWidth={1.4} /> })()}</span>
+                <span className="small-kicker"><b className="sc-n">0{i + 1}</b>{p.kicker}</span>
+              </div>
               <h3 id={`sc-${p.id}`}>{p.title}</h3>
               <p className="sc-tag">{p.tagline}</p>
               <span className="sc-label">La ce întrebări îți răspunde</span>

@@ -463,3 +463,23 @@
   .ax .sc-card-icon { grid-row: span 3; margin: 0 }
   .ax .sc-card-foot { grid-column: 1 / -1 }
 }
+
+/* ── Showcase: elemente noi (ascunse în varianta de bază) ── */
+.ax .sc-top { display: flex; align-items: center; gap: 12px }
+.ax .sc-icon { display: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(212,175,55,.5); align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0 }
+.ax .sc-n { display: none; font-weight: 600; color: var(--primary); margin-right: 8px }
+
+/* Varianta A: card, titlu auriu, listă cu bife */
+.ax .v-a .sc-num { display: none }
+.ax .v-a .sc-icon { display: flex }
+.ax .v-a .sc-copy { padding: 26px 24px; border: 1px solid rgba(212,175,55,.25); border-radius: 20px; background: linear-gradient(180deg, rgba(212,175,55,.08), rgba(238,233,244,.02)) }
+.ax .v-a .sc-copy h3 { color: var(--primary); font-size: 40px; margin-top: 14px }
+.ax .v-a .sc-tag { font-size: 16px; color: var(--muted-foreground) }
+.ax .v-a .sc-label { margin-top: 20px }
+.ax .v-a .sc-q li { font-family: var(--font-manrope); font-size: 15.5px; line-height: 1.5; border: 0; padding: 7px 0 7px 32px; color: var(--foreground) }
+.ax .v-a .sc-q li::before { content: '✓'; top: 8px; width: 20px; height: 20px; border-radius: 50%; background: rgba(212,175,55,.16); color: var(--primary); font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 700 }
+
+@media (max-width: 900px) {
+  .ax .v-a .sc-copy h3 { font-size: 34px }
+  .ax .v-a .sc-copy { padding: 20px 18px }
+}
