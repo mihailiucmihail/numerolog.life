@@ -29,7 +29,7 @@ function Phone({ report, title }: { report: AstroReport; title: string }) {
   }, [seen])
   return (
     <div className="demo-phone" ref={ref}>
-      {seen && <iframe src={`/api/astroai/demo?v=4&r=${report}`} title={`Exemplu: ${title}`} loading="lazy" onLoad={() => setLoaded(true)} />}
+      {seen && <iframe src={`/api/astroai/demo?v=5&r=${report}`} title={`Exemplu: ${title}`} loading="lazy" onLoad={() => setLoaded(true)} />}
       {!loaded && <div className="demo-wait">{seen && <span />}</div>}
     </div>
   )
@@ -63,7 +63,7 @@ export function Showcase({ onChoose }: { onChoose: (r: AstroReport) => void }) {
             <div className="sc-stage"><Phone report={p.id} title={p.title} /></div>
             <div className="sc-actions">
               <a href="#rapoarte" className="payment-button sc-cta" onClick={() => onChoose(p.id)}>Vreau {p.id === 'compat' ? 'analiza noastră' : 'raportul meu'} · {priceFor(ASTRO_PRODUCTS[p.id].priceBani, promo).now} <ArrowUpRight size={16} /></a>
-              <a href={`/api/astroai/demo?v=4&r=${p.id}`} target="_blank" rel="noopener" className="demo-full"><Maximize2 size={14} /> Deschide exemplul pe ecran complet</a>
+              <a href={`/api/astroai/demo?v=5&r=${p.id}`} target="_blank" rel="noopener" className="demo-full"><Maximize2 size={14} /> Deschide exemplul pe ecran complet</a>
             </div>
           </section>
         )
