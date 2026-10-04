@@ -39,10 +39,8 @@ const ICONS = { cristal: Gem, compat: HeartHandshake, prog: CalendarRange }
 
 export function Showcase({ onChoose }: { onChoose: (r: AstroReport) => void }) {
   const { promo } = useAstroPromo()
-  const [v, setV] = useState('')
-  useEffect(() => { try { const q = new URLSearchParams(window.location.search).get('scv'); if (q && /^[a-c]$/.test(q)) setV(q) } catch { /* */ } }, [])
   return (
-    <div className={`sc${v ? ` v-${v}` : ''}`}>
+    <div className="sc v-a">
       {PRODUCTS_COPY.map((p, i) => {
         const ex = EXAMPLE[p.id]
         return (
