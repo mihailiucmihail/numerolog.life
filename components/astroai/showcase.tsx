@@ -39,12 +39,15 @@ const ICONS = { cristal: Gem, compat: HeartHandshake, prog: CalendarRange }
 
 export function Showcase({ onChoose }: { onChoose: (r: AstroReport) => void }) {
   const { promo } = useAstroPromo()
+  const [u, setU] = useState('1')
+  const [tabs, setTabs] = useState<Record<string, 'q' | 'ex'>>({})
+  useEffect(() => { try { const q = new URLSearchParams(window.location.search).get('scu'); if (q && /^[1-3]$/.test(q)) setU(q) } catch { /* */ } }, [])
   return (
-    <div className="sc v-a">
+    <div className={`sc v-a u${u}`}>
       {PRODUCTS_COPY.map((p, i) => {
         const ex = EXAMPLE[p.id]
         return (
-          <section key={p.id} id={p.id} className={`sc-item${i % 2 ? ' flip' : ''}`} aria-labelledby={`sc-${p.id}`}>
+          <section key={p.id} id={p.id} className={`sc-item${i % 2 ? ' flip' : ''}${u === '3' ? ` tab-${tabs[p.id] || 'q'}` : ''}`} aria-labelledby={`sc-${p.id}`}>
             <div className="sc-copy">
               <span className="sc-num">0{i + 1}</span>
               <div className="sc-top">
@@ -53,6 +56,12 @@ export function Showcase({ onChoose }: { onChoose: (r: AstroReport) => void }) {
               </div>
               <h3 id={`sc-${p.id}`}>{p.title}</h3>
               <p className="sc-tag">{p.tagline}</p>
+              {u === '3' && (
+                <div className="sc-tabs" role="tablist">
+                  <button type="button" role="tab" aria-selected={(tabs[p.id] || 'q') === 'q'} onClick={() => setTabs({ ...tabs, [p.id]: 'q' })}>Întrebări</button>
+                  <button type="button" role="tab" aria-selected={tabs[p.id] === 'ex'} onClick={() => setTabs({ ...tabs, [p.id]: 'ex' })}>Exemplu complet</button>
+                </div>
+              )}
               <span className="sc-label">La ce întrebări îți răspunde</span>
               <ul className="sc-q">{p.questions.map((q) => <li key={q}>{q}</li>)}</ul>
               <div className="sc-example">
