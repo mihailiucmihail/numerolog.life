@@ -6,13 +6,14 @@ import { ArrowUpRight, Check, LockKeyhole, Plus, ShieldCheck, Sparkles } from 'l
 import { StarField } from '@/components/star-field'
 import { startAstroCheckout, trackAstro } from '@/app/actions/astroai'
 import { ASTRO_PRODUCTS, ASTRO_SEPARATE_TOTAL_BANI, type AstroProduct } from '@/lib/astroai/products'
-import { FAQ, REPORTS_V2, SCHOOLS_LINE, STORY, TOGETHER } from './content'
+import { FAQ, REPORTS_V2, SAMPLE, SCHOOLS_LINE, STORY, TOGETHER } from './content'
 import { CelestialInstrument } from './instrument'
 import './astro.css'
 
 const MONTHS = ['ianuarie', 'februarie', 'martie', 'aprilie', 'mai', 'iunie', 'iulie', 'august', 'septembrie', 'octombrie', 'noiembrie', 'decembrie']
 const YEAR_NOW = new Date().getFullYear()
-const YEARS = Array.from({ length: YEAR_NOW - 1919 }, (_, i) => YEAR_NOW - i)
+const YEAR_FIRST = YEAR_NOW - 10
+const YEARS = Array.from({ length: YEAR_FIRST - 1919 }, (_, i) => YEAR_FIRST - i)
 const DAYS = Array.from({ length: 31 }, (_, i) => i + 1)
 const ORDER: AstroProduct[] = ['cristal', 'compat', 'prog', 'pachet']
 
@@ -144,7 +145,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
             <div className="instrument-caption"><span className="caption-line" /><span>Cerul îți dă coordonatele. Cifrele le dau sens.</span><span className="caption-line" /></div>
           </div>
           <a className="hero-cta" href="#rapoarte" onClick={() => fire('product_select', product)}>Găsește-ți răspunsurile <ArrowUpRight size={18} /></a>
-          <div className="hero-proof"><span><Check size={14} /> Personalizat pentru tine</span><span>De la 39 lei</span></div>
+          <div className="hero-proof"><span><ShieldCheck size={14} /> <Link href="/ro/astroai/rambursare">Banii înapoi în 14 zile</Link></span><span>De la 39 lei</span></div>
         </section>
 
         <section className="story-block" id="poveste" aria-labelledby="poveste-titlu">
@@ -165,12 +166,27 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
           <p className="story-note">{STORY.note}</p>
         </section>
 
+        <section className="sample-block" id="exemplu" aria-labelledby="exemplu-titlu">
+          <div className="story-head">
+            <span className="small-kicker">{SAMPLE.kicker}</span>
+            <h2 id="exemplu-titlu">{SAMPLE.title}</h2>
+            <p>{SAMPLE.intro}</p>
+          </div>
+          <div className="sample-grid">
+            {SAMPLE.items.map((it) => (
+              <figure key={it.name} className="sample-card">
+                <div className="sample-shot"><img src={it.image} alt={`Fragment din raportul ${it.name}`} loading="lazy" width={540} height={it.h} /></div>
+                <figcaption><span>{it.name}</span><small>{it.caption}</small></figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+
         <section ref={orderRef} className="order-block" id="rapoarte" aria-label="Comanda ta">
           <div className="order-heading">
             <div><span className="small-kicker">Un pas mai aproape de tine</span><h2>Cu ce vrei să începi?</h2></div>
             <span className="preview-note"><LockKeyhole size={14} /> Datele tale rămân private</span>
           </div>
-          <Together compact />
           <div className="report-selector" role="tablist" aria-label="Alege raportul">
             {ORDER.map((id, i) => {
               const r = REPORTS_V2[id]; const pr = ASTRO_PRODUCTS[id]; const on = id === product
