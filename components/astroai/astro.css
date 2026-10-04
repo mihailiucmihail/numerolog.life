@@ -495,3 +495,12 @@
 @media (max-width: 900px) {
   .ax .u1 .sc-item { padding: 22px 18px 20px }
 }
+
+/* ── Pagini de intrare: portretul datei de naștere ── */
+.ax .hk-profile { margin: 26px 0 8px; text-align: left; display: grid; gap: 10px }
+.ax .hk-profile-head { display: block; text-align: center; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--primary); margin-bottom: 4px }
+.ax .hk-pcard { padding: 16px 18px; border-radius: 14px; border: 1px solid rgba(212,175,55,.22); background: linear-gradient(180deg, rgba(212,175,55,.07), rgba(238,233,244,.02)) }
+.ax .hk-pcard-kicker { display: block; font-size: 12.5px; color: var(--primary); margin-bottom: 2px }
+.ax .hk-pcard strong { display: block; font-family: var(--font-cormorant); font-weight: 500; font-size: 22px; line-height: 1.2; color: var(--foreground); margin-bottom: 6px }
+.ax .hk-pcard p { font-size: 15px; line-height: 1.65; color: rgba(238,233,244,.86) }
+.ax .hk-profile-note { text-align: center; font-size: 14px; line-height: 1.6; color: var(--muted-foreground); margin-top: 6px }
