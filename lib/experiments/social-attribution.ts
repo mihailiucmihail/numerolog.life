@@ -29,6 +29,8 @@ export function safePublicPath(raw: unknown): string | null {
   if (/^\/(?:ru|ro)\/(?:admin|auth|design)(?:\/|$)|^\/(?:admin|api|_next|_vercel|auth)(?:\/|$)/i.test(path)) return null
   if (/^\/(?:ru|ro)\/numerologie\/cristalul-raport\/[^/]+$/.test(path)) return path.replace(/\/[^/]+$/, '/:report')
   if (/^\/(?:ru|ro)\/grani\/raport\/[^/]+$/.test(path)) return path.replace(/\/[^/]+$/, '/:report')
+  // AstroAI (astroai.ro): pagina principală și paginile de intrare din reclame (slugurile fixe).
+  if (/^\/(?:ro\/astroai(?:\/l)?\/)?(?:zile-10-13|zile-14-22|inceput-sau-sfarsit|luna-nasterii|cuplu|varsator)$|^\/ro\/astroai$/.test(path)) return path.slice(0, 240)
   // Only product routes are collected; arbitrary slugs can contain personal data.
   if (!/^\/(?:ru|ro)?\/?(?:numerologie|compatibilitate|previziuni|blog|despre|contact|preturi|faq|grani|privacy|terms|confidentialitate|termeni)?$/.test(path)) return null
   return path.slice(0, 240)
