@@ -7,6 +7,7 @@ const nextConfig = {
   // Rapoartele AstroAI nu sunt publice: se citesc de pe disc doar după plata confirmată.
   outputFileTracingIncludes: {
     '/api/astroai/report': ['./private/astroai/**/*'],
+    '/api/astroai/demo': ['./private/astroai/**/*'],
   },
   reactCompiler: false,
   cacheComponents: false,

@@ -6,7 +6,8 @@ import { ArrowUpRight, Check, LockKeyhole, Plus, ShieldCheck, Sparkles } from 'l
 import { StarField } from '@/components/star-field'
 import { startAstroCheckout, trackAstro } from '@/app/actions/astroai'
 import { ASTRO_PRODUCTS, ASTRO_SEPARATE_TOTAL_BANI, type AstroProduct } from '@/lib/astroai/products'
-import { FAQ, REPORTS_V2, SAMPLE, SCHOOLS_LINE, STORY } from './content'
+import { FAQ, REPORTS_V2, SCHOOLS_LINE, STORY } from './content'
+import { LiveDemo } from './live-demo'
 import { CelestialInstrument } from './instrument'
 import { fbqTrack, MetaPixel } from './meta-pixel'
 import './astro.css'
@@ -125,7 +126,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
       <div className="ax-wrap">
         <header className="site-header">
           <a href="#" className="wordmark" aria-label="AstroAI, acasă"><Sparkles className="brand-symbol" size={29} strokeWidth={1.1} /> astro<span>ai</span><small>.ro</small></a>
-          <nav aria-label="Navigare"><a href="#rapoarte">Rapoartele tale</a><a href="#perspective">Două perspective, un singur raport</a><a href="#poveste">Metoda</a><a href="#intrebari">Întrebări</a></nav>
+          <nav aria-label="Navigare"><a href="#rapoarte">Rapoartele tale</a><a href="#perspective">Două perspective, un singur raport</a><a href="#exemplu">Exemplu</a><a href="#poveste">Metoda</a><a href="#intrebari">Întrebări</a></nav>
           <a href="#rapoarte" className="header-link" onClick={() => fire('product_select', product)}>Descoperă-te <ArrowUpRight size={16} /></a>
         </header>
 
@@ -145,38 +146,24 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
           <div className="hero-proof"><span><ShieldCheck size={14} /> <Link href="/ro/astroai/rambursare">Banii înapoi automat, în primele 14 zile</Link></span><span>Fără ora nașterii</span></div>
         </section>
 
-        <section className="story-block" id="poveste" aria-labelledby="poveste-titlu">
+        <section className="answers-block" id="raspunsuri" aria-labelledby="raspunsuri-titlu">
           <div className="story-head">
-            <span className="small-kicker">{STORY.kicker}</span>
-            <h2 id="poveste-titlu">{STORY.title}</h2>
-            {STORY.intro.map((p) => <p key={p}>{p}</p>)}
+            <span className="small-kicker">Ce afli din raport</span>
+            <h2 id="raspunsuri-titlu">Întrebările pe care nu le pui nimănui</h2>
           </div>
-          <ol className="story-schools">
-            {STORY.schools.map((s) => (
-              <li key={s.name}>
-                <span className={`story-mark${s.mark.length > 2 ? ' long' : ''}`} aria-hidden>{s.mark}</span>
-                <div><h3>{s.name}</h3><span className="story-origin">{s.origin}</span><p>{s.text}</p></div>
-              </li>
-            ))}
-          </ol>
-          <p className="story-outro">{STORY.outro}</p>
-          <p className="story-note">{STORY.note}</p>
+          <ul className="answers">
+            {REPORTS_V2.cristal.questions.map((q) => <li key={q}>{q}</li>)}
+          </ul>
+          <p className="answers-note">Fiecare răspuns vine din numele și data ta de naștere, cu calculul lângă el.</p>
         </section>
 
         <section className="sample-block" id="exemplu" aria-labelledby="exemplu-titlu">
           <div className="story-head">
-            <span className="small-kicker">{SAMPLE.kicker}</span>
-            <h2 id="exemplu-titlu">{SAMPLE.title}</h2>
-            <p>{SAMPLE.intro}</p>
+            <span className="small-kicker">Înainte să plătești</span>
+            <h2 id="exemplu-titlu">Derulează un raport întreg</h2>
+            <p>Nu un fragment: raportul complet, pe date fictive, așa cum îl vezi pe telefon.</p>
           </div>
-          <div className="sample-grid">
-            {SAMPLE.items.map((it) => (
-              <figure key={it.name} className="sample-card">
-                <div className="sample-shot"><img src={it.image} alt={`Fragment din raportul ${it.name}`} loading="eager" decoding="async" width={540} height={it.h} /></div>
-                <figcaption><span>{it.name}</span><small>{it.caption}</small></figcaption>
-              </figure>
-            ))}
-          </div>
+          <LiveDemo onCta={(r) => choose(r)} />
         </section>
 
         <section ref={orderRef} className="order-block" id="rapoarte" aria-label="Comanda ta">
@@ -242,6 +229,26 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
             </div>
           </form>
         </section>
+
+        <section className="story-block" id="poveste" aria-labelledby="poveste-titlu">
+          <details className="story-details">
+            <summary><span className="small-kicker">{STORY.kicker}</span><span className="story-sum">{STORY.title}</span></summary>
+          <div className="story-head" id="poveste-titlu">
+            {STORY.intro.map((p) => <p key={p}>{p}</p>)}
+          </div>
+          <ol className="story-schools">
+            {STORY.schools.map((s) => (
+              <li key={s.name}>
+                <span className={`story-mark${s.mark.length > 2 ? ' long' : ''}`} aria-hidden>{s.mark}</span>
+                <div><h3>{s.name}</h3><span className="story-origin">{s.origin}</span><p>{s.text}</p></div>
+              </li>
+            ))}
+          </ol>
+          <p className="story-outro">{STORY.outro}</p>
+          <p className="story-note">{STORY.note}</p>
+          </details>
+        </section>
+
 
         <section className="faq-block" id="intrebari">
           <h2>Întrebări pe scurt</h2>
