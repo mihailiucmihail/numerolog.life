@@ -165,6 +165,19 @@ export function HookLanding({ hook }: { hook: HookView }) {
             <h2>{result.title}</h2>
             <p className="hk-text">{result.text}</p>
             {result.extra && <p className="hk-extra">{result.extra}</p>}
+            {result.profile && result.profile.length > 0 && (
+              <div className="hk-profile">
+                <span className="hk-profile-head">Ce mai spune data ta de naștere</span>
+                {result.profile.map((it) => (
+                  <div key={it.key} className="hk-pcard">
+                    <span className="hk-pcard-kicker">{it.kicker}</span>
+                    <strong>{it.title}</strong>
+                    <p>{it.text}</p>
+                  </div>
+                ))}
+                <p className="hk-profile-note">Toate acestea vin doar din data nașterii. Raportul complet adaugă și numele tău, și atunci totul devine doar despre tine.</p>
+              </div>
+            )}
 
             <form className="hk-upsell" onSubmit={pay} noValidate>
               <span className="hk-upsell-kicker">{hook.upsellKicker}</span>
