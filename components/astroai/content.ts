@@ -62,13 +62,13 @@ export const PRODUCTS_COPY: ProductCopy[] = [
     tagline: 'Ce îți aduce anul acesta și cum să-l trăiești cu folos.',
     questions: [
       'Ce scenariu are anul tău și în ce domeniu se vor petrece evenimentele?',
-      'Care sunt anii de noroc și anii critici din viața ta?',
+      'Care sunt anii tăi buni și care anii de încercare?',
       'Ce se petrece cu tine în interior și ce se conturează în jurul tău?',
       'În ce perioadă a anului ești acum și ce cere de la tine?',
-      'Ce să eviți acum: ciclul fricii și bumerangul karmic',
-      'Ce energie are orice zi pe care o alegi?',
+      'Ce să eviți acum și ce lecție ți se întoarce',
+      'Ce energie are ziua pe care o ai în gând, ca să știi la ce să te aștepți?',
     ],
-    includes: ['Harta anilor vieții tale', 'Perioadele anului, cu date exacte', 'Norocul și „stropul de amar” al perioadei', 'Calculatorul zilei'],
+    includes: ['Harta anilor vieții tale', 'Perioadele anului, cu date exacte', 'Ce îți iese ușor și unde să ai grijă', 'Calculatorul zilei'],
     image: '/astroai/raport-prognoza.webp',
     imageAlt: 'Rezumatul anului din raportul Prognoza personală',
     needs: 'Numele, data nașterii și sexul',
@@ -143,7 +143,7 @@ export const FAQ = [
   },
   {
     q: 'Raportul e scris de inteligența artificială?',
-    a: 'Nu în timp real. Calculele se fac după regulile fiecărei școli, iar interpretările sunt texte redactate și verificate în prealabil pentru fiecare rezultat posibil. Același nume și aceeași dată de naștere dau mereu același raport.',
+    a: 'Nu sunt generate pe loc. Textele sunt scrise și verificate dinainte, pentru fiecare rezultat; calculele se fac automat, după regulile fiecărei școli. Același nume și aceeași dată de naștere dau mereu același raport.',
   },
   {
     q: 'De ce nu e nevoie de ora nașterii?',
@@ -211,8 +211,8 @@ export const REFUND_COPY = {
 export const TOGETHER = 'Astrologie și numerologie, într-o singură citire. De obicei le găsești separat. Aici lucrează împreună, pe aceeași dată de naștere. Puțini fac asta. Noi facem doar asta.'
 export const REPORTS_V2: Record<AstroProduct, { name: string; tagline: string; questions: string[] }> = {
   cristal: { name: 'Cristalul Destinului', tagline: 'Portretul tău complet: cine ești, de ce ai venit și ce urmează.', questions: ['De ce, în sinea mea, sunt altfel decât par?', 'Care e rostul meu pe lumea asta?', 'În ce sunt bună cu adevărat și de ce nu-mi folosesc forța?', 'De ce atrag mereu același tip de bărbat?', 'Prin ce muncă îmi vin banii cel mai ușor?', 'Ce mă trage înapoi fără să-mi dau seama?', 'Ce am moștenit de la neamul meu, fără să știu?', 'În ce etapă a vieții sunt acum și ce urmează?'] },
-  compat: { name: 'Compatibilitatea cuplului', tagline: 'Ce vă leagă, ce vă desparte și încotro mergeți împreună.', questions: ['Ne potrivim cu adevărat sau doar ne-am obișnuit?', 'De ce ne certăm mereu pentru aceleași lucruri?', 'Cine conduce în relație și cine cedează?', 'E o legătură karmică și ce avem de învățat împreună?', 'Am putea face afaceri împreună?', 'Ce ne aduce anul acesta, ca cuplu?'] },
-  prog: { name: 'Prognoza personală', tagline: 'Ce îți aduce anul acesta și cum să profiți de el.', questions: ['E anul în care fac pasul — sau anul în care aștept?', 'În ce lună să iau decizia și în ce lună să aștept?', 'Ce lecție mi se tot repetă și cum o închid odată?', 'Care îmi sunt anii buni și care anii de încercare?', 'Ce zi e bună pentru nuntă, interviu sau o decizie mare?', 'Ce îmi spune data de naștere a copilului despre cum să-l cresc?'] },
+  compat: { name: 'Compatibilitatea cuplului', tagline: 'Ce vă leagă, ce vă desparte și încotro mergeți împreună.', questions: ['Ne potrivim cu adevărat sau doar ne-am obișnuit?', 'De ce ne certăm mereu pentru aceleași lucruri?', 'Cine conduce în relație și cine cedează?', 'E o legătură karmică și ce avem de învățat împreună?', 'Cum am funcționa ca parteneri de afaceri?', 'Ce ne aduce anul acesta, ca cuplu?'] },
+  prog: { name: 'Prognoza personală', tagline: 'Ce îți aduce anul acesta și cum să profiți de el.', questions: ['E anul în care fac pasul — sau anul în care aștept?', 'În ce lună să iau decizia și în ce lună să aștept?', 'Ce lecție mi se tot repetă și cum o închid odată?', 'Care îmi sunt anii buni și care anii de încercare?', 'Ce energie are ziua pe care o am în gând pentru un pas important?', 'Ce îmi spune data de naștere a copilului despre cum să-l înțeleg?'] },
   pachet: { name: 'Toate trei', tagline: 'Toate trei, la un loc. Portretul, cuplul și anul — citite din aceeași dată de naștere, cu aceeași metodă.', questions: [] },
 }
 
@@ -232,7 +232,7 @@ export const STORY = {
     { mark: '∞', name: 'Numerologia karmică', origin: 'Karma și neamul', text: 'Lecțiile sufletului, tiparele moștenite din neam și oamenii pentru care ai venit pe lume.' },
     { mark: '9', name: 'Harta vectorială', origin: 'Imaginea întreagă', text: 'Toate calculele, reunite într-o singură hartă a celor 9 sfere ale vieții tale.' },
   ],
-  outro: 'Lângă fiecare concluzie din raport vezi din ce calcul provine. Nimic nu e spus la întâmplare.',
+  outro: 'Lângă fiecare concluzie din raport vezi din ce calcul provine.',
   note: 'Cristalul Destinului le folosește pe toate șase.',
 }
 
@@ -242,7 +242,7 @@ export const SCHOOLS_LINE = 'Rapoartele AstroAI îmbină șase școli de astrolo
 export const SAMPLE = {
   kicker: 'Înainte să plătești',
   title: 'Așa arată raportul',
-  intro: 'Fragmente reale din cele trei rapoarte. Lângă fiecare concluzie vezi din ce calcul provine.',
+  intro: 'Fragmente reale din cele trei rapoarte, așa cum le vezi pe telefon.',
   items: [
     { name: 'Cristalul Destinului', caption: 'Cine ești cu adevărat', image: '/astroai/raport-cristal.webp', h: 985 },
     { name: 'Compatibilitatea cuplului', caption: 'Compatibilitatea emoțională', image: '/astroai/raport-compatibilitate.webp', h: 1053 },

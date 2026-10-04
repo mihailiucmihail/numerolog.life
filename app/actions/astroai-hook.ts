@@ -12,7 +12,7 @@ export async function runAstroHook(slug: string, input: HookInput): Promise<{ ok
   return { ok: true, result: r }
 }
 
-export async function trackAstroHook(slug: string, event: 'landing_view' | 'product_select'): Promise<void> {
+export async function trackAstroHook(slug: string, event: 'landing_view' | 'product_select' | 'form_first_interaction'): Promise<void> {
   if (!isHookSlug(slug)) return
   await recordAstroEvent({ event, product: `hook_${slug}` }).catch(() => {})
 }
