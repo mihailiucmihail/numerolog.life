@@ -34,10 +34,12 @@ export const ASTRO_EVENTS = new Set([
   'refund_view',
   'refund_request',
   'refund_done',
+  'promo_view',
+  'promo_subscribe',
 ])
 
 /** Evenimente numărate o singură dată per vizitator și produs. */
-const ONCE = new Set(['landing_view', 'form_impression', 'form_first_interaction', 'form_submit', 'report_view', 'refund_view'])
+const ONCE = new Set(['promo_view', 'promo_subscribe', 'landing_view', 'form_impression', 'form_first_interaction', 'form_submit', 'report_view', 'refund_view'])
 
 /** Evenimentele care alimentează și raportul pe postări Instagram (social_events). */
 const SOCIAL = new Set(['form_impression', 'form_submit', 'preview_impression'])
@@ -77,7 +79,7 @@ export async function recordAstroEvent(input: {
 }): Promise<boolean> {
   try {
     if (!ASTRO_EVENTS.has(input.event)) return false
-    const product = /^[a-z]{3,10}$/.test(input.product) ? input.product : 'site'
+    const product = /^[a-z][a-z0-9_-]{2,30}$/.test(input.product) ? input.product : 'site'
     const visitorId = input.visitorId && VID.test(input.visitorId) ? input.visitorId : await astroVisitorId()
     if (!visitorId) return false
     const ctx = await getRequestExperimentContext()

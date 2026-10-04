@@ -49,9 +49,19 @@ export async function GET(req: NextRequest) {
         count(*) FILTER (WHERE event = 'purchase')::int AS purchases,
         coalesce(sum(value_amount) FILTER (WHERE event = 'purchase'), 0)::int AS revenue_bani
       FROM experiment_events
-      WHERE entry LIKE 'astro\\_%' AND entry <> 'astro_site' AND entry NOT LIKE 'astro\\_hook\\_%' AND created_at >= ${since}
+      WHERE entry LIKE 'astro\\_%' AND entry <> 'astro_site' AND entry NOT LIKE 'astro\\_hook\\_%' AND entry NOT LIKE 'astro\\_promo\\_%' AND created_at >= ${since}
       GROUP BY 1 ORDER BY 3 DESC`
-    return NextResponse.json({ generatedAt: new Date().toISOString(), days, byDay, byHook, byProduct }, { headers: { 'cache-control': 'no-store' } })
+    let subs: Record<string, unknown> | null = null
+    try {
+      const [c] = await db<Record<string, unknown>[]>`
+        SELECT count(*) FILTER (WHERE created_at >= ${since})::int AS new_emails,
+          count(*)::int AS total_emails,
+          count(*) FILTER (WHERE used_at >= ${since})::int AS used_codes,
+          (SELECT count(DISTINCT visitor_id)::int FROM experiment_events WHERE entry = 'astro_site' AND event = 'promo_view' AND created_at >= ${since}) AS popup_views
+        FROM promo_codes WHERE code LIKE 'ASTRO20-%'`
+      subs = c ?? null
+    } catch { /* tabela poate lipsi local */ }
+    return NextResponse.json({ generatedAt: new Date().toISOString(), days, byDay, byHook, byProduct, subs }, { headers: { 'cache-control': 'no-store' } })
   } catch (error) {
     console.error('[astroai] stats api', error)
     return NextResponse.json({ error: 'unavailable' }, { status: 503 })

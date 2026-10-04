@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Loader2, Lock, RefreshCw } from 'lucide-react'
-import { getAstroStats, listAstroRefunds, refundAstroPayment, sendAstroTestEmail, type AstroRefundRow, type AstroStats } from '@/app/actions/astroai-admin'
+import { getAstroStats, listAstroRefunds, refundAstroPayment, sendAstroTestEmail, type AstroRefundRow, type AstroStats, type AstroSubsStats } from '@/app/actions/astroai-admin'
 
 const NAMES: Record<string, string> = { cristal: 'Кристалл судьбы', compat: 'Совместимость', prog: 'Прогноз', pachet: 'Пакет из 3' }
 const lei = (bani: number) => `${(bani / 100).toLocaleString('ro-RO', { maximumFractionDigits: 0 })} lei`
@@ -67,6 +67,8 @@ export function AstroAIAdminClient() {
         ))}
       </div>
       <p className="text-sm text-muted-foreground">Конверсия посетитель → покупка: <b className="text-foreground">{pct(totals.purchases, stats.visitors)}</b> · форма → оплата: <b className="text-foreground">{pct(totals.purchases, totals.submits)}</b></p>
+
+      {stats.subs && <SubsPanel subs={stats.subs} days={days} />}
 
       <RefundsPanel password={password} />
 
@@ -196,6 +198,60 @@ function RefundsPanel({ password }: { password: string }) {
         <input type="email" value={testTo} onChange={(e) => setTestTo(e.target.value)} placeholder="твой e-mail" className="h-10 rounded-xl border border-primary/20 bg-background/40 px-3 text-sm outline-none focus:border-primary" />
         <button type="button" disabled={!!busy || !testTo} onClick={() => void test()} className="rounded-full border border-primary/30 px-4 py-2 text-sm text-primary disabled:opacity-50">{busy === 'test' ? <Loader2 className="size-4 animate-spin" /> : 'Отправить тест'}</button>
       </div>
+    </section>
+  )
+}
+
+const SOURCE_NAMES: Record<string, string> = { popup: 'Поп-ап', inline: 'Блок на главной (или галочка в заказе)', hook: 'Галочка на страницах рекламы', astroai_popup: 'Поп-ап', astroai_inline: 'Блок / галочка', astroai_hook: 'Страницы рекламы' }
+
+function SubsPanel({ subs, days }: { subs: AstroSubsStats; days: number }) {
+  const [all, setAll] = useState(false)
+  const rows = all ? subs.latest : subs.latest.slice(0, 15)
+  const period = days === 1 ? 'сегодня' : `за ${days} дн.`
+  return (
+    <section className="rounded-2xl border border-primary/15 bg-card/70 p-5">
+      <h2 className="font-serif text-2xl">Подписки за скидку −20%</h2>
+      <p className="mt-1 text-sm text-muted-foreground">Кто оставил e-mail в поп-апе, в блоке на главной или галочкой в заказе. Каждый e-mail получает один код ASTRO20 на 7 дней; скидка ставится на сайте сразу.</p>
+      <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-5">
+        {[
+          [`Оставили e-mail ${period}`, subs.period],
+          ['Всего e-mail', subs.total],
+          ['Сейчас подписаны', subs.active],
+          [`Купили со скидкой ${period}`, subs.usedPeriod],
+          [`Видели поп-ап ${period}`, subs.popupViews],
+        ].map(([label, value]) => (
+          <div key={label as string} className="rounded-xl border border-primary/10 bg-background/30 p-4">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground">{label}</p>
+            <p className="mt-1 font-serif text-2xl text-primary">{value}</p>
+          </div>
+        ))}
+      </div>
+      <p className="mt-3 text-sm text-muted-foreground">
+        Поп-ап → e-mail: <b className="text-foreground">{pct(subs.bySource.find((s) => s.source === 'popup')?.n ?? 0, subs.popupViews)}</b>
+        {' · '}e-mail → покупка (всего): <b className="text-foreground">{pct(subs.used, subs.total)}</b>
+        {subs.bySource.length > 0 && <> · по источникам {period}: {subs.bySource.map((s) => `${SOURCE_NAMES[s.source] || s.source} — ${s.n}`).join(', ')}</>}
+      </p>
+      <div className="mt-4 overflow-x-auto">
+        <table className="w-full min-w-[720px] text-sm">
+          <thead className="text-left text-xs uppercase tracking-widest text-muted-foreground"><tr>{['Когда', 'E-mail', 'Откуда', 'Код', 'Статус'].map((h) => <th key={h} className="px-3 py-2">{h}</th>)}</tr></thead>
+          <tbody>
+            {rows.length === 0 && <tr><td colSpan={5} className="px-3 py-5 text-center text-muted-foreground">Пока никто не оставил e-mail.</td></tr>}
+            {rows.map((r) => {
+              const expired = !r.usedAt && r.expiresAt && new Date(r.expiresAt).getTime() < Date.now()
+              return (
+                <tr key={r.code} className="border-t border-primary/10">
+                  <td className="px-3 py-2.5 whitespace-nowrap">{new Date(r.createdAt).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</td>
+                  <td className="px-3 py-2.5">{r.email}{!r.subscribed && <span className="ml-2 text-xs text-muted-foreground">(отписался)</span>}</td>
+                  <td className="px-3 py-2.5 text-muted-foreground">{SOURCE_NAMES[r.source] || r.source || '—'}</td>
+                  <td className="px-3 py-2.5 font-mono text-xs">{r.code}</td>
+                  <td className="px-3 py-2.5">{r.usedAt ? <span className="font-semibold text-emerald-300">Купил {new Date(r.usedAt).toLocaleDateString('ru-RU')}</span> : expired ? <span className="text-muted-foreground">Код истёк</span> : <span className="text-primary">Код активен</span>}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+      {subs.latest.length > 15 && <button type="button" onClick={() => setAll(!all)} className="mt-3 rounded-full border border-primary/30 px-4 py-2 text-sm text-primary">{all ? 'Свернуть' : `Показать все (${subs.latest.length})`}</button>}
     </section>
   )
 }

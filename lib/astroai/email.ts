@@ -78,12 +78,12 @@ function shell(title: string, body: string): string {
 </table></td></tr></table></body></html>`
 }
 
-async function send(to: string, subject: string, html: string, replyTo?: string): Promise<boolean> {
+async function send(to: string, subject: string, html: string, replyTo?: string, headers?: Record<string, string>): Promise<boolean> {
   const key = process.env.RESEND_API_KEY
   if (!key) return false
   const from = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
   try {
-    const { error } = await new Resend(key).emails.send({ from: `AstroAI <${from}>`, to, subject, html, replyTo: replyTo || CONTACT })
+    const { error } = await new Resend(key).emails.send({ from: `AstroAI <${from}>`, to, subject, html, replyTo: replyTo || CONTACT, ...(headers ? { headers } : {}) })
     if (error) { console.error('[astroai] email error', error); return false }
     return true
   } catch (error) {
@@ -175,4 +175,24 @@ export async function sendAstroReportEmailOnce(params: {
   }
   console.log('[astroai] report email', params.sessionId, r.sent ? 'sent' : 'FAILED', 'to', params.to)
   return { sent: r.sent, already: false }
+}
+
+/** Reducerea de la abonare: codul −20 % și linkul care îl aplică automat pe astroai.ro. */
+export async function sendAstroPromoEmail(p: { to: string; code: string; expiresAt: Date; unsubscribeToken: string }): Promise<boolean> {
+  const link = `https://astroai.ro/api/astroai/cod?c=${encodeURIComponent(p.code)}`
+  const unsub = `https://astroai.ro/api/unsubscribe?token=${encodeURIComponent(p.unsubscribeToken)}&locale=ro`
+  const until = p.expiresAt.toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', timeZone: 'Europe/Bucharest' })
+  const btn = 'display:inline-block;background:#D4AF37;color:#0A0A14;text-decoration:none;font-family:Arial,sans-serif;font-weight:700;font-size:16px;padding:15px 28px;border-radius:10px;'
+  return send(p.to, 'Codul tău: −20% la orice raport AstroAI', shell('Reducerea ta de 20%', `
+<p style="margin:0 0 16px;">Bună,</p>
+<p style="margin:0 0 20px;">Mulțumim că te-ai abonat. Ai <strong style="color:#D4AF37;">20% reducere</strong> la orice raport AstroAI: Cristalul Destinului, Compatibilitatea cuplului, Prognoza personală sau pachetul complet.</p>
+<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 22px;"><tr><td align="center" style="border:1px dashed rgba(212,175,55,0.55);border-radius:12px;padding:18px;">
+<p style="margin:0 0 6px;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:rgba(237,227,207,0.6);">Codul tău</p>
+<p style="margin:0;font-family:'Courier New',monospace;font-size:26px;letter-spacing:3px;color:#D4AF37;">${esc(p.code)}</p>
+</td></tr></table>
+<p style="margin:0 0 24px;text-align:center;"><a href="${link}" style="${btn}">Deschide AstroAI cu reducerea aplicată</a></p>
+<p style="margin:0 0 16px;">Nu trebuie să copiezi nimic: apasă butonul și reducerea apare deja la toate prețurile de pe site. Codul e valabil până la ${esc(until)}, pentru o singură comandă.</p>
+<p style="margin:0 0 16px;">Ce primești: un raport personal calculat din numele și data ta de naștere, care se deschide imediat după plată și îți rămâne pe e-mail. Dacă nu te regăsești în el, îți returnăm banii în 14 zile.</p>
+<p style="margin:24px 0 0;font-size:13px;color:rgba(237,227,207,0.5);">Primești acest e-mail pentru că ți-ai lăsat adresa pe astroai.ro. <a href="${unsub}" style="color:rgba(212,175,55,0.8);">Dezabonare</a></p>`),
+  undefined, { 'List-Unsubscribe': `<${unsub}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' })
 }
