@@ -244,7 +244,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
               <button type="submit" className="payment-button" disabled={busy}><LockKeyhole size={16} /> {busy ? 'Se deschide plata…' : 'Deschide raportul meu'}</button>
               <p className="payment-schools"><Sparkles size={14} strokeWidth={1.3} /> {SCHOOLS_LINE}</p>
               <p className="payment-note">Plată prin Stripe. Raportul se deschide imediat și îl primești pe e-mail.<br />Continuând, ești de acord cu <Link href="/ro/termeni">Termenii</Link> și <Link href="/ro/confidentialitate">Confidențialitatea</Link>.</p>
-              <div className="guarantee"><ShieldCheck size={23} /><p>Nu te regăsești în raport?<br /><span>Îți dăm banii înapoi în 14 zile. </span><Link href="/ro/astroai/rambursare">Cum funcționează</Link></p></div>
+              <div className="guarantee"><ShieldCheck size={23} /><p>Nu te regăsești în raport?<br /><span>Îți returnăm banii automat, în primele 14 zile de la plată. </span><Link href="/ro/astroai/rambursare">Cum funcționează</Link></p></div>
             </div>
           </form>
         </section>

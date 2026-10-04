@@ -30,7 +30,7 @@ export function AstroRefundPage({ sessionId, email: initialEmail }: { sessionId:
     setDone(res)
   }
 
-  const doneText = done ? (done.status === 'refunded' ? C.doneRefunded : done.status === 'already' ? C.doneAlready : C.doneNew) : null
+  const doneText = done ? (done.status === 'refunded_now' ? C.doneRefundedNow : done.status === 'refunded' ? C.doneRefunded : done.status === 'already' ? C.doneAlready : C.doneNew) : null
 
   return (
     <main className="ax relative min-h-screen overflow-x-clip bg-[#0b0816]">
@@ -58,7 +58,7 @@ export function AstroRefundPage({ sessionId, email: initialEmail }: { sessionId:
             {done ? (
               <div className="ax-refund-done" role="status">
                 <div className="ax-refund-seal" aria-hidden>✓</div>
-                <h2 className="ax-serif">{done.firstName ? `${done.firstName}, ${C.doneTitle.toLowerCase()}` : C.doneTitle}</h2>
+                <h2 className="ax-serif">{done.status === 'refunded_now' ? (done.firstName ? `${done.firstName}, banii sunt pe drum` : 'Banii sunt pe drum') : done.status === 'refunded' ? 'Banii au fost deja returnați' : (done.firstName ? `${done.firstName}, am primit cererea ta` : 'Am primit cererea ta')}</h2>
                 <p>{doneText}</p>
                 <a href="/" className="ax-pill" style={{ display: 'inline-block', marginTop: 18 }}>{C.back}</a>
               </div>
@@ -100,7 +100,6 @@ export function AstroRefundPage({ sessionId, email: initialEmail }: { sessionId:
               <Link href="/ro/confidentialitate">Confidențialitate</Link>
               <a href="mailto:contact@numerolog.life">Contact</a>
             </nav>
-            <span style={{ fontSize: 11.5, color: 'var(--ax-faint)' }}>MIHAILIUC GROUP SRL · CUI 49596845 · J2024003230404</span>
           </div>
         </footer>
       </div>

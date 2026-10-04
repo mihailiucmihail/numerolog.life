@@ -115,6 +115,16 @@ ${p.late ? `<p style="margin:0 0 8px;color:#f0a080;"><b>Atenție:</b> au trecut 
 <p style="margin:18px 0 0;"><a href="https://astroai.ro/ro/admin/astroai" style="color:#D4AF37;">Rambursează din panoul AstroAI</a> · <a href="${dash}" style="color:#D4AF37;">Plata în Stripe</a></p>`), p.to)
 }
 
+/** Notificare scurtă pentru administrator când garanția a rambursat automat. */
+export async function sendAstroRefundAdminNotice(p: { to: string; firstName: string; product: string; amount: string; reason: string; paymentIntentId: string }): Promise<void> {
+  const admin = process.env.ASTRO_ADMIN_EMAIL || CONTACT
+  await send(admin, `[AstroAI] Rambursare automată · ${p.amount} · ${p.to}`, shell('Rambursare automată (garanția 14 zile)', `
+<p style="margin:0 0 8px;"><b>Client:</b> ${esc(p.firstName)} &lt;${esc(p.to)}&gt;</p>
+<p style="margin:0 0 8px;"><b>Produs:</b> ${esc(p.product)} · ${esc(p.amount)}</p>
+<p style="margin:0 0 8px;"><b>Motiv:</b> ${esc(p.reason || '—')}</p>
+<p style="margin:18px 0 0;"><a href="https://dashboard.stripe.com/payments/${esc(p.paymentIntentId)}" style="color:#D4AF37;">Plata în Stripe</a></p>`), p.to)
+}
+
 /** Confirmarea că banii au fost returnați. */
 export async function sendAstroRefundDoneEmail(p: { to: string; firstName: string; product: string; amount: string }): Promise<void> {
   const name = esc(p.firstName || '')
