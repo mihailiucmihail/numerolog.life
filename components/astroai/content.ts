@@ -162,8 +162,8 @@ export const FAQ = [
     a: 'Da. Linkul din e-mail rămâne valabil, iar raportul se deschide de pe orice telefon sau calculator.',
   },
   {
-    q: 'Și dacă nu mă regăsesc în raport?',
-    a: 'Îți returnăm banii integral, automat, dacă îi ceri în primele 14 zile de la plată. Deschizi pagina de rambursare (linkul e în raport, în e-mail și în josul paginii), scrii adresa de e-mail și rambursarea pornește pe loc, fără justificări. Suma apare pe card de obicei în 5–10 zile lucrătoare, în funcție de bancă.',
+    q: 'Și dacă raportul nu mă mulțumește?',
+    a: 'Ne dorim ca raportul să te ajute: să te cunoști mai bine, să înțelegi ce urmează și să găsești informații de folos în viața ta. Dacă totuși nu te mulțumește, îți returnăm integral suma plătită. Ai la dispoziție 14 zile de la plată: deschizi pagina de rambursare (linkul e în raport, în e-mail și în josul paginii) și scrii adresa de e-mail. Suma apare pe card de obicei în 5–10 zile lucrătoare, în funcție de bancă.',
   },
   {
     q: 'Ce fac dacă am o problemă cu raportul?',
@@ -174,13 +174,13 @@ export const FAQ = [
 /* Garanția: pagina „Cere rambursarea” (/ro/astroai/rambursare). */
 export const REFUND_COPY = {
   back: 'Înapoi la AstroAI',
-  kicker: 'Garanția AstroAI · 14 zile',
-  title1: 'Nu te regăsești în raport?',
-  title2: 'Îți returnăm banii. Automat.',
-  lead: 'Dacă în primele 14 zile de la plată simți că raportul nu vorbește despre tine, îți returnăm integral suma. Nu trebuie să ne convingi și nu aștepți aprobarea nimănui: scrii adresa de e-mail, iar rambursarea pornește pe loc.',
+  kicker: 'Garanția satisfacției · 14 zile',
+  title1: 'Raportul nu te-a mulțumit?',
+  title2: 'Îți returnăm integral suma.',
+  lead: 'Ne dorim ca raportul AstroAI să te ajute să te cunoști mai bine, să înțelegi ce te așteaptă și să găsești informații de folos în viața ta. Dacă totuși nu te mulțumește, îți returnăm integral suma plătită, în primele 14 zile de la plată. Scrii adresa de e-mail mai jos, iar cererea se procesează pe loc.',
   points: [
     { t: 'Integral', d: 'Toată suma plătită, pe cardul cu care ai plătit.' },
-    { t: 'Automat', d: 'În primele 14 zile rambursarea pornește pe loc, din formularul de mai jos. Fără justificări, fără aprobări.' },
+    { t: 'Simplu', d: 'În primele 14 zile cererea se procesează pe loc, din formularul de mai jos. Nu trebuie să explici nimic.' },
     { t: 'Transparent', d: 'Primești imediat confirmarea pe e-mail. Suma apare în cont în 5–10 zile lucrătoare, cât durează procesarea la bancă.' },
   ],
   formTitle: 'Cere rambursarea',
@@ -196,12 +196,12 @@ export const REFUND_COPY = {
   errNetwork: 'Nu am putut trimite cererea. Verifică conexiunea și încearcă din nou.',
   doneTitle: 'Gata',
   doneRefundedNow: 'Rambursarea a pornit chiar acum, pe cardul cu care ai plătit. Ți-am trimis confirmarea pe e-mail. Suma apare în cont în 5–10 zile lucrătoare, în funcție de bancă.',
-  doneNew: 'Au trecut mai mult de 14 zile de la plată, așa că rambursarea nu mai pornește automat. Am primit-o și îți răspundem pe e-mail în cel mult 3 zile lucrătoare.',
+  doneNew: 'Au trecut mai mult de 14 zile de la plată. Am primit cererea și îți răspundem pe e-mail în cel mult 3 zile lucrătoare.',
   doneAlready: 'Cererea pentru această comandă e deja înregistrată. Îți răspundem pe e-mail în cel mult 3 zile lucrătoare.',
   doneRefunded: 'Banii pentru această comandă au fost deja returnați. Dacă nu i-ai primit încă, mai așteaptă puțin: de obicei durează 5–10 zile lucrătoare, în funcție de bancă.',
   steps: [
     { t: 'Scrii e-mailul', d: 'Adresa pe care ai primit raportul. Atât.' },
-    { t: 'Rambursarea pornește', d: 'În primele 14 zile de la plată, automat, pe loc. Primești confirmarea pe e-mail.' },
+    { t: 'Cererea se procesează', d: 'În primele 14 zile de la plată, pe loc. Primești confirmarea pe e-mail.' },
     { t: 'Banii ajung pe card', d: 'Prin Stripe, pe cardul cu care ai plătit. Banca îi afișează în cont de obicei în 5–10 zile lucrătoare.' },
   ],
   legal: 'Garanția se aplică o singură dată pentru fiecare comandă, în primele 14 zile de la plată. După rambursare, accesul la raport se închide. Garanția se adaugă drepturilor pe care le ai prin lege ca consumator, nu le înlocuiește.',

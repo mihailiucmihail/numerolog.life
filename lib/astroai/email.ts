@@ -51,7 +51,7 @@ export async function sendAstroReportEmail(params: {
 <ul style="margin:0 0 24px;padding-left:20px;color:rgba(237,227,207,0.85);">${list}</ul>
 <p style="margin:0 0 28px;text-align:center;"><a href="${params.url}" style="display:inline-block;background:linear-gradient(135deg,#f5d477,#d4af37);color:#14101f;text-decoration:none;font-family:Arial,sans-serif;font-weight:700;font-size:15px;padding:15px 30px;border-radius:999px;">Deschide raportul</a></p>
 <p style="margin:0 0 8px;font-size:14px;color:rgba(237,227,207,0.6);">Păstrează acest e-mail: linkul rămâne valabil și poți reveni oricând la raport, de pe orice dispozitiv.</p>
-<p style="margin:16px 0 0;font-size:13px;color:rgba(237,227,207,0.5);">Dacă nu te regăsești în raport, îți dăm banii înapoi: ai la dispoziție ${REFUND_DAYS} zile de la plată. <a href="${refundUrl(params.url)}" style="color:#D4AF37;">Cere rambursarea</a></p>
+<p style="margin:16px 0 0;font-size:13px;color:rgba(237,227,207,0.5);">Dacă raportul nu te mulțumește, îți returnăm integral suma plătită, în primele ${REFUND_DAYS} zile de la plată. <a href="${refundUrl(params.url)}" style="color:#D4AF37;">Cere rambursarea</a></p>
 </td></tr>
 <tr><td style="padding:20px 36px 32px;font-size:12px;color:rgba(237,227,207,0.4);text-align:center;font-family:Arial,sans-serif;">Ai primit acest e-mail pentru că ai comandat un raport pe astroai.ro.</td></tr>
 </table></td></tr></table></body></html>`,
@@ -192,7 +192,7 @@ export async function sendAstroPromoEmail(p: { to: string; code: string; expires
 </td></tr></table>
 <p style="margin:0 0 24px;text-align:center;"><a href="${link}" style="${btn}">Deschide AstroAI cu reducerea aplicată</a></p>
 <p style="margin:0 0 16px;">Nu trebuie să copiezi nimic: apasă butonul și reducerea apare deja la toate prețurile de pe site. Codul e valabil până la ${esc(until)}, pentru o singură comandă.</p>
-<p style="margin:0 0 16px;">Ce primești: un raport personal calculat din numele și data ta de naștere, care se deschide imediat după plată și îți rămâne pe e-mail. Dacă nu te regăsești în el, îți returnăm banii în 14 zile.</p>
+<p style="margin:0 0 16px;">Ce primești: un raport personal calculat din numele și data ta de naștere, care se deschide imediat după plată și îți rămâne pe e-mail. Dacă raportul nu te mulțumește, îți returnăm integral suma plătită, în primele 14 zile.</p>
 <p style="margin:24px 0 0;font-size:13px;color:rgba(237,227,207,0.5);">Primești acest e-mail pentru că ți-ai lăsat adresa pe astroai.ro. <a href="${unsub}" style="color:rgba(212,175,55,0.8);">Dezabonare</a></p>`),
   undefined, { 'List-Unsubscribe': `<${unsub}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' })
 }

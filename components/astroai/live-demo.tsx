@@ -41,7 +41,7 @@ export function LiveDemo({ onCta }: { onCta?: (r: AstroReport) => void }) {
       <div className="demo-stage">
         <div className="demo-phone">
           {seen ? (
-            <iframe key={tab} src={`/api/astroai/demo?r=${tab}`} title={`Exemplu: ${t.label}`} loading="lazy" onLoad={() => setLoaded((l) => ({ ...l, [tab]: true }))} />
+            <iframe key={tab} src={`/api/astroai/demo?v=3&r=${tab}`} title={`Exemplu: ${t.label}`} loading="lazy" onLoad={() => setLoaded((l) => ({ ...l, [tab]: true }))} />
           ) : <div className="demo-wait" />}
           {seen && !loaded[tab] && <div className="demo-wait"><span /></div>}
         </div>
@@ -53,10 +53,10 @@ export function LiveDemo({ onCta }: { onCta?: (r: AstroReport) => void }) {
           <ul>
             <li>Se deschide imediat după plată, pe ecran și pe e-mail</li>
             <li>Acces permanent, de pe orice telefon sau calculator</li>
-            <li>Nu te regăsești? Banii înapoi automat, în 14 zile</li>
+            <li>Dacă raportul nu te mulțumește, îți returnăm integral suma</li>
           </ul>
           <a href="#rapoarte" className="payment-button demo-cta" onClick={() => onCta?.(tab)}>Vreau raportul meu · {priceFor(ASTRO_PRODUCTS[tab].priceBani, promo).now} <ArrowUpRight size={16} /></a>
-          <a href={`/api/astroai/demo?r=${tab}`} target="_blank" rel="noopener" className="demo-full"><Maximize2 size={14} /> Deschide exemplul pe tot ecranul</a>
+          <a href={`/api/astroai/demo?v=3&r=${tab}`} target="_blank" rel="noopener" className="demo-full"><Maximize2 size={14} /> Deschide exemplul pe tot ecranul</a>
         </div>
       </div>
     </div>

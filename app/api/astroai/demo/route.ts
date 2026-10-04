@@ -48,6 +48,6 @@ export async function GET(request: NextRequest) {
   const out = k > 0 ? html.slice(0, k) + script + html.slice(k) : html + script
   return new NextResponse(out, {
     status: 200,
-    headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=3600, s-maxage=86400', 'x-robots-tag': 'noindex, nofollow' },
+    headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=300, s-maxage=600', 'x-robots-tag': 'noindex, nofollow' },
   })
 }
