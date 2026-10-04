@@ -174,7 +174,7 @@ export const FAQ = [
 /* Garanția: pagina „Cere rambursarea” (/ro/astroai/rambursare). */
 export const REFUND_COPY = {
   back: 'Înapoi la AstroAI',
-  kicker: 'Garanția satisfacției · 14 zile',
+  kicker: 'Drept de rambursare · 14 zile',
   title1: 'Raportul nu te-a mulțumit?',
   title2: 'Îți returnăm integral suma.',
   lead: 'Ne dorim ca raportul AstroAI să te ajute să te cunoști mai bine, să înțelegi ce te așteaptă și să găsești informații de folos în viața ta. Dacă totuși nu te mulțumește, îți returnăm integral suma plătită, în primele 14 zile de la plată. Scrii adresa de e-mail mai jos, iar cererea se procesează pe loc.',
