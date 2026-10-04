@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowUpRight, Maximize2 } from 'lucide-react'
 import { ASTRO_PRODUCTS, type AstroReport } from '@/lib/astroai/products'
+import { priceFor, useAstroPromo } from './promo'
 
 /**
  * Raportul-exemplu, viu, într-o ramă de telefon: vizitatorul îl derulează pe pagina principală.
@@ -19,6 +20,7 @@ export function LiveDemo({ onCta }: { onCta?: (r: AstroReport) => void }) {
   const [seen, setSeen] = useState(false)
   const [loaded, setLoaded] = useState<Record<string, boolean>>({})
   const ref = useRef<HTMLDivElement>(null)
+  const { promo } = useAstroPromo()
 
   useEffect(() => {
     const el = ref.current
@@ -53,7 +55,7 @@ export function LiveDemo({ onCta }: { onCta?: (r: AstroReport) => void }) {
             <li>Acces permanent, de pe orice telefon sau calculator</li>
             <li>Nu te regăsești? Banii înapoi automat, în 14 zile</li>
           </ul>
-          <a href="#rapoarte" className="payment-button demo-cta" onClick={() => onCta?.(tab)}>Vreau raportul meu · {ASTRO_PRODUCTS[tab].display} <ArrowUpRight size={16} /></a>
+          <a href="#rapoarte" className="payment-button demo-cta" onClick={() => onCta?.(tab)}>Vreau raportul meu · {priceFor(ASTRO_PRODUCTS[tab].priceBani, promo).now} <ArrowUpRight size={16} /></a>
           <a href={`/api/astroai/demo?r=${tab}`} target="_blank" rel="noopener" className="demo-full"><Maximize2 size={14} /> Deschide exemplul pe tot ecranul</a>
         </div>
       </div>

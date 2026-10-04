@@ -7,6 +7,8 @@ import { astroVisitorId, recordAstroEvent } from '@/lib/astroai/track'
 import { metaMatchData } from '@/lib/astroai/meta-capi'
 import { socialCheckoutMetadata, recordSocialSession } from '@/lib/experiments/social-server'
 import { recordCheckoutAttempt } from '@/lib/checkout-attempts'
+import { currentAstroPromo } from '@/lib/astroai/promo'
+import { astroDiscounted, formatLei } from '@/lib/astroai/promo-shared'
 
 /** Originea publică a cererii (astroai.ro în producție, adresa de preview în teste). */
 async function requestOrigin(): Promise<string> {
@@ -44,6 +46,10 @@ export async function startAstroCheckout(
   const meta = await metaMatchData()
   const payload = JSON.stringify(data)
   if (payload.length > 480) return { ok: false, error: 'Numele sunt prea lungi. Scrie-le fără titluri sau prescurtări.' }
+  // Reducerea de la abonare (cookie): suma se calculează doar aici, pe server.
+  const promo = await currentAstroPromo().catch(() => null)
+  const amount = promo ? astroDiscounted(product.priceBani, promo.percent) : product.priceBani
+  const display = promo ? formatLei(amount) : product.display
 
   try {
     const session = await getStripe().checkout.sessions.create({
@@ -51,7 +57,7 @@ export async function startAstroCheckout(
       locale: 'ro',
       customer_email: email,
       line_items: [{
-        price_data: { currency: ASTRO_CURRENCY, product_data: { name: product.name }, unit_amount: product.priceBani },
+        price_data: { currency: ASTRO_CURRENCY, product_data: { name: promo ? `${product.name} (−${promo.percent}%)` : product.name }, unit_amount: amount },
         quantity: 1,
       }],
       metadata: {
@@ -62,7 +68,8 @@ export async function startAstroCheckout(
         entry: `astro_${product.id}`,
         currency: ASTRO_CURRENCY,
         country: 'RO',
-        displayPrice: product.display,
+        displayPrice: display,
+        ...(promo ? { promoCode: promo.code, promoPercent: String(promo.percent) } : {}),
         ...social,
         ...meta,
         ...(visitorId ? { expVisitor: visitorId, socialVisitor: social.socialVisitor || visitorId } : {}),
@@ -71,11 +78,11 @@ export async function startAstroCheckout(
       cancel_url: `${origin}/ro/astroai?plata=anulata&produs=${product.id}#comanda`,
     })
     if (!session.url) throw new Error('no_session_url')
-    await recordAstroEvent({ event: 'checkout_start', product: product.id, visitorId, valueAmount: product.priceBani, valueCurrency: ASTRO_CURRENCY, dedup: session.id })
+    await recordAstroEvent({ event: 'checkout_start', product: product.id, visitorId, valueAmount: amount, valueCurrency: ASTRO_CURRENCY, dedup: session.id })
     await recordSocialSession(session, 'checkout_start')
     await recordCheckoutAttempt({
       email, formData: { product: `astro_${product.id}`, first: data.a.f, last: data.a.l, day: data.a.d, month: data.a.m, year: data.a.y }, country: 'RO', currency: ASTRO_CURRENCY,
-      amount: product.priceBani / 100, displayPrice: product.display, promoCode: null, locale: 'ro',
+      amount: amount / 100, displayPrice: display, promoCode: promo?.code ?? null, locale: 'ro',
       sessionId: session.id, status: 'started', visitorId, formVariant: 'astroai', previewVariant: product.id,
     }).catch(() => {})
     return { ok: true, url: session.url }

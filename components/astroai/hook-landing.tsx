@@ -9,6 +9,7 @@ import { startAstroCheckout } from '@/app/actions/astroai'
 import type { HookDef, HookResult } from '@/lib/astroai/hooks'
 import { ASTRO_PRODUCTS } from '@/lib/astroai/products'
 import { fbqTrack, MetaPixel } from './meta-pixel'
+import { PromoBar, PromoOptIn, applyOptIn, usePriceFor } from './promo'
 import './astro.css'
 
 const MONTHS = ['ianuarie', 'februarie', 'martie', 'aprilie', 'mai', 'iunie', 'iulie', 'august', 'septembrie', 'octombrie', 'noiembrie', 'decembrie']
@@ -68,6 +69,8 @@ export function HookLanding({ hook }: { hook: HookView }) {
   const resultRef = useRef<HTMLDivElement>(null)
   const couple = hook.kind === 'couple'
   const def = ASTRO_PRODUCTS[hook.product]
+  const [optIn, setOptIn] = useState(false)
+  const price = usePriceFor(def.priceBani, optIn)
 
   useEffect(() => {
     void trackAstroHook(hook.slug, 'landing_view')
@@ -111,6 +114,7 @@ export function HookLanding({ hook }: { hook: HookView }) {
       ...(couple && db ? { b: { f: partner.f.trim(), l: partner.l.trim(), ...db, g: b.g } } : {}),
     }
     try {
+      await applyOptIn(optIn, email, 'hook')
       const r = await startAstroCheckout(hook.product, payload, email)
       if (!r.ok) { setPayError(r.error); return }
       window.location.href = r.url
@@ -122,6 +126,7 @@ export function HookLanding({ hook }: { hook: HookView }) {
   return (
     <main className="ax hk relative min-h-screen overflow-x-clip bg-[#0b0816]">
       <MetaPixel />
+      <PromoBar />
       <StarField />
       <div className="ax-wrap">
         <header className="hk-head">
@@ -165,7 +170,7 @@ export function HookLanding({ hook }: { hook: HookView }) {
               <span className="hk-upsell-kicker">{hook.upsellKicker}</span>
               <p className="hk-upsell-lead">{hook.upsellLead}</p>
               <ul>{hook.more.map((m) => <li key={m}><Check size={15} /> {m}</li>)}</ul>
-              <div className="hk-price"><strong>{def.display}</strong><span>· se deschide imediat după plată · pe ecran și pe e-mail</span></div>
+              <div className="hk-price">{price.was && <s>{price.was}</s>}<strong>{price.now}</strong><span>· se deschide imediat după plată · pe ecran și pe e-mail</span></div>
               <div className="hk-names">
                 <span className="hk-label">{couple ? 'Numele voastre' : 'Numele tău'} <small>intră în calcul</small></span>
                 <div className="hk-row2">
@@ -181,9 +186,10 @@ export function HookLanding({ hook }: { hook: HookView }) {
                 {a.g === 'f' && <p className="hk-hint">Căsătorită? Scrie numele de fată: e cel cu care ai venit pe lume.</p>}
                 <label className="hk-input"><span>E-mail (aici primești raportul)</span><input type="email" inputMode="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="nume@exemplu.ro" /></label>
               </div>
+              <PromoOptIn checked={optIn} onChange={setOptIn} />
               <label className="hk-consent"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} /><span>Vreau raportul livrat imediat după plată și înțeleg că, fiind conținut digital, dreptul legal de retragere se pierde la livrare. Garanția AstroAI de 14 zile rămâne valabilă.</span></label>
               {payError && <p className="hk-error" role="alert">{payError}</p>}
-              <button type="submit" className="payment-button hk-cta" disabled={payBusy}><LockKeyhole size={16} /> {payBusy ? 'Se deschide plata…' : `Deschide raportul ${couple ? 'nostru' : 'meu'} · ${def.display}`}</button>
+              <button type="submit" className="payment-button hk-cta" disabled={payBusy}><LockKeyhole size={16} /> {payBusy ? 'Se deschide plata…' : `Deschide raportul ${couple ? 'nostru' : 'meu'} · ${price.now}`}</button>
               <div className="hk-trust">
                 <span><ShieldCheck size={14} /> Banii înapoi automat, în primele 14 zile de la plată</span>
                 <span>Plată prin Stripe · fără abonament</span>

@@ -10,6 +10,7 @@ import { FAQ, REPORTS_V2, SCHOOLS_LINE, STORY } from './content'
 import { LiveDemo } from './live-demo'
 import { CelestialInstrument } from './instrument'
 import { fbqTrack, MetaPixel } from './meta-pixel'
+import { PromoBar, PromoInline, PromoOptIn, PromoPopup, applyOptIn, priceFor, useAstroPromo, usePriceFor } from './promo'
 import './astro.css'
 
 const MONTHS = ['ianuarie', 'februarie', 'martie', 'aprilie', 'mai', 'iunie', 'iulie', 'august', 'septembrie', 'octombrie', 'noiembrie', 'decembrie']
@@ -42,6 +43,9 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
   const orderRef = useRef<HTMLElement>(null)
 
   const def = ASTRO_PRODUCTS[product]
+  const { promo } = useAstroPromo()
+  const [optIn, setOptIn] = useState(false)
+  const price = usePriceFor(def.priceBani, optIn)
   const copy = REPORTS_V2[product]
   const needsPartner = def.reports.includes('compat')
 
@@ -106,6 +110,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
       ...(needsPartner ? { b: person(b) } : {}),
       ...(needsPartner && meet.d && meet.m && meet.y ? { meet: { d: Number(meet.d), m: Number(meet.m), y: Number(meet.y) } } : {}),
     }
+    await applyOptIn(optIn, email, 'inline')
     const res = await startAstroCheckout(product, payload, email).catch(() => ({ ok: false as const, error: 'Conexiunea a eșuat. Încearcă din nou.' }))
     if (res.ok) { window.location.href = res.url; return }
     setBusy(false)
@@ -118,6 +123,8 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
   return (
     <main className="ax relative min-h-screen overflow-x-clip bg-[#0b0816]">
       <MetaPixel />
+      <PromoBar />
+      <PromoPopup quick={cancelled} />
       {/* Fundalul original al site-ului */}
       <StarField />
       <div className="sky-glow" aria-hidden />
@@ -142,7 +149,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
             <CelestialInstrument />
             <div className="instrument-caption"><span className="caption-line" /><span>Cerul îți dă coordonatele. Cifrele le dau sens.</span><span className="caption-line" /></div>
           </div>
-          <a className="hero-cta" href="#rapoarte" onClick={() => fire('product_select', product)}>Vreau raportul meu · {ASTRO_PRODUCTS.cristal.display} <ArrowUpRight size={18} /></a>
+          <a className="hero-cta" href="#rapoarte" onClick={() => fire('product_select', product)}>Vreau raportul meu · {priceFor(ASTRO_PRODUCTS.cristal.priceBani, promo).now} <ArrowUpRight size={18} /></a>
           <div className="hero-proof"><span><ShieldCheck size={14} /> <Link href="/ro/astroai/rambursare">Banii înapoi automat, în primele 14 zile</Link></span><span>Fără ora nașterii</span></div>
         </section>
 
@@ -166,6 +173,8 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
           <LiveDemo onCta={(r) => choose(r)} />
         </section>
 
+        <PromoInline />
+
         <section ref={orderRef} className="order-block" id="rapoarte" aria-label="Comanda ta">
           <div className="order-heading">
             <div><span className="small-kicker">Prima ta pagină</span><h2>Cu ce vrei să începi?</h2></div>
@@ -179,14 +188,14 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
                   onKeyDown={(e) => { if (['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) { e.preventDefault(); const next = e.key === 'Home' ? 0 : e.key === 'End' ? 3 : (idx + (e.key === 'ArrowRight' ? 1 : 3)) % 4; choose(ORDER[next]); document.getElementById(`tab-${ORDER[next]}`)?.focus() } }}>
                   <div className="option-top"><span className="radio-mark">{on && <span />}</span>{i === 3 && <span className="bundle-save">Separat: {Math.round(ASTRO_SEPARATE_TOTAL_BANI / 100)} lei</span>}</div>
                   <strong>{r.name}</strong>
-                  <div className="report-price">{Math.round(pr.priceBani / 100)}<span> lei</span></div>
+                  <div className="report-price">{promo ? <>{priceFor(pr.priceBani, promo).now.replace(' lei', '')}<span> lei</span><s>{Math.round(pr.priceBani / 100)} lei</s></> : <>{Math.round(pr.priceBani / 100)}<span> lei</span></>}</div>
                 </button>
               )
             })}
           </div>
           <div id="report-detail" role="tabpanel" aria-labelledby={`tab-${product}`} className="report-detail">
             <div key={product} className="report-reveal">
-              <div className="report-detail-heading"><h3>{copy.name}</h3><span>{product === 'pachet' && <small>separat {lei(ASTRO_SEPARATE_TOTAL_BANI)} · împreună </small>}{def.display}</span></div>
+              <div className="report-detail-heading"><h3>{copy.name}</h3><span>{product === 'pachet' && <small>separat {lei(ASTRO_SEPARATE_TOTAL_BANI)} · împreună </small>}{price.was && <s>{price.was}</s>} {price.now}</span></div>
               <p className="report-tagline">{copy.tagline}</p>
               {copy.questions.length > 0 && <ul className="report-questions">{copy.questions.map((q) => <li key={q}><span aria-hidden />{q}</li>)}</ul>}
               {product === 'pachet' && (
@@ -215,12 +224,13 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
               </div>
             </div>
             <div className="checkout-summary">
-              <div className="summary-title"><span>{copy.name}</span><strong>{Math.round(def.priceBani / 100)} <small>lei</small></strong></div>
+              <div className="summary-title"><span>{copy.name}</span><strong>{price.was && <s>{price.was}</s>}{price.now.replace(' lei', '')} <small>lei</small></strong></div>
               <div className="included">
                 <span><Check size={15} /> Astrologie și numerologie, împreună</span>
                 <span><Check size={15} /> {product === 'pachet' ? 'Trei rapoarte personale, acces permanent' : 'Raport personal, acces permanent'}</span>
                 <span><Check size={15} /> Pe ecran imediat după plată, linkul și pe e-mail</span>
               </div>
+              <PromoOptIn checked={optIn} onChange={setOptIn} />
               <label className="hk-consent"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} /><span>Vreau raportul livrat imediat după plată și înțeleg că, fiind conținut digital, dreptul legal de retragere se pierde la livrare. Garanția AstroAI de 14 zile rămâne valabilă.</span></label>
               <button type="submit" className="payment-button" disabled={busy}><LockKeyhole size={16} /> {busy ? 'Se deschide plata…' : 'Deschide raportul meu'}</button>
               <p className="payment-schools"><Sparkles size={14} strokeWidth={1.3} /> {SCHOOLS_LINE}</p>
@@ -276,7 +286,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
       </div>
 
       <div className={`ax-sticky${stickyHidden ? ' hide' : ''}`} aria-hidden={stickyHidden}>
-        <a href="#rapoarte" className="payment-button" tabIndex={stickyHidden ? -1 : 0} onClick={() => fire('product_select', product)}>Găsește-ți răspunsurile · de la 39 lei</a>
+        <a href="#rapoarte" className="payment-button" tabIndex={stickyHidden ? -1 : 0} onClick={() => fire('product_select', product)}>Găsește-ți răspunsurile · de la {priceFor(3900, promo).now}</a>
       </div>
       <div className="ax-sticky-pad" aria-hidden />
     </main>

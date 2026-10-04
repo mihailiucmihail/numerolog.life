@@ -25,7 +25,20 @@ export interface AstroFunnelRow {
 export interface AstroDayRow { day: string; visitors: number; submits: number; checkouts: number; purchases: number; revenueBani: number }
 export interface AstroSourceRow { source: string; campaign: string; content: string; visitors: number; submits: number; purchases: number; revenueBani: number }
 
+export interface AstroSubscriberRow { email: string; code: string; createdAt: string; source: string; subscribed: boolean; usedAt: string | null; expiresAt: string | null }
+export interface AstroSubsStats {
+  total: number          // toate e-mailurile lăsate pe astroai.ro (de la început)
+  period: number         // în perioada aleasă
+  active: number         // încă abonați (nu s-au dezabonat)
+  used: number           // au cumpărat cu reducerea
+  usedPeriod: number
+  popupViews: number     // vizitatori care au văzut pop-up-ul în perioadă
+  bySource: { source: string; n: number }[]
+  latest: AstroSubscriberRow[]
+}
+
 export interface AstroStats {
+  subs: AstroSubsStats | null
   visitors: number
   funnel: AstroFunnelRow[]
   days: AstroDayRow[]
@@ -57,7 +70,7 @@ export async function getAstroStats(password: string, days: number): Promise<{ o
         coalesce(sum(value_amount) FILTER (WHERE event = 'purchase'), 0)::int AS "revenueBani",
         count(DISTINCT visitor_id) FILTER (WHERE event = 'report_view')::int AS "reportViews"
       FROM experiment_events
-      WHERE entry LIKE 'astro\\_%' AND entry <> 'astro_site' AND created_at >= ${since}
+      WHERE entry LIKE 'astro\\_%' AND entry <> 'astro_site' AND entry NOT LIKE 'astro\\_promo\\_%' AND created_at >= ${since}
       GROUP BY 1 ORDER BY 1`
 
     const dayRows = await db<AstroDayRow[]>`
@@ -88,7 +101,41 @@ export async function getAstroStats(password: string, days: number): Promise<{ o
       console.error('[astroai-admin] sources unavailable', error)
     }
 
-    return { ok: true, stats: { visitors: v?.n ?? 0, funnel, days: dayRows, sources, generatedAt: new Date().toISOString() } }
+    let subs: AstroSubsStats | null = null
+    try {
+      const [c] = await db<{ total: number; period: number; active: number; used: number; used_period: number }[]>`
+        SELECT count(*)::int AS total,
+          count(*) FILTER (WHERE p.created_at >= ${since})::int AS period,
+          count(*) FILTER (WHERE n.subscribed IS TRUE)::int AS active,
+          count(*) FILTER (WHERE p.used_at IS NOT NULL)::int AS used,
+          count(*) FILTER (WHERE p.used_at >= ${since})::int AS used_period
+        FROM promo_codes p LEFT JOIN newsletter_subscribers n ON n.email = p.email
+        WHERE p.code LIKE 'ASTRO20-%'`
+      const [pv] = await db<{ n: number }[]>`
+        SELECT count(DISTINCT visitor_id)::int AS n FROM experiment_events
+         WHERE entry = 'astro_site' AND event = 'promo_view' AND created_at >= ${since}`
+      const bySource = await db<{ source: string; n: number }[]>`
+        SELECT substring(entry from 13) AS source, count(DISTINCT visitor_id)::int AS n FROM experiment_events
+         WHERE event = 'promo_subscribe' AND entry LIKE 'astro\\_promo\\_%' AND created_at >= ${since}
+         GROUP BY 1 ORDER BY 2 DESC`
+      const latest = await db<{ email: string; code: string; created_at: Date; source: string | null; subscribed: boolean | null; used_at: Date | null; expires_at: Date | null }[]>`
+        SELECT p.email, p.code, p.created_at, n.source, n.subscribed, p.used_at, p.expires_at
+        FROM promo_codes p LEFT JOIN newsletter_subscribers n ON n.email = p.email
+        WHERE p.code LIKE 'ASTRO20-%' ORDER BY p.created_at DESC LIMIT 100`
+      subs = {
+        total: c?.total ?? 0, period: c?.period ?? 0, active: c?.active ?? 0, used: c?.used ?? 0, usedPeriod: c?.used_period ?? 0,
+        popupViews: pv?.n ?? 0, bySource,
+        latest: latest.map((r) => ({
+          email: r.email, code: r.code, createdAt: new Date(r.created_at).toISOString(), source: r.source || '',
+          subscribed: r.subscribed !== false, usedAt: r.used_at ? new Date(r.used_at).toISOString() : null,
+          expiresAt: r.expires_at ? new Date(r.expires_at).toISOString() : null,
+        })),
+      }
+    } catch (error) {
+      console.error('[astroai-admin] subs unavailable', error)
+    }
+
+    return { ok: true, stats: { subs, visitors: v?.n ?? 0, funnel, days: dayRows, sources, generatedAt: new Date().toISOString() } }
   } catch (error) {
     console.error('[astroai-admin] stats error', error)
     return { ok: false, error: 'Статистика сейчас недоступна.' }
