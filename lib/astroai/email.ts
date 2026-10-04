@@ -125,6 +125,17 @@ export async function sendAstroRefundAdminNotice(p: { to: string; firstName: str
 <p style="margin:18px 0 0;"><a href="https://dashboard.stripe.com/payments/${esc(p.paymentIntentId)}" style="color:#D4AF37;">Plata în Stripe</a></p>`), p.to)
 }
 
+/** La câteva zile după plată: cerem o părere scurtă, cu acordul de a o publica (prenume + inițiala). */
+export async function sendAstroReviewRequestEmail(p: { to: string; firstName: string; product: string }): Promise<boolean> {
+  const name = esc(p.firstName || '')
+  return send(p.to, 'Te-ai regăsit în raport?', shell('O întrebare scurtă', `
+<p style="margin:0 0 16px;">Bună${name ? `, <strong style="color:#D4AF37;">${name}</strong>` : ''},</p>
+<p style="margin:0 0 16px;">Au trecut câteva zile de când ai deschis <strong>${esc(p.product)}</strong>. Te-ai regăsit în el? Ce ți s-a potrivit cel mai bine — și ce nu?</p>
+<p style="margin:0 0 16px;">Răspunde la acest e-mail cu două-trei propoziții. Citim fiecare răspuns și, dacă ești de acord, publicăm părerea ta pe astroai.ro doar cu prenumele și inițiala numelui (scrie „se poate publica” în răspuns).</p>
+<p style="margin:0 0 16px;">Dacă raportul nu a fost ce căutai, spune-ne și asta: <a href="https://astroai.ro/ro/astroai/rambursare" style="color:#D4AF37;">garanția de 14 zile</a> rămâne valabilă.</p>
+<p style="margin:0;font-size:14px;color:rgba(237,227,207,0.6);">Mulțumim că ai ales AstroAI.</p>`))
+}
+
 /** Confirmarea că banii au fost returnați. */
 export async function sendAstroRefundDoneEmail(p: { to: string; firstName: string; product: string; amount: string }): Promise<void> {
   const name = esc(p.firstName || '')
