@@ -40,7 +40,7 @@ const ICONS = { cristal: Gem, compat: HeartHandshake, prog: CalendarRange }
 export function Showcase({ onChoose }: { onChoose: (r: AstroReport) => void }) {
   const { promo } = useAstroPromo()
   return (
-    <div className="sc v-a">
+    <div className="sc v-a u1">
       {PRODUCTS_COPY.map((p, i) => {
         const ex = EXAMPLE[p.id]
         return (
