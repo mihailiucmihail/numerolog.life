@@ -735,7 +735,7 @@ body.st-on #stProgress{display:block;}
 #stIntro .st-skip{position:absolute;bottom:26px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--parchment-dim);opacity:.6;}
 
 /* приветствие */
-.st-welcome{text-align:center;padding:56px 8px 30px;}
+.st-welcome{text-align:center;padding:18px 8px 30px;}
 .st-welcome .st-crystal-sm{font-size:28px;color:var(--brass-bright);text-shadow:0 0 18px rgba(217,169,79,.6);}
 .st-welcome .st-eyebrow{margin-top:14px;font-family:var(--mono);font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--brass-bright);}
 .st-welcome h2{margin:14px 0 8px;font-size:clamp(30px,7vw,46px);font-style:italic;color:var(--parchment);}
@@ -10808,7 +10808,7 @@ window.HALYEAR_TEXTS={
     var d = +$('day').value, m = +$('month').value, y = +$('year').value;
     var MN = ['', 'ianuarie', 'februarie', 'martie', 'aprilie', 'mai', 'iunie', 'iulie', 'august', 'septembrie', 'octombrie', 'noiembrie', 'decembrie'];
     var chs = CH.map(function(c){ c.items = c.items.filter(function(x){ return x && x.key; }); return c; }).filter(function(c){ return c.items.length; });
-    var h = '<section class="st-welcome st-rv"><div class="st-crystal-sm">◈</div><div class="st-eyebrow">Astrologie și numerologie</div>';
+    var h = '<section class="st-welcome st-rv">';
     h += '<h2>' + esc(NAME || 'Bine ai venit') + '</h2><div class="st-date">' + d + ' ' + MN[m] + ' ' + y + '</div>';
     h += '<div class="st-hello">' + esc((NAME ? NAME + ', ' : '') + 'așază-te comod. Am în față numele și data ta de naștere — hai să vedem ce stă scris în ele. Vom parcurge ' + chs.length + ' ' + roPl(chs.length, 'pas', 'pași') + ': de la cine ești — până la ce te așteaptă.') + '</div>';
     h += '<div class="st-toc-intro">' + chs.map(function(c, i){ return '<a href="#st-' + c.id + '"><span class="n">' + String(i + 1).padStart(2, '0') + '</span><span class="t">' + esc(c.menu) + '</span></a>'; }).join('') + '</div></section>';
