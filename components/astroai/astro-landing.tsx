@@ -141,13 +141,13 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
           <div className="hero-copy">
             <div className="hero-kicker"><Sparkles size={16} strokeWidth={1.2} /> Astrologie <Plus size={12} /> numerologie</div>
             <h1>Două tradiții vechi. <em>Un singur răspuns</em> despre tine.</h1>
-            <p className="hero-intro">Am unit astrologia și numerologia într-o singură lectură, construită pe metodele a șase școli, din Europa și din China, și pe experiența multor astrologi și numerologi.</p>
+            <p className="hero-intro">Am unit astrologia și numerologia într-o singură analiză, construită pe metodele a șase școli, din Europa și din China, și pe experiența multor astrologi și numerologi.</p>
             <p className="hero-detail">Introdu numele, prenumele și data nașterii și vezi pe grafice ce te așteaptă în carieră, în bani și în iubire. Descoperă talentele ascunse pe care nu le folosești încă, cât de bine te potrivești cu partenerul, ce îți aduce fiecare lună din an și multe alte lucruri despre tine pe care nu le știai.</p>
             <a className="hero-cta" href="#ce-afli" onClick={() => fire('product_select', product)}>Vezi ce cuprind rapoartele <ArrowUpRight size={18} /></a>
             <div className="hero-proof"><span><ShieldCheck size={14} /> <Link href="/ro/astroai/rambursare">Drept de rambursare în 14 zile</Link></span><span>De la {priceFor(ASTRO_PRODUCTS.cristal.priceBani, promo).now}</span></div>
           </div>
           <div className="hero-art">
-            <div className="art-topline"><span>Astrologie <Plus size={12} /> Numerologie</span><span>O singură lectură</span></div>
+            <div className="art-topline"><span>Astrologie <Plus size={12} /> Numerologie</span><span>O singură analiză</span></div>
             <CelestialInstrument />
             <div className="instrument-caption"><span className="caption-line" /><span>Cerul îți dă coordonatele. Cifrele le dau sens.</span><span className="caption-line" /></div>
           </div>
