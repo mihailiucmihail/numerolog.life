@@ -485,28 +485,13 @@
 }
 
 /* ── Card unit: textul și exemplul într-un singur bloc ── */
-.ax .u1 .sc-item, .ax .u2 .sc-item, .ax .u3 .sc-item { border-top: 0; padding: 0; margin: 0 auto 28px }
+.ax .u1 .sc-item { border-top: 0; padding: 0; margin: 0 auto 28px }
 /* U1: un singur card care cuprinde tot */
 .ax .u1 .sc-item { border: 1px solid rgba(212,175,55,.25); border-radius: 22px; background: linear-gradient(180deg, rgba(212,175,55,.08), rgba(238,233,244,.02) 40%, rgba(212,175,55,.05)); padding: 30px 30px 26px; row-gap: 22px }
-.ax .u1 .v-a .sc-copy, .ax .u1.v-a .sc-copy { border: 0; background: none; padding: 0 }
+.ax .u1.v-a .sc-copy { border: 0; background: none; padding: 0 }
 .ax .u1 .sc-example { background: none; border-left: 0; padding: 0; margin-top: 18px }
 .ax .u1 .sc-example p { display: none }
 .ax .u1 .sc-who::before { content: '↓ '; }
-/* U2: card + telefon care „iese” din card */
-.ax .u2 .sc-copy { border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; padding-bottom: 90px !important }
-.ax .u2 .sc-stage { margin-top: -70px; position: relative; z-index: 2 }
-.ax .u2 .sc-example { display: none }
-/* U3: card cu file „Întrebări / Exemplu” */
-.ax .u3 .sc-item { border: 1px solid rgba(212,175,55,.25); border-radius: 22px; background: linear-gradient(180deg, rgba(212,175,55,.08), rgba(238,233,244,.02)); padding: 26px 22px 22px; row-gap: 18px }
-.ax .u3.v-a .sc-copy { border: 0; background: none; padding: 0 }
-.ax .u3 .sc-example { display: none }
-.ax .sc-tabs { display: flex; gap: 6px; margin: 18px 0 4px; padding: 4px; border: 1px solid var(--border); border-radius: 999px; width: fit-content }
-.ax .sc-tabs button { border: 0; background: none; color: var(--muted-foreground); font-size: 14px; padding: 9px 16px; border-radius: 999px }
-.ax .sc-tabs button[aria-selected="true"] { background: var(--primary); color: #0b0816; font-weight: 600 }
-.ax .u3 .tab-q .sc-stage { display: none }
-.ax .u3 .tab-ex .sc-label, .ax .u3 .tab-ex .sc-q { display: none }
-@media (min-width: 901px) { .ax .u3 .tab-q .sc-stage, .ax .u3 .tab-ex .sc-q, .ax .u3 .tab-ex .sc-label { display: revert } .ax .u3 .sc-tabs { display: none } }
 @media (max-width: 900px) {
   .ax .u1 .sc-item { padding: 22px 18px 20px }
-  .ax .u2 .sc-stage { margin-top: -80px }
 }
