@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { ArrowUpRight, Check, LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react'
 import { StarField } from '@/components/star-field'
+import { HookLifeChart } from './hook-chart'
 import { reportAstroHookBlocked, runAstroHook, trackAstroHook } from '@/app/actions/astroai-hook'
 import { startAstroCheckout } from '@/app/actions/astroai'
 import type { HookDef, HookResult } from '@/lib/astroai/hooks'
@@ -166,6 +167,18 @@ export function HookLanding({ hook }: { hook: HookView }) {
             <h2>{result.title}</h2>
             <p className="hk-text">{result.text}</p>
             {result.extra && <p className="hk-extra">{result.extra}</p>}
+            {result.rich?.charts && (
+              <HookLifeChart
+                career={result.rich.charts.career} careerReading={result.rich.charts.careerReading}
+                personal={result.rich.charts.personal} age={result.rich.charts.age}
+                onUnlock={() => {
+                  const f = document.querySelector<HTMLFormElement>('.hk-upsell')
+                  f?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  setTimeout(() => f?.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true }), 700)
+                  void trackAstroHook(hook.slug, 'form_first_interaction')
+                }}
+              />
+            )}
             {result.rich && (
               <div className="hk-rich">
                 <div className="hk-rcard hk-strong">

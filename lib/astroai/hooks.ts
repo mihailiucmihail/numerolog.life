@@ -1,5 +1,6 @@
 import 'server-only'
 import { solar2Lunar } from './lunar'
+import { careerChart, currentAge, personalChart, readChart, type ChartReading, type LifeChart } from './life-chart'
 import data from './hooks-data.json'
 import type { AstroProduct } from './products'
 
@@ -81,7 +82,7 @@ export const HOOKS: Record<HookSlug, HookDef> = {
     more: CRISTAL_MORE,
     cta: 'Află ce spune data mea',
     sample: 'Ziua 27: „Simți des că încă îți cauți drumul și sari mereu în ajutorul altora, uneori atât de mult încât te pierzi pe tine…”',
-    relief: 'Pe lângă ziua ta, afli ce spun luna, zodia și anul în care te-ai născut.',
+    relief: 'Pe lângă ziua ta, vezi graficul carierei tale și ce spun luna, zodia și anul în care te-ai născut.',
     upsellKicker: 'Asta e doar data nașterii.',
     upsellLead: 'Data nașterii e doar începutul. Raportul complet pornește de la numele tău și de acolo nu mai seamănă cu al nimănui.',
     meta: { title: 'Te-ai născut la începutul sau la sfârșitul lunii? · AstroAI', description: 'Scrie data nașterii și află gratuit ce înseamnă ziua în care te-ai născut.' },
@@ -151,6 +152,8 @@ export interface HookRich {
   color: string
   talisman: string
   locked: string[]
+  /** graficele vieții (aceleași formule ca în raport) */
+  charts: { age: number; career: LifeChart; careerReading: ChartReading; personal: LifeChart; personalReading: ChartReading }
 }
 
 /** Formele de gen din texte: {masculin|feminin} sau {|ă}. */
@@ -271,6 +274,11 @@ function richProfile(d: number, m: number, y: number, g: 'm' | 'f'): HookRich {
     color: R.color[String(ZK)],
     talisman: R.talisman[String(ZK)],
     locked: RICH_LOCKED,
+    charts: (() => {
+      const age = Math.max(0, currentAge(y, m, d))
+      const career = careerChart(d, m, y), personal = personalChart(d, m, y)
+      return { age, career, careerReading: readChart(career, age), personal, personalReading: readChart(personal, age) }
+    })(),
   }
 }
 
