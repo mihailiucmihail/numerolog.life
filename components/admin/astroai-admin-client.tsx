@@ -68,6 +68,8 @@ export function AstroAIAdminClient() {
       </div>
       <p className="text-sm text-muted-foreground">Конверсия посетитель → покупка: <b className="text-foreground">{pct(totals.purchases, stats.visitors)}</b> · форма → оплата: <b className="text-foreground">{pct(totals.purchases, totals.submits)}</b></p>
 
+      <SubmissionsPanel rows={stats.submissions || []} />
+
       {stats.subs && <SubsPanel subs={stats.subs} days={days} />}
 
       <RefundsPanel password={password} />
@@ -252,6 +254,61 @@ function SubsPanel({ subs, days }: { subs: AstroSubsStats; days: number }) {
         </table>
       </div>
       {subs.latest.length > 15 && <button type="button" onClick={() => setAll(!all)} className="mt-3 rounded-full border border-primary/30 px-4 py-2 text-sm text-primary">{all ? 'Свернуть' : `Показать все (${subs.latest.length})`}</button>}
+    </section>
+  )
+}
+
+const PAGE_NAMES: Record<string, string> = {
+  'hook_inceput-sau-sfarsit': 'Начало или конец месяца', 'hook_zile-10-13': 'Дни 10–13', 'hook_zile-14-22': 'Дни 14–22',
+  'hook_luna-nasterii': 'Месяц рождения', hook_varsator: 'Водолей', hook_cuplu: 'Пара',
+  cristal: 'Главная · Кристалл', compat: 'Главная · Совместимость', prog: 'Главная · Прогноз', pachet: 'Главная · Пакет',
+}
+function flag(cc: string | null) {
+  if (!cc || !/^[A-Za-z]{2}$/.test(cc)) return '🏳️'
+  return String.fromCodePoint(...cc.toUpperCase().split('').map((c) => 0x1f1e6 + c.charCodeAt(0) - 65))
+}
+function when(iso: string) {
+  try { return new Date(iso).toLocaleString('ru-RU', { timeZone: 'Europe/Bucharest', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) } catch { return iso }
+}
+
+/** Кто заполнял формы: страница, время, страна, введённая дата и докуда дошёл человек. */
+function SubmissionsPanel({ rows }: { rows: import('@/lib/astroai/submissions').AstroSubmissionRow[] }) {
+  const [only, setOnly] = useState<string>('all')
+  const pages = Array.from(new Set(rows.map((r) => r.product)))
+  const shown = only === 'all' ? rows : rows.filter((r) => r.product === only)
+  return (
+    <section>
+      <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
+        <h2 className="font-serif text-2xl">Кто заполнял формы <span className="text-base text-muted-foreground">({shown.length})</span></h2>
+        <select value={only} onChange={(e) => setOnly(e.target.value)} className="rounded-lg border border-primary/20 bg-background px-3 py-2 text-sm">
+          <option value="all">Все страницы</option>
+          {pages.map((p) => <option key={p} value={p}>{PAGE_NAMES[p] || p}</option>)}
+        </select>
+      </div>
+      <div className="overflow-x-auto rounded-2xl border border-primary/15 bg-card/70">
+        <table className="w-full min-w-[900px] text-sm">
+          <thead className="text-left text-xs uppercase tracking-widest text-muted-foreground">
+            <tr>{['Когда', 'Страница', 'Страна', 'Дата рождения', 'Пол', 'Источник', 'Докуда дошёл'].map((h) => <th key={h} className="px-4 py-3">{h}</th>)}</tr>
+          </thead>
+          <tbody>
+            {shown.length === 0 && <tr><td colSpan={7} className="px-4 py-6 text-center text-muted-foreground">Пока никто не заполнял. Даты начали сохраняться с 5 октября.</td></tr>}
+            {shown.map((r, i) => (
+              <tr key={i} className="border-t border-primary/10 align-top">
+                <td className="whitespace-nowrap px-4 py-3 font-mono text-xs">{when(r.at)}</td>
+                <td className="px-4 py-3"><a href={r.page} target="_blank" rel="noopener" className="text-primary underline-offset-2 hover:underline">{PAGE_NAMES[r.product] || r.product}</a><div className="text-xs text-muted-foreground">{r.page.replace('https://', '')}</div></td>
+                <td className="whitespace-nowrap px-4 py-3"><span className="text-lg">{flag(r.country)}</span> <span className="text-xs text-muted-foreground">{r.country || '—'}{r.device ? ` · ${r.device}` : ''}</span></td>
+                <td className="whitespace-nowrap px-4 py-3 font-mono">{r.birth || '—'}{r.partnerBirth && <div className="text-xs text-muted-foreground">+ {r.partnerBirth}</div>}</td>
+                <td className="px-4 py-3">{r.gender === 'f' ? 'Ж' : r.gender === 'm' ? 'М' : '—'}</td>
+                <td className="px-4 py-3 text-xs">{r.source || '—'}</td>
+                <td className="px-4 py-3">
+                  {r.paid ? <b className="text-primary">Оплатил ✓</b> : r.checkout ? 'Открыл оплату Stripe, не оплатил' : r.reachedPay ? 'Нажал «оплатить», но оплата не открылась' : 'Посмотрел бесплатный результат, дальше не пошёл'}
+                  {r.blocked && !r.paid && <div className="text-xs text-amber-400">Ошибка: {r.blocked}</div>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </section>
   )
 }

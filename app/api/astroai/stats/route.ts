@@ -1,12 +1,13 @@
 import { timingSafeEqual } from 'node:crypto'
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { listAstroSubmissions } from '@/lib/astroai/submissions'
 
 export const dynamic = 'force-dynamic'
 
 /**
  * Statistică AstroAI, doar citire, pentru rapoartele automate (sumarul de dimineață).
- * Autorizare: ?key=<ASTRO_STATS_KEY>. Fără date personale: doar numărători.
+ * Autorizare: ?key=<ASTRO_STATS_KEY>. Fără date de contact: numărători, plus datele de naștere introduse (fără nume sau e-mail).
  */
 function ok(key: string | null): boolean {
   const expected = process.env.ASTRO_STATS_KEY
@@ -61,7 +62,14 @@ export async function GET(req: NextRequest) {
         FROM promo_codes WHERE code LIKE 'ASTRO20-%'`
       subs = c ?? null
     } catch { /* tabela poate lipsi local */ }
-    return NextResponse.json({ generatedAt: new Date().toISOString(), days, byDay, byHook, byProduct, subs }, { headers: { 'cache-control': 'no-store' } })
+    let submissions: unknown[] = []
+    try { submissions = await listAstroSubmissions(since, 200) } catch { /* */ }
+    const blocked = await db<Record<string, unknown>[]>`
+      SELECT event, preview_variant AS product, coalesce(meta->>'reason', meta->>'why') AS reason, count(*)::int AS n
+      FROM experiment_events
+      WHERE entry LIKE 'astro\\_%' AND event IN ('checkout_blocked','checkout_invalid','checkout_error') AND created_at >= ${since}
+      GROUP BY 1, 2, 3 ORDER BY 4 DESC LIMIT 50`
+    return NextResponse.json({ generatedAt: new Date().toISOString(), days, byDay, byHook, byProduct, subs, blocked, submissions }, { headers: { 'cache-control': 'no-store' } })
   } catch (error) {
     console.error('[astroai] stats api', error)
     return NextResponse.json({ error: 'unavailable' }, { status: 503 })

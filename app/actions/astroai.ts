@@ -21,9 +21,17 @@ async function requestOrigin(): Promise<string> {
 }
 
 /** Evenimente de statistică trimise din pagină. Nu aruncă niciodată erori spre interfață. */
-export async function trackAstro(event: string, product: string): Promise<void> {
-  if (event === 'purchase' || event === 'checkout_start' || event === 'refund_request' || event === 'refund_done') return // acestea se scriu doar pe server
-  await recordAstroEvent({ event, product })
+export async function trackAstro(event: string, product: string, rawMeta?: Record<string, unknown>): Promise<void> {
+  if (event === 'purchase' || event === 'checkout_start' || event === 'refund_request' || event === 'refund_done' || event === 'checkout_invalid') return // acestea se scriu doar pe server
+  // din pagină acceptăm doar data nașterii/sexul (la trimiterea formularului) și motivul unei erori
+  let meta: Record<string, string | number | null> | null = null
+  if (rawMeta && typeof rawMeta === 'object') {
+    meta = {}
+    for (const k of ['d', 'm', 'y', 'bd', 'bm', 'by']) { const n = Number(rawMeta[k]); if (Number.isInteger(n) && n > 0 && n < 3000) meta[k] = n }
+    for (const k of ['g', 'bg']) if (rawMeta[k] === 'm' || rawMeta[k] === 'f') meta[k] = rawMeta[k] as string
+    if (typeof rawMeta.reason === 'string') meta.reason = rawMeta.reason.slice(0, 160)
+  }
+  await recordAstroEvent({ event, product, meta })
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
@@ -36,16 +44,25 @@ export async function startAstroCheckout(
   if (!isAstroProduct(productId)) return { ok: false, error: 'Produsul ales nu există.' }
   const product = ASTRO_PRODUCTS[productId as AstroProduct]
   const data = validateAstroForm(product.id, rawData)
-  if (!data) return { ok: false, error: 'Verifică numele și datele de naștere — par incomplete.' }
+  if (!data) {
+    await recordAstroEvent({ event: 'checkout_invalid', product: product.id, meta: { why: 'form' } }).catch(() => {})
+    return { ok: false, error: 'Verifică numele și datele de naștere: par incomplete. Numele se scriu doar cu litere.' }
+  }
   const email = String(rawEmail || '').trim().toLowerCase()
-  if (!EMAIL_RE.test(email) || email.length > 120) return { ok: false, error: 'Introdu o adresă de e-mail validă — acolo îți trimitem raportul.' }
+  if (!EMAIL_RE.test(email) || email.length > 120) {
+    await recordAstroEvent({ event: 'checkout_invalid', product: product.id, meta: { why: 'email' } }).catch(() => {})
+    return { ok: false, error: 'Introdu o adresă de e-mail validă: acolo îți trimitem raportul.' }
+  }
 
   const origin = await requestOrigin()
   const visitorId = await astroVisitorId()
   const social = await socialCheckoutMetadata()
   const meta = await metaMatchData()
   const payload = JSON.stringify(data)
-  if (payload.length > 480) return { ok: false, error: 'Numele sunt prea lungi. Scrie-le fără titluri sau prescurtări.' }
+  if (payload.length > 480) {
+    await recordAstroEvent({ event: 'checkout_invalid', product: product.id, meta: { why: 'too_long' } }).catch(() => {})
+    return { ok: false, error: 'Numele sunt prea lungi. Scrie-le fără titluri sau prescurtări.' }
+  }
   // Reducerea de la abonare (cookie): suma se calculează doar aici, pe server.
   const promo = await currentAstroPromo().catch(() => null)
   const amount = promo ? astroDiscounted(product.priceBani, promo.percent) : product.priceBani
@@ -88,7 +105,7 @@ export async function startAstroCheckout(
     return { ok: true, url: session.url }
   } catch (error) {
     console.error('[astroai] checkout error', error)
-    await recordAstroEvent({ event: 'checkout_error', product: product.id, visitorId })
+    await recordAstroEvent({ event: 'checkout_error', product: product.id, visitorId, meta: { why: String((error as Error)?.message || 'stripe').slice(0, 160) } })
     return { ok: false, error: 'Plata nu a putut fi pornită. Încearcă din nou peste câteva secunde.' }
   }
 }
