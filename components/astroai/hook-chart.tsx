@@ -104,22 +104,23 @@ function nextPeak(c: LifeChart, age: number): number {
   return pool.reduce((a, b) => (b.level > a.level ? b : a), pool[0]).plotAge
 }
 
-function careerText(r: ChartReading, peak: number): string[] {
+function careerText(r: ChartReading, peak: number, by?: number): string[] {
   const out: string[] = []
+  const yr = (a: number) => (by ? ` (în ${by + a})` : '')
   const dir = r.rising ? 'iar linia urcă' : 'iar linia coboară'
   out.push(`Acum, la ${deAni(r.age)}, ești ${r.band.label} în carieră, ${dir}.`)
   out.push(peak > r.age
-    ? `Următorul vârf al carierei tale vine în jurul vârstei de ${deAni(peak)}.`
+    ? `Următorul vârf al carierei tale vine în jurul vârstei de ${deAni(peak)}${yr(peak)}.`
     : `Cel mai puternic moment al carierei tale a fost în jurul vârstei de ${deAni(peak)}.`)
   out.push(r.worst <= r.age
     ? `Perioada cea mai grea pentru carieră a fost în jurul vârstei de ${deAni(r.worst)}.`
-    : `Perioada cea mai grea vine în jurul vârstei de ${deAni(r.worst)}: e bine să știi din timp ce să faci atunci.`)
-  if (r.next !== null) out.push(`Următoarea schimbare de direcție: în jurul vârstei de ${deAni(r.next)}, când vei trece ${r.above ? 'sub' : 'peste'} nivelul tău de confort.`)
+    : `Perioada cea mai grea vine în jurul vârstei de ${deAni(r.worst)}${yr(r.worst)}: e bine să știi din timp ce să faci atunci.`)
+  if (r.next !== null) out.push(`Următoarea schimbare de direcție: în jurul vârstei de ${deAni(r.next)}${yr(r.next)}, când vei trece ${r.above ? 'sub' : 'peste'} nivelul tău de confort.`)
   return out
 }
 
-export function HookLifeChart({ career, careerReading, personal, age, onUnlock }: {
-  career: LifeChart; careerReading: ChartReading; personal: LifeChart; age: number; onUnlock: () => void
+export function HookLifeChart({ career, careerReading, personal, age, birthYear, onUnlock }: {
+  career: LifeChart; careerReading: ChartReading; personal: LifeChart; age: number; birthYear?: number; onUnlock: () => void
 }) {
   const [tab, setTab] = useState<Tab>('career')
   const peak = nextPeak(career, age)
@@ -152,7 +153,7 @@ export function HookLifeChart({ career, careerReading, personal, age, onUnlock }
       </div>
       {tab === 'career' && (
         <div className="hk-chart-read">
-          {careerText(careerReading, peak).map((t) => <p key={t}>{t}</p>)}
+          {careerText(careerReading, peak, birthYear).map((t) => <p key={t}>{t}</p>)}
           <div className="hk-chart-more">
             <LockKeyhole size={14} />
             <span>În raportul complet: ce înseamnă fiecare punct, ce e bine să faci acum și graficele pentru bani și iubire.</span>

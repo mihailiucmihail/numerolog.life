@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowUpRight, Check, LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react'
 import { StarField } from '@/components/star-field'
 import { HookLifeChart } from './hook-chart'
+import { HookYear } from './hook-year'
 import { reportAstroHookBlocked, runAstroHook, trackAstroHook } from '@/app/actions/astroai-hook'
 import { startAstroCheckout } from '@/app/actions/astroai'
 import type { HookDef, HookResult } from '@/lib/astroai/hooks'
@@ -96,6 +97,13 @@ export function HookLanding({ hook }: { hook: HookView }) {
     } finally { setBusy(false) }
   }
 
+  function unlock() {
+    const f = document.querySelector<HTMLFormElement>('.hk-upsell')
+    f?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    setTimeout(() => f?.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true }), 700)
+    void trackAstroHook(hook.slug, 'form_first_interaction')
+  }
+
   async function pay(e: React.FormEvent) {
     e.preventDefault()
     setPayError(null)
@@ -163,16 +171,12 @@ export function HookLanding({ hook }: { hook: HookView }) {
             <h2>{result.title}</h2>
             <p className="hk-text">{result.text}</p>
             {result.extra && <p className="hk-extra">{result.extra}</p>}
+            {result.rich?.years && <HookYear years={result.rich.years} onUnlock={unlock} />}
             {result.rich?.charts && (
-              <HookLifeChart
+              <HookLifeChart birthYear={result.rich.years?.birthYear}
                 career={result.rich.charts.career} careerReading={result.rich.charts.careerReading}
                 personal={result.rich.charts.personal} age={result.rich.charts.age}
-                onUnlock={() => {
-                  const f = document.querySelector<HTMLFormElement>('.hk-upsell')
-                  f?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                  setTimeout(() => f?.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true }), 700)
-                  void trackAstroHook(hook.slug, 'form_first_interaction')
-                }}
+                onUnlock={unlock}
               />
             )}
             {result.rich && (
