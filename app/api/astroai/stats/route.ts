@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
         count(*) FILTER (WHERE entry LIKE 'astro\\_hook\\_%' AND event = 'form_submit')::int AS hook_results,
         count(*) FILTER (WHERE entry LIKE 'astro\\_hook\\_%' AND event = 'product_select')::int AS hook_to_report,
         count(DISTINCT visitor_id) FILTER (WHERE entry NOT LIKE 'astro\\_hook\\_%' AND event = 'form_first_interaction')::int AS form_touch,
-        count(DISTINCT visitor_id) FILTER (WHERE entry NOT LIKE 'astro\\_hook\\_%' AND event = 'form_submit')::int AS form_submits,
+        count(DISTINCT visitor_id) FILTER (WHERE entry NOT LIKE 'astro\\_hook\\_%' AND entry <> 'astro_site' AND event = 'form_submit')::int AS form_submits,
         count(*) FILTER (WHERE event = 'checkout_start')::int AS checkouts,
         count(*) FILTER (WHERE event = 'purchase')::int AS purchases,
         coalesce(sum(value_amount) FILTER (WHERE event = 'purchase'), 0)::int AS revenue_bani,
