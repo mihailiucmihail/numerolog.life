@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { ArrowUpRight, Check, LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react'
 import { StarField } from '@/components/star-field'
 import { HookLifeChart } from './hook-chart'
-import { HookYear } from './hook-year'
 import { reportAstroHookBlocked, runAstroHook, trackAstroHook } from '@/app/actions/astroai-hook'
 import { startAstroCheckout } from '@/app/actions/astroai'
 import type { HookDef, HookResult } from '@/lib/astroai/hooks'
@@ -171,7 +170,6 @@ export function HookLanding({ hook }: { hook: HookView }) {
             <h2>{result.title}</h2>
             <p className="hk-text">{result.text}</p>
             {result.extra && <p className="hk-extra">{result.extra}</p>}
-            {result.rich?.years && <HookYear years={result.rich.years} onUnlock={unlock} />}
             {result.rich?.charts && (
               <HookLifeChart birthYear={result.rich.years?.birthYear}
                 career={result.rich.charts.career} careerReading={result.rich.charts.careerReading}
