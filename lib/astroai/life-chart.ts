@@ -102,3 +102,47 @@ export function readChart(c: LifeChart, age: number): ChartReading {
   const next = c.crossings.map((a) => Math.round(a)).find((a) => a > age) ?? null
   return { age, level, band: levelBand(delta), rising: to.level > from.level, best: best.plotAge, worst: worst.plotAge, next, above: delta >= 0 }
 }
+
+/* ── Anul personal (ciclul de 9 ani din raport: buildYearlyCycle / SIMPLE_YEAR_TXT) ── */
+const YEAR_ENERGY: Record<number, number> = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 4, 7: 3, 8: 2, 9: 1 }
+const digitSum9 = (n: number) => { while (n > 9) n = String(n).split('').reduce((a, c) => a + Number(c), 0); return n }
+
+export const YEAR_TITLE: Record<number, string> = {
+  1: 'Anul începuturilor', 2: 'Anul parteneriatului', 3: 'Anul creșterii și al exprimării de sine', 4: 'Anul temeliei',
+  5: 'Anul schimbărilor', 6: 'Anul familiei și al responsabilității', 7: 'Anul reflecției', 8: 'Anul rezultatelor', 9: 'Anul încheierilor',
+}
+/** Textele simple din raport (fără titlul de la început). */
+export const YEAR_TEXT: Record<number, string> = {
+  1: 'Al pornirilor noi, al deciziilor independente și al primului pas acolo unde până acum ți-a lipsit curajul.',
+  2: 'Al alianțelor, al negocierilor și al capacității de a-l asculta pe celălalt: rezultatele le obții în doi, nu {de unul singur|de una singură}.',
+  3: 'Creație, comunicare și bucuria procesului, nu doar a rezultatului.',
+  4: 'Al muncii ordonate și al consolidării a ceea ce ai construit deja, fără grabă și fără salturi.',
+  5: 'Al împrejurărilor noi, al flexibilității și al disponibilității de a-ți regândi drumul obișnuit.',
+  6: 'Grija pentru cei apropiați, casa și relațiile trec pe primul plan.',
+  7: 'Pauza, munca interioară, studiul și retragerea îți aduc mai mult decât activitatea exterioară.',
+  8: 'Cariera, banii și statutul răspund la munca investită în anii dinainte.',
+  9: 'Anul care închide ciclul: e bine să renunți la ce și-a trăit traiul, ca să faci loc pentru ceva nou.',
+}
+
+export interface PersonalYears {
+  current: { personalYear: number; from: string; to: string }
+  next: { personalYear: number; from: string }
+  bars: { year: number; personalYear: number; energy: number; now: boolean }[]
+}
+
+export function personalYears(day: number, month: number, today = new Date()): PersonalYears {
+  const t = new Date(today.getFullYear(), today.getMonth(), today.getDate())
+  let anchor = new Date(t.getFullYear(), month - 1, day)
+  if (anchor > t) anchor = new Date(t.getFullYear() - 1, month - 1, day)
+  const startYear = anchor.getFullYear()
+  const seed = digitSum9(parseInt(`${day}${month}${startYear}`, 10))
+  const seq = [seed]
+  for (let i = 0; i < 8; i++) { let n = seq[seq.length - 1] + 1; if (n >= 10) n = 1; seq.push(n) }
+  const nextBd = new Date(startYear + 1, month - 1, day)
+  const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+  return {
+    current: { personalYear: seq[0], from: iso(anchor), to: iso(nextBd) },
+    next: { personalYear: seq[1], from: iso(nextBd) },
+    bars: seq.map((pn, i) => ({ year: startYear + i, personalYear: pn, energy: YEAR_ENERGY[pn], now: i === 0 })),
+  }
+}

@@ -1,6 +1,6 @@
 import 'server-only'
 import { solar2Lunar } from './lunar'
-import { careerChart, currentAge, personalChart, readChart, type ChartReading, type LifeChart } from './life-chart'
+import { careerChart, currentAge, personalChart, personalYears, readChart, YEAR_TEXT, type ChartReading, type LifeChart, type PersonalYears } from './life-chart'
 import data from './hooks-data.json'
 import type { AstroProduct } from './products'
 
@@ -154,6 +154,8 @@ export interface HookRich {
   locked: string[]
   /** graficele vieții (aceleași formule ca în raport) */
   charts: { age: number; career: LifeChart; careerReading: ChartReading; personal: LifeChart; personalReading: ChartReading }
+  /** anul personal de acum și următorul (ciclul de 9 ani din raport) */
+  years: PersonalYears & { currentText: string; birthYear: number }
 }
 
 /** Formele de gen din texte: {masculin|feminin} sau {|ă}. */
@@ -279,6 +281,7 @@ function richProfile(d: number, m: number, y: number, g: 'm' | 'f'): HookRich {
       const career = careerChart(d, m, y), personal = personalChart(d, m, y)
       return { age, career, careerReading: readChart(career, age), personal, personalReading: readChart(personal, age) }
     })(),
+    years: (() => { const py = personalYears(d, m); return { ...py, currentText: gender(YEAR_TEXT[py.current.personalYear], g), birthYear: y } })(),
   }
 }
 
