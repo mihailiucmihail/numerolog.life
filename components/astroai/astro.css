@@ -540,3 +540,49 @@
 .ax .hk-map-rest > span svg { color: var(--primary) }
 .ax .hk-map-rest div { display: flex; flex-wrap: wrap; gap: 6px }
 .ax .hk-map-rest i { font-style: normal; font-size: 13px; padding: 5px 10px; border-radius: 999px; border: 1px solid rgba(238,233,244,.14); color: rgba(238,233,244,.7) }
+
+/* graficul vieții pe pagina de intrare */
+.ax .hk-chart { margin: 26px -6px 6px; padding: 22px 16px 18px; border-radius: 22px; text-align: left; position: relative; overflow: hidden;
+  border: 1px solid rgba(212,175,55,.45);
+  background: radial-gradient(120% 80% at 50% 0%, rgba(212,175,55,.16), rgba(212,175,55,0) 60%), linear-gradient(180deg, #1a1230, #0f0a1f);
+  box-shadow: 0 20px 60px -20px rgba(212,175,55,.35), inset 0 1px 0 rgba(255,255,255,.06) }
+.ax .hk-chart-head { padding: 0 4px }
+.ax .hk-chart-kicker { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--primary) }
+.ax .hk-chart h3 { font-family: var(--font-cormorant); font-weight: 500; font-size: 30px; line-height: 1.1; margin: 8px 0 6px; color: #fff }
+.ax .hk-chart-head p { font-size: 15px; line-height: 1.55; color: rgba(238,233,244,.78) }
+.ax .hk-tabs { display: flex; gap: 6px; margin: 16px 2px 10px; overflow-x: auto; scrollbar-width: none }
+.ax .hk-tabs button { flex: none; display: inline-flex; align-items: center; gap: 5px; padding: 8px 13px; border-radius: 999px; font-size: 13.5px; color: rgba(238,233,244,.75); border: 1px solid rgba(238,233,244,.14); background: rgba(238,233,244,.04) }
+.ax .hk-tabs button.on { color: #1a1230; background: linear-gradient(180deg, #f1d27a, #d4af37); border-color: transparent; font-weight: 600 }
+.ax .hk-chart-stage { position: relative; border-radius: 16px; background: rgba(6,4,14,.45); border: 1px solid rgba(238,233,244,.07); padding: 6px 2px 0 }
+.ax .hk-chart-svg { display: block; width: 100%; height: auto }
+.ax .hk-chart-svg.blurred { filter: blur(7px) saturate(.8); opacity: .55 }
+.ax .hk-grid { stroke: rgba(238,233,244,.08); stroke-width: 1 }
+.ax .hk-axis { fill: rgba(238,233,244,.5); font-size: 12px; font-family: var(--font-sans, inherit) }
+.ax .hk-axis-cap { font-size: 11px; fill: rgba(238,233,244,.35) }
+.ax .hk-avg { stroke: rgba(160,220,255,.55); stroke-width: 1.4; stroke-dasharray: 5 6 }
+.ax .hk-avg-label { fill: rgba(160,220,255,.75); font-size: 11.5px }
+.ax .hk-area { opacity: 0; transition: opacity 1s ease .9s }
+.ax .hk-line { fill: none; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1000; stroke-dashoffset: 1000; transition: stroke-dashoffset 1.6s cubic-bezier(.65,0,.35,1) }
+.ax .hk-pt { fill: #0f0a1f; stroke: #f1d27a; stroke-width: 2; opacity: 0; transition: opacity .4s ease }
+.ax .hk-cross { fill: none; stroke: #7fd8ff; stroke-width: 2; opacity: 0; transition: opacity .5s ease 1.4s }
+.ax .hk-best circle { fill: rgba(241,210,122,.18); stroke: #f1d27a; stroke-width: 1.5; opacity: 0; transition: opacity .5s ease 1.5s }
+.ax .hk-best text { fill: #f1d27a; font-size: 12.5px; font-weight: 600; opacity: 0; transition: opacity .5s ease 1.5s }
+.ax .hk-now line { stroke: rgba(241,210,122,.45); stroke-width: 1.2; stroke-dasharray: 3 4 }
+.ax .hk-now-dot { fill: #f1d27a; stroke: #1a1230; stroke-width: 2 }
+.ax .hk-now-halo { fill: rgba(241,210,122,.25); transform-box: fill-box; transform-origin: center; animation: hkPulse 1.8s ease-in-out infinite }
+.ax .hk-now rect { fill: #f1d27a }
+.ax .hk-now text { fill: #1a1230; font-size: 12.5px; font-weight: 700 }
+.ax .hk-chart-svg.drawn .hk-line { stroke-dashoffset: 0 }
+.ax .hk-chart-svg.drawn .hk-area, .ax .hk-chart-svg.drawn .hk-pt, .ax .hk-chart-svg.drawn .hk-cross, .ax .hk-chart-svg.drawn .hk-best circle, .ax .hk-chart-svg.drawn .hk-best text { opacity: 1 }
+@keyframes hkPulse { 0%,100% { transform: scale(1); opacity: .9 } 50% { transform: scale(1.7); opacity: .2 } }
+@media (prefers-reduced-motion: reduce) { .ax .hk-line, .ax .hk-area, .ax .hk-pt { transition: none } .ax .hk-now-halo { animation: none } }
+.ax .hk-chart-lock { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 18px; text-align: center; color: #fff }
+.ax .hk-chart-lock svg { color: var(--primary) }
+.ax .hk-chart-lock strong { font-family: var(--font-cormorant); font-weight: 500; font-size: 22px }
+.ax .hk-chart-lock span { font-size: 14px; line-height: 1.5; color: rgba(238,233,244,.82); max-width: 320px }
+.ax .hk-chart-lock button { margin-top: 6px; display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 999px; background: linear-gradient(180deg, #f1d27a, #d4af37); color: #1a1230; font-weight: 700; font-size: 14px }
+.ax .hk-chart-read { padding: 14px 4px 0 }
+.ax .hk-chart-read p { font-size: 16px; line-height: 1.65; color: rgba(238,233,244,.92); margin-bottom: 8px }
+.ax .hk-chart-more { display: flex; gap: 8px; align-items: flex-start; margin: 12px 0 14px; padding: 11px 13px; border-radius: 12px; background: rgba(212,175,55,.08); border: 1px dashed rgba(212,175,55,.35); font-size: 14px; line-height: 1.5; color: rgba(238,233,244,.85) }
+.ax .hk-chart-more svg { flex: none; margin-top: 3px; color: var(--primary) }
+.ax .hk-chart-cta { width: 100%; justify-content: center }
