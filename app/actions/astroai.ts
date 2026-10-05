@@ -34,6 +34,14 @@ export async function trackAstro(event: string, product: string, rawMeta?: Recor
   await recordAstroEvent({ event, product, meta })
 }
 
+/** Descrierea scurtă afișată pe pagina de plată Stripe, lângă imaginea raportului. */
+const STRIPE_DESC: Record<AstroProduct, string> = {
+  cristal: 'Raport personal AstroAI: cine ești, cariera, banii și iubirea, cu grafice pe ani. Se deschide imediat.',
+  compat: 'Raport AstroAI pentru cuplu: ce vă unește, de unde pornesc certurile și încotro merge relația. Se deschide imediat.',
+  prog: 'Prognoza ta personală AstroAI: anul lună cu lună, perioadele bune și datele care contează. Se deschide imediat.',
+  pachet: 'Toate cele trei rapoarte AstroAI: Cristalul Destinului, Compatibilitatea cuplului și Prognoza personală.',
+}
+
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
 export async function startAstroCheckout(
@@ -75,7 +83,15 @@ export async function startAstroCheckout(
       locale: 'ro',
       ...(email ? { customer_email: email } : {}),
       line_items: [{
-        price_data: { currency: ASTRO_CURRENCY, product_data: { name: promo ? `${product.name} (−${promo.percent}%)` : product.name }, unit_amount: amount },
+        price_data: {
+          currency: ASTRO_CURRENCY,
+          product_data: {
+            name: promo ? `${product.name} (−${promo.percent}%)` : product.name,
+            description: STRIPE_DESC[product.id],
+            images: [`https://astroai.ro/astroai/stripe/${product.id}.jpg`],
+          },
+          unit_amount: amount,
+        },
         quantity: 1,
       }],
       metadata: {
@@ -91,6 +107,10 @@ export async function startAstroCheckout(
         ...social,
         ...meta,
         ...(visitorId ? { expVisitor: visitorId, socialVisitor: social.socialVisitor || visitorId } : {}),
+      },
+      submit_type: 'pay',
+      custom_text: {
+        submit: { message: 'AstroAI · raportul tău personal se deschide imediat după plată și îl primești și pe e-mail. Drept de rambursare în 14 zile, fără abonament.' },
       },
       success_url: `${origin}/ro/astroai/raport?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/ro/astroai?plata=anulata&produs=${product.id}#comanda`,
