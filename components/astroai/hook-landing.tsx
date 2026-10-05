@@ -10,7 +10,7 @@ import { startAstroCheckout } from '@/app/actions/astroai'
 import type { HookDef, HookResult } from '@/lib/astroai/hooks'
 import { ASTRO_PRODUCTS } from '@/lib/astroai/products'
 import { fbqTrack, MetaPixel } from './meta-pixel'
-import { PromoBar, PromoOptIn, applyOptIn, usePriceFor } from './promo'
+import { PromoBar, usePriceFor } from './promo'
 import './astro.css'
 
 const MONTHS = ['ianuarie', 'februarie', 'martie', 'aprilie', 'mai', 'iunie', 'iulie', 'august', 'septembrie', 'octombrie', 'noiembrie', 'decembrie']
@@ -62,7 +62,6 @@ export function HookLanding({ hook }: { hook: HookView }) {
   const [result, setResult] = useState<HookResult | null>(null)
   const [first, setFirst] = useState({ f: '', l: '' })
   const [partner, setPartner] = useState({ f: '', l: '' })
-  const [email, setEmail] = useState('')
   const [payBusy, setPayBusy] = useState(false)
   const [payError, setPayError] = useState<string | null>(null)
   const [consent, setConsent] = useState(false)
@@ -70,8 +69,7 @@ export function HookLanding({ hook }: { hook: HookView }) {
   const resultRef = useRef<HTMLDivElement>(null)
   const couple = hook.kind === 'couple'
   const def = ASTRO_PRODUCTS[hook.product]
-  const [optIn, setOptIn] = useState(false)
-  const price = usePriceFor(def.priceBani, optIn)
+  const price = usePriceFor(def.priceBani)
 
   useEffect(() => {
     void trackAstroHook(hook.slug, 'landing_view')
@@ -106,7 +104,6 @@ export function HookLanding({ hook }: { hook: HookView }) {
     const block = (msg: string) => { setPayError(msg); void reportAstroHookBlocked(hook.slug, msg).catch(() => {}) }
     if (!first.f.trim() || !first.l.trim()) { block('Scrie prenumele și numele de familie: intră în calcul.'); return }
     if (couple && (!partner.f.trim() || !partner.l.trim())) { block('Scrie și numele partenerului / partenerei.'); return }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) { block('Scrie o adresă de e-mail validă: acolo îți trimitem raportul.'); return }
     if (!consent) { block('Bifează acordul pentru livrarea imediată a raportului.'); return }
     setPayBusy(true)
     void trackAstroHook(hook.slug, 'product_select')
@@ -116,8 +113,7 @@ export function HookLanding({ hook }: { hook: HookView }) {
       ...(couple && db ? { b: { f: partner.f.trim(), l: partner.l.trim(), ...db, g: b.g } } : {}),
     }
     try {
-      await applyOptIn(optIn, email, 'hook')
-      const r = await startAstroCheckout(hook.product, payload, email)
+      const r = await startAstroCheckout(hook.product, payload, '')
       if (!r.ok) { block(r.error); return }
       window.location.href = r.url
     } catch {
@@ -250,9 +246,11 @@ export function HookLanding({ hook }: { hook: HookView }) {
               <span className="hk-upsell-kicker">{hook.upsellKicker}</span>
               <p className="hk-upsell-lead">{hook.upsellLead}</p>
               <ul>{hook.more.map((m) => <li key={m}><Check size={15} /> {m}</li>)}</ul>
-              <div className="hk-price">{price.was && <s>{price.was}</s>}<strong>{price.now}</strong><span>· se deschide imediat după plată · pe ecran și pe e-mail</span></div>
+              <div className="hk-price">{price.was && <s>{price.was}</s>}<strong>{price.now}</strong><span>· o singură plată · se deschide imediat</span></div>
               <div className="hk-names">
-                <span className="hk-label">{couple ? 'Numele voastre' : 'Numele tău'} <small>intră în calcul</small></span>
+                <div className="hk-steps"><span className="done"><Check size={13} /> Data nașterii</span><span className="now">Pasul 2 din 2 · {couple ? 'numele voastre' : 'numele tău'}</span></div>
+                <span className="hk-label">{couple ? 'Mai lipsesc numele voastre' : 'Mai lipsește numele tău'}</span>
+                <p className="hk-why">{couple ? 'Din nume calculăm cum vă potriviți cu adevărat și graficul relației voastre.' : 'Din nume calculăm graficul banilor, talentul tău ascuns și tot ce e doar al tău.'}</p>
                 <div className="hk-row2">
                   <label><span>Prenume</span><input value={first.f} onChange={(e) => setFirst({ ...first, f: e.target.value })} autoComplete="given-name" maxLength={40} /></label>
                   <label><span>Nume de familie</span><input value={first.l} onChange={(e) => setFirst({ ...first, l: e.target.value })} autoComplete="family-name" maxLength={40} /></label>
@@ -264,12 +262,11 @@ export function HookLanding({ hook }: { hook: HookView }) {
                   </div>
                 )}
                 {a.g === 'f' && <p className="hk-hint">Căsătorită? Scrie numele de fată: e cel cu care ai venit pe lume.</p>}
-                <label className="hk-input"><span>E-mail (aici primești raportul)</span><input type="email" inputMode="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="nume@exemplu.ro" /></label>
               </div>
-              <PromoOptIn checked={optIn} onChange={setOptIn} />
-              <label className="hk-consent"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} /><span>Vreau raportul livrat imediat după plată și înțeleg că, fiind conținut digital, dreptul legal de retragere se pierde la livrare. Garanția AstroAI de 14 zile rămâne valabilă.</span></label>
+              <label className="hk-consent"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} /><span>Vreau raportul imediat după plată și renunț la dreptul legal de retragere pentru conținutul digital livrat. Garanția AstroAI de 14 zile rămâne.</span></label>
               {payError && <p className="hk-error" role="alert">{payError}</p>}
               <button type="submit" className="payment-button hk-cta" disabled={payBusy}><LockKeyhole size={16} /> {payBusy ? 'Se deschide plata…' : `Deschide raportul ${couple ? 'nostru' : 'meu'} · ${price.now}`}</button>
+              <p className="hk-paynote">E-mailul îl scrii pe pagina de plată: acolo îți trimitem și raportul.</p>
               <div className="hk-trust">
                 <span><ShieldCheck size={14} /> Drept de rambursare în 14 zile</span>
                 <span>Plată prin Stripe · fără abonament</span>

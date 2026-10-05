@@ -586,3 +586,10 @@
 .ax .hk-chart-more { display: flex; gap: 8px; align-items: flex-start; margin: 12px 0 14px; padding: 11px 13px; border-radius: 12px; background: rgba(212,175,55,.08); border: 1px dashed rgba(212,175,55,.35); font-size: 14px; line-height: 1.5; color: rgba(238,233,244,.85) }
 .ax .hk-chart-more svg { flex: none; margin-top: 3px; color: var(--primary) }
 .ax .hk-chart-cta { width: 100%; justify-content: center }
+
+.ax .hk-steps { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px }
+.ax .hk-steps span { display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 999px; font-size: 12.5px }
+.ax .hk-steps .done { color: #8fd18f; background: rgba(143,209,143,.1); border: 1px solid rgba(143,209,143,.3) }
+.ax .hk-steps .now { color: #1a1230; background: linear-gradient(180deg, #f1d27a, #d4af37); font-weight: 700 }
+.ax .hk-why { font-size: 14.5px; line-height: 1.5; color: rgba(238,233,244,.75); margin: 2px 0 10px }
+.ax .hk-paynote { text-align: center; font-size: 13px; color: rgba(238,233,244,.65); margin-top: 8px }
