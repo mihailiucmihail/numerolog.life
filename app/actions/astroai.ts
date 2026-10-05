@@ -48,8 +48,9 @@ export async function startAstroCheckout(
     await recordAstroEvent({ event: 'checkout_invalid', product: product.id, meta: { why: 'form' } }).catch(() => {})
     return { ok: false, error: 'Verifică numele și datele de naștere: par incomplete. Numele se scriu doar cu litere.' }
   }
+  // E-mailul poate lipsi: îl cere Stripe pe pagina de plată, iar raportul pleacă la adresa de acolo.
   const email = String(rawEmail || '').trim().toLowerCase()
-  if (!EMAIL_RE.test(email) || email.length > 120) {
+  if (email && (!EMAIL_RE.test(email) || email.length > 120)) {
     await recordAstroEvent({ event: 'checkout_invalid', product: product.id, meta: { why: 'email' } }).catch(() => {})
     return { ok: false, error: 'Introdu o adresă de e-mail validă: acolo îți trimitem raportul.' }
   }
@@ -72,7 +73,7 @@ export async function startAstroCheckout(
     const session = await getStripe().checkout.sessions.create({
       mode: 'payment',
       locale: 'ro',
-      customer_email: email,
+      ...(email ? { customer_email: email } : {}),
       line_items: [{
         price_data: { currency: ASTRO_CURRENCY, product_data: { name: promo ? `${product.name} (−${promo.percent}%)` : product.name }, unit_amount: amount },
         quantity: 1,
@@ -98,7 +99,7 @@ export async function startAstroCheckout(
     await recordAstroEvent({ event: 'checkout_start', product: product.id, visitorId, valueAmount: amount, valueCurrency: ASTRO_CURRENCY, dedup: session.id })
     await recordSocialSession(session, 'checkout_start')
     await recordCheckoutAttempt({
-      email, formData: { product: `astro_${product.id}`, first: data.a.f, last: data.a.l, day: data.a.d, month: data.a.m, year: data.a.y }, country: 'RO', currency: ASTRO_CURRENCY,
+      email: email || null, formData: { product: `astro_${product.id}`, first: data.a.f, last: data.a.l, day: data.a.d, month: data.a.m, year: data.a.y }, country: 'RO', currency: ASTRO_CURRENCY,
       amount: amount / 100, displayPrice: display, promoCode: promo?.code ?? null, locale: 'ro',
       sessionId: session.id, status: 'started', visitorId, formVariant: 'astroai', previewVariant: product.id,
     }).catch(() => {})

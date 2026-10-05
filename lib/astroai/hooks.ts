@@ -84,7 +84,7 @@ export const HOOKS: Record<HookSlug, HookDef> = {
     sample: 'Ziua 27: „Simți des că încă îți cauți drumul și sari mereu în ajutorul altora, uneori atât de mult încât te pierzi pe tine…”',
     relief: 'Pe lângă ziua ta, vezi graficul carierei tale și ce spun luna, zodia și anul în care te-ai născut.',
     upsellKicker: 'Asta e doar data nașterii.',
-    upsellLead: 'Data nașterii e doar începutul. Raportul complet pornește de la numele tău și de acolo nu mai seamănă cu al nimănui.',
+    upsellLead: 'Raportul complet pornește și de la numele tău și de acolo nu mai seamănă cu al nimănui.',
     meta: { title: 'Te-ai născut la începutul sau la sfârșitul lunii? · AstroAI', description: 'Scrie data nașterii și află gratuit ce înseamnă ziua în care te-ai născut.' },
   },
   'luna-nasterii': {
