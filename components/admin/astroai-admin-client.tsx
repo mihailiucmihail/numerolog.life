@@ -261,6 +261,7 @@ function SubsPanel({ subs, days }: { subs: AstroSubsStats; days: number }) {
 const PAGE_NAMES: Record<string, string> = {
   'hook_inceput-sau-sfarsit': 'Начало или конец месяца', 'hook_zile-10-13': 'Дни 10–13', 'hook_zile-14-22': 'Дни 14–22',
   'hook_luna-nasterii': 'Месяц рождения', hook_varsator: 'Водолей', hook_cuplu: 'Пара',
+  site: 'Страница с датой (до 4 окт.)',
   cristal: 'Главная · Кристалл', compat: 'Главная · Совместимость', prog: 'Главная · Прогноз', pachet: 'Главная · Пакет',
 }
 function flag(cc: string | null) {
@@ -295,7 +296,7 @@ function SubmissionsPanel({ rows }: { rows: import('@/lib/astroai/submissions').
             {shown.map((r, i) => (
               <tr key={i} className="border-t border-primary/10 align-top">
                 <td className="whitespace-nowrap px-4 py-3 font-mono text-xs">{when(r.at)}</td>
-                <td className="px-4 py-3"><a href={r.page} target="_blank" rel="noopener" className="text-primary underline-offset-2 hover:underline">{PAGE_NAMES[r.product] || r.product}</a><div className="text-xs text-muted-foreground">{r.page.replace('https://', '')}</div></td>
+                <td className="px-4 py-3"><a href={r.page.split(' ')[0]} target="_blank" rel="noopener" className="text-primary underline-offset-2 hover:underline">{PAGE_NAMES[r.product] || r.product}</a><div className="text-xs text-muted-foreground">{r.page.replace('https://', '')}</div></td>
                 <td className="whitespace-nowrap px-4 py-3"><span className="text-lg">{flag(r.country)}</span> <span className="text-xs text-muted-foreground">{r.country || '—'}{r.device ? ` · ${r.device}` : ''}</span></td>
                 <td className="whitespace-nowrap px-4 py-3 font-mono">{r.birth || '—'}{r.partnerBirth && <div className="text-xs text-muted-foreground">+ {r.partnerBirth}</div>}</td>
                 <td className="px-4 py-3">{r.gender === 'f' ? 'Ж' : r.gender === 'm' ? 'М' : '—'}</td>

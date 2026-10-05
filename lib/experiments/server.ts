@@ -82,7 +82,7 @@ export async function getRequestExperimentContext(): Promise<{ locale: string | 
     const ua = h.get('user-agent') || ''
     return {
       locale: h.get('x-locale'),
-      country: h.get('x-country'),
+      country: h.get('x-country') || h.get('x-vercel-ip-country') || null,
       device: /Mobi|Android|iPhone|iPad/i.test(ua) ? 'mobile' : 'desktop',
     }
   } catch {

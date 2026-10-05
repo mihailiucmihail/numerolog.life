@@ -39,13 +39,13 @@ export async function listAstroSubmissions(since: Date, limit: number): Promise<
     const src = [m.utm_content, m.utm_campaign].filter(Boolean).join(' · ') || null
     return {
       at: new Date(r.created_at).toISOString(),
-      page: hook ? `https://astroai.ro/${hook}` : 'https://astroai.ro/',
+      page: hook ? `https://astroai.ro/${hook}` : r.product === 'site' ? 'https://astroai.ro/ (o pagină cu data nașterii; adresa exactă nu se salva înainte de 4 oct.)' : 'https://astroai.ro/',
       product: r.product,
       country: r.country, device: r.device,
       birth: date(m.d, m.m, m.y), gender: (m.g as string) || null,
       partnerBirth: date(m.bd, m.bm, m.by),
       source: src,
-      reachedPay: !hook || r.reached_pay, checkout: r.checkout, paid: r.paid, blocked: r.blocked,
+      reachedPay: (!hook && r.product !== 'site') || r.reached_pay, checkout: r.checkout, paid: r.paid, blocked: r.blocked,
     }
   })
 }
