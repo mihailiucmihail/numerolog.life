@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { ArrowUpRight, Check, LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react'
 import { StarField } from '@/components/star-field'
-import { runAstroHook, trackAstroHook } from '@/app/actions/astroai-hook'
+import { reportAstroHookBlocked, runAstroHook, trackAstroHook } from '@/app/actions/astroai-hook'
 import { startAstroCheckout } from '@/app/actions/astroai'
 import type { HookDef, HookResult } from '@/lib/astroai/hooks'
 import { ASTRO_PRODUCTS } from '@/lib/astroai/products'
@@ -102,10 +102,11 @@ export function HookLanding({ hook }: { hook: HookView }) {
     setPayError(null)
     const da = parseDate(a.raw), db = couple ? parseDate(b.raw) : null
     if (!da) return
-    if (!first.f.trim() || !first.l.trim()) { setPayError('Scrie prenumele și numele de familie: intră în calcul.'); return }
-    if (couple && (!partner.f.trim() || !partner.l.trim())) { setPayError('Scrie și numele partenerului / partenerei.'); return }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) { setPayError('Scrie o adresă de e-mail validă: acolo îți trimitem raportul.'); return }
-    if (!consent) { setPayError('Bifează acordul pentru livrarea imediată a raportului.'); return }
+    const block = (msg: string) => { setPayError(msg); void reportAstroHookBlocked(hook.slug, msg).catch(() => {}) }
+    if (!first.f.trim() || !first.l.trim()) { block('Scrie prenumele și numele de familie: intră în calcul.'); return }
+    if (couple && (!partner.f.trim() || !partner.l.trim())) { block('Scrie și numele partenerului / partenerei.'); return }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) { block('Scrie o adresă de e-mail validă: acolo îți trimitem raportul.'); return }
+    if (!consent) { block('Bifează acordul pentru livrarea imediată a raportului.'); return }
     setPayBusy(true)
     void trackAstroHook(hook.slug, 'product_select')
     fbqTrack('InitiateCheckout', { content_name: hook.product, value: def.priceBani / 100, currency: 'RON' })
@@ -116,7 +117,7 @@ export function HookLanding({ hook }: { hook: HookView }) {
     try {
       await applyOptIn(optIn, email, 'hook')
       const r = await startAstroCheckout(hook.product, payload, email)
-      if (!r.ok) { setPayError(r.error); return }
+      if (!r.ok) { block(r.error); return }
       window.location.href = r.url
     } catch {
       setPayError('Nu am putut deschide plata. Mai încearcă o dată.')

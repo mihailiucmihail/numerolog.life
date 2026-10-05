@@ -29,7 +29,7 @@ type Person = { f: string; l: string; d: string; m: string; y: string; g: '' | '
 const EMPTY: Person = { f: '', l: '', d: '', m: '', y: '', g: '' }
 
 function lei(bani: number) { return `${Math.round(bani / 100)} lei` }
-function fire(event: string, product: string) { void trackAstro(event, product).catch(() => {}) }
+function fire(event: string, product: string, meta?: Record<string, unknown>) { void trackAstro(event, product, meta).catch(() => {}) }
 
 
 export function AstroLanding({ initialProduct, cancelled }: { initialProduct: AstroProduct; cancelled: boolean }) {
@@ -102,12 +102,13 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
     setError(null)
     const person = (p: Person) => ({ f: p.f, l: p.l, d: Number(p.d), m: Number(p.m), y: Number(p.y), g: p.g })
     const missing = (p: Person) => !p.f.trim() || !p.l.trim() || !p.d || !p.m || !p.y || !p.g
-    if (missing(a)) { setError('Completează prenumele, numele, data nașterii și sexul.'); return }
-    if (needsPartner && missing(b)) { setError('Completează și datele partenerului.'); return }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) { setError('Scrie o adresă de e-mail validă: acolo îți trimitem raportul.'); return }
-    if (!consent) { setError('Bifează acordul pentru livrarea imediată a raportului.'); return }
+    const block = (msg: string) => { setError(msg); fire('checkout_blocked', product, { reason: msg }) }
+    if (missing(a)) { block('Completează prenumele, numele, data nașterii și sexul.'); return }
+    if (needsPartner && missing(b)) { block('Completează și datele partenerului.'); return }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) { block('Scrie o adresă de e-mail validă: acolo îți trimitem raportul.'); return }
+    if (!consent) { block('Bifează acordul pentru livrarea imediată a raportului.'); return }
     setBusy(true)
-    fire('form_submit', product)
+    fire('form_submit', product, { d: a.d, m: a.m, y: a.y, g: a.g, ...(needsPartner ? { bd: b.d, bm: b.m, by: b.y, bg: b.g } : {}) })
     fbqTrack('InitiateCheckout', { content_name: product, value: ASTRO_PRODUCTS[product].priceBani / 100, currency: 'RON' })
     try { sessionStorage.setItem('astroai_form', JSON.stringify({ a, b, meet, email })) } catch { /* fără stocare: plata merge oricum */ }
     const payload = {
@@ -120,6 +121,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
     if (res.ok) { window.location.href = res.url; return }
     setBusy(false)
     setError(res.error)
+    fire('checkout_blocked', product, { reason: res.error })
   }
 
   const stickyHidden = formInView || !pastHero

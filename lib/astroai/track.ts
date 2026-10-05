@@ -36,10 +36,15 @@ export const ASTRO_EVENTS = new Set([
   'refund_done',
   'promo_view',
   'promo_subscribe',
+  'checkout_blocked',
+  'checkout_invalid',
 ])
 
 /** Evenimente numărate o singură dată per vizitator și produs. */
 const ONCE = new Set(['promo_view', 'promo_subscribe', 'landing_view', 'form_impression', 'form_first_interaction', 'form_submit', 'report_view', 'refund_view'])
+
+/** Evenimente la care păstrăm și sursa (UTM) în meta, pentru lista din admin. */
+const DETAILED = new Set(['form_submit', 'product_select', 'checkout_blocked', 'checkout_invalid', 'checkout_start'])
 
 /** Evenimentele care alimentează și raportul pe postări Instagram (social_events). */
 const SOCIAL = new Set(['form_impression', 'form_submit', 'preview_impression', 'landing_view'])
@@ -76,6 +81,8 @@ export async function recordAstroEvent(input: {
   valueAmount?: number | null
   valueCurrency?: string | null
   dedup?: string | null
+  /** detalii fără date personale de contact: data nașterii introdusă, motivul unei erori etc. */
+  meta?: Record<string, string | number | boolean | null> | null
 }): Promise<boolean> {
   try {
     if (!ASTRO_EVENTS.has(input.event)) return false
@@ -83,6 +90,13 @@ export async function recordAstroEvent(input: {
     const visitorId = input.visitorId && VID.test(input.visitorId) ? input.visitorId : await astroVisitorId()
     if (!visitorId) return false
     const ctx = await getRequestExperimentContext()
+    let meta: Record<string, unknown> | null = input.meta ? { ...input.meta } : null
+    if (DETAILED.has(input.event)) {
+      try {
+        const a = await requestSocialAttribution()
+        if (a) meta = { ...(meta || {}), utm_campaign: a.last.campaign || null, utm_content: a.last.content || null, utm_source: a.last.source || null }
+      } catch { /* fără sursă */ }
+    }
     const dedupKey = ONCE.has(input.event)
       ? `astro|${visitorId}|${input.event}|${product}`
       : input.dedup ? `astro|${input.event}|${input.dedup}` : null
@@ -92,7 +106,7 @@ export async function recordAstroEvent(input: {
       VALUES
         (${visitorId}, ${input.event}, ${ASTRO_FORM_VARIANT}, ${product}, ${`astro_${product}`},
          ${'ro'}, ${ctx.country}, ${ctx.device}, ${input.valueAmount ?? null}, ${input.valueCurrency ?? null},
-         ${null}, ${dedupKey})
+         ${meta ? JSON.stringify(meta) : null}::jsonb, ${dedupKey})
       ON CONFLICT (dedup_key) DO NOTHING`
     if (SOCIAL.has(input.event)) await recordAstroSocial(input.event, product, visitorId)
     return true

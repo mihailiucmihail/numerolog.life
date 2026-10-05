@@ -37,7 +37,11 @@ export interface AstroSubsStats {
   latest: AstroSubscriberRow[]
 }
 
+export type { AstroSubmissionRow } from '@/lib/astroai/submissions'
+import { listAstroSubmissions, type AstroSubmissionRow } from '@/lib/astroai/submissions'
+
 export interface AstroStats {
+  submissions: AstroSubmissionRow[]
   subs: AstroSubsStats | null
   visitors: number
   funnel: AstroFunnelRow[]
@@ -135,7 +139,10 @@ export async function getAstroStats(password: string, days: number): Promise<{ o
       console.error('[astroai-admin] subs unavailable', error)
     }
 
-    return { ok: true, stats: { subs, visitors: v?.n ?? 0, funnel, days: dayRows, sources, generatedAt: new Date().toISOString() } }
+    let submissions: AstroSubmissionRow[] = []
+    try { submissions = await listAstroSubmissions(since, 300) } catch (error) { console.error('[astroai-admin] submissions unavailable', error) }
+
+    return { ok: true, stats: { submissions, subs, visitors: v?.n ?? 0, funnel, days: dayRows, sources, generatedAt: new Date().toISOString() } }
   } catch (error) {
     console.error('[astroai-admin] stats error', error)
     return { ok: false, error: 'Статистика сейчас недоступна.' }
@@ -229,3 +236,4 @@ export async function sendAstroTestEmail(password: string, to: string): Promise<
   const r = await sendAstroReportEmail({ to: to.trim(), firstName: 'Test', product: 'pachet', url: 'https://astroai.ro/ro/astroai/raport?session_id=cs_test_EXEMPLU0000000' })
   return r.sent ? { ok: true } : { ok: false, error: `Resend отклонил отправку (отправитель: ${process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'}). Смотри логи Vercel «[astroai] email error».` }
 }
+
