@@ -809,6 +809,55 @@ select.sel:focus{outline:none;border-color:var(--brass-bright);box-shadow:0 0 0 
   .sum-grid{grid-template-columns:1fr;}
 }
 
+
+/* ==== Povestea anului (6 oct.) ==== */
+.st { --sn: #0d1020; --sr: #151a2e; --sp: #e9e4d8; --sh: #8d92a8; --sc: #cdb27a; --sx: #c26f5b; --sl: rgba(233,228,216,.12);
+  max-width: 720px; margin: 0 auto 28px; color: var(--sp); font-family: var(--sans) }
+.st p { font-size: 17px; line-height: 1.7; margin: 0 0 14px; color: var(--sp) }
+.st-head { padding: 10px 0 24px; border-bottom: 1px solid var(--sl) }
+.st-for { color: var(--sc) !important; font-size: 15px !important; margin: 0 0 6px !important }
+.st-head h2 { font-family: var(--display); font-weight: 500; font-size: clamp(34px, 7vw, 52px); line-height: 1.05; letter-spacing: -.015em; margin: 0 0 12px; color: var(--sp) }
+.st-age { color: var(--sh) !important; font-size: 15.5px !important }
+.st-nav { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 18px }
+.st-nav button { height: 42px; padding: 0 16px; border-radius: 6px; border: 1px solid var(--sl); background: transparent; color: var(--sp); font: inherit; font-size: 15px; cursor: pointer }
+.st-nav button.on { background: var(--sp); color: var(--sn); border-color: var(--sp); font-weight: 700 }
+.st-nav button:disabled { opacity: .35; cursor: default }
+.st-other { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--sh); text-transform: none; letter-spacing: 0 }
+.st-other select { height: 42px; border-radius: 6px; border: 1px solid var(--sl); background: var(--sr); color: var(--sp); font: inherit; font-size: 14.5px; padding: 0 10px }
+.st-block { padding: 28px 0 14px; border-bottom: 1px solid var(--sl) }
+.st-block h3 { font-family: var(--display); font-weight: 500; font-size: 30px; line-height: 1.15; margin: 0 0 14px; color: var(--sp) }
+.st-lead { font-family: var(--display); font-size: 25px !important; line-height: 1.35 !important }
+.st-note { font-size: 14.5px !important; color: var(--sh) !important; line-height: 1.55 !important }
+.st-two { display: grid; gap: 12px }
+.st-two > div { padding: 16px 18px; border-radius: 10px; background: var(--sr) }
+.st-two h4 { margin: 0 0 6px; font-size: 15px; font-weight: 700 }
+.st-good h4 { color: var(--sc) } .st-warn h4 { color: var(--sx) }
+.st-two p { font-size: 16px; margin: 0 }
+.st-steps { list-style: none; margin: 0; padding: 0 0 0 18px; border-left: 1px solid var(--sl) }
+.st-steps li { position: relative; padding: 0 0 18px 4px }
+.st-steps li::before { content: ''; position: absolute; left: -24px; top: 6px; width: 11px; height: 11px; border-radius: 50%; background: var(--sn); border: 1px solid var(--sh) }
+.st-steps li.now::before { background: var(--sc); border-color: var(--sc); box-shadow: 0 0 10px rgba(205,178,122,.6) }
+.st-when { display: block; font-size: 14.5px; font-weight: 700; color: var(--sp); margin-bottom: 4px }
+.st-when b { color: var(--sc); margin-left: 6px }
+.st-steps p { font-size: 16px }
+.st-months { display: grid; gap: 6px }
+.st-month { border-radius: 10px; background: var(--sr) }
+.st-month summary { list-style: none; display: grid; grid-template-columns: 34px 1fr auto; gap: 12px; align-items: center; padding: 12px 14px; cursor: pointer }
+.st-month summary::-webkit-details-marker { display: none }
+.st-mname { font-size: 16.5px; font-weight: 600 } .st-mname b { color: var(--sc); font-size: 13px; margin-left: 6px }
+.st-mtone { font-size: 13.5px; color: var(--sh) }
+.st-month.t0 .st-mtone { color: #a8d6a0 } .st-month.t3 .st-mtone { color: #e59a8b }
+.st-mbody { padding: 0 16px 6px 60px } .st-mbody p { font-size: 15.5px }
+.st-moon { width: 32px; height: 32px; overflow: visible } .st-moon .d { fill: #1b2038; stroke: rgba(233,228,216,.18); stroke-width: .8 } .st-moon .l { fill: var(--sp) }
+.st-dayform input { height: 48px; border-radius: 6px; border: 1px solid var(--sl); background: var(--sr); color: var(--sp); font: inherit; font-size: 16px; padding: 0 12px; color-scheme: dark }
+.st-day { display: flex; gap: 14px; align-items: center; margin: 16px 0 12px }
+.st-day .st-moon { width: 44px; height: 44px } .st-day strong { display: block; font-family: var(--display); font-weight: 500; font-size: 26px; line-height: 1.1 } .st-day span { font-size: 14px; color: var(--sh) }
+.st-nav button:focus-visible, .st-month summary:focus-visible, .st-expert > summary:focus-visible { outline: 2px solid var(--sc); outline-offset: 3px }
+.st-expert { max-width: 720px; margin: 10px auto 40px; border-radius: 12px; border: 1px solid rgba(233,228,216,.12) }
+.st-expert > summary { list-style: none; cursor: pointer; padding: 18px 20px; display: flex; flex-direction: column; gap: 4px; color: #e9e4d8 }
+.st-expert > summary span { font-size: 17px; font-weight: 700 } .st-expert > summary small { font-size: 14px; color: #8d92a8 }
+.st-expert[open] > summary { border-bottom: 1px solid rgba(233,228,216,.12) }
+@media (max-width: 520px) { .st-mbody { padding-left: 16px } .st p { font-size: 16.5px } }
 </style>
 </head>
 <body>
@@ -2600,8 +2649,150 @@ window.I18N_LANG="ro";
     window.I18N_GENDER = state.gender;
     render(ctx);
   }
+  /* ==== Povestea anului: raportul spus pe înțelesul tuturor (6 oct.) ====
+     Folosește exact aceleași calcule (PROG) și aceleași texte (T) ca secțiunile de mai jos; doar le povestește. */
+  var STORY = { sy: null };
+  var ST = {"zs_planet": {"Плутон": {"plus": "Ești la o răscruce, iar alegerea îți aparține. Pot veni o schimbare bruscă în bine și aliați puternici. Ascultă-ți intuiția: ea te duce pe drumul bun.", "minus": "Ești la o răscruce, iar unele oferte ispititoare ascund o capcană. Dacă simți că ceva în tine se opune unui plan, renunță la el. Alege cu inima, nu doar cu mintea."}, "Солнце": {"plus": "Un an activ, care cere fapte, nu așteptare. Ce începi acum pornește ușor și are viitor. Pune-ți ținte mari și nu te teme să crești.", "minus": "Lucrurile se mișcă repede și uneori te pot pune într-o situație stânjenitoare. Neplăcerile trec însă repede și fără urmări serioase. Rămâi în mișcare și nu te lăsa {descurajat|descurajată}."}, "Луна": {"plus": "Un an intens, care îți dă putere. Ajungi la rezultat punând în joc energia, emoțiile și ideile tale. Fă lucrurile în felul tău și poți întoarce situația în favoarea ta.", "minus": "Energia nu-ți ajunge mereu pentru tot ce ți-ai propus, iar asta te poate face {iritabil|iritabilă}. Ai grijă la vicleniile din jur, chiar și din partea celor apropiați. Bazează-te pe tine și dozează-ți forțele."}, "Юпитер": {"plus": "Un timp bun să-ți crești bunăstarea și să găsești oameni de nădejde. Înveți lucruri noi și câștigi experiență. Norocul e aproape, așa că pune-ți planurile în practică.", "minus": "Rezultatul s-ar putea să nu te mulțumească din prima. Nu-i nimic: îți revii repede, corectezi planul și o iei de la capăt. Ce îți lipsește acum e mai ales încrederea în tine."}, "Уран": {"plus": "Un an de așezare: ce obții acum ține mult timp. E un timp bun pentru carieră, afaceri, călătorii de serviciu și căsătorie. Construiește pe ce ai deja.", "minus": "Ce se așază acum rămâne așa mult timp, iar ce pierzi se recuperează greu. O a doua șansă poate întârzia. Păstrează cu grijă ce ai și nu pune în joc lucrurile importante."}, "Нептун": {"plus": "Multe schimbări și drumuri, evenimente rapide și variate. Merită să încerci chiar și ideile îndrăznețe. Prinde ocaziile cât sunt aici.", "minus": "Totul e schimbător: azi primești un „da”, mâine un „nu”, poimâine altă variantă. Nu te baza pe promisiuni până nu se împlinesc. Acționează când ai ocazia, dar păstrează mereu un plan de rezervă."}, "Венера": {"plus": "Un timp bun pentru oameni noi, clienți noi și proiecte comune. Ajutorul vine de unde nu te aștepți, de la cei din jur. Culegi roadele muncii de până acum.", "minus": "{Singur|Singură} nu câștigi mare lucru acum. Reușești atunci când ești de folos și altcuiva. Caută colaborarea, nu drumul pe cont propriu."}, "Меркурий": {"plus": "Un an în care înveți mult și îți vin idei bune: abilități noi, soluții neobișnuite, contacte utile. Ai ceva greu de rezolvat, dar răspunsul e aproape. Decide la timp, fără amânări.", "minus": "Ai grijă la vorbe și la acte. Cineva ar putea încerca să te dea la o parte sau să-ți întindă o capcană. Citește tot ce semnezi și nu amâna deciziile importante."}, "Сатурн": {"plus": "Nu e momentul pentru lucruri noi, ci pentru a folosi ce ai construit deja. Poți cumpăra, vinde sau investi în ceva sigur. Cu prudență îți păstrezi tot ce contează: munca, familia, bunurile.", "minus": "Un an lent, care cere răbdare. Strânge, economisește și cheltuiește cu chibzuință. Evită proiectele noi și riscurile, iar perioada grea va trece mai ușor."}, "Марс": {"plus": "Un an bun să te desparți de ce e de prisos și să închei ce e vechi. Poți să-ți aperi pozițiile și să-ți depășești concurenții. Victoria vine prin efort.", "minus": "Un an de luptă, cu schimbări bruște de planuri și de oameni. Ce îți dorești vine greu. Dacă ceva merge suspect de ușor, verifică de două ori."}, "Прозерпина": {"plus": "Un timp bun pentru învățat, pentru întrebări și pentru căutarea sensului. Ia o pauză și regândește-ți strategia. Planul refăcut acum îți va folosi mult.", "minus": "Planurile vechi te pot duce pe un drum greșit. Nu te grăbi cu concluziile și deciziile. Oprește-te, regândește și abia apoi mergi mai departe."}, "Хирон": {"plus": "Un an de „totul sau nimic”, care de data asta înclină spre răsplată. Poți reuși în mai multe lucruri deodată. E vremea revanșei și a dreptății.", "minus": "Un an de „totul sau nimic”, în care multe depind de ce ai semănat înainte. Urmează strict un plan bine gândit. Lasă emoțiile deoparte când iei decizii."}}, "ts_sphere": {"Самореализация": {"plus": "Totul se învârte în jurul tău: ai șansa să te afirmi și să urci la un nivel nou. E ora ta de glorie, în orice domeniu.", "minus": "Totul se învârte în jurul afirmării tale, dar recunoașterea vine mai greu. Ai răbdare și nu renunța la ce ți-ai propus."}, "Партнёрство": {"plus": "Anul se simte mai ales în familie și în relații. În muncă, te ajută oamenii noi pe care îi cunoști și clienții noi.", "minus": "Anul se simte mai ales în familie și în relațiile cu oamenii, iar aici pot apărea tensiuni. Vorbește deschis cu cei dragi și alege-ți bine partenerii."}, "Бизнес и карьера": {"plus": "Totul se învârte în jurul muncii și al banilor. Te așteaptă reușite și recompense.", "minus": "Totul se învârte în jurul muncii și al banilor, iar aici pot apărea pași înapoi. Fii {prudent|prudentă} cu deciziile de carieră și cu cheltuielile."}, "Личные интересы": {"plus": "Accentul cade pe tine: ideile tale, lumea ta interioară, talentele și liniștea ta. E un timp bun să faci ce-ți place.", "minus": "Accentul cade pe lumea ta interioară, iar libertatea și liniștea ta pot fi puse la încercare. Apără-ți timpul și spațiul personal."}, "Препятствия": {"plus": "Anul vine cu piedici, chiar și când lucrurile merg bine. Cu răbdare și organizare le treci pe toate.", "minus": "Anul vine cu piedici și cu situații înșelătoare. Fii {atent|atentă} la detalii, ai grijă de tine și nu lua decizii în grabă."}, "Перспективы": {"plus": "Anul îți deschide drumuri noi: apar oportunități și variante. Spune „da” celor care te atrag.", "minus": "Unele drumuri se pot închide, iar variantele par puține. Caută ușile care rămân deschise și nu te agăța de ce s-a terminat."}}, "zs_tzs": {"++": {"text": "Destinul te ajută el însuși: totul se leagă fără efort. Te așteaptă o victorie ușoară."}, "+-": {"text": "Rezultatul e promis, dar va trebui să muncești pentru el. Nu e momentul să te relaxezi, însă victoria rămâne a ta."}, "-+": {"text": "Destinul nu-ți face cadouri, însă nici nu-ți stă în cale. Vei primi mai puțin decât speri, dar vei fi {mulțumit|mulțumită}."}, "--": {"text": "Anul acesta lucrurile nu se lasă forțate. Dacă insiști, riști să pierzi timp și energie. Mergi încet și învață din greșelile trecute."}}, "ts_tts_tempo": {"ян/ян": {"text": "Lucrurile se întâmplă repede și se termină la fel de repede. Efectul e rapid și nu se repetă, așa că prinde momentul."}, "ян/инь": {"text": "Totul pornește fulgerător, dar efectul ține mult. Ce e bun te bucură mult timp, ce e greu cere mai multă răbdare."}, "инь/ян": {"text": "Lucrurile merg încet și nu apucă mereu să dea rezultatul dorit. Nu te grăbi cu concluziile și mizează pe pași mici."}, "инь/инь": {"text": "Lucrurile merg încet și se vor mai repeta în viitor. Ce înveți acum îți va folosi data viitoare."}}, "sign_patterns": {"++++": {"text": "Totul e de partea ta: lucrurile se leagă ușor și îți aduc folos. Ce îți dorești vine aproape fără efort, ca o răsplată pentru ce ai construit."}, "++-+": {"text": "Poate ai impresia că ești sub presiune, dar situația e de partea ta. Luptă puțin cu fricile tale și nu da înapoi. Nu accepta prea ușor un „nu” și ține-te de plan."}, "+++-": {"text": "Împrejurările sunt favorabile, dar nu vei triumfa pe deplin. Nu căuta conflictul și nu forța nimic. Vei primi exact cât ți se cuvine, iar efortul suplimentar nu schimbă rezultatul."}, "++--": {"text": "Ai impresia că te lovești de un zid, și nu fără motiv. Nu încurca lucrurile cu panică sau insistență. Lasă-te {dus|dusă} de curent, iar el te va scoate la soluția potrivită."}, "--++": {"text": "În jur se pot prăbuși planuri, dar pe tine aproape că nu te ating. Nu e lupta ta: retrage-te și fii {flexibil|flexibilă}. În schimb, apar variante noi și mai avantajoase."}, "---+": {"text": "E tensiune, ai multe obligații și depinzi de voința altcuiva. Situația pare mai grea decât e. Ține-ți emoțiile în frâu și ascultă sfaturile aliaților: există o ieșire."}, "--+-": {"text": "Nu e limpede cine îți vrea binele și cine nu. Nu-ți spune planurile oricui și nu accepta orice propunere. Schimbă tactica, iar ieșirea o vei găsi {singur|singură}."}, "----": {"text": "Un an care cere atenție în toate domeniile. Lecțiile trecutului se pot simți mai apăsat. Mergi cu pași mici și ai grijă de tine și de bunăstarea ta."}}, "shadow_meaning": {"positive": {"text": "Trecutul te lasă în pace anul acesta. Te pot încurca doar propria lene și propriile frici, în timp ce viața îți aduce o mulțime de propuneri."}, "negative": {"text": "Lecțiile trecutului se simt anul acesta. Chiar și lucrurile simple merg mai greu și nu toți aliații sunt sinceri. Mai bine nu începe proiecte mari, pe termen lung."}}, "age_category": {"1": {"text": "Un an în care Destinul te ocrotește, iar trecutul nu-ți cere socoteală."}, "2": {"text": "Un an cu unele greutăți și supărări, dar le poți depăși fără urmări."}, "3": {"text": "Un an care cere multă atenție: o greșeală mică poate crește repede. Fii {atent|atentă} la fiecare pas."}, "4": {"text": "Un an foarte activ și ieșit din tipare, cu ispite și schimbări mari. Efectul ține puțin, așa că până la final consolidează-ți reușitele."}}, "angel_periods": {"Меркурий": {"text": "Cea mai bună perioadă a anului ca să pornești ceva nou și să-ți stabilești ținte. Vin cunoștințe noi, se reiau legături vechi, apar clienți și oameni care te susțin. Fixează-ți acum cât mai multe obiective, pentru că de ele depinde tot anul."}, "Венера": {"text": "O perioadă a întâlnirilor romantice și a familiei: ești {deschis|deschisă} și {atrăgător|atrăgătoare}. Dacă ești {singur|singură}, imaginează-ți clar partenerul dorit. La muncă poți fi mai puțin {concentrat|concentrată}, dar inspirația pentru frumos și creație e la ea acasă."}, "Марс": {"text": "O perioadă tensionată, cu ispite și oferte care par prea bune ca să fie adevărate. Nu lua credite, nu face cumpărături scumpe și nu semna înțelegeri dubioase. Ține-te de promisiuni și evită riscurile inutile."}, "Юпитер": {"text": "E timpul să înveți și să crești: pot veni oferte de studiu, de promovare sau de transfer, nu le refuza. Repară acum ce n-a mers în perioada dinainte. Dacă te simți într-o fundătură, aici vin soluțiile noi."}, "Сатурн": {"text": "Cea mai puternică perioadă a anului: poți corecta tot ce n-a mers de la începutul lui. Drumurile sunt deschise pentru începuturi, iubire și cunoștințe noi, așa că îndrăznește să-ți dorești lucruri mari. Fii {corect|corectă} cu ceilalți și {recunoscător|recunoscătoare} celor care te-au ajutat; dacă se închide o ușă, de obicei se deschide repede alta, mai bună."}, "Уран": {"text": "E timpul să duci la capăt ce ai început, nu să pornești lucruri noi. Împacă-te, corectează greșelile și recuperează ce ți se cuvine; vânzările și mutările merg bine acum. Energia e mai scăzută, așa că dozează-ți puterile și odihnește-te."}, "Нептун": {"text": "Perioada care cere cea mai multă grijă din tot anul, mai ales ultima lună dinaintea zilei tale de naștere. Acum se încheie ce a rămas nerezolvat. Evită riscurile și pasiunile riscante și încheie anul liniștit."}}, "ts5_sphere": {"Самореализация": {"plus": "În culise se decide cum vei fi {văzut|văzută} și cât vei avansa. Lucrurile se aranjează în favoarea ta.", "minus": "În culise se decid stima de sine și avansarea ta, iar acum lucrurile pot întârzia. Nu te descuraja și continuă să lucrezi pentru tine."}, "Партнёрство": {"plus": "În culise se decide viața ta personală și de familie, într-o direcție bună.", "minus": "În culise se decide viața ta personală și de familie, iar acum e nevoie de răbdare. Vorbește deschis cu cei dragi."}, "Бизнес и карьера": {"plus": "În culise se decid cariera, banii și bunăstarea ta, iar vântul îți bate din spate.", "minus": "În culise se decid cariera și banii tăi, iar acum lucrurile pot merge mai greu. Fii {prudent|prudentă} cu cheltuielile și cu deciziile de muncă."}, "Личные интересы": {"plus": "Libertatea, hobby-urile și timpul tău sunt în centrul lunii. E momentul să le dai mai mult spațiu.", "minus": "Libertatea, hobby-urile și timpul tău sunt puse la încercare. Apără-ți spațiul personal și învață să spui „nu”."}, "Препятствия": {"plus": "În culise apar piedici care pot cere timp. Rezolvă-le din vreme, pas cu pas.", "minus": "În culise apar piedici care pot rămâne mult timp pe umerii tăi. Fii {atent|atentă} și nu-ți asuma obligații noi în grabă."}, "Перспективы": {"plus": "În culise se decid planurile și perspectivele tale, iar ușile se deschid.", "minus": "În culise se decid planurile tale, iar unele uși se pot închide. Caută alternative și nu pune toate ouăle în același coș."}}, "zs5_tzs5": {"++": {"text": "Vei afla ce se pregătea în culise, iar totul s-a aranjat ca să te răsplătească."}, "+-": {"text": "Cineva n-a jucat cinstit. Nu se mai poate repara, dar nu e o tragedie, iar acum știi cine a fost."}, "-+": {"text": "Situația pare îndreptată împotriva ta, dar vei ieși {învingător|învingătoare}."}, "--": {"text": "O situație din care nimeni nu iese câștigat și care se poate repeta. Mai bine stai departe de intrigi și bârfe."}}, "tts5": {"+": {"text": "Cei care nu-ți vor binele nu te pot clătina. Chiar și situațiile tensionate se întorc în favoarea ta, iar tu rămâi {stăpân|stăpână} pe situație."}, "-": {"text": "Cei care ți-au greșit nu s-au îndepărtat prea mult și pot reveni. A rămas ceva nerezolvat sau o împăcare amânată. Nu provoca soarta și ține-te de ce ai promis."}}, "minor_arcana_pr": {"1": {"plus": "Dorințe împlinite și datorii vechi închise, mai ales când motivele tale sunt sincere. În dragoste, îndrăgostire și fidelitate.", "minus": "Poți acționa din impuls, cu multe vorbe și puține fapte. Gândește-te la urmări și ține rezultatul sub control."}, "2": {"plus": "Începuturi frumoase: cunoștințe noi, romantism sau o relație care urcă la alt nivel. Un timp bun pentru colaborare și compromis.", "minus": "Supărările și orgoliul pot duce la o ceartă în care nimeni nu cedează. Neînțelegerea e de scurtă durată, așa că lasă emoțiile să se așeze."}, "3": {"plus": "Un motiv de bucurie: norocul e de partea ta, iar micile greutăți fac victoria mai dulce. Va trebui însă să decizi {singur|singură}.", "minus": "Cineva își pune ochii pe ce e al tău și te scoate din sărite. Nu va obține mare lucru, iar neplăcerea se repară repede."}, "4": {"plus": "O pauză binevenită: te odihnești și te bucuri de ce ai realizat. Dă mai multă atenție familiei și celor dragi.", "minus": "Plictiseală și dezamăgire, lucrurile stau pe loc. Odihnește-te și repară relațiile, apoi totul se pune din nou în mișcare."}, "5": {"plus": "O perioadă grea se apropie de sfârșit. Afli cine nu e sincer cu tine, iar obstacolele ascunse ies la lumină.", "minus": "Dezamăgiri și jocuri de culise, mai ales din invidie sau supărare. Ai grijă la parteneriate și nu te baza pe încredere oarbă."}, "6": {"plus": "Se întoarce ceva bun din trecut: o împăcare, o relație care renaște, succese de altădată. Poți porni proiectul la care te gândești de mult.", "minus": "Te poți trezi punând confortul altcuiva înaintea ta. Păstrează-ți timpul și visurile și nu renunța la libertatea ta."}, "7": {"plus": "O încercare care nu aduce mare lucru, dar nici nu te costă. Cel mult rămâi cu un vis neîmplinit.", "minus": "Ce pare corect poate fi doar o iluzie, iar ambele variante au dezavantaje. Ai grijă la tensiunile din viața personală și întreabă-te dacă merită efortul."}, "8": {"plus": "Amenințările sunt doar bluf, iar intuiția te duce spre victorie. E bine să închei ce și-a trăit traiul.", "minus": "E timpul să-ți iei rămas-bun de la ceva și să mergi mai departe. Lasă în urmă ce nu-ți mai folosește."}, "9": {"plus": "Dorințele se împlinesc, chiar și cele mai îndrăznețe: bunăstare, nuntă, avansare. E cel mai mult la care poți spera.", "minus": "Ce pare deja împlinit poate ieși pe dos. Fii {pregătit|pregătită} să-ți reduci așteptările și să cauți alte căi."}, "10": {"plus": "Iubire, familie fericită și bunăstare. Sărbători, întâlniri cu prietenii, șanse frumoase de nuntă sau de o călătorie.", "minus": "Neplăceri trecătoare acasă: certuri mărunte, neînțelegeri, o revedere amânată. Vorbește deschis și vor trece."}, "11": {"plus": "Ideea ta mai are nevoie de șlefuit, dar ești pe drumul cel bun. Cei apropiați pot crede în tine și te pot susține.", "minus": "Doar credința nu ajunge: planul nu e încă realist. Cere sfatul unor oameni pricepuți sau acceptă ce îți oferă viața acum."}, "12": {"plus": "Deocamdată e bine să aștepți: curând apar informații sau condiții care îți ușurează drumul. Strânge-ți susținătorii și fii {loial|loială} familiei.", "minus": "Mai bine amâni decizia, acum ar fi riscant. Pe la spate se pot țese mici intrigi, așa că nu te încrede în orice vorbă."}, "13": {"plus": "Ești {puternic|puternică} și vezi limpede situația. Ai grijă de ce șchiopătează, fie proiect, fie relație, iar timpul investit va da roade.", "minus": "S-ar putea să fie nevoie de concesii amare ca să nu pierzi mai mult. Evită scandalurile cu cei apropiați."}, "14": {"plus": "Familia e cel mai de preț sprijin: afaceri de familie, contracte reușite, ajutor de la ai tăi. Alege-ți cu grijă oamenii cu care lucrezi.", "minus": "Pot apărea neînțelegeri sau amestecul unor terți în relații. Încă se pot preveni, dacă ești {atent|atentă} din timp."}, "15": {"plus": "Ești pe drumul cel bun, iar situația urcă la un nivel nou. Acceptă variantele noi: succesul vine din strategie.", "minus": "Ți-ai asumat un risc crezând că ai prevăzut totul. Prea multă încredere în tine poate costa, așa că mai verifică o dată."}, "16": {"plus": "Un început bun în carieră sau în afaceri, un loc de muncă mai avantajos, poate chiar o mutare în altă țară. Deocamdată sunt mai multe planuri decât fapte.", "minus": "Ești {prins|prinsă} în obligații și nu prea ai timp pentru tine. Găsește măcar mici momente de liniște."}, "17": {"plus": "Ai trecut de primul prag și ai luat-o înainte. Aliații se unesc să te ajute la pasul următor, deși urmează încă muncă.", "minus": "S-ar putea să nu primești aprobarea pe care o aștepți și să pierzi câțiva aliați. Nu pune la suflet invidia altora."}, "18": {"plus": "E timpul să culegi roadele: premii, sărbători, călătorii, avansare. Nu începe proiecte noi, bucură-te de ce ai.", "minus": "Hârtii, instituții și reguli stricte îți pot îngrădi mișcările. Ține-ți actele în ordine și respectă termenele."}, "19": {"plus": "Rivalii s-au relaxat, iar tu ești cu o jumătate de pas înainte. Acționează cu istețime, nu direct.", "minus": "Unele rezultate par decise dinainte, iar tu doar bifezi formalități. Fii {atent|atentă} la cine spune adevărul și cine nu."}, "20": {"plus": "O victorie deplină și fără capcane, un adevărat triumf. Vei afla de ea puțin mai târziu.", "minus": "Ai muncit și ai riscat, dar meritele le ia altcineva. Fă-ți contribuția vizibilă și nu tăcea despre ea."}, "21": {"plus": "Crești în toate direcțiile. Fii doar {atent|atentă} la ce se petrece cu cei din jur.", "minus": "În jurul tău se adună nemulțumiri și oboseală. Ascultă-i pe cei apropiați și pe colegi înainte ca ele să devină piedici."}, "22": {"plus": "Toate drumurile sunt deschise, doar lenea te poate opri. Multele treburi îți aduc experiență și o victorie rapidă.", "minus": "Problemele vin din mai multe părți deodată. Rezolvă-le pe loc, una câte una, ca să nu se adune."}, "23": {"plus": "Rezultatul e aproape în mâinile tale, mai e nevoie de un ultim efort. Piedicile rămase sunt mici.", "minus": "Greșeli vechi pot ieși la iveală, iar cineva te poate vorbi de rău. Fii {corect|corectă} în tot ce faci și nu te baza pe indulgența altora."}, "24": {"plus": "Ți-ai luat multe pe umeri, dar se va răsplăti curând: recunoaștere, primă, avansare. Mergi înainte cu încredere.", "minus": "Ai împotrivă oameni influenți, iar când rezolvi o problemă apare alta. Nu te lupta pe toate fronturile și cere ajutor."}, "25": {"plus": "E momentul să faci primii pași spre ce ți-ai propus. Acceptă ce îți vine în mână și construiește în paralel proiectul tău.", "minus": "Momentul potrivit a trecut, iar acum concurența e mai mare. Adaptează-ți ideea la ce se caută azi."}, "26": {"plus": "Acționează, dar cu prudență, alături de câțiva oameni de încredere. În discuții și la controale ești în avantaj dacă ai actele pregătite.", "minus": "Cineva din jur nu-ți dă informații corecte. Verifică totul de două ori și caută o înțelegere în loc de o dispută."}, "27": {"plus": "Împărtășește-ți ideea cu echipa: {singur|singură} nu reușești, împreună faceți saltul.", "minus": "Ideea ta poate fi preluată de altcineva. Păstrează ce e mai important pentru tine până la momentul potrivit."}, "28": {"plus": "Creștere în carieră și împlinire creativă, uși care se deschid. Chiar la serviciu îți poți întâlni {viitoarea soție|viitorul soț}.", "minus": "Pot apărea dispute lungi și formalități legate de bani sau de bunuri. Cere din timp sfatul unui specialist."}, "29": {"plus": "O sursă nouă și neașteptată de venit. Puțin efort acum poate aduce mult mai târziu.", "minus": "Tentația câștigului rapid te poate împinge să treci peste alții. Rămâi {corect|corectă}, ca să nu-ți faci dușmani."}, "30": {"plus": "Apare un aliat curajos, gata să te ajute să te pui pe picioare. Schimbări plăcute în viața de zi cu zi.", "minus": "Mici greutăți cu banii, mai ales cu creditele sau bugetul comun. Fii {atent|atentă} la ofertele prea bune și la cine îți cere bani."}, "31": {"plus": "Munca ta stăruitoare e prețuită de cineva care te susține din umbră. Orizontul se lărgește și îți crește măiestria.", "minus": "Munca nu e plătită cum merită, iar talentul nu e văzut. Nu-ți irosi timpul acolo unde nu ești {apreciat|apreciată}."}, "32": {"plus": "Știi să-ți înmulțești banii, iar ce ai investit se întoarce. Un timp bun pentru cumpărături mari și pentru a-ți recupera datoriile.", "minus": "Proiectele financiare noi sunt nesigure acum. Culege roadele a ce ai deja, nu porni investiții noi."}, "33": {"plus": "Ai nevoie de tărie: economisește-ți puterile și banii. Forța ta interioară te trece prin greutăți fără pierderi mari.", "minus": "Vremuri mai strâmte: mai puțini bani, mai puțin sprijin, mai puțină energie. Nu porni nimic riscant și ține-te de lucrurile sigure."}, "34": {"plus": "Un dar, o datorie returnată sau un sprijin sincer, fără condiții. Propunerile sunt bune, mai ai doar puțin de așteptat.", "minus": "S-ar putea să plătești mai mult decât ai socotit sau să primești mai puțin. Citește bine condițiile înainte să te angajezi."}, "35": {"plus": "Un venit mic, dar stabil, din experiența adunată. O descoperire nouă te poate ajuta să avansezi.", "minus": "Primești mai puțin decât meriți, iar meritele tale le ia altcineva. Uneori e mai înțelept să lași o idee deoparte și să începi alta."}, "36": {"plus": "Ești ca pe o insulă ocrotită: necazurile altora nu te ating. E timpul să-ți șlefuiești talentul și să te apuci de ce ți-ai propus de mult.", "minus": "Muncești mult, cu puțin profit și puțină bucurie, dar nu poți renunța acum. Du lucrurile la capăt și trage învățăminte pentru data viitoare."}, "37": {"plus": "Achiziții, renovări și îmbunătățiri care vin aproape de la sine. Perspective mari, iar succesul te privește direct pe tine.", "minus": "Ce părea sigur se poate risipi repede. Nu te lăsa {folosit|folosită} și ai grijă cui îți dai încrederea."}, "38": {"plus": "Stabilitate financiară, o căsnicie solidă, un salariu mai bun sau un loc de muncă sigur. Investițiile în casă sunt avantajoase.", "minus": "Cei pe care te bazai te pot refuza în ultimul moment. Te poți simți {singur|singură} printre mulți oameni, așa că sprijină-te pe tine."}, "39": {"plus": "Nu te grăbi: curând vine o ofertă mai bună, cu condiții mai avantajoase.", "minus": "Mai bine o vrabie în mână: nu aștepta mai mult decât ți s-a oferit. Ce ai deja e un dar."}, "40": {"plus": "Poziția ta e solidă și poți acționa deschis, iar resursele care lipsesc se găsesc pe parcurs. Un moment bun pentru economii și investiții.", "minus": "Situația alunecă încet în defavoarea ta, iar strategia veche nu mai merge. Fii {atent|atentă} la bani și la oamenii interesați din jur."}, "41": {"plus": "O idee mică poate crește într-un proiect profitabil, dar cere investiții. Împarte banii pe mai multe direcții, iar investițiile mai vechi încep să dea roade.", "minus": "Banii investiți acum se pot duce ca apa în nisip. Renunță la ce nu merge înainte ca pierderile să crească."}, "42": {"plus": "Bogăție și lansări reușite: imobile, afaceri mari, un partener înstărit. Tranzacțiile au șanse bune.", "minus": "Cariera, afacerea și banii cer atenție în perioada următoare. Evită riscurile financiare și ține-ți bugetul strâns."}, "43": {"plus": "Un mic câștig pentru care va trebui să lupți. Nu renunța: rezultatul merită efortul.", "minus": "Pot ieși la suprafață supărări vechi și dorințe de răzbunare. Iartă ce poți și stai departe de oamenii care nu-ți vor binele."}, "44": {"plus": "O liniște temporară: e momentul să cauți un compromis și aliați. Ieșirea e aproape.", "minus": "Mici reproșuri și neînțelegeri în cuplu sau între parteneri. Regândește-ți atitudinea înainte ca ele să se adune."}, "45": {"plus": "Rădăcina greutăților e în tine, deci și cheia lor. E o șansă să scapi de ce te ține pe loc și s-o iei de la capăt.", "minus": "Cineva din umbră încearcă să te scoată din echilibru. Ai grijă de ce îți e drag și caută-ți sprijin."}, "46": {"plus": "Criza, datoriile și rivalii se retrag. Nu turna gaz pe foc: situația se rezolvă de la sine.", "minus": "Lucrurile încetinesc atât de tare încât unele nu mai pornesc. Acceptă ce s-a oprit și îndreaptă-ți energia spre altceva."}, "47": {"plus": "Liniștea de după furtună: ai păstrat o parte din succes. Acceptă și recompensele mici, curând totul se poate schimba.", "minus": "Stabilitatea poate fi pusă la încercare pe mai multe fronturi. Lasă supărările în urmă și evită disputele lungi."}, "48": {"plus": "Necazurile s-au retras și găsești o ieșire avantajoasă. Închide liniștit ce a rămas nerezolvat.", "minus": "Dacă mergi pe vechiul plan, rămâi pe loc. Oprește-te, cere ajutorul altora și caută o cale nouă."}, "49": {"plus": "Vei afla cine te-a rănit și îți vei lua revanșa. Uneori va trebui să joci pe limba celuilalt.", "minus": "Lângă tine poate fi un om cu două fețe. Ferește-te de afaceri dubioase și păstrează dovezi pentru tot ce faci."}, "50": {"plus": "Capcana e doar aparentă: te eliberezi ușor de obligații dacă ai încredere în omul de lângă tine. Te încurcă doar frica și orgoliul.", "minus": "Te simți {legat|legată} de obligații și {ținut|ținută} sub control. Caută cu răbdare o cale să-ți recapeți libertatea."}, "51": {"plus": "Problemele vin mai ales din propriile alegeri: certuri pornite din poziții slabe sau lucruri începute nepregătit. Oprește-te și pregătește-te mai bine.", "minus": "O perioadă apăsătoare, în care ajutorul vine greu. Bazează-te pe intuiție și fii {prudent|prudentă}."}, "52": {"plus": "Ceva se încheie și altceva începe: pe ce a rămas poți construi ceva nou. O dispută se încheie, iar asta aduce ușurare.", "minus": "O dezamăgire din partea cuiva apropiat te poate costa ceva de preț. Iartă și mergi mai departe."}, "53": {"plus": "O mică victorie neașteptată: norocul ți-a zâmbit. Ce ți-ai propus se poate realiza cu puțin efort, dar rivalii devin mai activi.", "minus": "Nu te baza pe noroc și nici pe indulgența altora. Rivalii te iau în serios, așa că pregătește-te bine."}, "54": {"plus": "Acționează imediat și deschis: strategia e bună și ai sprijinul celor care decid. Te poate aștepta o victorie răsunătoare.", "minus": "Trebuie să acționezi repede, deși nu ești {pregătit|pregătită}. Păstrează-ți reputația și demnitatea, orice ar fi."}, "55": {"plus": "Bătălia abia urmează: pune ordine în acte și conturi și împacă-te cu cei apropiați. Caută compromisul cu diplomație.", "minus": "Situația e dusă de emoții, nu de rațiune, iar cei din jur pot reacționa impulsiv. Păstrează-ți calmul și nu răspunde la provocări."}, "56": {"plus": "Succesul vine, dar cu greutăți și concurență pe care le poți depăși. Ești de partea dreptății, chiar dacă te costă efort.", "minus": "Cineva influent, un șef, o instituție sau părinții, ține frâiele. Cât timp nu renunți, nimic nu e decis."}}};
+
+  function sDate(dt) { return dt.d + ' ' + MONTHS_GEN[dt.m - 1] + ' ' + dt.y; }
+  function sDayBefore(dt) { var x = new Date(dt.y, dt.m - 1, dt.d - 1); return { d: x.getDate(), m: x.getMonth() + 1, y: x.getFullYear() }; }
+  function sToday() { var x = new Date(); return { d: x.getDate(), m: x.getMonth() + 1, y: x.getFullYear() }; }
+  function sTxt(e) { return e && e.text ? e.text : ''; }
+  function sCap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+  var S_LIGHT = [1, 0.72, 0.5, 0.26, 0.1];
+  var S_TONE = ['Lună liniștită', 'Lună bună', 'Lună cu încercări', 'Lună tensionată', 'Lună tensionată'];
+  function sMoon(f, cls) {
+    var r = 15, c = 17, lit = '';
+    if (f >= 0.99) lit = 'M' + c + ',' + (c - r) + ' a' + r + ',' + r + ' 0 1,1 0,' + 2 * r + ' a' + r + ',' + r + ' 0 1,1 0,' + (-2 * r) + ' Z';
+    else if (f > 0.01) lit = 'M' + c + ',' + (c - r) + ' A' + r + ',' + r + ' 0 0,1 ' + c + ',' + (c + r) + ' A' + (r * Math.abs(1 - 2 * f)).toFixed(2) + ',' + r + ' 0 0,' + (f > 0.5 ? 1 : 0) + ' ' + c + ',' + (c - r) + ' Z';
+    return '<svg viewBox="0 0 34 34" class="st-moon' + (cls ? ' ' + cls : '') + '" aria-hidden="true"><circle cx="17" cy="17" r="15" class="d"/>' + (lit ? '<path d="' + lit + '" class="l"/>' : '') + '</svg>';
+  }
+  function sOuterNeg(p) { return ['ZS5', 'TS5', 'TZS5', 'TTS5'].filter(function (k) { return p.neg[k]; }).length; }
+  function sOuterText(p) {
+    var k = P.keys(p), out = [];
+    var ts = ST.ts5_sphere[k.ts5Sphere], zt = ST.zs5_tzs5[k.zs5Tzs5], tt = ST.tts5[k.tts5];
+    if (ts) out.push(p.neg.TS5 ? ts.minus : ts.plus);
+    if (zt) out.push(zt.text);
+    if (k.tts5 === '-' && tt) out.push(tt.text);
+    return out;
+  }
+
+  function storyYearNav(ctx, sy) {
+    var now = P.solarYear(ctx.birth, sToday()), opts = '';
+    for (var y = Math.max(ctx.birth.y, now - 3); y <= now + 6; y++) opts += '<option value="' + y + '"' + (y === sy ? ' selected' : '') + '>' + sDate(P.birthdayIn(ctx.birth, y)) + '</option>';
+    function btn(y, label) { return '<button type="button" data-sy="' + y + '" class="' + (y === sy ? 'on' : '') + '"' + (y < ctx.birth.y ? ' disabled' : '') + '>' + label + '</button>'; }
+    return '<div class="st-nav" role="group" aria-label="Alege anul">' + btn(now, 'Anul acesta') + btn(now + 1, 'Anul următor') +
+      '<label class="st-other"><span>Alt an, de la</span><select data-sy-select>' + opts + '</select></label></div>';
+  }
+
+  function storyHTML(ctx, sy) {
+    var b = ctx.birth, from = P.birthdayIn(b, sy), to = sDayBefore(P.birthdayIn(b, sy + 1));
+    var p = P.yearPrognosis(b, ctx.nameArc, sy, sy), k = P.keys(p);
+    var cat = p.ageInfo.category, h = '';
+    var nowSy = P.solarYear(b, sToday());
+    var when = sy === nowSy ? 'anul pe care îl trăiești acum' : sy > nowSy ? 'anul care vine' : 'un an trecut';
+
+    h += '<header class="st-head">';
+    h += '<p class="st-for">' + esc(ctx.first) + ', ' + when + '</p>';
+    h += '<h2>' + sCap(sDate(from)) + ' – ' + sDate(to) + '</h2>';
+    h += '<p class="st-age">Anul tău începe de ziua ta, nu pe 1 ianuarie. În el împlinești ' + p.age + ' ' + yearsWord(p.age) + '.</p>';
+    h += storyYearNav(ctx, sy);
+    h += '</header>';
+
+    // 1. anul pe scurt
+    var verdict = sTxt(ST.age_category[String(cat)]);
+    var pat = ST.sign_patterns[k.pattern];
+    h += '<section class="st-block"><h3>Anul pe scurt</h3>';
+    h += '<p class="st-lead">' + esc(verdict) + '</p>';
+    if (pat) h += '<p>' + esc(pat.text) + '</p>';
+    h += '</section>';
+
+    // 2. ce se întâmplă
+    h += '<section class="st-block"><h3>Ce ți se întâmplă în acest an</h3>';
+    var zp = ST.zs_planet[k.zsPlanet], tsp = ST.ts_sphere[k.tsSphere];
+    [zp && (p.neg.ZS ? zp.minus : zp.plus), tsp && (p.neg.TS ? tsp.minus : tsp.plus), sTxt(ST.zs_tzs[k.zsTzs]), sTxt(ST.ts_tts_tempo[k.tempo])].forEach(function (t) { if (t) h += '<p>' + esc(t) + '</p>'; });
+    var sm = ST.shadow_meaning[p.shadow > 0 ? 'positive' : 'negative'];
+    if (sm) h += '<p>' + esc(sm.text) + '</p>';
+    h += '</section>';
+
+    // 3. noroc și atenție
+    var luck = p.minors.PI != null ? ST.minor_arcana_pr[String(p.minors.PI)] : null;
+    var bitter = p.minors.OI != null ? ST.minor_arcana_pr[String(p.minors.OI)] : null;
+    var warn = [];
+    if (ctx.nodalMap[p.age]) warn.push('Un an-nod: la această vârstă se leagă un nod important al vieții tale. Nu lăsa lucrurile în voia lor, nu-ți subestima adversarul și nu risca.');
+    if (ctx.crit.all.indexOf(p.age) >= 0) warn.push(T.critical_years.summary.text);
+    if (luck || bitter || warn.length) {
+      h += '<section class="st-block st-two">';
+      if (luck) h += '<div class="st-good"><h4>Norocul anului</h4><p>' + esc(p.minors.flipped.PI ? luck.minus : luck.plus) + '</p></div>';
+      if (bitter) h += '<div class="st-warn"><h4>La ce să fii atent{|ă}</h4><p>' + esc(bitter.minus) + '</p></div>';
+      warn.forEach(function (w) { h += '<div class="st-warn"><h4>Un an de cotitură</h4><p>' + esc(w) + '</p></div>'; });
+      h += '</section>';
+    }
+
+    // 4. anul pas cu pas: cele 7 perioade de la ziua de naștere
+    var per = P.angelPeriods(b, sy);
+    if (per && per.length) {
+      h += '<section class="st-block"><h3>Anul, pas cu pas</h3><ol class="st-steps">';
+      per.forEach(function (a) {
+        var ae = ST.angel_periods[a.planet], isNow = cmp(sToday(), a.from) >= 0 && cmp(sToday(), a.to) <= 0;
+        h += '<li' + (isNow ? ' class="now"' : '') + '><span class="st-when">' + a.from.d + ' ' + MONTHS_GEN[a.from.m - 1] + ' – ' + a.to.d + ' ' + MONTHS_GEN[a.to.m - 1] + (isNow ? ' <b>acum</b>' : '') + '</span><p>' + esc(ae ? ae.text : '') + '</p></li>';
+      });
+      h += '</ol></section>';
+    }
+
+    // 5. lună cu lună
+    h += '<section class="st-block"><h3>Lună cu lună</h3><p class="st-note">Luna plină e o lună liniștită. Cu cât luna e mai subțire, cu atât cere mai multă atenție. Apasă pe o lună ca s-o citești.</p><div class="st-months">';
+    var m = from.m, y = from.y;
+    for (var i = 0; i < 12; i++) {
+      var pp = P.periodPrognosis(b, ctx.nameArc, { m: m, y: y });
+      var n = Math.min(sOuterNeg(pp), 4), isNowM = sToday().m === m && sToday().y === y;
+      h += '<details class="st-month t' + Math.min(n, 3) + '"' + (isNowM ? ' open' : '') + '><summary>' + sMoon(S_LIGHT[n]) + '<span class="st-mname">' + sCap(MONTHS[m - 1]) + ' ' + y + (isNowM ? ' <b>acum</b>' : '') + '</span><span class="st-mtone">' + S_TONE[n] + '</span></summary>';
+      h += '<div class="st-mbody">' + sOuterText(pp).map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') + '</div></details>';
+      m++; if (m > 12) { m = 1; y++; }
+    }
+    h += '</div></section>';
+
+    // 6. o zi anume
+    var t0 = sToday();
+    h += '<section class="st-block" id="stDay"><h3>O zi anume</h3><p class="st-note">Ai o întâlnire, un interviu, o semnătură? Alege data și vezi cum e ziua pentru tine.</p>';
+    h += '<div class="st-dayform"><input type="date" id="stDate" value="' + t0.y + '-' + pad2(t0.m) + '-' + pad2(t0.d) + '"></div><div id="stDayOut"></div></section>';
+    return h;
+  }
+
+  function storyDay(ctx) {
+    var v = ($('stDate') || {}).value, out = $('stDayOut');
+    if (!out) return;
+    var mm = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v || '');
+    if (!mm) { out.innerHTML = ''; return; }
+    var dt = { d: +mm[3], m: +mm[2], y: +mm[1] };
+    if (cmp(dt, ctx.birth) < 0) { out.innerHTML = '<p class="st-note">Alege o dată de după naștere.</p>'; return; }
+    var pp = P.periodPrognosis(ctx.birth, ctx.nameArc, dt), n = Math.min(sOuterNeg(pp), 4);
+    var ang = P.angelPeriodAt(ctx.birth, dt), ae = ang ? ST.angel_periods[ang.planet] : null;
+    var dayTone = ['O zi liniștită', 'O zi bună', 'O zi cu încercări', 'O zi tensionată', 'O zi tensionată'][n];
+    var h = '<div class="st-day t' + Math.min(n, 3) + '">' + sMoon(S_LIGHT[n]) + '<div><strong>' + sCap(sDate(dt)) + '</strong><span>' + dayTone + '</span></div></div>';
+    h += sOuterText(pp).map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('');
+    if (ae) h += '<p class="st-note">Perioada în care cade ziua (' + ang.from.d + ' ' + MONTHS_GEN[ang.from.m - 1] + ' – ' + ang.to.d + ' ' + MONTHS_GEN[ang.to.m - 1] + '): ' + esc(ae.text) + '</p>';
+    out.innerHTML = I18N_G(h);
+  }
+
+  function renderStory(ctx) {
+    var box = $('story');
+    if (!box) return;
+    if (STORY.sy == null) STORY.sy = P.solarYear(ctx.birth, sToday());
+    box.innerHTML = I18N_G(storyHTML(ctx, STORY.sy));
+    Array.prototype.forEach.call(box.querySelectorAll('[data-sy]'), function (el) {
+      el.addEventListener('click', function () { STORY.sy = +el.getAttribute('data-sy'); renderStory(ctx); box.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+    });
+    var sel = box.querySelector('[data-sy-select]');
+    if (sel) sel.addEventListener('change', function () { STORY.sy = +sel.value; renderStory(ctx); box.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+    var di = $('stDate'); if (di) di.addEventListener('change', function () { storyDay(ctx); });
+    storyDay(ctx);
+  }
+
   function render(ctx) {
     var r = $('results'), h = '';
+    h += '<div class="st" id="story"></div>';
+    h += '<details class="st-expert"><summary><span>Calculul complet, pentru cei pasionați</span><small>Semnele, arcanele, harta anilor vieții și toate tabelele, exact ca în metoda originală.</small></summary>';
     h += renderSummary(ctx);
     h += renderYear(ctx);
     h += renderMonths(ctx);
@@ -2612,13 +2803,16 @@ window.I18N_LANG="ro";
     if (ctx.biz) h += renderBusiness(ctx);
     h += renderKarmaBase(ctx);
     h += renderNotes();
+    h += '</details>';
     r.innerHTML = I18N_G(h);
     r.style.display = 'block';
+    STORY.sy = null;
+    renderStory(ctx);
     wireDay(ctx);
     wireLifeMap(ctx);
     wireChild(ctx);
     initScrollReveal();
-    var first = r.querySelector('.card');
+    var first = $('story');
     if (first && first.scrollIntoView) first.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
