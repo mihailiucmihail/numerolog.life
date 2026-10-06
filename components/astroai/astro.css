@@ -655,7 +655,7 @@
 @media (prefers-reduced-motion: reduce) { .ax .hk-mbar i { animation: none } }
 .ax .hk-mtag { z-index: 2; top: -20px }
 
-/* ───────── Pagini de intrare: „Efemeride” (rescris 6 oct.) ─────────
+/* ==== Pagini de intrare: „Efemeride” (rescris 6 oct.) ====
    Noapte albastru-cerneală, fără nebuloasă; ivoriu pentru text, șampanie doar pentru datele omului și butonul principal. */
 .ax.hk { --n-ink: #0d1020; --n-raise: #151a2e; --n-paper: #e9e4d8; --n-haze: #8d92a8; --n-champ: #cdb27a; --n-rust: #c26f5b; --n-line: rgba(233, 228, 216, .12);
   background: var(--n-ink); color: var(--n-paper) }
