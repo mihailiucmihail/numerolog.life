@@ -260,7 +260,7 @@ function SubsPanel({ subs, days }: { subs: AstroSubsStats; days: number }) {
 
 const PAGE_NAMES: Record<string, string> = {
   'hook_inceput-sau-sfarsit': 'Начало или конец месяца', 'hook_zile-10-13': 'Дни 10–13', 'hook_zile-14-22': 'Дни 14–22',
-  'hook_luna-nasterii': 'Месяц рождения', hook_varsator: 'Водолей', hook_cuplu: 'Пара',
+  'hook_luna-nasterii': 'Месяц рождения', hook_varsator: 'Водолей', 'hook_urmatoarele-12-luni': '12 месяцев (Прогноз)', hook_cuplu: 'Пара',
   site: 'Страница с датой (до 4 окт.)',
   cristal: 'Главная · Кристалл', compat: 'Главная · Совместимость', prog: 'Главная · Прогноз', pachet: 'Главная · Пакет',
 }

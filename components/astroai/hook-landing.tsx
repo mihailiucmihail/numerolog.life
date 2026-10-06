@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowUpRight, Check, LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react'
 import { StarField } from '@/components/star-field'
 import { HookLifeChart } from './hook-chart'
+import { HookMonths } from './hook-months'
 import { reportAstroHookBlocked, runAstroHook, trackAstroHook } from '@/app/actions/astroai-hook'
 import { startAstroCheckout } from '@/app/actions/astroai'
 import type { HookDef, HookResult } from '@/lib/astroai/hooks'
@@ -68,6 +69,8 @@ export function HookLanding({ hook }: { hook: HookView }) {
   const touched = useRef(false)
   const resultRef = useRef<HTMLDivElement>(null)
   const couple = hook.kind === 'couple'
+  const monthsKind = hook.kind === 'months'
+  const [firstName, setFirstName] = useState('')
   const def = ASTRO_PRODUCTS[hook.product]
   const price = usePriceFor(def.priceBani)
 
@@ -85,11 +88,13 @@ export function HookLanding({ hook }: { hook: HookView }) {
     const da = parseDate(a.raw), db = couple ? parseDate(b.raw) : null
     if (!da || !a.g) { setError('Scrie data nașterii ca ZZ.LL.AAAA, de exemplu 16.02.1987.'); return }
     if (couple && (!db || !b.g)) { setError('Scrie și data de naștere a partenerului / partenerei, ca ZZ.LL.AAAA.'); return }
+    if (monthsKind && !/^[\p{L}][\p{L}' .-]{0,39}$/u.test(firstName.trim())) { setError('Scrie prenumele, doar cu litere.'); return }
     setBusy(true)
     try {
-      const r = await runAstroHook(hook.slug, { ...da, g: a.g as 'm' | 'f', ...(couple && db ? { b: { ...db, g: b.g as 'm' | 'f' } } : {}) })
+      const r = await runAstroHook(hook.slug, { ...da, g: a.g as 'm' | 'f', ...(monthsKind ? { f: firstName.trim() } : {}), ...(couple && db ? { b: { ...db, g: b.g as 'm' | 'f' } } : {}) })
       if (!r.ok) { setError(r.error); return }
       setResult(r.result)
+      if (monthsKind) setFirst((p) => ({ ...p, f: firstName.trim() }))
       fbqTrack('Lead', { content_name: `hook_${hook.slug}` })
     } catch {
       setError('Nu am reușit să calculăm acum. Mai încearcă o dată.')
@@ -155,9 +160,15 @@ export function HookLanding({ hook }: { hook: HookView }) {
                   <DateField v={b} onChange={setB} who="Partenerul / partenera" idp="b" onTouch={touch} />
                 </>
               ) : <DateField v={a} onChange={setA} idp="a" onTouch={touch} />}
+              {monthsKind && (
+                <label className="hk-input" htmlFor="hk-first">
+                  <span>Prenumele tău</span>
+                  <input id="hk-first" autoComplete="given-name" maxLength={40} placeholder="de exemplu, Elena" value={firstName} onFocus={touch} onChange={(e) => setFirstName(e.target.value)} />
+                </label>
+              )}
               {error && <p className="hk-error" role="alert">{error}</p>}
               <button type="submit" className="payment-button hk-submit" disabled={busy}>{busy ? 'Se calculează…' : hook.cta} <ArrowUpRight size={16} /></button>
-              <p className="hk-note">Nu îți cerem nici numele, nici e-mailul.</p>
+              <p className="hk-note">{monthsKind ? 'Doar prenumele: nu îți cerem e-mailul.' : 'Nu îți cerem nici numele, nici e-mailul.'}</p>
             </form>
             <div className="hk-sample"><span>Exemplu</span><p>{hook.sample}</p></div>
           </>
@@ -170,6 +181,7 @@ export function HookLanding({ hook }: { hook: HookView }) {
             <h2>{result.title}</h2>
             <p className="hk-text">{result.text}</p>
             {result.extra && <p className="hk-extra">{result.extra}</p>}
+            {result.months && <HookMonths r={result.months} onUnlock={unlock} />}
             {result.rich?.charts && (
               <HookLifeChart birthYear={result.rich.years?.birthYear}
                 career={result.rich.charts.career} careerReading={result.rich.charts.careerReading}
@@ -252,7 +264,7 @@ export function HookLanding({ hook }: { hook: HookView }) {
               <div className="hk-names">
                 <div className="hk-steps"><span className="done"><Check size={13} /> Data nașterii</span><span className="now">Pasul 2 din 2 · {couple ? 'numele voastre' : 'numele tău'}</span></div>
                 <span className="hk-label">{couple ? 'Mai lipsesc numele voastre' : 'Mai lipsește numele tău'}</span>
-                <p className="hk-why">{couple ? 'Din nume calculăm cum vă potriviți cu adevărat și graficul relației voastre.' : 'Din nume calculăm graficul banilor, talentul tău ascuns și tot ce e doar al tău.'}</p>
+                <p className="hk-why">{couple ? 'Din nume calculăm cum vă potriviți cu adevărat și graficul relației voastre.' : monthsKind ? 'Cu numele complet, prognoza se calculează doar pentru tine: fiecare lună, zilele bune și anii de cotitură.' : 'Din nume calculăm graficul banilor, talentul tău ascuns și tot ce e doar al tău.'}</p>
                 <div className="hk-row2">
                   <label><span>Prenume</span><input value={first.f} onChange={(e) => setFirst({ ...first, f: e.target.value })} autoComplete="given-name" maxLength={40} /></label>
                   <label><span>Nume de familie</span><input value={first.l} onChange={(e) => setFirst({ ...first, l: e.target.value })} autoComplete="family-name" maxLength={40} /></label>

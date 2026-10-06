@@ -207,7 +207,7 @@ async function routeRequest(request: NextRequest) {
       return withGeoCookies(NextResponse.rewrite(target, { request: { headers } }), request, resolved)
     }
     // Paginile de intrare pentru reclame: astroai.ro/<slug> → /ro/astroai/l/<slug>, cu URL curat.
-    const hook = pathname.match(/^\/(zile-10-13|zile-14-22|inceput-sau-sfarsit|luna-nasterii|cuplu|varsator)\/?$/)
+    const hook = pathname.match(/^\/(zile-10-13|zile-14-22|inceput-sau-sfarsit|luna-nasterii|cuplu|varsator|urmatoarele-12-luni)\/?$/)
     if (hook) {
       const headers = new Headers(request.headers)
       headers.set('X-NEXT-INTL-LOCALE', 'ro')

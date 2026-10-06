@@ -1,0 +1,78 @@
+{
+ "ts5_sphere": {
+  "Самореализация": {
+   "text": "În culise se decid autorealizarea, stima de sine și avansarea ta viitoare.",
+   "arcana": [
+    1,
+    5,
+    17,
+    19
+   ]
+  },
+  "Партнёрство": {
+   "text": "În culise se decide viața ta personală și de familie.",
+   "arcana": [
+    2,
+    3,
+    6,
+    20
+   ]
+  },
+  "Бизнес и карьера": {
+   "text": "În culise se decid cariera, banii și bunăstarea ta.",
+   "arcana": [
+    4,
+    10,
+    14,
+    16
+   ]
+  },
+  "Личные интересы": {
+   "text": "Sunt amenințate sau puse în joc libertatea, hobby-urile, timpul tău și bunurile tale personale nemateriale.",
+   "arcana": [
+    8,
+    12,
+    18,
+    22
+   ]
+  },
+  "Препятствия": {
+   "text": "Ce se întâmplă în culise e periculos și poate deveni o povară îndelungată, mai ales în minus.",
+   "arcana": [
+    9,
+    11,
+    13,
+    15
+   ]
+  },
+  "Перспективы": {
+   "text": "În culise se decid planurile, avansarea și perspectivele tale.",
+   "arcana": [
+    7,
+    21
+   ]
+  }
+ },
+ "zs5_tzs5": {
+  "++": {
+   "text": "Vei afla rezultatul a ceea ce se pregătește în culise — Destinul a condus lucrurile în această direcție tocmai ca să te răsplătească."
+  },
+  "+-": {
+   "text": "Cineva a trișat: nu se mai poate îndrepta, dar nu e o tragedie — e doar o mică răutate; în schimb, acum știi cine e vinovatul."
+  },
+  "-+": {
+   "text": "Situația e îndreptată împotriva ta (sau ai pornit-o chiar tu), dar vei ieși învingăt{or|oare}."
+  },
+  "--": {
+   "text": "Periculos: nu vor exista învingători, îți vei face un dușman sau situația se va repeta — mai bine nu te băga în intrigi."
+  }
+ },
+ "tts5": {
+  "+": {
+   "text": "Dușmanii nu te sperie: chiar și cele mai critice situații se întorc în câștigul tău; dacă totul e în plus, ești stăpân{|ă} pe situație."
+  },
+  "-": {
+   "text": "Situația nu s-a încheiat: cei care ți-au greșit nu s-au îndepărtat mult și se pot întoarce; a rămas ceva nerezolvat sau o împăcare amânată — nu provoca soarta, fă ce ai promis. Îmbunătățirea sănătății într-o astfel de perioadă e doar temporară."
+  }
+ }
+}
