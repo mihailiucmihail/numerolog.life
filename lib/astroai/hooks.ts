@@ -136,7 +136,7 @@ export const HOOKS: Record<HookSlug, HookDef> = {
     cta: 'Arată-mi cele 12 luni',
     sample: 'Elena, 14.10.1992: „Luna cea mai liniștită: aprilie 2027. Luna care cere atenție: septembrie 2027…”',
     relief: 'Nu e horoscopul zodiei: e calculat doar pentru data și prenumele tău.',
-    upsellKicker: 'Ai văzut doar fazele lunilor.',
+    upsellKicker: 'Ai văzut o singură lună din douăsprezece.',
     upsellLead: 'Prognoza completă îți spune ce se întâmplă în fiecare lună, cine îți e alături și ce e bine să faci, inclusiv în luna cea grea.',
     meta: { title: 'Ce îți aduc următoarele 12 luni? · AstroAI', description: 'Din data nașterii și din prenume: ce îți aduce fiecare lună din următoarele 12.' },
   },
@@ -340,9 +340,10 @@ export function computeHook(slug: HookSlug, input: HookInput): HookResult | { er
     const sp = (n: number, one: string, many: string) => (n === 1 ? `o ${one}` : `${n} ${many}`)
     return {
       seal: '12', label: first,
-      title: r.calm ? `${sp(r.calm, 'lună liniștită', 'luni liniștite')} și ${sp(r.tense, 'lună tensionată', 'luni tensionate')}` : `${sp(r.tense, 'lună tensionată', 'luni tensionate')} în următorul an`,
+      title: r.calm && r.tense ? `${sp(r.calm, 'lună bună', 'luni bune')} și ${sp(r.tense, 'lună grea', 'luni grele')}`
+        : r.calm ? `${sp(r.calm, 'lună bună', 'luni bune')} în următorul an` : r.tense ? `${sp(r.tense, 'lună grea', 'luni grele')} în următorul an` : 'Un an fără luni grele',
       text: 'Calculat pentru data și prenumele tău, cu aceleași formule ca Prognoza completă.',
-      months: { ...r, best: { ...r.best, text: gender(r.best.text, g) }, first },
+      months: { ...r, best: { ...r.best, text: gender(r.best.text, g), energy: gender(r.best.energy, g), help: r.best.help ? gender(r.best.help, g) : null, care: r.best.care.map((t) => gender(t, g)) }, first },
     }
   }
   // cuplu
