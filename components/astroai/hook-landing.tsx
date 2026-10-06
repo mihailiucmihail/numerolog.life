@@ -1,5 +1,6 @@
 'use client'
 
+import { StarField } from '@/components/star-field'
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { Check, LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react'
@@ -134,11 +135,13 @@ export function HookLanding({ hook }: { hook: HookView }) {
     <main className="ax hk relative min-h-screen overflow-x-clip bg-[#0b0816]">
       <MetaPixel />
       <PromoBar />
-      <div className="hk-sky" aria-hidden />
+      {/* Fundalul original al site-ului */}
+      <StarField />
+      <div className="sky-glow" aria-hidden />
+      <div aria-hidden className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_top,rgba(212,175,55,0.10),transparent_55%),radial-gradient(ellipse_at_bottom_right,rgba(124,77,255,0.10),transparent_60%)]" />
       <div className="ax-wrap">
         <header className="hk-head">
           <Link href="/" className="wordmark" aria-label="AstroAI, acasă"><Sparkles className="brand-symbol" size={24} strokeWidth={1.1} /> astro<span>ai</span><small>.ro</small></Link>
-          <span className="hk-free">Gratuit, pe loc</span>
         </header>
 
         <section className={`hk-hero${result ? ' done' : ''}`}>
@@ -167,7 +170,6 @@ export function HookLanding({ hook }: { hook: HookView }) {
               <button type="submit" className="payment-button hk-submit" disabled={busy}>{busy ? 'Se calculează…' : hook.cta.replace(' · gratuit', '')}</button>
               <p className="hk-note">{monthsKind ? 'Doar prenumele: nu îți cerem e-mailul.' : 'Nu îți cerem nici numele, nici e-mailul.'}</p>
             </form>
-            <figure className="hk-sample"><blockquote>{hook.sample.replace(/^[^„]*„/, '„')}</blockquote><figcaption>{hook.sample.split(':')[0]}</figcaption></figure>
           </>
         )}
 

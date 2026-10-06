@@ -657,8 +657,9 @@
 
 /* ==== Pagini de intrare: „Efemeride” (rescris 6 oct.) ====
    Noapte albastru-cerneală, fără nebuloasă; ivoriu pentru text, șampanie doar pentru datele omului și butonul principal. */
-.ax.hk { --n-ink: #0d1020; --n-raise: #151a2e; --n-paper: #e9e4d8; --n-haze: #8d92a8; --n-champ: #cdb27a; --n-rust: #c26f5b; --n-line: rgba(233, 228, 216, .12);
-  background: var(--n-ink); color: var(--n-paper) }
+/* aceleași culori și același fundal ca pagina principală */
+.ax.hk { --n-ink: #0b0816; --n-raise: rgba(255, 255, 255, .045); --n-paper: var(--foreground); --n-haze: var(--muted-foreground); --n-champ: #d4af37; --n-rust: #d98a7a; --n-line: var(--border);
+  color: var(--n-paper) }
 .ax.hk .hk-sky { position: fixed; inset: 0; pointer-events: none; z-index: 0;
   background: radial-gradient(520px 520px at 88% -6%, rgba(233, 228, 216, .09), transparent 70%), radial-gradient(900px 600px at 50% 120%, rgba(60, 80, 140, .18), transparent 70%) }
 .ax.hk .ax-wrap { position: relative; z-index: 1; max-width: 560px; padding: 0 20px }
@@ -685,7 +686,7 @@
 .ax.hk .hk-gender button.on { background: var(--n-paper); color: var(--n-ink); font-weight: 600 }
 .ax.hk .hk-gender button:focus-visible, .ax.hk .hk-btn:focus-visible, .ax.hk .payment-button:focus-visible { outline: 2px solid var(--n-champ); outline-offset: 3px }
 .ax.hk .payment-button, .ax.hk .hk-btn { display: flex; width: 100%; align-items: center; justify-content: center; gap: 8px; min-height: 58px; border: 0; border-radius: 6px; background: var(--n-champ); color: var(--n-ink); box-shadow: none; font-weight: 700; font-size: 16.5px; letter-spacing: .01em; cursor: pointer; filter: none }
-.ax.hk .payment-button:hover, .ax.hk .hk-btn:hover { background: #d9c08c }
+.ax.hk .payment-button:hover, .ax.hk .hk-btn:hover { background: #e0bf4f }
 .ax.hk .hk-note { text-align: left; color: var(--n-haze); font-size: 13px }
 .ax.hk .hk-error { color: #f0a493 }
 
@@ -700,7 +701,7 @@
 .ax.hk .hk-moon-cell.now span { color: var(--n-paper); font-weight: 700 }
 .ax.hk .hk-moon-cell small { position: absolute; bottom: -15px; font-size: 9.5px; color: rgba(141, 146, 168, .7) }
 .ax.hk .hk-moon { width: 100%; max-width: 34px; height: auto; overflow: visible }
-.ax.hk .hk-moon-dark { fill: #1b2038; stroke: rgba(233, 228, 216, .16); stroke-width: .8 }
+.ax.hk .hk-moon-dark { fill: rgba(255, 255, 255, .06); stroke: rgba(233, 228, 216, .16); stroke-width: .8 }
 .ax.hk .hk-moon.empty .hk-moon-dark { fill: rgba(233, 228, 216, .03); stroke: rgba(233, 228, 216, .38); stroke-dasharray: 2 2.4 }
 .ax.hk .hk-moon-lit { fill: var(--n-paper); filter: drop-shadow(0 0 4px rgba(233, 228, 216, .35)) }
 .ax.hk .hk-moon-ring { fill: none; stroke-width: 1.6 }

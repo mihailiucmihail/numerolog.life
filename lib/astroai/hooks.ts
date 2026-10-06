@@ -124,7 +124,7 @@ export const HOOKS: Record<HookSlug, HookDef> = {
   'urmatoarele-12-luni': {
     slug: 'urmatoarele-12-luni', kind: 'months', product: 'prog',
     title: 'Ce îți aduc următoarele 12 luni?',
-    sub: 'Data nașterii și prenumele arată care luni vin ușor și care cer atenție. Vezi-le acum, gratuit, lună cu lună.',
+    sub: 'Din data nașterii și din prenume afli ce îți aduce fiecare lună: când vin oportunitățile, când e mai bine să nu te grăbești.',
     formLabel: 'Datele tale',
     resultKicker: 'Următoarele 12 luni',
     more: [
@@ -133,12 +133,12 @@ export const HOOKS: Record<HookSlug, HookDef> = {
       'Calculatorul zilei: alegi orice dată și vezi dacă e bună pentru o decizie',
       'Anul tău pe scurt și anii de cotitură din viața ta',
     ],
-    cta: 'Vezi lunile mele · gratuit',
+    cta: 'Arată-mi cele 12 luni',
     sample: 'Elena, 14.10.1992: „Luna cea mai liniștită: aprilie 2027. Luna care cere atenție: septembrie 2027…”',
     relief: 'Nu e horoscopul zodiei: e calculat doar pentru data și prenumele tău.',
     upsellKicker: 'Ai văzut doar fazele lunilor.',
     upsellLead: 'Prognoza completă îți spune ce se întâmplă în fiecare lună, cine îți e alături și ce e bine să faci, inclusiv în luna cea grea.',
-    meta: { title: 'Ce îți aduc următoarele 12 luni? · AstroAI', description: 'Din data nașterii și prenume: lunile liniștite și lunile care cer atenție. Gratuit, pe loc.' },
+    meta: { title: 'Ce îți aduc următoarele 12 luni? · AstroAI', description: 'Din data nașterii și din prenume: ce îți aduce fiecare lună din următoarele 12.' },
   },
   varsator: {
     slug: 'varsator', kind: 'zodiac', product: 'cristal',
