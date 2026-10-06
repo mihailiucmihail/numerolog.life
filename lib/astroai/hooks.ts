@@ -2,6 +2,7 @@ import 'server-only'
 import { solar2Lunar } from './lunar'
 import { careerChart, currentAge, personalChart, personalYears, readChart, YEAR_TEXT, type ChartReading, type LifeChart, type PersonalYears } from './life-chart'
 import data from './hooks-data.json'
+import { nextTwelveMonths, type MonthsResult } from './months'
 import type { AstroProduct } from './products'
 
 /**
@@ -9,8 +10,8 @@ import type { AstroProduct } from './products'
  * un mini-rezultat gratuit, calculat din data nașterii, înainte de a propune raportul.
  * Textele vin din aceleași tabele ca raportul (fără trimiteri la surse în interfață).
  */
-export type HookSlug = 'zile-10-13' | 'zile-14-22' | 'inceput-sau-sfarsit' | 'luna-nasterii' | 'cuplu' | 'varsator'
-export type HookKind = 'day' | 'month' | 'couple' | 'zodiac'
+export type HookSlug = 'zile-10-13' | 'zile-14-22' | 'inceput-sau-sfarsit' | 'luna-nasterii' | 'cuplu' | 'varsator' | 'urmatoarele-12-luni'
+export type HookKind = 'day' | 'month' | 'couple' | 'zodiac' | 'months'
 
 export interface HookDef {
   slug: HookSlug
@@ -120,6 +121,25 @@ export const HOOKS: Record<HookSlug, HookDef> = {
     upsellLead: 'Raportul vă arată ce vă ține, ce vă obosește și ce așteaptă fiecare de la celălalt fără s-o spună.',
     meta: { title: 'Cifra cuplului vostru · AstroAI', description: 'Din două date de naștere: țelul pentru care v-ați întâlnit. Gratuit, pe loc.' },
   },
+  'urmatoarele-12-luni': {
+    slug: 'urmatoarele-12-luni', kind: 'months', product: 'prog',
+    title: 'Ce îți aduc următoarele 12 luni?',
+    sub: 'Data nașterii și prenumele arată care luni vin ușor și care cer atenție. Vezi-le acum, gratuit, lună cu lună.',
+    formLabel: 'Datele tale',
+    resultKicker: 'Următoarele 12 luni',
+    more: [
+      'Ce aduce fiecare lună: cine te ajută, ce se decide în culise și unde e pericol',
+      'Ce e bine să faci în luna grea, ca să treacă ușor',
+      'Calculatorul zilei: alegi orice dată și vezi dacă e bună pentru o decizie',
+      'Anul tău pe scurt și anii de cotitură din viața ta',
+    ],
+    cta: 'Vezi lunile mele · gratuit',
+    sample: 'Elena, 14.10.1992: „Luna cea mai liniștită: aprilie 2027. Luna care cere atenție: septembrie 2027…”',
+    relief: 'Nu e horoscopul zodiei: e calculat doar pentru data și prenumele tău.',
+    upsellKicker: 'Ai văzut doar culoarea lunilor.',
+    upsellLead: 'Prognoza completă îți spune ce se întâmplă în fiecare lună, cine îți e alături și ce e bine să faci, inclusiv în luna cea grea.',
+    meta: { title: 'Ce îți aduc următoarele 12 luni? · AstroAI', description: 'Din data nașterii și prenume: lunile liniștite și lunile care cer atenție. Gratuit, pe loc.' },
+  },
   varsator: {
     slug: 'varsator', kind: 'zodiac', product: 'cristal',
     title: 'Perioada ta karmică a început deja?',
@@ -138,9 +158,9 @@ export const HOOKS: Record<HookSlug, HookDef> = {
 
 export function isHookSlug(v: unknown): v is HookSlug { return typeof v === 'string' && v in HOOKS }
 
-export interface HookInput { d: number; m: number; y: number; g: 'm' | 'f'; b?: { d: number; m: number; y: number; g: 'm' | 'f' } }
+export interface HookInput { d: number; m: number; y: number; g: 'm' | 'f'; /** prenumele (doar pentru «12 luni») */ f?: string; b?: { d: number; m: number; y: number; g: 'm' | 'f' } }
 export interface HookProfileItem { key: 'day' | 'month' | 'zodiac' | 'mission'; kicker: string; title: string; text: string }
-export interface HookResult { label: string; title: string; text: string; extra?: string; /** semnul mare de deasupra rezultatului: ziua, luna, zodia sau cifra */ seal: string; /** portretul datei: ziua, luna, zodia, misiunea (texte scurte, pe înțelesul tuturor) */ profile?: HookProfileItem[]; /** partea bogată, calculată doar din dată (aceleași calcule ca în Cristal) */ rich?: HookRich }
+export interface HookResult { label: string; title: string; text: string; extra?: string; /** semnul mare de deasupra rezultatului: ziua, luna, zodia sau cifra */ seal: string; /** portretul datei: ziua, luna, zodia, misiunea (texte scurte, pe înțelesul tuturor) */ profile?: HookProfileItem[]; /** partea bogată, calculată doar din dată (aceleași calcule ca în Cristal) */ rich?: HookRich; /** următoarele 12 luni, calculate ca în Prognoza */ months?: MonthsResult & { first: string } }
 
 export interface HookMapCell { n: number; name: string; count: number; open: boolean }
 export interface HookRich {
@@ -312,6 +332,18 @@ export function computeHook(slug: HookSlug, input: HookInput): HookResult | { er
     else if (next) when = `Următoarea ta perioadă karmică: ${RO_DATE(next.start)} – ${RO_DATE(next.end)}.${past ? ` Ultima a fost ${RO_DATE(past.start)} – ${RO_DATE(past.end)}.` : ''}`
     else when = 'Perioadele tale karmice le găsești în raport.'
     return { seal: ZODIAC_GLYPH[sign] || '✦', label: sign, title: `${sign}: ${current ? 'ești în perioada karmică' : 'perioada ta karmică'}`, text: when, extra: `Lecția zodiei tale în aceste perioade: ${gender(task, g)}`, profile: dateProfile(d, m, y, g, 'zodiac'), rich: richProfile(d, m, y, g) }
+  }
+  if (h.kind === 'months') {
+    const first = String(input.f || '').trim().replace(/\s+/g, ' ')
+    if (!/^[\p{L}][\p{L}' .-]{0,39}$/u.test(first)) return { error: 'Scrie prenumele doar cu litere.' }
+    const r = nextTwelveMonths({ d, m, y }, first)
+    const sp = (n: number, one: string, many: string) => (n === 1 ? `o ${one}` : `${n} ${many}`)
+    return {
+      seal: '12', label: first,
+      title: r.calm ? `${sp(r.calm, 'lună liniștită', 'luni liniștite')} și ${sp(r.tense, 'lună tensionată', 'luni tensionate')}` : `${sp(r.tense, 'lună tensionată', 'luni tensionate')} în următorul an`,
+      text: 'Fiecare bară e o lună. Cu cât e mai înaltă, cu atât luna e mai liniștită pentru tine. Calculul e cel din Prognoza completă.',
+      months: { ...r, best: { ...r.best, text: gender(r.best.text, g) }, first },
+    }
   }
   // cuplu
   const b = input.b

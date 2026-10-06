@@ -616,3 +616,41 @@
 .ax .hk-year-lock { display: flex; gap: 7px; align-items: flex-start; font-size: 14px; line-height: 1.45; color: rgba(238,233,244,.78) }
 .ax .hk-year-lock svg { flex: none; margin-top: 3px; color: var(--primary) }
 .ax .hk-year-cta { margin-top: 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 14.5px; font-weight: 600; color: #f1d27a }
+
+/* următoarele 12 luni (Prognoza) */
+.ax .hk-months { margin: 22px -6px 6px; padding: 20px 14px 18px; border-radius: 22px; text-align: left; border: 1px solid rgba(212,175,55,.45);
+  background: radial-gradient(120% 70% at 50% 0%, rgba(212,175,55,.14), transparent 60%), linear-gradient(180deg, #1a1230, #0f0a1f); box-shadow: 0 20px 60px -24px rgba(212,175,55,.35) }
+.ax .hk-mbars { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; align-items: end; height: 170px; padding: 18px 2px 0 }
+.ax .hk-mbar { position: relative; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 4px }
+.ax .hk-mbar i { display: block; width: 100%; border-radius: 6px 6px 3px 3px; transform-origin: bottom; animation: hkGrow .7s cubic-bezier(.2,.8,.2,1) both }
+.ax .hk-mbar.t0 i { background: linear-gradient(180deg, #a8e0a0, #4f9a5a) }
+.ax .hk-mbar.t1 i { background: linear-gradient(180deg, #f1d27a, #b8892c) }
+.ax .hk-mbar.t2 i { background: linear-gradient(180deg, #e7a46f, #a8603a) }
+.ax .hk-mbar.t3 i { background: linear-gradient(180deg, #ee8a8a, #9a3b48) }
+.ax .hk-mbar.best i { box-shadow: 0 0 18px rgba(168,224,160,.7) }
+.ax .hk-mbar.hard i { box-shadow: 0 0 18px rgba(238,138,138,.65) }
+.ax .hk-mbar.now span { color: #f1d27a; font-weight: 700 }
+.ax .hk-mbar span { font-size: 10.5px; color: rgba(238,233,244,.65) }
+.ax .hk-mbar small { position: absolute; bottom: -16px; font-size: 9.5px; color: rgba(238,233,244,.4) }
+.ax .hk-mtag { position: absolute; top: -2px; font-style: normal; font-size: 12px; font-weight: 800; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center }
+.ax .hk-mtag.good { color: #10301a; background: #a8e0a0 }
+.ax .hk-mtag.bad { color: #3a0f16; background: #ee8a8a }
+.ax .hk-mlegend { display: flex; gap: 14px; justify-content: center; margin: 22px 0 14px; font-size: 12px; color: rgba(238,233,244,.6) }
+.ax .hk-mlegend b { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 5px; vertical-align: -1px }
+.ax .hk-mlegend .g { background: #6fbf72 } .ax .hk-mlegend .y { background: #d9a94f } .ax .hk-mlegend .r { background: #d9707a }
+.ax .hk-mcard { margin-top: 10px; padding: 14px 15px; border-radius: 16px; border: 1px solid }
+.ax .hk-mcard.good { border-color: rgba(168,224,160,.4); background: rgba(168,224,160,.07) }
+.ax .hk-mcard.bad { border-color: rgba(238,138,138,.45); background: rgba(238,138,138,.07) }
+.ax .hk-mcard-k { display: flex; align-items: center; gap: 6px; font-size: 12px; letter-spacing: .1em; text-transform: uppercase }
+.ax .hk-mcard.good .hk-mcard-k { color: #a8e0a0 } .ax .hk-mcard.bad .hk-mcard-k { color: #ee8a8a }
+.ax .hk-mcard strong { display: block; font-family: var(--font-cormorant); font-weight: 500; font-size: 28px; line-height: 1.15; color: #fff; margin: 4px 0 2px }
+.ax .hk-mcard-s { display: block; font-size: 13.5px; color: rgba(238,233,244,.65); margin-bottom: 6px }
+.ax .hk-mcard p { font-size: 15.5px; line-height: 1.6; color: rgba(238,233,244,.9) }
+.ax .hk-mcard-lock { position: relative; margin-top: 6px }
+.ax .hk-mcard-lock p { filter: blur(4.5px); user-select: none; opacity: .75 }
+.ax .hk-mcard-lock span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 7px; font-weight: 700; font-size: 14.5px; color: #fff }
+.ax .hk-mrest { display: flex; gap: 8px; align-items: flex-start; margin: 14px 2px; font-size: 14px; line-height: 1.5; color: rgba(238,233,244,.78) }
+.ax .hk-mrest svg { flex: none; margin-top: 3px; color: var(--primary) }
+@keyframes hkGrow { from { transform: scaleY(0) } to { transform: scaleY(1) } }
+@media (prefers-reduced-motion: reduce) { .ax .hk-mbar i { animation: none } }
+.ax .hk-mtag { z-index: 2; top: -20px }
