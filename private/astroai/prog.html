@@ -2719,15 +2719,16 @@ window.I18N_LANG="ro";
     var luck = p.minors.PI != null ? ST.minor_arcana_pr[String(p.minors.PI)] : null;
     var bitter = p.minors.OI != null ? ST.minor_arcana_pr[String(p.minors.OI)] : null;
     var warn = [];
-    if (ctx.nodalMap[p.age]) warn.push('Un an-nod: la această vârstă se leagă un nod important al vieții tale. Nu lăsa lucrurile în voia lor, nu-ți subestima adversarul și nu risca.');
+    if (ctx.nodalMap[p.age]) warn.push('La vârsta asta se hotărăsc lucruri care contează pentru mulți ani de acum înainte. Nu lăsa lucrurile în voia lor și nu risca inutil.');
     if (ctx.crit.all.indexOf(p.age) >= 0) warn.push('Un an în care se pot schimba lucruri importante: munca, banii, familia sau ce îți dorești de la viață. Nu lua decizii mari în grabă și cântărește fiecare pas.');
     if (luck || bitter || warn.length) {
       h += '<section class="st-block st-two">';
-      var flip = luck && p.minors.flipped.PI;
-      if (luck && !flip) h += '<div class="st-good"><h4>Norocul anului</h4><p>' + esc(luck.plus) + '</p></div>';
-      if (flip && (!bitter || p.minors.PI !== p.minors.OI)) h += '<div class="st-warn"><h4>Anul acesta norocul nu vine de la sine</h4><p>' + esc(luck.minus) + '</p></div>';
-      if (bitter) h += '<div class="st-warn"><h4>' + (flip && p.minors.PI === p.minors.OI ? 'Anul acesta norocul nu vine de la sine' : 'La ce să fii atent{|ă}') + '</h4><p>' + esc(bitter.minus) + '</p></div>';
-      warn.forEach(function (w) { h += '<div class="st-warn"><h4>Un an de cotitură</h4><p>' + esc(w) + '</p></div>'; });
+      var flip = luck && p.minors.flipped.PI, care = [];
+      if (luck && !flip) h += '<div class="st-good"><h4>Ce te ajută anul acesta</h4><p>' + esc(luck.plus) + '</p></div>';
+      if (flip) care.push(luck.minus);
+      if (bitter && care.indexOf(bitter.minus) < 0) care.push(bitter.minus);
+      if (care.length) h += '<div class="st-warn"><h4>La ce să fii atent{|ă}</h4>' + care.map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') + '</div>';
+      if (warn.length) h += '<div class="st-warn"><h4>Un an de cotitură</h4>' + warn.map(function (w) { return '<p>' + esc(w) + '</p>'; }).join('') + '</div>';
       h += '</section>';
     }
 
