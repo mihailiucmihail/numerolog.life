@@ -2720,11 +2720,13 @@ window.I18N_LANG="ro";
     var bitter = p.minors.OI != null ? ST.minor_arcana_pr[String(p.minors.OI)] : null;
     var warn = [];
     if (ctx.nodalMap[p.age]) warn.push('Un an-nod: la această vârstă se leagă un nod important al vieții tale. Nu lăsa lucrurile în voia lor, nu-ți subestima adversarul și nu risca.');
-    if (ctx.crit.all.indexOf(p.age) >= 0) warn.push(T.critical_years.summary.text);
+    if (ctx.crit.all.indexOf(p.age) >= 0) warn.push('Un an în care se pot schimba lucruri importante: munca, banii, familia sau ce îți dorești de la viață. Nu lua decizii mari în grabă și cântărește fiecare pas.');
     if (luck || bitter || warn.length) {
       h += '<section class="st-block st-two">';
-      if (luck) h += '<div class="st-good"><h4>Norocul anului</h4><p>' + esc(p.minors.flipped.PI ? luck.minus : luck.plus) + '</p></div>';
-      if (bitter) h += '<div class="st-warn"><h4>La ce să fii atent{|ă}</h4><p>' + esc(bitter.minus) + '</p></div>';
+      var flip = luck && p.minors.flipped.PI;
+      if (luck && !flip) h += '<div class="st-good"><h4>Norocul anului</h4><p>' + esc(luck.plus) + '</p></div>';
+      if (flip && (!bitter || p.minors.PI !== p.minors.OI)) h += '<div class="st-warn"><h4>Anul acesta norocul nu vine de la sine</h4><p>' + esc(luck.minus) + '</p></div>';
+      if (bitter) h += '<div class="st-warn"><h4>' + (flip && p.minors.PI === p.minors.OI ? 'Anul acesta norocul nu vine de la sine' : 'La ce să fii atent{|ă}') + '</h4><p>' + esc(bitter.minus) + '</p></div>';
       warn.forEach(function (w) { h += '<div class="st-warn"><h4>Un an de cotitură</h4><p>' + esc(w) + '</p></div>'; });
       h += '</section>';
     }
