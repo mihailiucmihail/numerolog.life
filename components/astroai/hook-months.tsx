@@ -1,54 +1,85 @@
 'use client'
 
-import { ArrowDown, LockKeyhole, Sparkle, TriangleAlert } from 'lucide-react'
+import { LockKeyhole } from 'lucide-react'
 import type { MonthsResult } from '@/lib/astroai/months'
 
+const SHORT = ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'noi', 'dec']
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
-/** Cele 12 luni: barele (din Prognoza), luna cea mai liniștită deschisă, luna grea și restul blocate. */
+/** Partea luminată a lunii după câte semne exterioare sunt în minus (0 = lună plină). */
+export const LIGHT = [1, 0.72, 0.5, 0.26, 0.1]
+
+/** O lună desenată: f = cât din disc e luminat (0…1), crește spre dreapta. */
+export function Moon({ f, mark }: { f: number | null; mark?: 'best' | 'hard' }) {
+  const r = 15, c = 17
+  let lit: string | null = null
+  if (f !== null && f >= 0.99) lit = `M${c},${c - r} a${r},${r} 0 1,1 0,${2 * r} a${r},${r} 0 1,1 0,${-2 * r} Z`
+  else if (f !== null && f > 0.01) {
+    const rx = (r * Math.abs(1 - 2 * f)).toFixed(2)
+    lit = `M${c},${c - r} A${r},${r} 0 0,1 ${c},${c + r} A${rx},${r} 0 0,${f > 0.5 ? 1 : 0} ${c},${c - r} Z`
+  }
+  return (
+    <svg viewBox="0 0 34 34" className={`hk-moon${mark ? ` ${mark}` : ''}${f === null ? ' empty' : ''}`} aria-hidden>
+      <circle cx={c} cy={c} r={r} className="hk-moon-dark" />
+      {lit && <path d={lit} className="hk-moon-lit" />}
+      {mark && <circle cx={c} cy={c} r={r + 1.2} className="hk-moon-ring" />}
+    </svg>
+  )
+}
+
+/** Rândul celor 12 luni, gol (înainte de calcul) sau plin. */
+export function MoonRow({ cells }: { cells: { key: string; m: number; y: number; f: number | null; mark?: 'best' | 'hard'; now?: boolean }[] }) {
+  return (
+    <div className="hk-moons" role="img" aria-label="Următoarele 12 luni: luna plină e o lună liniștită, luna subțire e o lună tensionată">
+      {cells.map((c, i) => (
+        <div key={c.key} className={`hk-moon-cell${c.now ? ' now' : ''}`} style={{ animationDelay: `${i * 70}ms` }}>
+          <Moon f={c.f} mark={c.mark} />
+          <span>{SHORT[c.m - 1]}</span>
+          {(i === 0 || c.m === 1) && <small>{c.y}</small>}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/** Lunile următoare, goale: arată ce urmează să fie calculat. */
+export function emptyMonths(today = new Date()) {
+  const out: { key: string; m: number; y: number; f: null }[] = []
+  let m = today.getMonth() + 1, y = today.getFullYear()
+  for (let i = 0; i < 12; i++) { out.push({ key: `${y}-${m}`, m, y, f: null }); m++; if (m > 12) { m = 1; y++ } }
+  return out
+}
+
+/** Cele 12 luni: luna cea mai liniștită deschisă, luna grea doar numită, restul în raport. */
 export function HookMonths({ r, onUnlock }: { r: MonthsResult & { first: string }; onUnlock: () => void }) {
-  const bestKey = r.best.name, hardKey = r.hard?.name
   return (
     <section className="hk-months" aria-label="Următoarele 12 luni">
-      <div className="hk-mbars" role="img" aria-label="Lunile tale: cu cât bara e mai înaltă, cu atât luna e mai liniștită">
-        {r.months.map((c, i) => {
-          const isBest = c.name === bestKey, isHard = c.name === hardKey
-          return (
-            <div key={c.name} className={`hk-mbar t${Math.min(c.neg, 3)}${isBest ? ' best' : ''}${isHard ? ' hard' : ''}${c.now ? ' now' : ''}`}>
-              {isBest && <em className="hk-mtag good">★</em>}
-              {isHard && <em className="hk-mtag bad">!</em>}
-              <i style={{ height: `${(4 - c.neg) * 20 + 16}%`, animationDelay: `${i * 60}ms` }} />
-              <span>{c.short}</span>
-              {(i === 0 || c.m === 1) && <small>{c.y}</small>}
-            </div>
-          )
-        })}
-      </div>
-      <div className="hk-mlegend"><span><b className="g" /> liniștită</span><span><b className="y" /> cu încercări</span><span><b className="r" /> tensionată</span></div>
+      <MoonRow cells={r.months.map((c) => ({
+        key: c.name, m: c.m, y: c.y, now: c.now, f: LIGHT[Math.min(c.neg, 4)],
+        mark: c.name === r.best.name ? 'best' : c.name === r.hard?.name ? 'hard' : undefined,
+      }))} />
+      <p className="hk-moons-key">Luna plină e o lună liniștită. Cu cât luna e mai subțire, cu atât luna cere mai multă atenție.</p>
 
-      <div className="hk-mcard good">
-        <span className="hk-mcard-k"><Sparkle size={13} /> Luna ta cea mai liniștită</span>
-        <strong>{cap(r.best.name)}</strong>
-        <span className="hk-mcard-s">Ce se decide atunci: {r.best.sphere.toLowerCase()}</span>
+      <div className="hk-month best">
+        <span className="hk-month-k">Cea mai liniștită lună</span>
+        <h3>{cap(r.best.name)}</h3>
+        <p className="hk-month-s">Se decide: {r.best.sphere.toLowerCase()}</p>
         <p>{r.best.text}</p>
       </div>
 
       {r.hard && (
-        <div className="hk-mcard bad">
-          <span className="hk-mcard-k"><TriangleAlert size={13} /> Luna care cere atenție</span>
-          <strong>{cap(r.hard.name)}</strong>
-          <div className="hk-mcard-lock">
-            <p>Ce se întâmplă atunci, cine îți poate pune bețe în roate și ce e bine să faci ca luna să treacă ușor.</p>
+        <div className="hk-month hard">
+          <span className="hk-month-k">Luna care cere atenție</span>
+          <h3>{cap(r.hard.name)}</h3>
+          <div className="hk-month-lock">
+            <p aria-hidden>Ce se întâmplă atunci, cine îți poate pune bețe în roate și ce e bine să faci ca luna să treacă ușor.</p>
             <span><LockKeyhole size={14} /> În Prognoza completă</span>
           </div>
         </div>
       )}
 
-      <div className="hk-mrest">
-        <LockKeyhole size={14} />
-        <span>Și celelalte {r.hard ? 10 : 11} luni, fiecare cu explicația ei: oameni, bani, iubire, obstacole.</span>
-      </div>
-      <button type="button" className="payment-button hk-chart-cta" onClick={onUnlock}>Vreau să știu ce aduce fiecare lună <ArrowDown size={15} /></button>
+      <p className="hk-months-rest">Celelalte {r.hard ? 10 : 11} luni, fiecare cu explicația ei, sunt în Prognoza completă.</p>
+      <button type="button" className="hk-btn" onClick={onUnlock}>Vreau să știu ce aduce fiecare lună</button>
     </section>
   )
 }
