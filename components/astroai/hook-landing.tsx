@@ -64,7 +64,6 @@ export function HookLanding({ hook }: { hook: HookView }) {
   const [partner, setPartner] = useState({ f: '', l: '' })
   const [payBusy, setPayBusy] = useState(false)
   const [payError, setPayError] = useState<string | null>(null)
-  const [consent, setConsent] = useState(false)
   const touched = useRef(false)
   const resultRef = useRef<HTMLDivElement>(null)
   const couple = hook.kind === 'couple'
@@ -115,7 +114,6 @@ export function HookLanding({ hook }: { hook: HookView }) {
     const block = (msg: string) => { setPayError(msg); void reportAstroHookBlocked(hook.slug, msg).catch(() => {}) }
     if (!first.f.trim() || !first.l.trim()) { block('Scrie prenumele și numele de familie: intră în calcul.'); return }
     if (couple && (!partner.f.trim() || !partner.l.trim())) { block('Scrie și numele partenerului / partenerei.'); return }
-    if (!consent) { block('Bifează acordul pentru livrarea imediată a raportului.'); return }
     setPayBusy(true)
     void trackAstroHook(hook.slug, 'product_select')
     fbqTrack('InitiateCheckout', { content_name: hook.product, value: def.priceBani / 100, currency: 'RON' })
@@ -276,7 +274,6 @@ export function HookLanding({ hook }: { hook: HookView }) {
                 )}
                 {a.g === 'f' && <p className="hk-hint">Căsătorită? Scrie numele de fată: e cel cu care ai venit pe lume.</p>}
               </div>
-              <label className="hk-consent"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} /><span>Vreau raportul imediat după plată și renunț la dreptul legal de retragere pentru conținutul digital livrat. Garanția AstroAI de 14 zile rămâne.</span></label>
               {payError && <p className="hk-error" role="alert">{payError}</p>}
               <button type="submit" className="payment-button hk-cta" disabled={payBusy}><LockKeyhole size={16} /> {payBusy ? 'Se deschide plata…' : `Deschide raportul ${couple ? 'nostru' : 'meu'} · ${price.now}`}</button>
               <p className="hk-paynote">E-mailul îl scrii pe pagina de plată: acolo îți trimitem și raportul.</p>
