@@ -654,3 +654,98 @@
 @keyframes hkGrow { from { transform: scaleY(0) } to { transform: scaleY(1) } }
 @media (prefers-reduced-motion: reduce) { .ax .hk-mbar i { animation: none } }
 .ax .hk-mtag { z-index: 2; top: -20px }
+
+/* ───────── Pagini de intrare: „Efemeride” (rescris 6 oct.) ─────────
+   Noapte albastru-cerneală, fără nebuloasă; ivoriu pentru text, șampanie doar pentru datele omului și butonul principal. */
+.ax.hk { --n-ink: #0d1020; --n-raise: #151a2e; --n-paper: #e9e4d8; --n-haze: #8d92a8; --n-champ: #cdb27a; --n-rust: #c26f5b; --n-line: rgba(233, 228, 216, .12);
+  background: var(--n-ink); color: var(--n-paper) }
+.ax.hk .hk-sky { position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(520px 520px at 88% -6%, rgba(233, 228, 216, .09), transparent 70%), radial-gradient(900px 600px at 50% 120%, rgba(60, 80, 140, .18), transparent 70%) }
+.ax.hk .ax-wrap { position: relative; z-index: 1; max-width: 560px; padding: 0 20px }
+.ax.hk .hk-head { height: 64px; border-bottom: 1px solid var(--n-line) }
+.ax.hk .hk-head .wordmark, .ax.hk .hk-head .wordmark span { color: var(--n-paper) }
+.ax.hk .hk-head .brand-symbol { color: var(--n-champ) }
+.ax.hk .hk-free { color: var(--n-haze); font-size: 13px }
+
+.ax.hk .hk-hero { text-align: left; padding: 40px 0 8px; max-width: none }
+.ax.hk .hk-hero h1 { font-family: var(--font-cormorant); font-weight: 500; font-size: clamp(42px, 11vw, 64px); line-height: 1.02; letter-spacing: -.02em; color: var(--n-paper); margin: 0 0 18px; text-wrap: balance }
+.ax.hk .hk-hero p { font-size: 16.5px; line-height: 1.6; color: var(--n-haze); max-width: 34em }
+.ax.hk .hk-relief { color: var(--n-haze) !important; font-size: 14.5px; margin-top: 10px !important; opacity: 1 }
+.ax.hk .hk-hero.done { padding-bottom: 0 }
+.ax.hk .hk-hero.done h1 { font-size: clamp(30px, 8vw, 40px); color: var(--n-haze) }
+
+.ax.hk .hk-form { max-width: none; margin: 26px 0 0; border: 0; background: none; padding: 0; gap: 16px }
+.ax.hk .hk-input > span, .ax.hk .hk-row2 label > span { font-size: 13.5px; color: var(--n-haze) }
+.ax.hk .hk-input { display: flex; flex-direction: column; gap: 7px }
+.ax.hk .hk-input input, .ax.hk .hk-row2 input { height: 56px; border: 1px solid transparent; border-radius: 6px; background: var(--n-raise); color: var(--n-paper); font-size: 18px; padding: 0 16px; letter-spacing: .01em }
+.ax.hk .hk-input input::placeholder, .ax.hk .hk-row2 input::placeholder { color: rgba(141, 146, 168, .6) }
+.ax.hk .hk-input input:focus, .ax.hk .hk-row2 input:focus { border-color: var(--n-champ); box-shadow: none; outline: none }
+.ax.hk .hk-gender { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-top: 10px; padding: 4px; border-radius: 8px; background: var(--n-raise) }
+.ax.hk .hk-gender button { height: 44px; border: 0; border-radius: 5px; background: transparent; color: var(--n-haze); font-size: 15px }
+.ax.hk .hk-gender button.on { background: var(--n-paper); color: var(--n-ink); font-weight: 600 }
+.ax.hk .hk-gender button:focus-visible, .ax.hk .hk-btn:focus-visible, .ax.hk .payment-button:focus-visible { outline: 2px solid var(--n-champ); outline-offset: 3px }
+.ax.hk .payment-button, .ax.hk .hk-btn { display: flex; width: 100%; align-items: center; justify-content: center; gap: 8px; min-height: 58px; border: 0; border-radius: 6px; background: var(--n-champ); color: var(--n-ink); box-shadow: none; font-weight: 700; font-size: 16.5px; letter-spacing: .01em; cursor: pointer; filter: none }
+.ax.hk .payment-button:hover, .ax.hk .hk-btn:hover { background: #d9c08c }
+.ax.hk .hk-note { text-align: left; color: var(--n-haze); font-size: 13px }
+.ax.hk .hk-error { color: #f0a493 }
+
+.ax.hk .hk-sample { max-width: none; margin: 38px 0 0; padding: 0; display: block }
+.ax.hk .hk-sample blockquote { margin: 0; font-family: var(--font-cormorant); font-style: italic; font-size: 22px; line-height: 1.35; color: var(--n-paper) }
+.ax.hk .hk-sample figcaption { margin-top: 8px; font-size: 13px; color: var(--n-haze) }
+
+/* lunile: semnul paginii */
+.ax.hk .hk-moons { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px; margin: 30px 0 8px; padding-bottom: 14px }
+.ax.hk .hk-moon-cell { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; animation: hkRise .6s ease both }
+.ax.hk .hk-moon-cell span { font-size: 10.5px; color: var(--n-haze) }
+.ax.hk .hk-moon-cell.now span { color: var(--n-paper); font-weight: 700 }
+.ax.hk .hk-moon-cell small { position: absolute; bottom: -15px; font-size: 9.5px; color: rgba(141, 146, 168, .7) }
+.ax.hk .hk-moon { width: 100%; max-width: 34px; height: auto; overflow: visible }
+.ax.hk .hk-moon-dark { fill: #1b2038; stroke: rgba(233, 228, 216, .16); stroke-width: .8 }
+.ax.hk .hk-moon.empty .hk-moon-dark { fill: rgba(233, 228, 216, .03); stroke: rgba(233, 228, 216, .38); stroke-dasharray: 2 2.4 }
+.ax.hk .hk-moon-lit { fill: var(--n-paper); filter: drop-shadow(0 0 4px rgba(233, 228, 216, .35)) }
+.ax.hk .hk-moon-ring { fill: none; stroke-width: 1.6 }
+.ax.hk .hk-moon.best .hk-moon-lit { fill: var(--n-champ); filter: drop-shadow(0 0 7px rgba(205, 178, 122, .7)) }
+.ax.hk .hk-moon.best .hk-moon-ring { stroke: var(--n-champ) }
+.ax.hk .hk-moon.hard .hk-moon-ring { stroke: var(--n-rust) }
+@keyframes hkRise { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
+@media (prefers-reduced-motion: reduce) { .ax.hk .hk-moon-cell { animation: none } }
+
+/* rezultatul */
+.ax.hk .hk-result { max-width: none; padding-top: 22px }
+.ax.hk .hk-kicker { display: block; text-align: left; font-size: 15px; color: var(--n-champ); letter-spacing: 0; text-transform: none }
+.ax.hk .hk-result h2 { color: var(--n-paper); text-align: left; font-weight: 500; font-size: clamp(32px, 8.5vw, 44px); line-height: 1.08; letter-spacing: -.015em; margin: 8px 0 12px }
+.ax.hk .hk-text { border-left: 0; padding-left: 0; color: var(--n-haze); font-size: 16px; line-height: 1.65 }
+.ax.hk .hk-months { margin: 6px 0 0; padding: 0; border: 0; background: none; box-shadow: none }
+.ax.hk .hk-moons-key { font-size: 14px; line-height: 1.55; color: var(--n-haze); margin: 0 0 26px }
+.ax.hk .hk-month { padding: 22px 0; border-top: 1px solid var(--n-line) }
+.ax.hk .hk-month-k { display: block; font-size: 14px; font-weight: 600 }
+.ax.hk .hk-month.best .hk-month-k { color: var(--n-champ) }
+.ax.hk .hk-month.hard .hk-month-k { color: var(--n-rust) }
+.ax.hk .hk-month h3 { font-family: var(--font-cormorant); font-weight: 500; font-size: 38px; line-height: 1.05; letter-spacing: -.01em; color: var(--n-paper); margin: 6px 0 6px }
+.ax.hk .hk-month-s { font-size: 14px; color: var(--n-haze); margin: 0 0 10px }
+.ax.hk .hk-month p { font-size: 16.5px; line-height: 1.65; color: var(--n-paper) }
+.ax.hk .hk-month-lock { position: relative; margin-top: 8px }
+.ax.hk .hk-month-lock p { filter: blur(5px); user-select: none; opacity: .7 }
+.ax.hk .hk-month-lock span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 700; font-size: 15px; color: var(--n-paper) }
+.ax.hk .hk-months-rest { padding: 20px 0 16px; border-top: 1px solid var(--n-line); font-size: 15px; line-height: 1.55; color: var(--n-haze) }
+
+/* oferta */
+.ax.hk .hk-upsell { margin-top: 40px; border: 0; border-radius: 14px; background: var(--n-raise); padding: 28px 20px 22px }
+.ax.hk .hk-upsell-kicker { font-family: var(--font-cormorant); font-weight: 500; font-size: 30px; line-height: 1.1; color: var(--n-paper); margin-bottom: 10px }
+.ax.hk .hk-upsell-lead { color: var(--n-haze) }
+.ax.hk .hk-upsell li { color: var(--n-paper); font-size: 15px }
+.ax.hk .hk-upsell li svg { color: var(--n-champ) }
+.ax.hk .hk-price strong { font-size: 44px; color: var(--n-paper); font-weight: 500 }
+.ax.hk .hk-names { border-top-color: var(--n-line) }
+.ax.hk .hk-label { font-size: 15px; letter-spacing: 0; text-transform: none; color: var(--n-paper); font-weight: 600 }
+.ax.hk .hk-steps .done { color: var(--n-haze); background: none; border: 1px solid var(--n-line) }
+.ax.hk .hk-steps .now { color: var(--n-ink); background: var(--n-paper) }
+.ax.hk .hk-upsell .hk-input input, .ax.hk .hk-upsell .hk-row2 input { background: var(--n-ink) }
+.ax.hk .hk-trust, .ax.hk .hk-paynote, .ax.hk .hk-legal, .ax.hk .hk-foot, .ax.hk .hk-consent { color: var(--n-haze) }
+.ax.hk .hk-foot { border-top: 1px solid var(--n-line); margin-top: 30px }
+.ax.hk .hk-chart, .ax.hk .hk-rcard, .ax.hk .hk-strong, .ax.hk .hk-locked { background: var(--n-raise); border: 1px solid var(--n-line); box-shadow: none }
+.ax.hk .hk-chart-stage { background: var(--n-ink); border-color: var(--n-line) }
+.ax.hk .hk-chart-kicker, .ax.hk .hk-pcard-kicker { letter-spacing: 0; text-transform: none; font-size: 14px; color: var(--n-champ) }
+.ax.hk .hk-tabs button.on { background: var(--n-paper); color: var(--n-ink) }
+.ax.hk .hk-seal { border-color: rgba(205, 178, 122, .45); box-shadow: none }
+.ax.hk .hk-seal b { color: var(--n-champ) }

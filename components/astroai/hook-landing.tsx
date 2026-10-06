@@ -2,10 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { ArrowUpRight, Check, LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react'
-import { StarField } from '@/components/star-field'
+import { Check, LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react'
 import { HookLifeChart } from './hook-chart'
-import { HookMonths } from './hook-months'
+import { HookMonths, MoonRow, emptyMonths } from './hook-months'
 import { reportAstroHookBlocked, runAstroHook, trackAstroHook } from '@/app/actions/astroai-hook'
 import { startAstroCheckout } from '@/app/actions/astroai'
 import type { HookDef, HookResult } from '@/lib/astroai/hooks'
@@ -137,23 +136,23 @@ export function HookLanding({ hook }: { hook: HookView }) {
     <main className="ax hk relative min-h-screen overflow-x-clip bg-[#0b0816]">
       <MetaPixel />
       <PromoBar />
-      <StarField />
+      <div className="hk-sky" aria-hidden />
       <div className="ax-wrap">
         <header className="hk-head">
           <Link href="/" className="wordmark" aria-label="AstroAI, acasă"><Sparkles className="brand-symbol" size={24} strokeWidth={1.1} /> astro<span>ai</span><small>.ro</small></Link>
-          <span className="hk-free"><Check size={13} /> Gratuit, pe loc</span>
+          <span className="hk-free">Gratuit, pe loc</span>
         </header>
 
         <section className={`hk-hero${result ? ' done' : ''}`}>
           <h1>{hook.title}</h1>
           <p>{hook.sub}</p>
           {!result && <p className="hk-relief">{hook.relief}</p>}
+          {!result && monthsKind && <MoonRow cells={emptyMonths()} />}
         </section>
 
         {!result && (
           <>
             <form className="hk-form" onSubmit={submit} noValidate>
-              <span className="hk-label">{hook.formLabel}</span>
               {couple ? (
                 <>
                   <DateField v={a} onChange={setA} who="Tu" idp="a" onTouch={touch} />
@@ -167,17 +166,17 @@ export function HookLanding({ hook }: { hook: HookView }) {
                 </label>
               )}
               {error && <p className="hk-error" role="alert">{error}</p>}
-              <button type="submit" className="payment-button hk-submit" disabled={busy}>{busy ? 'Se calculează…' : hook.cta} <ArrowUpRight size={16} /></button>
+              <button type="submit" className="payment-button hk-submit" disabled={busy}>{busy ? 'Se calculează…' : hook.cta.replace(' · gratuit', '')}</button>
               <p className="hk-note">{monthsKind ? 'Doar prenumele: nu îți cerem e-mailul.' : 'Nu îți cerem nici numele, nici e-mailul.'}</p>
             </form>
-            <div className="hk-sample"><span>Exemplu</span><p>{hook.sample}</p></div>
+            <figure className="hk-sample"><blockquote>{hook.sample.replace(/^[^„]*„/, '„')}</blockquote><figcaption>{hook.sample.split(':')[0]}</figcaption></figure>
           </>
         )}
 
         {result && (
           <section className="hk-result" ref={resultRef} aria-live="polite">
-            <div className="hk-seal" aria-hidden><b>{result.seal}</b></div>
-            <span className="small-kicker hk-kicker">{hook.resultKicker} · {result.label}</span>
+            {!result.months && <div className="hk-seal" aria-hidden><b>{result.seal}</b></div>}
+            <span className="hk-kicker">{result.months ? `${result.months.first}, iată următoarele tale 12 luni` : `${hook.resultKicker}, ${result.label}`}</span>
             <h2>{result.title}</h2>
             <p className="hk-text">{result.text}</p>
             {result.extra && <p className="hk-extra">{result.extra}</p>}
@@ -262,7 +261,7 @@ export function HookLanding({ hook }: { hook: HookView }) {
               <ul>{hook.more.map((m) => <li key={m}><Check size={15} /> {m}</li>)}</ul>
               <div className="hk-price">{price.was && <s>{price.was}</s>}<strong>{price.now}</strong><span>· o singură plată · se deschide imediat</span></div>
               <div className="hk-names">
-                <div className="hk-steps"><span className="done"><Check size={13} /> Data nașterii</span><span className="now">Pasul 2 din 2 · {couple ? 'numele voastre' : 'numele tău'}</span></div>
+                <div className="hk-steps"><span className="done"><Check size={13} /> Data nașterii</span><span className="now">Pasul 2 din 2: {couple ? 'numele voastre' : 'numele tău'}</span></div>
                 <span className="hk-label">{couple ? 'Mai lipsesc numele voastre' : 'Mai lipsește numele tău'}</span>
                 <p className="hk-why">{couple ? 'Din nume calculăm cum vă potriviți cu adevărat și graficul relației voastre.' : monthsKind ? 'Cu numele complet, prognoza se calculează doar pentru tine: fiecare lună, zilele bune și anii de cotitură.' : 'Din nume calculăm graficul banilor, talentul tău ascuns și tot ce e doar al tău.'}</p>
                 <div className="hk-row2">

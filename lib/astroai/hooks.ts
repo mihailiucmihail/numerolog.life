@@ -136,7 +136,7 @@ export const HOOKS: Record<HookSlug, HookDef> = {
     cta: 'Vezi lunile mele · gratuit',
     sample: 'Elena, 14.10.1992: „Luna cea mai liniștită: aprilie 2027. Luna care cere atenție: septembrie 2027…”',
     relief: 'Nu e horoscopul zodiei: e calculat doar pentru data și prenumele tău.',
-    upsellKicker: 'Ai văzut doar culoarea lunilor.',
+    upsellKicker: 'Ai văzut doar fazele lunilor.',
     upsellLead: 'Prognoza completă îți spune ce se întâmplă în fiecare lună, cine îți e alături și ce e bine să faci, inclusiv în luna cea grea.',
     meta: { title: 'Ce îți aduc următoarele 12 luni? · AstroAI', description: 'Din data nașterii și prenume: lunile liniștite și lunile care cer atenție. Gratuit, pe loc.' },
   },
@@ -341,7 +341,7 @@ export function computeHook(slug: HookSlug, input: HookInput): HookResult | { er
     return {
       seal: '12', label: first,
       title: r.calm ? `${sp(r.calm, 'lună liniștită', 'luni liniștite')} și ${sp(r.tense, 'lună tensionată', 'luni tensionate')}` : `${sp(r.tense, 'lună tensionată', 'luni tensionate')} în următorul an`,
-      text: 'Fiecare bară e o lună. Cu cât e mai înaltă, cu atât luna e mai liniștită pentru tine. Calculul e cel din Prognoza completă.',
+      text: 'Calculat pentru data și prenumele tău, cu aceleași formule ca Prognoza completă.',
       months: { ...r, best: { ...r.best, text: gender(r.best.text, g) }, first },
     }
   }
