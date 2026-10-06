@@ -174,14 +174,14 @@ export const FAQ = [
 /* Garanția: pagina „Cere rambursarea” (/ro/astroai/rambursare). */
 export const REFUND_COPY = {
   back: 'Înapoi la AstroAI',
-  kicker: 'Drept de rambursare · 14 zile',
-  title1: 'Raportul nu te-a mulțumit?',
+  kicker: 'Garanție de satisfacție · 14 zile',
+  title1: 'Raportul nu ți-a fost de folos?',
   title2: 'Îți returnăm integral suma.',
-  lead: 'Ne dorim ca raportul AstroAI să te ajute să te cunoști mai bine, să înțelegi ce te așteaptă și să găsești informații de folos în viața ta. Dacă totuși nu te mulțumește, îți returnăm integral suma plătită, în primele 14 zile de la plată. Scrii adresa de e-mail mai jos, iar cererea se procesează pe loc.',
+  lead: 'Ne dorim ca raportul AstroAI să te ajute să te cunoști mai bine, să înțelegi ce te așteaptă și să găsești informații de folos în viața ta. Dacă totuși nu te mulțumește, îți returnăm integral suma plătită, în primele 14 zile de la plată. Completezi formularul de mai jos și ne ocupăm noi de rest.',
   points: [
     { t: 'Integral', d: 'Toată suma plătită, pe cardul cu care ai plătit.' },
-    { t: 'Simplu', d: 'În primele 14 zile cererea se procesează pe loc, din formularul de mai jos. Nu trebuie să explici nimic.' },
-    { t: 'Transparent', d: 'Primești imediat confirmarea pe e-mail. Suma apare în cont în 5–10 zile lucrătoare, cât durează procesarea la bancă.' },
+    { t: 'Simplu', d: 'Completezi formularul de mai jos în primele 14 zile de la plată. Ne ajută să știm ce nu a mers, dar nu e obligatoriu.' },
+    { t: 'Clar', d: 'Primești imediat confirmarea pe e-mail. Suma apare în cont în 5–10 zile lucrătoare, cât durează procesarea la bancă.' },
   ],
   formTitle: 'Cere rambursarea',
   formNote: 'Scrie adresa de e-mail pe care ai primit raportul. Găsim comanda după ea.',
@@ -189,7 +189,7 @@ export const REFUND_COPY = {
   emailLabel: 'E-mailul folosit la comandă',
   reasonLabel: 'Ce nu a mers? (opțional)',
   reasonPlaceholder: 'Câteva cuvinte ne ajută să facem rapoartele mai bune.',
-  submit: 'Returnează-mi banii',
+  submit: 'Trimite cererea',
   sending: 'Se procesează…',
   secure: 'Banii se întorc pe cardul cu care ai plătit, prin Stripe. Nu îți cerem datele cardului.',
   errEmail: 'Scrie adresa de e-mail folosită la comandă.',
@@ -200,8 +200,8 @@ export const REFUND_COPY = {
   doneAlready: 'Cererea pentru această comandă e deja înregistrată. Îți răspundem pe e-mail în cel mult 3 zile lucrătoare.',
   doneRefunded: 'Banii pentru această comandă au fost deja returnați. Dacă nu i-ai primit încă, mai așteaptă puțin: de obicei durează 5–10 zile lucrătoare, în funcție de bancă.',
   steps: [
-    { t: 'Scrii e-mailul', d: 'Adresa pe care ai primit raportul. Atât.' },
-    { t: 'Cererea se procesează', d: 'În primele 14 zile de la plată, pe loc. Primești confirmarea pe e-mail.' },
+    { t: 'Scrii e-mailul', d: 'Adresa de e-mail folosită la comandă.' },
+    { t: 'Confirmăm cererea', d: 'În primele 14 zile de la plată, imediat. Primești confirmarea pe e-mail.' },
     { t: 'Banii ajung pe card', d: 'Prin Stripe, pe cardul cu care ai plătit. Banca îi afișează în cont de obicei în 5–10 zile lucrătoare.' },
   ],
   legal: 'Garanția se aplică o singură dată pentru fiecare comandă, în primele 14 zile de la plată. După rambursare, accesul la raport se închide. Garanția se adaugă drepturilor pe care le ai prin lege ca consumator, nu le înlocuiește.',
@@ -210,9 +210,9 @@ export const REFUND_COPY = {
 /* Astrolabul v2: textele selectorului de rapoarte (întrebările corespund capitolelor reale). */
 export const TOGETHER = 'Astrologie și numerologie, într-o singură citire. De obicei le găsești separat. Aici lucrează împreună, pe aceeași dată de naștere. Puțini fac asta. Noi facem doar asta.'
 export const REPORTS_V2: Record<AstroProduct, { name: string; tagline: string; questions: string[] }> = {
-  cristal: { name: 'Cristalul Destinului', tagline: 'Portretul tău complet: cine ești, de ce ai venit și ce urmează.', questions: ['De ce, în sinea mea, sunt altfel decât par?', 'Care e rostul meu pe lumea asta?', 'În ce sunt bună cu adevărat și de ce nu-mi folosesc forța?', 'De ce atrag mereu același tip de bărbat?', 'Prin ce muncă îmi vin banii cel mai ușor?', 'Ce mă trage înapoi fără să-mi dau seama?', 'Ce am moștenit de la neamul meu, fără să știu?', 'În ce etapă a vieții sunt acum și ce urmează?'] },
+  cristal: { name: 'Cristalul Destinului', tagline: 'Portretul tău complet: cine ești, de ce ai venit și ce urmează.', questions: ['De ce, în sinea mea, sunt altfel decât par?', 'Care e rostul meu pe lumea asta?', 'La ce mă pricep cu adevărat și de ce nu-mi folosesc forța?', 'De ce atrag mereu același tip de partener?', 'Prin ce muncă îmi vin banii cel mai ușor?', 'Ce mă trage înapoi fără să-mi dau seama?', 'Ce am moștenit de la neamul meu, fără să știu?', 'În ce etapă a vieții sunt acum și ce urmează?'] },
   compat: { name: 'Compatibilitatea cuplului', tagline: 'Ce vă leagă, ce vă desparte și încotro mergeți împreună.', questions: ['Ne potrivim cu adevărat sau doar ne-am obișnuit?', 'De ce ne certăm mereu pentru aceleași lucruri?', 'Cine conduce în relație și cine cedează?', 'E o legătură karmică și ce avem de învățat împreună?', 'Cum am funcționa ca parteneri de afaceri?', 'Ce ne aduce anul acesta, ca cuplu?'] },
-  prog: { name: 'Prognoza personală', tagline: 'Ce îți aduce anul acesta și cum să profiți de el.', questions: ['E anul în care fac pasul — sau anul în care aștept?', 'În ce lună să iau decizia și în ce lună să aștept?', 'Ce lecție mi se tot repetă și cum o închid odată?', 'Care îmi sunt anii buni și care anii de încercare?', 'Ce energie are ziua pe care o am în gând pentru un pas important?', 'Ce îmi spune data de naștere a copilului despre cum să-l înțeleg?'] },
+  prog: { name: 'Prognoza personală', tagline: 'Ce îți aduce anul acesta și cum să profiți de el.', questions: ['E anul în care fac pasul — sau anul în care aștept?', 'În ce lună să iau decizia și în ce lună să aștept?', 'Ce lecție mi se tot repetă și cum o închid odată?', 'Care îmi sunt anii buni și care anii de încercare?', 'Cum e pentru mine ziua în care vreau să fac un pas important?', 'Ce îmi spune data de naștere a copilului despre cum să-l înțeleg?'] },
   pachet: { name: 'Toate trei', tagline: 'Toate trei, la un loc. Portretul, cuplul și anul — citite din aceeași dată de naștere, cu aceeași metodă.', questions: [] },
 }
 

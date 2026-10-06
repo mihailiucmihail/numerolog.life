@@ -110,7 +110,7 @@ export async function startAstroCheckout(
       },
       submit_type: 'pay',
       custom_text: {
-        submit: { message: 'AstroAI · raportul tău personal se deschide imediat după plată și îl primești și pe e-mail. Drept de rambursare în 14 zile, fără abonament.' },
+        submit: { message: 'AstroAI · raportul tău personal se deschide imediat după plată și îl primești și pe e-mail. Garanție de satisfacție 14 zile, fără abonament.' },
       },
       success_url: `${origin}/ro/astroai/raport?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/ro/astroai?plata=anulata&produs=${product.id}#comanda`,

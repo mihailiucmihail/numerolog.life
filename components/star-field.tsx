@@ -263,6 +263,7 @@ export function StarField() {
       {/* Zodiac Constellations */}
       {isClient && (
         <svg 
+          aria-hidden="true"
           className="fixed inset-0 w-full h-full pointer-events-none"
           viewBox="0 0 100 100"
           preserveAspectRatio="xMidYMid slice"

@@ -132,7 +132,7 @@ export async function sendAstroReviewRequestEmail(p: { to: string; firstName: st
 <p style="margin:0 0 16px;">Bună${name ? `, <strong style="color:#D4AF37;">${name}</strong>` : ''},</p>
 <p style="margin:0 0 16px;">Au trecut câteva zile de când ai deschis <strong>${esc(p.product)}</strong>. Te-ai regăsit în el? Ce ți s-a potrivit cel mai bine — și ce nu?</p>
 <p style="margin:0 0 16px;">Răspunde la acest e-mail cu două-trei propoziții. Citim fiecare răspuns și, dacă ești de acord, publicăm părerea ta pe astroai.ro doar cu prenumele și inițiala numelui (scrie „se poate publica” în răspuns).</p>
-<p style="margin:0 0 16px;">Dacă raportul nu a fost ce căutai, spune-ne și asta: <a href="https://astroai.ro/ro/astroai/rambursare" style="color:#D4AF37;">garanția de 14 zile</a> rămâne valabilă.</p>
+<p style="margin:0 0 16px;">Dacă ceva nu ți s-a potrivit, scrie-ne: citim fiecare răspuns și te ajutăm.</p>
 <p style="margin:0;font-size:14px;color:rgba(237,227,207,0.6);">Mulțumim că ai ales AstroAI.</p>`))
 }
 
@@ -192,7 +192,7 @@ export async function sendAstroPromoEmail(p: { to: string; code: string; expires
 </td></tr></table>
 <p style="margin:0 0 24px;text-align:center;"><a href="${link}" style="${btn}">Deschide AstroAI cu reducerea aplicată</a></p>
 <p style="margin:0 0 16px;">Nu trebuie să copiezi nimic: apasă butonul și reducerea apare deja la toate prețurile de pe site. Codul e valabil până la ${esc(until)}, pentru o singură comandă.</p>
-<p style="margin:0 0 16px;">Ce primești: un raport personal calculat din numele și data ta de naștere, care se deschide imediat după plată și îți rămâne pe e-mail. Dacă raportul nu te mulțumește, îți returnăm integral suma plătită, în primele 14 zile.</p>
+<p style="margin:0 0 16px;">Ce primești: un raport personal calculat din numele și data ta de naștere, care se deschide imediat după plată, iar linkul îl primești și pe e-mail. Dacă raportul nu te mulțumește, îți returnăm integral suma plătită, în primele 14 zile.</p>
 <p style="margin:24px 0 0;font-size:13px;color:rgba(237,227,207,0.5);">Primești acest e-mail pentru că ți-ai lăsat adresa pe astroai.ro. <a href="${unsub}" style="color:rgba(212,175,55,0.8);">Dezabonare</a></p>`),
   undefined, { 'List-Unsubscribe': `<${unsub}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' })
 }
