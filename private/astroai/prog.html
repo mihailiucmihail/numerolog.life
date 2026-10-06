@@ -822,6 +822,7 @@ select.sel:focus{outline:none;border-color:var(--brass-bright);box-shadow:0 0 0 
 .st-nav button { height: 42px; padding: 0 16px; border-radius: 6px; border: 1px solid var(--sl); background: transparent; color: var(--sp); font: inherit; font-size: 15px; cursor: pointer }
 .st-nav button.on { background: var(--sp); color: var(--sn); border-color: var(--sp); font-weight: 700 }
 .st-nav button:disabled { opacity: .35; cursor: default }
+.st-mbody h5, #stDayOut h5 { margin: 14px 0 2px; font-size: 13.5px; font-weight: 600; color: var(--gold, #d4af37) }
 .st-other { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--sh); text-transform: none; letter-spacing: 0 }
 .st-other select { height: 42px; border-radius: 6px; border: 1px solid var(--sl); background: var(--sr); color: var(--sp); font: inherit; font-size: 14.5px; padding: 0 10px }
 .st-block { padding: 28px 0 14px; border-bottom: 1px solid var(--sl) }
@@ -2660,7 +2661,7 @@ window.I18N_LANG="ro";
   function sTxt(e) { return e && e.text ? e.text : ''; }
   function sCap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
   var S_LIGHT = [1, 0.72, 0.5, 0.26, 0.1];
-  var S_TONE = ['Lună liniștită', 'Lună bună', 'Lună cu încercări', 'Lună tensionată', 'Lună tensionată'];
+  var S_TONE = ['Lună foarte bună', 'Lună bună', 'Lună cu încercări', 'Lună grea', 'Lună grea'];
   function sMoon(f, cls) {
     var r = 15, c = 17, lit = '';
     if (f >= 0.99) lit = 'M' + c + ',' + (c - r) + ' a' + r + ',' + r + ' 0 1,1 0,' + 2 * r + ' a' + r + ',' + r + ' 0 1,1 0,' + (-2 * r) + ' Z';
@@ -2675,6 +2676,24 @@ window.I18N_LANG="ro";
     if (zt) out.push(zt.text);
     if (k.tts5 === '-' && tt) out.push(tt.text);
     return out;
+  }
+
+  // textul unei luni sau al unei zile: ce se decide, cum va fi, ce te ajută, la ce să ai grijă
+  var S_UNIT = [['Un an activ, care', 'activă, care'], ['Un an intens, care', 'intensă, care'], ['Un an de așezare:', 'de așezare:'], ['Un an în care', 'în care'],
+    ['Un an lent, care', 'lentă, care'], ['Un an bun să', 'bună ca să'], ['Un an de luptă,', 'de luptă,'], ['Un an de „totul sau nimic”,', 'de „totul sau nimic”,']];
+  function sUnit(t, w) { S_UNIT.forEach(function (r) { t = t.split(r[0]).join(w + ' ' + r[1]); }); return t; }
+  function sPeriodHTML(p, w) {
+    var k = P.keys(p), h = '<p>' + sOuterText(p).map(esc).join(' ') + '</p>';
+    var zp = ST.zs_planet[k.zs5Planet];
+    if (zp) h += '<h5>Cum va fi ' + (w === 'O zi' ? 'ziua' : 'luna') + '</h5><p>' + esc(sUnit(p.neg.ZS5 ? zp.minus : zp.plus, w)) + '</p>';
+    var pi = p.minors.PI != null ? ST.minor_arcana_pr[String(p.minors.PI)] : null;
+    var oi = p.minors.OI != null ? ST.minor_arcana_pr[String(p.minors.OI)] : null;
+    var flip = !!(pi && p.minors.flipped && p.minors.flipped.PI), care = [];
+    if (pi && !flip) h += '<h5>Ce te ajută</h5><p>' + esc(pi.plus) + '</p>';
+    if (flip) care.push(pi.minus);
+    if (oi && care.indexOf(oi.minus) < 0) care.push(oi.minus);
+    if (care.length) h += '<h5>La ce să ai grijă</h5>' + care.map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('');
+    return h;
   }
 
   function storyYearNav(ctx, sy) {
@@ -2744,13 +2763,13 @@ window.I18N_LANG="ro";
     }
 
     // 5. lună cu lună
-    h += '<section class="st-block"><h3>Lună cu lună</h3><p class="st-note">Luna plină e o lună liniștită. Cu cât luna e mai subțire, cu atât cere mai multă atenție. Apasă pe o lună ca s-o citești.</p><div class="st-months">';
+    h += '<section class="st-block"><h3>Lună cu lună</h3><p class="st-note">Luna plină e o lună bună pentru tine. Cu cât luna e mai subțire, cu atât îți cere mai multă atenție. Apasă pe o lună ca s-o citești.</p><div class="st-months">';
     var m = from.m, y = from.y;
     for (var i = 0; i < 12; i++) {
       var pp = P.periodPrognosis(b, ctx.nameArc, { m: m, y: y });
       var n = Math.min(sOuterNeg(pp), 4), isNowM = sToday().m === m && sToday().y === y;
       h += '<details class="st-month t' + Math.min(n, 3) + '"' + (isNowM ? ' open' : '') + '><summary>' + sMoon(S_LIGHT[n]) + '<span class="st-mname">' + sCap(MONTHS[m - 1]) + ' ' + y + (isNowM ? ' <b>acum</b>' : '') + '</span><span class="st-mtone">' + S_TONE[n] + '</span></summary>';
-      h += '<div class="st-mbody">' + sOuterText(pp).map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') + '</div></details>';
+      h += '<div class="st-mbody">' + sPeriodHTML(pp, 'O lună') + '</div></details>';
       m++; if (m > 12) { m = 1; y++; }
     }
     h += '</div></section>';
@@ -2771,9 +2790,9 @@ window.I18N_LANG="ro";
     if (cmp(dt, ctx.birth) < 0) { out.innerHTML = '<p class="st-note">Alege o dată de după naștere.</p>'; return; }
     var pp = P.periodPrognosis(ctx.birth, ctx.nameArc, dt), n = Math.min(sOuterNeg(pp), 4);
     var ang = P.angelPeriodAt(ctx.birth, dt), ae = ang ? ST.angel_periods[ang.planet] : null;
-    var dayTone = ['O zi liniștită', 'O zi bună', 'O zi cu încercări', 'O zi tensionată', 'O zi tensionată'][n];
+    var dayTone = ['O zi foarte bună', 'O zi bună', 'O zi cu încercări', 'O zi grea', 'O zi grea'][n];
     var h = '<div class="st-day t' + Math.min(n, 3) + '">' + sMoon(S_LIGHT[n]) + '<div><strong>' + sCap(sDate(dt)) + '</strong><span>' + dayTone + '</span></div></div>';
-    h += sOuterText(pp).map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('');
+    h += sPeriodHTML(pp, 'O zi');
     if (ae) h += '<p class="st-note">Perioada în care cade ziua (' + ang.from.d + ' ' + MONTHS_GEN[ang.from.m - 1] + ' – ' + ang.to.d + ' ' + MONTHS_GEN[ang.to.m - 1] + '): ' + esc(ae.text) + '</p>';
     out.innerHTML = I18N_G(h);
   }

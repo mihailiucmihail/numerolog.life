@@ -65,6 +65,9 @@ export function HookMonths({ r, onUnlock }: { r: MonthsResult & { first: string 
         <h3>{cap(r.best.name)}</h3>
         <p className="hk-month-s">Se decide: {r.best.sphere.toLowerCase()}</p>
         <p>{r.best.text}</p>
+        {r.best.energy && <><h4>Cum va fi luna</h4><p>{r.best.energy}</p></>}
+        {r.best.help && <><h4>Ce te ajută</h4><p>{r.best.help}</p></>}
+        {r.best.care.length > 0 && <><h4>La ce să ai grijă</h4>{r.best.care.map((t) => <p key={t}>{t}</p>)}</>}
       </div>
 
       {r.hard && (
