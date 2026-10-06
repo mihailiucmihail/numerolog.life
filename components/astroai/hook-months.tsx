@@ -30,7 +30,7 @@ export function Moon({ f, mark }: { f: number | null; mark?: 'best' | 'hard' }) 
 /** Rândul celor 12 luni, gol (înainte de calcul) sau plin. */
 export function MoonRow({ cells }: { cells: { key: string; m: number; y: number; f: number | null; mark?: 'best' | 'hard'; now?: boolean }[] }) {
   return (
-    <div className="hk-moons" role="img" aria-label="Următoarele 12 luni: luna plină e o lună liniștită, luna subțire e o lună tensionată">
+    <div className="hk-moons" role="img" aria-label="Următoarele 12 luni: luna plină e o lună bună, luna subțire cere atenție">
       {cells.map((c, i) => (
         <div key={c.key} className={`hk-moon-cell${c.now ? ' now' : ''}`} style={{ animationDelay: `${i * 70}ms` }}>
           <Moon f={c.f} mark={c.mark} />
@@ -58,10 +58,10 @@ export function HookMonths({ r, onUnlock }: { r: MonthsResult & { first: string 
         key: c.name, m: c.m, y: c.y, now: c.now, f: LIGHT[Math.min(c.neg, 4)],
         mark: c.name === r.best.name ? 'best' : c.name === r.hard?.name ? 'hard' : undefined,
       }))} />
-      <p className="hk-moons-key">Luna plină e o lună liniștită. Cu cât luna e mai subțire, cu atât luna cere mai multă atenție.</p>
+      <p className="hk-moons-key">Luna plină e o lună bună pentru tine. Cu cât luna e mai subțire, cu atât îți cere mai multă atenție.</p>
 
       <div className="hk-month best">
-        <span className="hk-month-k">Cea mai liniștită lună</span>
+        <span className="hk-month-k">Luna ta cea mai bună</span>
         <h3>{cap(r.best.name)}</h3>
         <p className="hk-month-s">Se decide: {r.best.sphere.toLowerCase()}</p>
         <p>{r.best.text}</p>
