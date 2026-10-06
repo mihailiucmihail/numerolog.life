@@ -143,7 +143,7 @@ export const FAQ = [
   },
   {
     q: 'Raportul e scris de inteligența artificială?',
-    a: 'Nu sunt generate pe loc. Textele sunt scrise și verificate dinainte, pentru fiecare rezultat; calculele se fac automat, după regulile fiecărei școli. Același nume și aceeași dată de naștere dau mereu același raport.',
+    a: 'Inteligența artificială face calculele pe baza cunoștințelor din multe cărți și școli de astrologie și numerologie.',
   },
   {
     q: 'De ce nu e nevoie de ora nașterii?',
