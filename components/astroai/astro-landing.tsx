@@ -39,7 +39,6 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
   const [meet, setMeet] = useState({ d: '', m: '', y: '' })
   const [email, setEmail] = useState('')
   const [error, setError] = useState<string | null>(cancelled ? 'Plata a fost anulată. Datele tale au rămas completate, poți încerca din nou oricând.' : null)
-  const [consent, setConsent] = useState(false)
   const [busy, setBusy] = useState(false)
   const [openFaq, setOpenFaq] = useState<number | null>(0)
   const [formInView, setFormInView] = useState(false)
@@ -106,7 +105,6 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
     if (missing(a)) { block('Completează prenumele, numele, data nașterii și sexul.'); return }
     if (needsPartner && missing(b)) { block('Completează și datele partenerului.'); return }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) { block('Scrie o adresă de e-mail validă: acolo îți trimitem raportul.'); return }
-    if (!consent) { block('Bifează acordul pentru livrarea imediată a raportului.'); return }
     setBusy(true)
     fire('form_submit', product, { d: a.d, m: a.m, y: a.y, g: a.g, ...(needsPartner ? { bd: b.d, bm: b.m, by: b.y, bg: b.g } : {}) })
     fbqTrack('InitiateCheckout', { content_name: product, value: ASTRO_PRODUCTS[product].priceBani / 100, currency: 'RON' })
@@ -238,7 +236,6 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
                 <span><Check size={15} /> Pe ecran imediat după plată, linkul și pe e-mail</span>
               </div>
               <PromoOptIn checked={optIn} onChange={setOptIn} />
-              <label className="hk-consent"><input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} /><span>Vreau raportul livrat imediat după plată și înțeleg că, fiind conținut digital, dreptul legal de retragere se pierde la livrare. Garanția AstroAI de 14 zile rămâne valabilă.</span></label>
               <button type="submit" className="payment-button" disabled={busy}><LockKeyhole size={16} /> {busy ? 'Se deschide plata…' : 'Deschide raportul meu'}</button>
               <p className="payment-schools"><Sparkles size={14} strokeWidth={1.3} /> {SCHOOLS_LINE}</p>
               <p className="payment-note">Plată prin Stripe. Raportul se deschide imediat și îl primești pe e-mail.<br />Continuând, ești de acord cu <Link href="/ro/termeni">Termenii</Link> și <Link href="/ro/confidentialitate">Confidențialitatea</Link>.</p>
