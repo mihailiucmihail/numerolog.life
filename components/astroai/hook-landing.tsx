@@ -145,8 +145,8 @@ export function HookLanding({ hook }: { hook: HookView }) {
         </header>
 
         <section className={`hk-hero${result ? ' done' : ''}`}>
-          <h1>{hook.title}</h1>
-          <p>{hook.sub}</p>
+          {!result && <h1>{hook.title}</h1>}
+          {!result && <p>{hook.sub}</p>}
           {!result && <p className="hk-relief">{hook.relief}</p>}
           {!result && monthsKind && <MoonRow cells={emptyMonths()} />}
         </section>
@@ -168,7 +168,7 @@ export function HookLanding({ hook }: { hook: HookView }) {
               )}
               {error && <p className="hk-error" role="alert">{error}</p>}
               <button type="submit" className="payment-button hk-submit" disabled={busy}>{busy ? 'Se calculează…' : hook.cta.replace(' · gratuit', '')}</button>
-              <p className="hk-note">{monthsKind ? 'Doar prenumele: nu îți cerem e-mailul.' : 'Nu îți cerem nici numele, nici e-mailul.'}</p>
+              <p className="hk-note">{monthsKind ? 'Pentru calcul ajung data nașterii și prenumele.' : couple ? 'Pentru cifra cuplului ajung datele de naștere.' : 'Pentru calcul ajunge data nașterii.'}</p>
             </form>
           </>
         )}
@@ -225,7 +225,7 @@ export function HookLanding({ hook }: { hook: HookView }) {
                 </div>
 
                 <div className="hk-rcard">
-                  <span className="hk-pcard-kicker">Elementul tău · {result.rich.element.name}</span>
+                  <span className="hk-pcard-kicker">Energia ta dominantă · {result.rich.element.name}</span>
                   <strong>Ce te ține în echilibru</strong>
                   <p>{result.rich.element.text}</p>
                   <div className="hk-chips">
@@ -280,7 +280,7 @@ export function HookLanding({ hook }: { hook: HookView }) {
               <button type="submit" className="payment-button hk-cta" disabled={payBusy}><LockKeyhole size={16} /> {payBusy ? 'Se deschide plata…' : `Deschide raportul ${couple ? 'nostru' : 'meu'} · ${price.now}`}</button>
               <p className="hk-paynote">E-mailul îl scrii pe pagina de plată: acolo îți trimitem și raportul.</p>
               <div className="hk-trust">
-                <span><ShieldCheck size={14} /> Drept de rambursare în 14 zile</span>
+                <span><ShieldCheck size={14} /> Garanție de satisfacție 14 zile</span>
                 <span>Plată prin Stripe · fără abonament</span>
               </div>
               <p className="hk-legal">Continuând, ești de acord cu <Link href="/ro/termeni">Termenii</Link> și <Link href="/ro/confidentialitate">Confidențialitatea</Link>.</p>

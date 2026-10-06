@@ -149,7 +149,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
             <p className="hero-intro">Am unit astrologia și numerologia într-o singură analiză, construită pe metodele a șase școli, din Europa și din China, și pe experiența multor astrologi și numerologi.</p>
             <p className="hero-detail">Introdu numele, prenumele și data nașterii și vezi pe grafice ce te așteaptă în carieră, în bani și în iubire. Descoperă talentele ascunse pe care nu le folosești încă, cât de bine te potrivești cu partenerul, ce îți aduce fiecare lună din an și multe alte lucruri despre tine pe care nu le știai.</p>
             <a className="hero-cta" href="#ce-afli" onClick={() => fire('product_select', product)}>Vezi ce cuprind rapoartele <ArrowUpRight size={18} /></a>
-            <div className="hero-proof"><span><ShieldCheck size={14} /> <Link href="/ro/astroai/rambursare">Drept de rambursare în 14 zile</Link></span><span>De la {priceFor(ASTRO_PRODUCTS.cristal.priceBani, promo).now}</span></div>
+            <div className="hero-proof"><span><ShieldCheck size={14} /> <Link href="/ro/astroai/rambursare">Garanție de satisfacție 14 zile</Link></span><span>De la {priceFor(ASTRO_PRODUCTS.cristal.priceBani, promo).now}</span></div>
           </div>
           <div className="hero-art">
             <div className="art-topline"><span>Astrologie <Plus size={12} /> Numerologie</span><span>O singură analiză</span></div>
@@ -182,7 +182,7 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
 
         <section ref={orderRef} className="order-block" id="rapoarte" aria-label="Comanda ta">
           <div className="order-heading">
-            <div><span className="small-kicker">Prima ta pagină</span><h2>Cu ce vrei să începi?</h2></div>
+            <div><span className="small-kicker">Alege raportul</span><h2>Cu ce vrei să începi?</h2></div>
             <span className="preview-note"><LockKeyhole size={14} /> Datele tale rămân private</span>
           </div>
           <div className="report-selector" role="tablist" aria-label="Alege raportul">
@@ -233,13 +233,13 @@ export function AstroLanding({ initialProduct, cancelled }: { initialProduct: As
               <div className="included">
                 <span><Check size={15} /> Astrologie și numerologie, împreună</span>
                 <span><Check size={15} /> {product === 'pachet' ? 'Trei rapoarte personale, acces permanent' : 'Raport personal, acces permanent'}</span>
-                <span><Check size={15} /> Pe ecran imediat după plată, linkul și pe e-mail</span>
+                <span><Check size={15} /> Se deschide imediat după plată, iar linkul îți vine și pe e-mail</span>
               </div>
               <PromoOptIn checked={optIn} onChange={setOptIn} />
               <button type="submit" className="payment-button" disabled={busy}><LockKeyhole size={16} /> {busy ? 'Se deschide plata…' : 'Deschide raportul meu'}</button>
               <p className="payment-schools"><Sparkles size={14} strokeWidth={1.3} /> {SCHOOLS_LINE}</p>
               <p className="payment-note">Plată prin Stripe. Raportul se deschide imediat și îl primești pe e-mail.<br />Continuând, ești de acord cu <Link href="/ro/termeni">Termenii</Link> și <Link href="/ro/confidentialitate">Confidențialitatea</Link>.</p>
-              <div className="guarantee"><ShieldCheck size={23} /><p>Drept de rambursare în 14 zile<br /><span>Vrem ca raportul să te ajute să te cunoști mai bine și să vezi ce urmează. Dacă totuși nu te mulțumește, îți returnăm integral suma plătită, în primele 14 zile. </span><Link href="/ro/astroai/rambursare">Cum funcționează</Link></p></div>
+              <div className="guarantee"><ShieldCheck size={23} /><p>Garanție de satisfacție 14 zile<br /><span>Vrem ca raportul să te ajute să te cunoști mai bine și să vezi ce urmează. Dacă totuși nu te mulțumește, îți returnăm integral suma plătită, în primele 14 zile. </span><Link href="/ro/astroai/rambursare">Cum funcționează</Link></p></div>
             </div>
           </form>
         </section>
@@ -315,7 +315,7 @@ function PersonFields({ value, onChange, idp }: { value: Person; onChange: (p: P
     <>
       <div className="field"><label htmlFor={`${idp}-f`}>Prenume</label><input id={`${idp}-f`} autoComplete={idp === 'a' ? 'given-name' : 'off'} value={value.f} onChange={(e) => onChange({ ...value, f: e.target.value })} placeholder="Prenumele tău" /></div>
       <div className="field"><label htmlFor={`${idp}-l`}>Nume de familie</label><input id={`${idp}-l`} autoComplete={idp === 'a' ? 'family-name' : 'off'} value={value.l} onChange={(e) => onChange({ ...value, l: e.target.value })} placeholder="Numele tău" /></div>
-      <p className="field-hint">Ți-ai schimbat numele (de exemplu la căsătorie)? Scrie numele de la naștere: e cel cu care ai venit pe lume. În raport vezi și ce a schimbat noul nume.</p>
+      <p className="field-hint">Ți-ai schimbat numele (de exemplu la căsătorie)? Scrie numele de la naștere: e cel cu care ai venit pe lume.</p>
       <DateSelects value={{ d: value.d, m: value.m, y: value.y }} onChange={(v) => onChange({ ...value, ...v })} idp={idp} />
       <div className="sex-field"><span>Sex</span>
         <div role="radiogroup" aria-label="Sexul">

@@ -3,7 +3,7 @@
 import { LockKeyhole } from 'lucide-react'
 import type { MonthsResult } from '@/lib/astroai/months'
 
-const SHORT = ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'noi', 'dec']
+const SHORT = ['ian', 'feb', 'mar', 'apr', 'mai', 'iun', 'iul', 'aug', 'sep', 'oct', 'nov', 'dec']
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
 /** Partea luminată a lunii după câte semne exterioare sunt în minus (0 = lună plină). */
@@ -58,7 +58,7 @@ export function HookMonths({ r, onUnlock }: { r: MonthsResult & { first: string 
         key: c.name, m: c.m, y: c.y, now: c.now, f: LIGHT[Math.min(c.neg, 4)],
         mark: c.name === r.best.name ? 'best' : c.name === r.hard?.name ? 'hard' : undefined,
       }))} />
-      <p className="hk-moons-key">Luna plină e o lună bună pentru tine. Cu cât luna e mai subțire, cu atât îți cere mai multă atenție.</p>
+      <p className="hk-moons-key">Discul plin înseamnă o lună bună pentru tine. Cu cât discul e mai subțire, cu atât luna îți cere mai multă atenție.</p>
 
       <div className="hk-month best">
         <span className="hk-month-k">Luna ta cea mai bună</span>
